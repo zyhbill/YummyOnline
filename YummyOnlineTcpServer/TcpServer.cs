@@ -101,37 +101,28 @@ namespace YummyOnlineTcpServer {
 		private void Tcp_MessageReceivedEvent(TcpClient client, string content) {
 			try {
 				BaseTcpProtocal baseProtocal = JsonConvert.DeserializeObject<BaseTcpProtocal>(content);
-				string endPoint = client.Client.RemoteEndPoint.ToString();
+				TcpClientInfo clientInfo = new TcpClientInfo(client);
 
 				switch(baseProtocal.Type) {
 					case TcpProtocalType.OrderSystemConnect:
-						log($"{endPoint} ({nameof(TcpProtocalType.OrderSystemConnect)}) Connected", Log.LogLevel.Success);
-						orderSystemConnected(client, JsonConvert.DeserializeObject<OrderSystemConnectProtocal>(content));
+						orderSystemConnected(clientInfo, JsonConvert.DeserializeObject<OrderSystemConnectProtocal>(content));
 						break;
 					case TcpProtocalType.NewDineInformClientConnect:
-						NewDineInformClientConnectProtocal niccp = JsonConvert.DeserializeObject<NewDineInformClientConnectProtocal>(content);
-						log($"{endPoint} ({nameof(TcpProtocalType.NewDineInformClientConnect)}): Guid: {niccp.Guid} Connected", Log.LogLevel.Success);
-						newDineInfromClientConnected(client, niccp);
+						newDineInfromClientConnected(clientInfo, JsonConvert.DeserializeObject<NewDineInformClientConnectProtocal>(content));
 						break;
 					case TcpProtocalType.PrintDineClientConnect:
-						PrintDineClientConnectProtocal pdccp = JsonConvert.DeserializeObject<PrintDineClientConnectProtocal>(content);
-						log($"{endPoint} ({nameof(TcpProtocalType.PrintDineClientConnect)}): HotelId: {pdccp.HotelId} Connected", Log.LogLevel.Success);
-						printDineClientConnected(client, pdccp);
+						printDineClientConnected(clientInfo, JsonConvert.DeserializeObject<PrintDineClientConnectProtocal>(content));
 						break;
 					case TcpProtocalType.OrderSystemNewDineInform:
-						OrderSystemNewDineInformProtocal osndip = JsonConvert.DeserializeObject<OrderSystemNewDineInformProtocal>(content);
-						log($"{endPoint} ({nameof(TcpProtocalType.OrderSystemNewDineInform)}): HotelId: {osndip.HotelId}, DineId: {osndip.DineId}, IsPaid: {osndip.IsPaid}", Log.LogLevel.Success);
-						orderSystemNewDineInform(osndip);
+						orderSystemNewDineInform(clientInfo, JsonConvert.DeserializeObject<OrderSystemNewDineInformProtocal>(content));
 						break;
 					case TcpProtocalType.RequestPrintDine:
-						RequestPrintDineProtocal rpdp = JsonConvert.DeserializeObject<RequestPrintDineProtocal>(content);
-						log($"{endPoint} ({nameof(TcpProtocalType.RequestPrintDine)}): HotelId: {rpdp.HotelId}, DineId: {rpdp.DineId}", Log.LogLevel.Success);
-						requestPrintDine(rpdp);
+						requestPrintDine(clientInfo, JsonConvert.DeserializeObject<RequestPrintDineProtocal>(content));
 						break;
 				}
 			}
 			catch(Exception e) {
-				log($"{client.Client.RemoteEndPoint} Received Error: {e.Message} {content}", Log.LogLevel.Error);
+				log($"{client.Client.RemoteEndPoint} Receive Error: {e.Message} {content}", Log.LogLevel.Error);
 				client.Close();
 			}
 		}
@@ -171,20 +162,55 @@ namespace YummyOnlineTcpServer {
 		/// <summary>
 		/// OrderSystem连接
 		/// </summary>
-		private void orderSystemConnected(TcpClient client, OrderSystemConnectProtocal protocal) {
+		private void orderSystemConnected(TcpClientInfo clientInfo, OrderSystemConnectProtocal protocal) {
 			OrderSystemClient?.Client.Close();
-			OrderSystemClient = new TcpClientInfo(client);
+			OrderSystemClient = clientInfo;
 
-			clientVerified(OrderSystemClient);
+			log($"{clientInfo.OriginalRemotePoint} (OrderSystem) Connected", Log.LogLevel.Success);
+
+			_clientVerified(OrderSystemClient);
 		}
+
+		/// <summary>
+		/// 需要及时收到新订单的客户端连接
+		/// </summary>
+		private void newDineInfromClientConnected(TcpClientInfo clientInfo, NewDineInformClientConnectProtocal protocal) {
+			log($"{clientInfo.OriginalRemotePoint} (NewDineInformClient): Guid: {protocal.Guid} Request Connection", Log.LogLevel.Info);
+
+			if(protocal.Guid == new Guid()) {
+				log($"{clientInfo.OriginalRemotePoint} NewDineInformClient Lack Guid", Log.LogLevel.Warning);
+				clientInfo.Client.Client.Close();
+				return;
+			}
+
+			KeyValuePair<NewDineInformClientGuid, TcpClientInfo> pair = NewDineInformClients.FirstOrDefault(p => p.Key.Guid == protocal.Guid);
+			if(pair.Key == null) {
+				log($"{clientInfo.OriginalRemotePoint} NewDineInformClient Guid {protocal.Guid} Not Matched", Log.LogLevel.Warning);
+				clientInfo.Client.Client.Close();
+				return;
+			}
+			else {
+				if(pair.Value != null) {
+					log($"NewDineInformClient Guid {pair.Key.Guid} Repeated", Log.LogLevel.Warning);
+					pair.Value.Client.Client.Close();
+				}
+
+				NewDineInformClients[pair.Key] = clientInfo;
+
+				log($"{clientInfo.OriginalRemotePoint} ({pair.Key.Description}) Connected", Log.LogLevel.Success);
+			}
+
+			_clientVerified(clientInfo);
+		}
+
 		/// <summary>
 		/// 饭店打印机连接
 		/// </summary>
-		private void printDineClientConnected(TcpClient client, PrintDineClientConnectProtocal protocal) {
-			TcpClientInfo clientInfo = new TcpClientInfo(client);
+		private void printDineClientConnected(TcpClientInfo clientInfo, PrintDineClientConnectProtocal protocal) {
+			log($"{clientInfo.OriginalRemotePoint} (Printer): HotelId: {protocal.HotelId} Request Connection", Log.LogLevel.Info);
 
 			if(!PrintDineClients.ContainsKey(protocal.HotelId)) {
-				log($"{clientInfo.OriginalRemotePoint.ToString()} {protocal.HotelId} HotelId Not Matched", Log.LogLevel.Warning);
+				log($"{clientInfo.OriginalRemotePoint} Printer HotelId {protocal.HotelId} Not Matched", Log.LogLevel.Warning);
 				clientInfo.Client.Client.Close();
 				return;
 			}
@@ -192,50 +218,23 @@ namespace YummyOnlineTcpServer {
 			KeyValuePair<int, TcpClientInfo> pair = PrintDineClients.FirstOrDefault(p => p.Key == protocal.HotelId);
 
 			if(pair.Value != null) {
-				log($"{pair.Key} HotelId Repeated", Log.LogLevel.Warning);
+				log($"Printer HotelId {pair.Key} Repeated", Log.LogLevel.Warning);
 				pair.Value.Client.Client.Close();
 			}
 
 			PrintDineClients[pair.Key] = clientInfo;
 
-			clientVerified(PrintDineClients[pair.Key]);
+			log($"{clientInfo.OriginalRemotePoint} (Printer of Hotel {protocal.HotelId}) Connected", Log.LogLevel.Success);
+
+			_clientVerified(PrintDineClients[pair.Key]);
 
 			while(printDineWaitedQueue[pair.Key].Count > 0) {
 				sendPrintDineProtocal(pair.Key, printDineWaitedQueue[pair.Key].Dequeue());
-				log($"Send waited info of Hotel {pair.Key}", Log.LogLevel.Success);
+				log($"Send Waited Dine of Hotel {pair.Key}", Log.LogLevel.Success);
 			}
 		}
-		/// <summary>
-		/// 需要及时收到新订单的客户端连接
-		/// </summary>
-		private void newDineInfromClientConnected(TcpClient client, NewDineInformClientConnectProtocal protocal) {
-			TcpClientInfo clientInfo = new TcpClientInfo(client);
 
-			if(protocal.Guid == new Guid()) {
-				log($"{clientInfo.OriginalRemotePoint.ToString()} Lack Guid", Log.LogLevel.Warning);
-				clientInfo.Client.Client.Close();
-				return;
-			}
-
-			KeyValuePair<NewDineInformClientGuid, TcpClientInfo> pair = NewDineInformClients.FirstOrDefault(p => p.Key.Guid == protocal.Guid);
-			if(pair.Key == null) {
-				log($"{clientInfo.OriginalRemotePoint.ToString()} {protocal.Guid} Guid Not Matched", Log.LogLevel.Warning);
-				clientInfo.Client.Client.Close();
-				return;
-			}
-			else {
-				if(pair.Value != null) {
-					log($"{pair.Key.Guid} Guid Repeated", Log.LogLevel.Warning);
-					pair.Value.Client.Client.Close();
-				}
-
-				NewDineInformClients[pair.Key] = clientInfo;
-			}
-
-			clientVerified(clientInfo);
-		}
-
-		private void clientVerified(TcpClientInfo clientInfo) {
+		private void _clientVerified(TcpClientInfo clientInfo) {
 			lock(WaitingForVerificationClients) {
 				TcpClientInfo waitedClientInfo = WaitingForVerificationClients.FirstOrDefault(p => p.Client == clientInfo.Client);
 				clientInfo.ConnectedTime = waitedClientInfo.ConnectedTime;
@@ -247,7 +246,9 @@ namespace YummyOnlineTcpServer {
 		/// <summary>
 		/// OrderSystem通知有新的订单
 		/// </summary>
-		private void orderSystemNewDineInform(OrderSystemNewDineInformProtocal protocal) {
+		private void orderSystemNewDineInform(TcpClientInfo clientInfo, OrderSystemNewDineInformProtocal protocal) {
+			log($"{clientInfo.OriginalRemotePoint} (NewDineInform): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}", Log.LogLevel.Success);
+
 			foreach(var p in NewDineInformClients) {
 				if(p.Value == null)
 					continue;
@@ -260,11 +261,13 @@ namespace YummyOnlineTcpServer {
 		/// <summary>
 		/// 请求打印
 		/// </summary>
-		private void requestPrintDine(RequestPrintDineProtocal protocal) {
+		private void requestPrintDine(TcpClientInfo clientInfo, RequestPrintDineProtocal protocal) {
+			log($"{clientInfo.OriginalRemotePoint} (RequestPrintDine): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}", Log.LogLevel.Success);
+
 			PrintDineProtocal p = new PrintDineProtocal(protocal.DineId, protocal.PrintTypes);
 			if(PrintDineClients[protocal.HotelId] == null) {
 				printDineWaitedQueue[protocal.HotelId].Enqueue(p);
-				log($"PrinterServer of Hotel {protocal.HotelId} is not connected", Log.LogLevel.Error);
+				log($"Printer of Hotel {protocal.HotelId} is not connected", Log.LogLevel.Error);
 				return;
 			}
 			sendPrintDineProtocal(protocal.HotelId, p);

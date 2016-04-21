@@ -48,12 +48,14 @@
 							立即刷新
 						</button>
 					</div>
-					<div class="col-xs-6 text-right">
-						<button class="btn btn-danger"
-								ng-click="stopTcpServer()">
-							关闭Tcp服务器
-						</button>
-					</div>
+					@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+						<div class="col-xs-6 text-right">
+							<button class="btn btn-danger"
+									ng-click="stopTcpServer()">
+								关闭Tcp服务器
+							</button>
+						</div>
+					}
 				</div>
 			</p>
 		</div>

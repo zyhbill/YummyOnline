@@ -8,24 +8,30 @@
 			<tr>
 				<th>Guid</th>
 				<th>说明</th>
-				<th></th>
+				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+					<th></th>
+				}
 			</tr>
 			<tr ng-repeat="guid in guids">
 				<td>{{guid.Guid}}</td>
 				<td>{{guid.Description}}</td>
-				<td class="text-right">
-					<button class="btn btn-danger" ng-click="deleteGuid(guid)">删除</button>
-				</td>
+				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+					<td class="text-right">
+						<button class="btn btn-danger" ng-click="deleteGuid(guid)">删除</button>
+					</td>
+				}
 			</tr>
-			<tr>
-				<td><input type="text" class="form-control" ng-model="newGuid.Guid"></td>
-				<td><input type="text" class="form-control" ng-model="newGuid.Description"></td>
-				<td class="text-right">
-					<button class="btn btn-primary btn-block" ng-click="addGuid()">添加</button>
-				</td>
-			</tr>
+			@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+				<tr>
+					<td><input type="text" class="form-control" ng-model="newGuid.Guid"></td>
+					<td><input type="text" class="form-control" ng-model="newGuid.Description"></td>
+					<td class="text-right">
+						<button class="btn btn-primary btn-block" ng-click="addGuid()">添加</button>
+					</td>
+				</tr>
+			}
 		</table>
 	</div>
-	
+
 
 </div>

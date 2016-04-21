@@ -12,7 +12,10 @@
 				<th>邮箱</th>
 				<th>用户名</th>
 				<th>注册日期</th>
-				<th></th>
+				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+					<th></th>
+				}
+				
 			</tr>
 			<tr ng-repeat="admin in admins">
 				<td>{{admin.Id}}</td>
@@ -20,19 +23,22 @@
 				<td>{{admin.Email}}</td>
 				<td>{{admin.UserName}}</td>
 				<td>{{admin.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
-				<td class="text-right">
-					<button class="btn btn-danger" ng-click="deleteAdmin(admin)">删除</button>
-				</td>
+				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+					<td class="text-right">
+						<button class="btn btn-danger" ng-click="deleteAdmin(admin)">删除</button>
+					</td>
+				}
 			</tr>
 		</table>
 	</div>
-
-	<div class="box-body">
-		<div class="input-group">
-			<input type="text" class="form-control" ng-model="newAdminPhoneNumber">
-			<div class="input-group-btn">
-				<button type="button" class="btn btn-primary" ng-click="addAdmin()">添加</button>
+	@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+		<div class="box-body">
+			<div class="input-group">
+				<input type="text" class="form-control" ng-model="newAdminPhoneNumber">
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-primary" ng-click="addAdmin()">添加</button>
+				</div>
 			</div>
 		</div>
-	</div>
+	}
 </div>

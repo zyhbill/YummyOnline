@@ -8,6 +8,7 @@ using YummyOnlineDAO.Models;
 using Protocal;
 
 namespace YummyOnline.Controllers {
+	[Authorize(Roles = nameof(Role.Admin))]
 	public class UsersController : BaseController {
 		// GET: Users
 		public ActionResult Index() {
@@ -24,6 +25,8 @@ namespace YummyOnline.Controllers {
 		public async Task<JsonResult> GetAdmins() {
 			return Json(await YummyOnlineManager.GetUsers(Role.Admin));
 		}
+
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> AddAdmin(string phoneNumber) {
 			User user = await UserManager.FindByPhoneNumberAsync(phoneNumber);
 			if(user == null) {
@@ -35,6 +38,8 @@ namespace YummyOnline.Controllers {
 			await UserManager.AddToRoleAsync(user.Id, Role.Admin);
 			return Json(new JsonSuccess());
 		}
+
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> DeleteAdmin(string id) {
 			await UserManager.RemoveFromRoleAsync(id, Role.Admin);
 			return Json(new JsonSuccess());

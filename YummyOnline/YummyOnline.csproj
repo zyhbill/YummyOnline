@@ -201,7 +201,6 @@
     <Content Include="Scripts\Log\controllers.js" />
     <Content Include="Scripts\Log\route.js" />
     <Content Include="Scripts\TcpServer\controller.js" />
-    <Content Include="Scripts\TcpServer\directives.js" />
     <Content Include="Scripts\TcpServer\route.js" />
     <Content Include="Scripts\Users\controllers.js" />
     <Content Include="Scripts\Users\route.js" />

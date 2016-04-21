@@ -8,7 +8,7 @@ using Protocal;
 using Newtonsoft.Json;
 
 namespace YummyOnline.Controllers {
-	[Authorize(Roles = nameof(Role.SuperAdmin))]
+	[Authorize(Roles = nameof(Role.Admin))]
 	public class TcpServerController : BaseController {
 		static string processName = "YummyOnlineTcpServer";
 		static PerformanceCounter curtime = new PerformanceCounter("Process", "% Processor Time", processName);
@@ -36,6 +36,7 @@ namespace YummyOnline.Controllers {
 			return Json(new JsonError("开启失败"));
 		}
 
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public JsonResult StopTcpServer() {
 			bool result = TcpServerProcess.StopTcpServer();
 			if(result) {
@@ -55,6 +56,7 @@ namespace YummyOnline.Controllers {
 		public async Task<JsonResult> GetGuids() {
 			return Json(await YummyOnlineManager.GetGuids());
 		}
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> AddGuid(Guid guid, string description) {
 			if(!await YummyOnlineManager.AddGuid(new NewDineInformClientGuid {
 				Guid = guid,
@@ -64,6 +66,7 @@ namespace YummyOnline.Controllers {
 			}
 			return Json(new JsonSuccess());
 		}
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> DeleteGuid(Guid guid) {
 			if(!await YummyOnlineManager.DeleteGuid(guid)) {
 				return Json(new JsonError());

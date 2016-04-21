@@ -42,6 +42,7 @@ namespace YummyOnlineTcpServer {
 				Console.WriteLine(ex);
 			}
 			finally {
+				Console.Clear();
 				Console.WriteLine("WaitingForVerificationClients:");
 				foreach(var p in status.WaitingForVerificationClients) {
 					displayClientStatus(p);

@@ -64,7 +64,7 @@ namespace YummyOnlineTcpServer {
 		public async Task Initialize() {
 			YummyOnlineManager manager = new YummyOnlineManager();
 			SystemConfig config = await manager.GetSystemConfig();
-			
+
 			List<Hotel> hotels = await manager.GetHotels();
 			hotels.ForEach(h => {
 				PrintDineClients.Add(h.Id, null);
@@ -84,7 +84,7 @@ namespace YummyOnlineTcpServer {
 				}
 				log($"{clientInfo.OriginalRemotePoint} Connected, Waiting for verification", Log.LogLevel.Info);
 			});
-			
+
 			// 30秒之内断开已连接但是未发送身份信息的socket
 			System.Timers.Timer timer = new System.Timers.Timer(10 * 1000);
 			timer.Elapsed += (e, o) => {
@@ -93,7 +93,6 @@ namespace YummyOnlineTcpServer {
 					log($"{c.OriginalRemotePoint} Timeout", Log.LogLevel.Warning);
 					c.Client.Close();
 				});
-				//clientsStatusChange();
 			};
 			timer.Start();
 		}
@@ -132,7 +131,7 @@ namespace YummyOnlineTcpServer {
 				}
 			}
 			catch(Exception e) {
-				log($"{client.Client.RemoteEndPoint} Received Error: {e.Message}, {content}", Log.LogLevel.Error);
+				log($"{client.Client.RemoteEndPoint} Received Error: {e.Message} {content}", Log.LogLevel.Error);
 				client.Close();
 			}
 		}
@@ -155,7 +154,7 @@ namespace YummyOnlineTcpServer {
 			foreach(KeyValuePair<NewDineInformClientGuid, TcpClientInfo> pair in NewDineInformClients) {
 				if(pair.Value?.Client == client) {
 					NewDineInformClients[pair.Key] = null;
-					log($"NewDineInformClient {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
+					log($"NewDineInformClient ({pair.Key.Description}) {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
 					return;
 				}
 			}
@@ -250,6 +249,9 @@ namespace YummyOnlineTcpServer {
 		/// </summary>
 		private void orderSystemNewDineInform(OrderSystemNewDineInformProtocal protocal) {
 			foreach(var p in NewDineInformClients) {
+				if(p.Value == null)
+					continue;
+
 				string content = JsonConvert.SerializeObject(new NewDineInformProtocal(protocal.HotelId, protocal.DineId, protocal.IsPaid));
 				var _ = tcp.Send(p.Value.Client, content, null);
 			}

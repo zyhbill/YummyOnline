@@ -1,0 +1,211 @@
+﻿html {
+	min-height: 100%;
+}
+
+body {
+	position: relative;
+	min-height: 100%;
+	font-family: "Microsoft Yahei";
+}
+
+.btn.active.focus,
+.btn.active:focus,
+.btn.focus,
+.btn:active.focus,
+.btn:active:focus,
+.btn:focus {
+	outline: none;
+}
+
+.btn.btn-round {
+	border-radius: 25px;
+}
+
+
+.btn.btn-circle {
+	padding: 0;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+}
+
+
+	.btn.btn-circle.btn-xs {
+		width: 24px;
+		height: 24px;
+	}
+
+.label {
+	margin-right: 2px;
+}
+
+.input-group .input-group-btn .btn {
+	padding: 6px 6px;
+	border-width: 1px;
+	border-style: solid;
+	border-left: none;
+}
+
+.form-control.form-control-round {
+	border-radius: 15px;
+}
+
+.form-control.from-control-inline {
+	display: inline-block;
+}
+
+.list-group {
+	background: none;
+}
+
+	.list-group .list-group-item {
+		padding-left: 0;
+		padding-right: 0;
+		border-left: none;
+		border-right: none;
+		border-radius: 0;
+		background: none;
+	}
+
+		.list-group .list-group-item:first-child {
+			border-top: none;
+		}
+
+	.list-group .list-group-item-align {
+		line-height: 30px;
+	}
+
+.row.no-padding {
+	margin: 0 -1px;
+}
+
+	.row.no-padding .col-xs-1,
+	.row.no-padding .col-xs-2,
+	.row.no-padding .col-xs-3,
+	.row.no-padding .col-xs-4,
+	.row.no-padding .col-xs-5,
+	.row.no-padding .col-xs-6,
+	.row.no-padding .col-xs-7,
+	.row.no-padding .col-xs-8,
+	.row.no-padding .col-xs-9,
+	.row.no-padding .col-xs-10,
+	.row.no-padding .col-xs-11,
+	.row.no-padding .col-xs-12 {
+		padding: 0 1px;
+	}
+
+.loading {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	color: #fff;
+	background-color: rgba(0,0,0,0.75);
+	z-index: 10;
+}
+
+	.loading p {
+		margin-top: 100px;
+		font-size: 18px;
+	}
+
+nav {
+	position: relative;
+	padding: 5px 10px;
+	z-index: 3;
+}
+
+	nav .nav-search {
+		margin-right: 40px;
+	}
+
+	nav .nav-right {
+		float: right;
+	}
+
+	nav .nav-title {
+		margin: 0 40px;
+		text-align: center;
+		font-size: 18px;
+		line-height: 30px;
+	}
+
+	nav .btn.btn-circle {
+		height: 30px;
+		width: 30px;
+		font-size: 18px;
+		line-height: 30px;
+		border: none;
+	}
+
+
+.bar {
+	position: fixed;
+	padding: 3px 15px 0 15px;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	height: 48px;
+	clear: both;
+	z-index: 2;
+}
+
+	.bar .bar-btn-group {
+		position: relative;
+		text-align: center;
+	}
+
+		.bar .bar-btn-group p {
+			margin-bottom: 0;
+			font-size: 12px;
+			line-height: 12px;
+		}
+
+		.bar .bar-btn-group .btn.btn-circle {
+			position: relative;
+			width: 30px;
+			height: 30px;
+		}
+
+		.bar .bar-btn-group .btn img {
+			width: 100%;
+		}
+
+		.bar .bar-btn-group.bar-btn-group-cart {
+			position: absolute;
+			padding: 0;
+			bottom: 2px;
+			left: 0;
+			width: 100%;
+			background: none;
+			border: none;
+			z-index: -1;
+		}
+
+			.bar .bar-btn-group.bar-btn-group-cart .btn {
+				padding: 0;
+				width: 80px;
+				border: 0;
+			}
+
+		.bar .bar-btn-group .cart-sum {
+			position: absolute;
+			color: #fff;
+			top: 3px;
+			width: 100%;
+			z-index: 1;
+		}
+
+		.bar .bar-btn-group .cart-price {
+			position: absolute;
+			background-color: #ebe4d1;
+			padding: 3px 10px;
+			border-radius: 10px;
+			right: 25px;
+			top: 6px;
+		}
+
+		.bar .bar-btn-group .btn-goto-payment {
+			margin-top: 4px;
+		}

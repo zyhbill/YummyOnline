@@ -1,0 +1,1 @@
+﻿var app = angular.module('waiterApp', ['ngRoute', 'ngStorage', 'ui.bootstrap']);

@@ -1,0 +1,38 @@
+﻿
+<div class="box box-default">
+	<div class="box-header">
+		<h3 class="box-title">管理员</h3>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table no-margin">
+			<tr>
+				<th>Id</th>
+				<th>手机</th>
+				<th>邮箱</th>
+				<th>用户名</th>
+				<th>注册日期</th>
+				<th></th>
+			</tr>
+			<tr ng-repeat="admin in admins">
+				<td>{{admin.Id}}</td>
+				<td>{{admin.PhoneNumber}}</td>
+				<td>{{admin.Email}}</td>
+				<td>{{admin.UserName}}</td>
+				<td>{{admin.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
+				<td class="text-right">
+					<button class="btn btn-danger" ng-click="deleteAdmin(admin)">删除</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+
+	<div class="box-body">
+		<div class="input-group">
+			<input type="text" class="form-control" ng-model="newAdminPhoneNumber">
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-primary" ng-click="addAdmin()">添加</button>
+			</div>
+		</div>
+	</div>
+</div>

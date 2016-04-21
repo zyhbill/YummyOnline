@@ -1,0 +1,31 @@
+﻿<div class="box box-default">
+	<div class="box-header">
+		<h3 class="box-title">GUIDs</h3>
+	</div>
+
+	<div class="table-responsive">
+		<table class="table no-margin">
+			<tr>
+				<th>Guid</th>
+				<th>说明</th>
+				<th></th>
+			</tr>
+			<tr ng-repeat="guid in guids">
+				<td>{{guid.Guid}}</td>
+				<td>{{guid.Description}}</td>
+				<td class="text-right">
+					<button class="btn btn-danger" ng-click="deleteGuid(guid)">删除</button>
+				</td>
+			</tr>
+			<tr>
+				<td><input type="text" class="form-control" ng-model="newGuid.Guid"></td>
+				<td><input type="text" class="form-control" ng-model="newGuid.Description"></td>
+				<td class="text-right">
+					<button class="btn btn-primary btn-block" ng-click="addGuid()">添加</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+	
+
+</div>

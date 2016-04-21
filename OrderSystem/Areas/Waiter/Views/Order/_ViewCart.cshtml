@@ -1,0 +1,135 @@
+﻿@Html.Partial("_PartialLoading")
+
+@Html.Partial("_PartialCustomerModal")
+
+<script type="text/ng-template" id="remarkModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">选择备注</h3>
+	</div>
+	<div class="modal-body remark-modal">
+		<p>未选备注：</p>
+		<button class="btn btn-primary btn-sm"
+				ng-repeat="remark in menu.Remarks"
+				ng-click="cart.AddRemark(menu,remark,$index)"
+				ng-disabled="menu.Addition.Remarks.length>=3"
+				stop-event>
+			{{remark.Name}}
+		</button>
+
+		<p>已选备注：</p>
+		<button class="btn btn-danger btn-sm"
+				ng-repeat="remark in menu.Addition.Remarks"
+				ng-click="cart.RemoveRemark(menu,remark,$index)"
+				stop-event>
+			{{remark.Name}}
+		</button>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-default" type="button" ng-click="ok()">确定</button>
+	</div>
+</script>
+
+<section class="search">
+	<div class="input-group input-group-lg">
+		<span class="input-group-addon"><span class="fa fa-search"></span></span>
+		<input type="text" class="form-control" placeholder="搜索"
+			   ng-model="menuFilter.SearchText" ng-change="menuFilter.ChangeSearchText()">
+	</div>
+</section>
+
+<section ng-hide="cart.Desk==null" class="menu" ng-static-height="96">
+	<!-- ngRepeat menu -->
+	<div class="menu-btn" ng-repeat="menu in menuFilter.FilteredMenus"
+		 ng-class="{active:menu.Addition.Ordered>0}"
+		 ng-click="cart.AddMenu(menu)">
+		<div class="row">
+			<div class="col-xs-10">
+				{{menu.NameAbbr}}
+			</div>
+			<div class="col-xs-2 text-left"
+				 ng-if="menu.Addition.Ordered>0">
+				{{menu.Addition.Ordered}}
+			</div>
+		</div>
+
+		<div ng-if="menu.Addition.Ordered">
+			<span ng-repeat="remark in menu.Addition.Remarks">
+				{{remark.Name | limitTo:4}}
+			</span>
+			<div class="row menu-control">
+				<div class="col-xs-6">
+					<button class="btn btn-primary btn-sm"
+							ng-if="menu.IsShowRemark()"
+							ng-click="openRemarkModal(menu)"
+							stop-event>
+						备注
+					</button>
+				</div>
+				<div class="col-xs-6 text-right">
+					<button class="btn btn-default btn-sm"
+							ng-click="cart.RemoveMenu(menu)"
+							stop-event>
+						<i class="fa fa-minus"></i>
+					</button>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</section>
+
+<section>
+	<ul class="control">
+		<li class="control-btn control-btn-3 no-border" 
+			ng-hide="cart.Desk==null || menuFilter.IsResultMode()">
+			<div uib-dropdown>
+				<div uib-dropdown-toggle>
+					分类
+				</div>
+				<ul class="dropdown-menu" ng-static-height="96">
+					<li ng-class="{active:menuFilter.IsOnSaleMode()}"
+						ng-click="menuFilter.IntoOnSaleMode()">
+						今日特价
+					</li>
+					<li ng-class="{active:menuFilter.IsRankMode()}"
+						ng-click="menuFilter.IntoRankMode()">
+						销量排行
+					</li>
+					<li ng-repeat="class in dataSet.MenuClasses"
+						ng-class="{active: class.Addition.IsSelected}"
+						ng-click="menuFilter.ToggleSelected(class)">
+						{{class.Name | limitTo:4}}
+						<span class="label label-warning"
+							  ng-show="class.Addition.Ordered">
+							{{class.Addition.Ordered}}
+						</span>
+					</li>
+				</ul>
+			</div>
+		</li>
+		<li class="control-btn control-btn-3 no-border"
+			ng-show="menuFilter.IsResultMode()"
+			ng-click="menuFilter.IntoRankMode()">
+			返回
+		</li>
+
+		<li class="control-btn control-btn-3 control-btn-desk" ng-class="{'control-btn-12':cart.Desk==null}">
+			@Html.Partial("_PartialOpenDesk")
+		</li>
+
+		<li class="control-btn control-btn-3 control-btn-option" ng-hide="cart.Desk==null">
+			@Html.Partial("_PartialOpenOption")
+		</li>
+
+		<li class="control-btn control-btn-3"
+			ng-click="menuFilter.IntoResultMode()"
+			ng-hide="menuFilter.IsResultMode() || cart.Desk==null">
+			查看点单
+		</li>
+		<li class="control-btn control-btn-3"
+			ng-show="cart.CanSubmit() && menuFilter.IsResultMode()"
+			route-href="/Payment">
+			结算下单
+		</li>
+	</ul>
+</section>

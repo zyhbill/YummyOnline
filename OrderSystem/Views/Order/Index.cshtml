@@ -1,0 +1,19 @@
+﻿@{
+	Layout = "~/Views/Shared/_LayoutGlobal.cshtml";
+}
+
+@section Style{
+	<link href="~/Content/css/order.css" rel="stylesheet" />
+}
+
+@section Script{
+	<script src="~/Scripts/Order/route.js"></script>
+	<script src="~/Scripts/Order/factories.js"></script>
+	<script src="~/Scripts/Order/controllers.js"></script>
+}
+
+@Html.Partial("_PartialLoading")
+
+<div ng-view>
+
+</div>

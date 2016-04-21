@@ -1,0 +1,122 @@
+﻿
+@Html.Partial("_PartialNavTitle", "确认点单")
+
+<div class="container-fluid" ng-static-height="88">
+	<ul class="list-group">
+		<li class="list-group-item list-group-item-align">
+			<div class="row">
+				<div class="col-xs-6">
+					{{cart.Desk.Name}}
+				</div>
+				<div class="col-xs-6 text-right">
+					人数：
+					<select class=""
+							ng-model="cart.HeadCount" convert-to-number>
+						<option ng-repeat="c in headCountsAll" value="{{c}}"
+								ng-selected="cart.HeadCount == c">
+							{{c}}
+						</option>
+					</select>
+				</div>
+			</div>
+		</li>
+
+		<li class="list-group-item">
+			<div class="radio radio-paykind"
+				 ng-repeat="payKind in dataSet.PayKinds"
+				 ng-class="{'radio-paykind-offline': payKind.Type == 3}">
+				<input type="radio" name="PayKindId"
+					   ng-attr-id="{{'radio' + payKind.Id}}" ng-value="payKind" ng-model="cart.PayKind">
+				<label ng-attr-for="{{'radio' + payKind.Id}}">
+					{{payKind.Name}}
+					<span ng-if="payKind.Discount<1">({{payKind.Discount*10}} 折)</span>
+					<span ng-if="payKind.Type == 3">（请到收银台完成支付）</span>
+					<div ng-if="payKind.Type == 3">
+						<hr />
+						<div class="row no-padding">
+							<div class="col-xs-4"><i class="fa fa-money"></i> 现金支付</div>
+							<div class="col-xs-4 text-center"><i class="fa fa-credit-card-alt"></i> 刷卡支付</div>
+							<div class="col-xs-4 text-right"><i class="fa fa-qrcode"></i> 扫码支付</div>
+						</div>
+					</div>
+				</label>
+			</div>
+
+		</li>
+
+		<li class="list-group-item">
+			<div class="row no-padding"
+				 ng-repeat="menu in cart.OrderedMenus">
+				<div class="col-xs-6">
+					{{menu.Name}}
+					<span class="label label-default"
+						  ng-repeat="remark in menu.Addition.Remarks">
+						{{remark.Name}}
+					</span>
+				</div>
+				<div class="col-xs-4">
+					{{menu.MenuPrice.Price | currency : "￥"}} &times;{{menu.Addition.Ordered}}
+				</div>
+				<div class="col-xs-2 text-right text-danger">
+					{{menu.MenuPrice.Price * menu.Addition.Ordered | currency : "￥"}}
+				</div>
+			</div>
+		</li>
+
+		<li class="list-group-item">
+			<div class="row">
+				<div class="col-xs-6">
+					合计：
+				</div>
+				<div class="col-xs-6 text-danger text-right">
+					{{cart.Price | currency : "￥"}}
+				</div>
+			</div>
+
+			<div class="row" ng-if="cart.DiscountMethod.Discount<1">
+				<div class="col-xs-9">
+					折扣： {{cart.DiscountMethod.Name}}
+				</div>
+				<div class="col-xs-3 text-danger text-right">
+					{{cart.DiscountMethod.Discount * 10}} 折
+				</div>
+			</div>
+		</li>
+		<li class="list-group-item" ng-if="cart.Customer!=null && dataSet.Hotel.PointsRatio!=0">
+			抵扣 <input class="form-control input-sm from-control-inline" style="width: 60px" type="number" ng-model="cart.PriceInPoints" /> 元
+			<small>
+				( 可用
+				<span class="text-success">
+					[{{cart.Customer.Points}}]
+				</span>
+				积分 =
+				<span class="text-success">
+					[{{cart.Customer.Points / dataSet.Hotel.PointsRatio | currency : "￥"}}]
+				</span>)
+			</small>
+		</li>
+		<li class="list-group-item">
+			<div class="row">
+				<div class="col-xs-6">
+					总计支付：
+				</div>
+				<div class="col-xs-6 text-danger text-right">
+					{{cart.GetSubmitPrice() | currency : "￥"}}
+				</div>
+			</div>
+		</li>
+	</ul>
+</div>
+
+<div class="bar">
+	@Html.Partial("_PartialBarStatic")
+
+	<div class="bar-btn-group pull-right">
+		<button class="btn btn-default btn-round btn-goto-payment"
+				ng-disabled="!canSubmit()"
+				ng-click="pay()">
+			<span ng-show="!isSubmitting">确认支付</span>
+			<span ng-show="isSubmitting">正在处理</span>
+		</button>
+	</div>
+</div>

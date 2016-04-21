@@ -1,0 +1,193 @@
+﻿body {
+	background-color: #F7F7F7;
+}
+
+input.form-control {
+	background: #fff;
+	border-color: #fff;
+	box-shadow: none;
+}
+
+/*.btn.btn-default {
+	color: #fff;
+	background-color: #BEB49B;
+	border-color: transparent;
+}
+
+	.btn.btn-default:hover {
+		background-color: #B4A88C;
+	}
+
+	.btn.btn-default:focus {
+		background-color: #B4A88C;
+	}
+
+	.btn.btn-default:active {
+		color: #fff;
+		background-color: #AA9C7D;
+	}*/
+
+/*.btn.btn-primary {
+	color: #fff;
+	background-color: #673E1E;
+	border-color: transparent;
+}
+
+	.btn.btn-primary:hover {
+		background-color: #533218;
+	}
+
+	.btn.btn-primary:focus {
+		background-color: #533218;
+	}
+
+	.btn.btn-primary:active {
+		background-color: #3F2612;
+	}*/
+
+.label-default {
+	color: #666;
+	background-color: #ebe4d1;
+}
+
+
+
+.input-group .input-group-btn .btn-default {
+	background-color: #EBE4D1;
+	color: #673E1E;
+	border-color: #fff;
+}
+
+.list-group .list-group-item {
+	border-top: 1px dashed #ebe4d1;
+	border-bottom: 1px dashed #ebe4d1;
+}
+
+nav {
+	background-color: #337ab7;
+	color: #fff;
+	box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+	nav .btn,
+	nav .btn:focus,
+	nav .btn:hover {
+		color: #BEB49B;
+		background-color: #fff;
+	}
+
+.bar {
+	background-color: #fff;
+	box-shadow: 0 0 5px rgba(0,0,0,0.5);
+}
+
+	.bar .bar-btn-group p {
+		color: #673E1E;
+	}
+
+
+.index .title {
+	color: #BEB49B;
+}
+
+.index .btn-group .btn:last-child {
+	border-left-color: #fff;
+}
+
+.account {
+	background-color: #ebe4d1;
+}
+
+	.account .title {
+		color: #673E1E;
+	}
+
+	.account .list-group .list-group-item {
+		border-top: 1px dashed #fff;
+		border-bottom: 1px dashed #fff;
+	}
+
+
+.payment .title {
+	color: #673E1E;
+}
+
+.list-group-dine .title {
+	color: #673E1E;
+}
+
+.radio.radio-paykind input[type="radio"]:checked + label {
+	background-color: #ebe4d1;
+}
+
+	.radio.radio-paykind input[type="radio"]:checked + label::after {
+		background: #673e1e;
+	}
+
+.radio.radio-paykind label {
+	background-color: #DDDDDD;
+}
+
+
+.section-category .list-group .list-group-item.active {
+	color: #fff;
+	background-color: #337ab7;
+}
+
+.section-category .class-tip {
+	color: #fff;
+	background-color: #673e1e;
+}
+
+.section-category .class-decoration {
+	color: #fff;
+	background-color: #673e1e;
+}
+
+.section-menu .media-body .meal-point {
+	color: #fff;
+	background-color: rgba(103,62,30,.4);
+}
+
+.section-menu .media-body .remark.active {
+	background-color: #fff;
+	box-shadow: 0 1px 5px rgba(0,0,0,.5);
+}
+
+.section-menu .media-body .meal-bottom {
+	background-color: rgba(250,250,250,.9);
+}
+
+	.section-menu .media-body .meal-bottom .meal-title {
+		color: #333;
+	}
+
+
+
+	.section-menu .media-body .meal-bottom .meal-price {
+		color: #ff6000;
+	}
+
+	.section-menu .media-body .meal-bottom .meal-oriprice {
+		color: #666;
+	}
+
+	.section-menu .media-body .meal-bottom .meal-on-sale {
+		color: #fff;
+		background-color: #c9302c;
+	}
+
+.cart-control {
+	background-color: #673e1e;
+}
+
+	.cart-control .btn-cart-decrease {
+		background: none;
+		color: #fff;
+	}
+
+	.cart-control .btn-cart-add,
+	.cart-control .btn-cart-num {
+		background: none;
+		color: #fbdc86;
+	}

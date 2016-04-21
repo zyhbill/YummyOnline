@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+<html lang="zh_cn" ng-app="orderApp">
+<head>
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+	<meta name="description" content="店小二" />
+	
+	<title>店小二</title>
+	@Styles.Render("~/css/bootstrap")
+	@Styles.Render("~/css/fontawesome")
+
+	<link href="~/Content/css/lib/animate.min.css" rel="stylesheet">
+	<link href="~/Content/css/lib/toastr.min.css" rel="stylesheet" />
+	<link href="~/Content/css/lib/awesome-bootstrap-checkbox.css" rel="stylesheet" />
+	<link href="~/Content/css/global.css" rel="stylesheet" />
+
+	<link href="~/Content/css/themes/@ViewBag.CssThemePath" rel="stylesheet" />
+
+	@RenderSection("Style", false)
+
+</head>
+<body class="@ViewBag.BodyClass">
+	@RenderBody()
+
+	@Scripts.Render("~/scripts/jquery")
+	@Scripts.Render("~/scripts/bootstrap")
+	@Scripts.Render("~/scripts/angular")
+	@Scripts.Render("~/scripts/angular-route")
+	@Scripts.Render("~/scripts/angular-ui-bootstrap")
+	<script src="~/Scripts/lib/angularjs-storage.min.js"></script>
+	<script src="~/Scripts/lib/toastr.min.js"></script>
+
+	<script src="~/Scripts/app.js"></script>
+	<script src="~/Scripts/directives.js"></script>
+	@RenderSection("Script", false)
+</body>
+</html>

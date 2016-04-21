@@ -1,0 +1,14 @@
+﻿
+<div uib-dropdown>
+	<div uib-dropdown-toggle>
+		<span ng-show="cart.Desk==null">开桌</span>
+		<span ng-hide="cart.Desk==null">{{cart.Desk.Id}}</span>
+	</div>
+	<ul class="dropdown-menu" ng-static-height="96">
+		<li ng-repeat="desk in dataSet.Desks"
+			ng-class="{active:desk.Addition.IsSelected}"
+			ng-click="cart.LoadCart(desk)">
+			{{desk.Id}}
+		</li>
+	</ul>
+</div>

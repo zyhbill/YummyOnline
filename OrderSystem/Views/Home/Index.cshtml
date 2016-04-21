@@ -1,0 +1,27 @@
+﻿
+@{
+	Layout = "~/Views/Shared/_LayoutGlobal.cshtml";
+	ViewBag.BodyClass = "index";
+}
+
+@section Style{
+	<link href="~/Content/css/index.css" rel="stylesheet">
+}
+
+<div class="container-fluid">
+	<div class="text-center">
+		<img class="logo" src="~/Content/image/@ViewBag.HotelId/index.png">
+		<p class="title">欢迎使用店小二点餐系统</p>
+		<div class="form-group">
+			<a class="btn btn-round btn-primary" href="/Order">进入点餐</a>
+		</div>
+		<div class="form-group">
+			<div class="btn-group">
+				<a class="btn btn-default btn-round" href="/Account#/Signin">会员登录</a>
+				<a class="btn btn-default btn-round" href="/Account#/Signup">注册</a>
+			</div>
+		</div>
+		
+		<img class="intro" src="~/Content/image/logo-index.png" />
+	</div>
+</div>

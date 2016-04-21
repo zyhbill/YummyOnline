@@ -1,0 +1,79 @@
+﻿@{
+	Layout = "~/Views/Shared/_LayoutGlobal.cshtml";
+}
+@section Script{
+	@Scripts.Render("~/scripts/highcharts")
+
+	<script src="~/Scripts/DashBoard/controller.js"></script>
+	<script src="~/Scripts/DashBoard/directives.js"></script>
+}
+
+<div ng-controller="DashBoardCtrl">
+	<div class="row">
+		<div class="col-md-3">
+			<div class="info-box bg-aqua">
+				<span class="info-box-icon"><i class="fa fa-desktop"></i></span>
+				<div class="info-box-content">
+					<span class="info-box-text">磁盘剩余容量</span>
+					<span class="info-box-number">@ViewBag.DiskFreeSpace<small>GB</small> / @ViewBag.DiskSpace<small>GB</small></span>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="info-box bg-red">
+				<span class="info-box-icon"><i class="fa fa-map-marker"></i></span>
+				<div class="info-box-content">
+					<span class="info-box-text">饭店数量</span>
+					<span class="info-box-number">@ViewBag.HotelCount</span>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div class="info-box bg-green">
+				<span class="info-box-icon"><i class="fa fa-users"></i></span>
+				<div class="info-box-content">
+					<span class="info-box-text">用户数量</span>
+					<span class="info-box-number">@ViewBag.UserCount</span>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3 col-sm-6 col-xs-12">
+			<div class="info-box bg-yellow">
+				<span class="info-box-icon"><i class="fa fa-cutlery"></i></span>
+				<div class="info-box-content">
+					<span class="info-box-text">今日点单数量</span>
+					<span class="info-box-number">@ViewBag.DineCount</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6">
+			<div class="box">
+				<div class="box-header with-border">
+					<h3 class="box-title">日新增用户数量</h3>
+					<div class="box-tools pull-right">
+						<button class="btn btn-box-tool" ng-click="refreshUserLine()"><i class="fa fa-refresh"></i></button>
+					</div>
+				</div>
+				<div class="box-body">
+					<div highcharts-user-line></div>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-6">
+			<div class="box">
+				<div class="box-header with-border">
+					<h3 class="box-title">日新增点单数量</h3>
+					<div class="box-tools pull-right">
+						<button class="btn btn-box-tool" ng-click="refreshDineLine()"><i class="fa fa-refresh"></i></button>
+					</div>
+				</div>
+				<div class="box-body">
+					<div highcharts-dine-line></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

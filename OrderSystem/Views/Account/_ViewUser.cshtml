@@ -1,0 +1,29 @@
+﻿<div class="container-fluid" ng-static-height="88">
+	<p class="title">{{user.Id}}</p>
+	<ul class="list-group">
+		<li class="list-group-item">
+			<div class="row">
+				<div class="col-xs-6">我的订单：</div>
+				<div class="col-xs-6 text-right">{{user.DinesCount}}</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-6">我的积分：</div>
+				<div class="col-xs-6 text-right">{{user.Points}}</div>
+			</div>
+		</li>
+	</ul>
+	<div class="row">
+		<div class="col-xs-6">
+			<button class="btn btn-default btn-round"
+					route-href="/Forget">
+				修改密码
+			</button>
+		</div>
+		<div class="col-xs-6 text-right">
+			<button class="btn btn-default btn-round"
+					ng-click="signout()">
+				退出
+			</button>
+		</div>
+	</div>
+</div>

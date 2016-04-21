@@ -1,0 +1,19 @@
+﻿<ul class="sidebar-menu">
+	<li class="header">概览</li>
+	<li side-bar-menu fa="fa-dashboard" title="仪表盘" href="/DashBoard"></li>
+
+	@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+		<li class="header">人员管理</li>
+		<li side-bar-menu fa="fa-users" title="普通用户管理" href="/Users#/Customer"></li>
+		<li side-bar-menu fa="fa-user-secret" title="管理员管理" href="/Users#/Admin"></li>
+
+		<li class="header">Tcp服务器</li>
+		<li side-bar-menu fa="fa-server" title="Tcp服务器使用情况" href="/TcpServer#/Status"></li>
+		<li side-bar-menu fa="fa-server" title="Tcp Guid授权" href="/TcpServer#/Guids"></li>
+	}
+
+	<li class="header">文档日志</li>
+	<li side-bar-menu fa="fa-file-text" title="文档" href="/Log#/Specification"></li>
+	<li side-bar-menu fa="fa-laptop" title="系统日志" href="/Log#/YummyOnline"></li>
+	<li side-bar-menu fa="fa-map-marker" title="饭店日志" href="/Log#/Hotel"></li>
+</ul>

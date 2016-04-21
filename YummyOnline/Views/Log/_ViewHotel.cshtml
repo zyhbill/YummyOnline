@@ -1,0 +1,39 @@
+﻿
+<div class="box">
+	<div class="box-header">
+		<h3 class="box-title">饭店 {{currHotel.Id}} {{currHotel.Name}} 日志</h3>
+		<div class="box-tools pull-right">
+			<div class="btn-group" uib-dropdown>
+				<button class="btn btn-box-tool" uib-dropdown-toggle><i class="fa fa-chevron-down"></i></button>
+				<ul uib-dropdown-menu>
+					<li ng-repeat="hotel in hotels">
+						<a href="/Log#/Hotel/{{hotel.Id}}">{{hotel.Name}}</a>
+					</li>
+				</ul>
+			</div>
+
+			<button class="btn btn-box-tool"
+					ng-click="loadHotelLog(currHotel)">
+				<i class="fa fa-refresh"></i>
+			</button>
+		</div>
+	</div>
+	<div class="box-body no-padding">
+		<div class="table-responsive">
+			<table class="table table-bordered no-margin">
+				<tr>
+					<th>等级</th>
+					<th>内容</th>
+					<th>时间</th>
+				</tr>
+
+				<tr ng-class="log.Class" ng-repeat="log in logs">
+					<td>{{log.Level}}</td>
+					<td>{{log.Message}}</td>
+					<td>{{log.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+				</tr>
+
+			</table>
+		</div>
+	</div>
+</div>

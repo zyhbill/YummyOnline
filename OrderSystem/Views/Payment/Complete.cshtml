@@ -1,0 +1,19 @@
+﻿
+@{
+	Layout = "~/Views/Shared/_LayoutGlobal.cshtml";
+	ViewBag.BodyClass = "payment";
+}
+
+@section Style{
+	<link href="~/Content/css/payment.css" rel="stylesheet" />
+}
+
+@Html.Partial("_PartialNavTitle", "点餐成功")
+
+<div class="container-fluid">
+	<img src="~/Content/image/@ViewBag.HotelId/completed.gif" class="logo" />
+	<p class="title">您的订单已提交</p>
+	<p class="title">请耐心等待！</p>
+</div>
+
+@Html.Partial("_PartialBarBase")

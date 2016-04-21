@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html ng-app="adminApp">
+<head>
+	<meta charset="utf-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@ViewBag.Title</title>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+	@Styles.Render("~/css/bootstrap")
+	@Styles.Render("~/css/fontawesome")
+	<link rel="stylesheet" href="~/Content/css/lib/toastr.min.css" />
+	<link rel="stylesheet" href="~/Content/css/AdminLTE/AdminLTE.min.css" />
+	<link rel="stylesheet" href="~/Content/css/AdminLTE/skins/skin-blue.min.css" />
+
+	<link rel="stylesheet" href="~/Content/css/global.css" />
+	@RenderSection("Style", false)
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+	<div class="wrapper">
+		<!-- Main Header -->
+		<header class="main-header">
+			<!-- Logo -->
+			<a href="#" class="logo">
+				<span class="logo-mini">YO</span>
+				<span class="logo-lg">YummyOnline</span>
+			</a>
+			<!-- Header Navbar -->
+			<nav class="navbar navbar-static-top" role="navigation">
+				<!-- Sidebar toggle button-->
+				<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+					<span class="sr-only">Toggle navigation</span>
+				</a>
+				<!-- Navbar Right Menu -->
+				<div class="navbar-custom-menu">
+					@Html.Partial("_PartialNavBarRight")
+				</div>
+			</nav>
+		</header>
+		<!-- Left side column. contains the logo and sidebar -->
+		<aside class="main-sidebar">
+			<!-- sidebar: style can be found in sidebar.less -->
+			<section class="sidebar">
+				@Html.Partial("_PartialSideBarMenu")
+			</section>
+			<!-- /.sidebar -->
+		</aside>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<section class="content-header">
+				<h1>
+					{{layout.Title}}
+					<small>{{layout.Subtitle}}</small>
+				</h1>
+			</section>
+			<!-- Main content -->
+			<section class="content">
+				@RenderBody()
+			</section><!-- /.content -->
+		</div><!-- /.content-wrapper -->
+	</div><!-- ./wrapper -->
+	<div class="footer-container">
+		<footer class="main-footer">
+			<strong>Copyright &copy; 2016 YummyOnline.</strong> All rights reserved.
+		</footer>
+	</div>
+
+	@Scripts.Render("~/scripts/jquery")
+	@Scripts.Render("~/scripts/bootstrap")
+	@Scripts.Render("~/scripts/angular")
+	@Scripts.Render("~/scripts/angular-route")
+	@Scripts.Render("~/scripts/angular-ui-bootstrap")
+	<script src="~/Scripts/adminLTEApp.js"></script>
+	<script src="~/Scripts/lib/toastr.min.js"></script>
+
+	<script src="~/Scripts/app.js"></script>
+	<script src="~/Scripts/directives.js"></script>
+	<script src="~/Scripts/Layout/factories.js"></script>
+
+	@RenderSection("Script", false)
+</body>
+</html>

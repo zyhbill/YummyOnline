@@ -1,0 +1,27 @@
+﻿.index .logo {
+	width: 60%;
+	max-width: 400px;
+	margin: 30px 0 30px 0;
+}
+
+.index .title {
+	font-size: 14px;
+}
+
+.index .btn.btn-primary {
+	width: 180px;
+}
+
+.index .btn-group .btn:first-child {
+	width: 120px;
+}
+
+.index .btn-group .btn:last-child {
+	width: 60px;
+}
+
+.index .intro {
+	margin-top:20px;
+	width: 90%;
+	max-width: 400px;
+}

@@ -1,0 +1,69 @@
+﻿@Html.Partial("_PartialNavTitle", "购物车")
+
+<div class="container-fluid" ng-static-height="88">
+	<ul class="list-group">
+		<li class="list-group-item"
+			ng-repeat="menu in cart.GetOrderedMenusWithFixed()">
+			<div class="row no-padding">
+				<div class="col-xs-6">
+					{{$index + 1}} {{menu.Name}}
+				</div>
+				<div class="col-xs-6 text-right">
+					<span>{{menu.MenuPrice.Price | currency : "￥"}}</span>
+					<div class="cart-control">
+						<span ng-if="menu.Addition.Ordered>0">
+							<button class="btn btn-sm btn-cart-decrease"
+									ng-click="cart.RemoveMenu(menu)">
+								<i class="fa fa-minus"></i>
+							</button>
+							<span class="btn btn-sm btn-cart-num">{{menu.Addition.Ordered}}</span>
+						</span>
+						<button class="btn btn-sm btn-cart-add"
+								ng-click="cart.AddMenu(menu)">
+							<i class="fa fa-plus"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+			<div>
+				<button class="btn btn-primary btn-xs btn-circle btn-toggle-remark"
+						ng-if="menu.IsShowRemark()"
+						ng-click="menu.ToggleRemark()">
+					<img src="~/Content/image/remark.png" alt="" />
+				</button>
+
+				<button class="btn btn-primary btn-xs btn-remark"
+						ng-repeat="remark in menu.Addition.Remarks"
+						ng-click="cart.RemoveRemark(menu,remark,$index)">
+					{{remark.Name}}
+					<span ng-if="remark.Price>0">({{remark.Price | currency : "￥"}})</span>
+					<span class="fa fa-times-circle"></span>
+				</button>
+
+				<div class="remark-collapse" ng-show="menu.IsRemarkCollapsed()">
+					@* 未添加备注 *@
+					<button class="btn btn-default btn-xs btn-remark"
+							ng-repeat="remark in menu.Remarks"
+							ng-click="cart.AddRemark(menu,remark,$index)"
+							ng-disabled="menu.Addition.Remarks.length>=3">
+						{{remark.Name}}
+						<span ng-if="remark.Price>0">({{remark.Price | currency : "￥"}})</span>
+						<span class="fa fa-check-circle"></span>
+					</button>
+				</div>
+			</div>
+		</li>
+	</ul>
+</div>
+
+<div class="bar">
+	@Html.Partial("_PartialBarStatic")
+
+	<div class="bar-btn-group pull-right"
+		 ng-show="cart.CanSubmit()">
+		<button class="btn btn-primary btn-round btn-goto-payment"
+				route-href="/Payment">
+			去结算
+		</button>
+	</div>
+</div>

@@ -1,0 +1,14 @@
+﻿.payment {
+	text-align: center;
+}
+
+	.payment .logo {
+		width: 60%;
+		max-width: 90px;
+		margin: 30px 0 30px 0;
+	}
+
+	.payment .title {
+		margin-bottom: 2px;
+		font-size: 16px;
+	}

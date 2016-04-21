@@ -1,0 +1,22 @@
+﻿@{
+	Layout = "~/Views/Shared/_LayoutGlobal.cshtml";
+	ViewBag.BodyClass = "account";
+}
+
+@section Style{
+	<link href="~/Content/css/account.css" rel="stylesheet" />
+}
+
+@section Script{
+	<script src="~/Scripts/Account/route.js"></script>
+	<script src="~/Scripts/Account/factories.js"></script>
+	<script src="~/Scripts/Account/controllers.js"></script>
+}
+
+@Html.Partial("_PartialLoading")
+
+<div ng-view>
+
+</div>
+
+@Html.Partial("_PartialBarBase")

@@ -1,0 +1,310 @@
+﻿using HotelDAO;
+using HotelDAO.Models;
+using OrderSystem.Models;
+using System.Threading.Tasks;
+using System.Web.Mvc;
+using YummyOnlineDAO;
+using YummyOnlineDAO.Identity;
+using YummyOnlineDAO.Models;
+using Newtonsoft.Json;
+using System.Linq;
+using System;
+using Protocal;
+using System.Text;
+using System.Collections.Generic;
+
+namespace OrderSystem.Controllers {
+	public class PaymentController : BaseCommonController {
+		private StaffManager _staffManager;
+		public StaffManager StaffManager {
+			get {
+				if(_staffManager == null) {
+					_staffManager = new StaffManager();
+				}
+				return _staffManager;
+			}
+		}
+
+		private OrderManager _orderManager;
+		public OrderManager OrderManager {
+			get {
+				if(_orderManager == null) {
+					Hotel hotel = CurrHotel;
+					if(hotel == null) {
+						HotelMissingError();
+					}
+					string connString = hotel.ConnectionString;
+					_orderManager = new OrderManager(connString);
+				}
+				return _orderManager;
+			}
+		}
+
+		/// <summary>
+		/// 支付完成页面，无关数据记录
+		/// </summary>
+		/// <returns></returns>
+		public ActionResult Complete(bool? succeeded, string dineId) {
+			ViewBag.Succeeded = succeeded == null ? true : succeeded;
+			ViewBag.DineId = dineId;
+			return View();
+		}
+
+		/// <summary>
+		/// 普通用户支付
+		/// </summary>
+		/// <param name="cart"></param>
+		/// <returns></returns>
+		public async Task<JsonResult> Pay(Cart cart) {
+			CartAddition addition = new CartAddition();
+
+			// 新建或获取用户Id
+			User user = await createOrGetUser(User.Identity.GetUserId());
+			if(user == null) {
+				return Json(new JsonError("创建匿名用户失败"));
+			}
+			await SigninManager.Signin(user, true);
+			addition.UserId = user.Id;
+
+			// 创建新订单
+			FunctionResult result = await OrderManager.CreateDine(cart, addition);
+			if(!result.Succeeded) {
+				return Json(new JsonError(result.Message));
+			}
+
+			Dine dine = ((Dine)result.Data);
+
+			await newDineInform(dine.Id, "OrderSystem");
+
+			PayKind payKind = await HotelManager.GetPayKind(cart.PayKindId);
+			string redirectUrl = null;
+
+			if(payKind.Type == PayKindType.Online) {
+				DinePaidDetail paidDetail = dine.DinePaidDetails.FirstOrDefault(p => p.PayKind.Id == payKind.Id);
+				if(paidDetail.Price == 0) {
+					redirectUrl = $"{payKind.CompleteUrl}?Succeeded={true}&DineId={dine.Id}";
+					await onlinePayCompleted(dine.Id, null);
+				}
+				else {
+					redirectUrl = await getOnlineRedirectUrl(dine.Id);
+				}
+			}
+			else {
+				await requestPrintDine(dine.Id);
+				redirectUrl = $"{payKind.CompleteUrl}?Succeeded={true}&DineId={dine.Id}";
+			}
+
+			return Json(new JsonSuccess(redirectUrl));
+		}
+
+		/// <summary>
+		/// 收银员台支付
+		/// </summary>
+		/// <param name="cart"></param>
+		/// <param name="cartAddition"></param>
+		/// <returns></returns>
+		public async Task<JsonResult> ManagerPay(Cart cart, ManagerCartAddition cartAddition) {
+			SystemConfig system = await YummyOnlineManager.GetSystemConfig();
+			if(system.Token != cartAddition.Token) {
+				return Json(new JsonError("身份验证失败"));
+			}
+
+			CurrHotel = await YummyOnlineManager.GetHotelById(cartAddition.HotelId);
+
+			cart.PayKindId = await new HotelManagerForWaiter(CurrHotel.ConnectionString).GetOtherPayKindId();
+			CartAddition addition = new CartAddition {
+				ClerkId = cartAddition.ClerkId,
+				Discount = cartAddition.Discount,
+				DiscountName = cartAddition.DiscountName
+			};
+
+			User user = await createOrGetUser(cartAddition.UserId);
+			if(user == null) {
+				return Json(new JsonError("创建匿名用户失败"));
+			}
+			addition.UserId = user.Id;
+
+			// 创建新订单
+			FunctionResult result = await OrderManager.CreateDine(cart, addition);
+			if(!result.Succeeded) {
+				return Json(new JsonError(result.Message));
+			}
+
+			Dine dine = ((Dine)result.Data);
+
+			await newDineInform(dine.Id, "Manager");
+
+			return Json(new JsonSuccess());
+		}
+
+		/// <summary>
+		/// 服务员支付
+		/// </summary>
+		/// <param name="cart"></param>
+		/// <param name="cartAddition"></param>
+		/// <returns></returns>
+		[Authorize(Roles = nameof(Schema.SubmitWaiterPay))]
+		public async Task<JsonResult> WaiterPay(Cart cart, WaiterCartAddition cartAddition) {
+			FunctionResult result = await waiterPay(cart, cartAddition);
+
+			if(!result.Succeeded) {
+				return Json(new JsonError(result.Message));
+			}
+
+			Dine dine = ((Dine)result.Data);
+
+			await newDineInform(dine.Id, "Waiter");
+
+			return Json(new JsonSuccess());
+		}
+
+		/// <summary>
+		/// 服务员支付完成，记录支付详情
+		/// </summary>
+		/// <param name="paidDetails"></param>
+		/// <returns></returns>
+		[Authorize(Roles = nameof(Schema.SubmitWaiterPay))]
+		public async Task<JsonResult> WaiterPayCompleted(WaiterPaidDetails paidDetails) {
+			bool succeeded = await OrderManager.OfflinePayCompleted(paidDetails);
+			if(!succeeded) {
+				return Json(new JsonError("支付金额与应付金额不匹配"));
+			}
+
+			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, paidDetails.DineId, true);
+
+			return Json(new JsonSuccess());
+		}
+		/// <summary>
+		/// 服务员支付并且带所有支付详情
+		/// </summary>
+		/// <param name="cart"></param>
+		/// <param name="cartAddition"></param>
+		/// <param name="paidDetails"></param>
+		/// <returns></returns>
+		[Authorize(Roles = nameof(Schema.SubmitWaiterPay))]
+		public async Task<JsonResult> WaiterPayWithPaidDetails(Cart cart, WaiterCartAddition cartAddition, WaiterPaidDetails paidDetails) {
+			FunctionResult result = await waiterPay(cart, cartAddition);
+
+			if(!result.Succeeded) {
+				return Json(new JsonError(result.Message));
+			}
+
+			Dine dine = ((Dine)result.Data);
+
+			await newDineInform(dine.Id, "WaiterWithPaidDetail");
+
+			paidDetails.DineId = dine.Id;
+
+			return await WaiterPayCompleted(paidDetails);
+		}
+
+		
+
+		/// <summary>
+		/// 重新支付
+		/// </summary>
+		/// <param name="dineId"></param>
+		/// <returns></returns>
+		public async Task<JsonResult> PayAgain(string dineId) {
+			return Json(new JsonSuccess(await getOnlineRedirectUrl(dineId)));
+		}
+
+		/// <summary>
+		/// 支付完成异步通知
+		/// </summary>
+		public async Task<JsonResult> OnlineNotify(string encryptedInfo) {
+			string decryptedInfo = Cryptography.DesCryptography.DesDecrypt(encryptedInfo);
+
+			NetworkNotifyViewModels model = null;
+
+			try {
+				model = JsonConvert.DeserializeObject<NetworkNotifyViewModels>(decryptedInfo);
+			}
+			catch {
+				return Json(new JsonError());
+			}
+
+			CurrHotel = await YummyOnlineManager.GetHotelById(model.HotelId);
+
+			await new HotelManager(CurrHotel.ConnectionString).RecordLog(HotelDAO.Models.Log.LogLevel.Info, $"Notified DineId: {model.DineId}");
+			await onlinePayCompleted(model.DineId, model.RecordId);
+
+			return Json(new JsonSuccess());
+		}
+
+		/// <summary>
+		/// 打印完成
+		/// </summary>
+		/// <param name="hotelId"></param>
+		/// <param name="dineId"></param>
+		/// <returns></returns>
+		public async Task PrintCompleted(int hotelId, string dineId) {
+			CurrHotel = await YummyOnlineManager.GetHotelById(hotelId);
+			string connStr = await YummyOnlineManager.GetHotelConnectionStringById(hotelId);
+			OrderManager orderManager = new OrderManager(connStr);
+			await orderManager.PrintCompleted(dineId);
+			await new HotelManager(connStr).RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"PrintCompleted DineId: {dineId}");
+		}
+
+		private async Task<User> createOrGetUser(string userId) {
+			User user = await UserManager.FindByIdAsync(userId);
+			if(user == null) {
+				user = await UserManager.CreateVoidUserAsync();
+				if(user == null) {
+					return null;
+				}
+				await UserManager.AddToRoleAsync(user.Id, Role.Nemo);
+			}
+			return user;
+		}
+		private async Task newDineInform(string dineId, string via) {
+			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Dine recorded DineId: {dineId}, Via {via}");
+			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dineId, false);
+		}
+		private async Task<string> getOnlineRedirectUrl(string dineId) {
+			HotelConfig hotelConfig = await HotelManager.GetHotelConfig();
+			DinePaidDetail dinePaidDetail = await HotelManager.GetDineOnlinePaidDetail(dineId);
+			if(dinePaidDetail == null)
+				return null;
+
+			StringBuilder redirectUrl = new StringBuilder();
+			redirectUrl.Append($"{dinePaidDetail.PayKind.RedirectUrl}?");
+			redirectUrl.Append($"HotelId={hotelConfig.Id}&DineId={dineId}&Price={Cryptography.DesCryptography.DesEncrypt(dinePaidDetail.Price.ToString())}&");
+			redirectUrl.Append($"NotifyUrl={dinePaidDetail.PayKind.NotifyUrl}&");
+			redirectUrl.Append($"CompleteUrl={dinePaidDetail.PayKind.CompleteUrl}");
+			return redirectUrl.ToString();
+		}
+		private async Task onlinePayCompleted(string dineId, string recordId) {
+			await OrderManager.OnlinePayCompleted(dineId, recordId);
+			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dineId, true);
+			await requestPrintDine(dineId);
+		}
+
+		private async Task<FunctionResult> waiterPay(Cart cart, WaiterCartAddition cartAddition) {
+			var staff = await StaffManager.FindStaffById(User.Identity.GetUserId());
+
+			cart.PayKindId = await new HotelManagerForWaiter(CurrHotel.ConnectionString).GetOtherPayKindId();
+			CartAddition addition = new CartAddition {
+				WaiterId = staff.Id,
+				Discount = cartAddition.Discount,
+				DiscountName = cartAddition.DiscountName
+			};
+
+			User user = await createOrGetUser(cartAddition.UserId);
+			if(user == null) {
+				return new FunctionResult(false, "无法创建匿名用户");
+			}
+			addition.UserId = user.Id;
+
+			// 创建新订单
+			return await OrderManager.CreateDine(cart, addition);
+		}
+
+		private async Task requestPrintDine(string dineId) {
+			HotelConfig config = await HotelManager.GetHotelConfig();
+			if(config.HasAutoPrinter) {
+				NewDineInformTcpClient.SendRequestPrintDine(CurrHotel.Id, dineId);
+			}
+		}
+	}
+}

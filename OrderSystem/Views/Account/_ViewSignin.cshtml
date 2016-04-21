@@ -1,0 +1,40 @@
+﻿<div class="container-fluid" ng-static-height="88">
+	<h3 class="title">会员登录</h3>
+	<form name="form">
+		<div class="form-group">
+			<input class="form-control form-control-round" type="number" name="PhoneNumber" placeholder="手机"
+				   ng-model="signinFormData.PhoneNumber" required ng-minlength="11" ng-maxlength="11">
+		</div>
+
+		<div class="input-group">
+			<input class="form-control form-control-round" type="password" name="Password" placeholder="密码"
+				   ng-model="signinFormData.Password" required>
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default btn-round" route-href="/Forget"> 忘记密码 </button>
+			</div>
+		</div>
+
+		@if(ViewBag.NeedCodeImg) {
+			@*<li class="list-group-item">
+					<div class="input-group input-group-sm ">
+						<span class="input-group-addon"><i class="fa fa-fw fa-key"></i></span>
+						<input class="form-control input-sm form-control-inline" type="text" name="CodeImg" placeholder="验证码"
+							   ng-model="signinFormData.CodeImg" required>
+						<span class="input-group-addon input-group-addon-img">
+							<img ng-src="{{codeImgSrc}}" ng-click="changeCodeImg()">
+						</span>
+					</div>
+				</li>*@
+		}
+		<button class="btn btn-primary btn-round btn-block btn-signin" type="button"
+				ng-disabled="!form.$valid" ng-click="signin()">
+			登 录
+		</button>
+		<div class="text-center">
+			<button class="btn btn-default btn-round btn-goto-signup" type="button"
+					route-href="/Signup">
+				注 册
+			</button>
+		</div>
+	</form>
+</div>

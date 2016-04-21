@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+	<meta charset="UTF-8">
+	<title>YummyOnlineDataBaseSpecification</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link href="http://cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		body {
+			font-family: 'Consolas', '微软雅黑';
+		}
+
+		.table {
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+		}
+
+		.table tr.modified {
+			background-color: #f2dede;
+		}
+
+		.table tr.primary-key {
+			background-color: #fcf8e3;
+		}
+
+		.table > tbody > tr > td {
+			vertical-align: middle;
+		}
+
+		.table > tbody > tr > th {
+			width: 20%;
+		}
+
+		.table > tbody > tr > td > p {
+			margin-bottom: 5px;
+		}
+
+		.table > tbody > tr > td > p:last-child {
+			margin-bottom: 0;
+		}
+	</style>
+	<script>
+		console.log('Server Name : www.yummyonline.net');
+		console.log('UserName : RemoteUser');
+		console.log('Password : *Rbr%K!p');
+	</script>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<h2>YummyOnline Database Specification</h2>
+		<div class="alert alert-danger">
+			<p>VipDiscounts主键字段名称为Id, 不是Level, 感谢王徐峰同学的火眼金睛</p>
+			<p class="text-right">
+				<small>2016-4-20 王徐峰</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>总数据中添加新订单通知客户端的GUID授权表</p>
+			<p class="text-right">
+				<small>2016-4-20 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>饭店数据库中的CSS路径移动到总数据库中</p>
+			<p class="text-right">
+				<small>2016-4-19 张朕煜</small>
+			</p>
+		</div>
+
+		<ul>
+			<li>Database version : SQLSERVER 2014</li>
+			<li>Windows version : Windows Server 2012</li>
+		</ul>
+
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>名称</th>
+				<th>类型</th>
+				<th>说明</th>
+				<th>备注</th>
+			</tr>
+		</table>
+
+		<h3>YummyOnlineHotelBaseDB</h3>
+
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Departments</th>
+				<th></th>
+				<th>部门信息表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>部门编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(20)</td>
+				<td>部门名称</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Description</td>
+				<td>nvarchar(50)</td>
+				<td>部门描述</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Usable</td>
+				<td>bit</td>
+				<td>可用状态</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>PrinterId</td>
+				<td>int</td>
+				<td>打印机Id</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Printers</th>
+				<th></th>
+				<th>部门打印机</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>打印机编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>Usable</td>
+				<td>bit</td>
+				<td>可用状态</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(max)</td>
+				<td>打印机名称</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>IpAddress</td>
+				<td>nvarchar(15)</td>
+				<td>打印机ip地址</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>PrinterFormats</th>
+				<th></th>
+				<th>打印格式表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>打印格式编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>Font</td>
+				<td>nvarchar(10)</td>
+				<td>字体</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Iscenter</td>
+				<td>bit</td>
+				<td>是否居中打印</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Papersize</td>
+				<td>int</td>
+				<td>纸张大小</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Areas</th>
+				<th></th>
+				<th>区域信息表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>nvarchar(3)</td>
+				<td>区域编号</td>
+				<td>手动设置</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(20)</td>
+				<td>区域名称</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Description</td>
+				<td>nvarchar(128)</td>
+				<td>描述</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Usable</td>
+				<td>bit</td>
+				<td>是否可用</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>DepartmentReciptId</td>
+				<td>int</td>
+				<td>收银部门编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>DepartmentServeId</td>
+				<td>int</td>
+				<td>传菜部门编号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Desks</th>
+				<th></th>
+				<th>桌台信息表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>nvarchar(4)</td>
+				<td>桌号</td>
+				<td>手动设置</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(20)</td>
+				<td>桌台名称</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>AreaId</td>
+				<td>nvarchar(2)</td>
+				<td>区域编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Order</td>
+				<td>int</td>
+				<td>餐台序号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>HeadCount</td>
+				<td>int</td>
+				<td>桌台座位数</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Description</td>
+				<td>nvarchar(128)</td>
+				<td>桌台描述</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>QrCode</td>
+				<td>nvarchar(5)</td>
+				<td>二维码</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>MinPrice</td>
+				<td>decimal(11, 2)</td>
+				<td>最低消费</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Status</td>
+				<td>int</td>
+				<td>状态</td>
+				<td>
+					<p>0 空</p>
+					<p>1 正在使用</p>
+					<p>2 被预订</p>
+				</td>
+			</tr>
+			<tr>
+				<td>Usable</td>
+				<td>bit</td>
+				<td>可用状态</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>MenuClasses</th>
+				<th></th>
+				<th>菜品类别表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>nvarchar(6)</td>
+				<td>类别号</td>
+				<td>手动设置</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(20)</td>
+				<td>类别名字</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Description</td>
+				<td>nvarchar(50)</td>
+				<td>小类描述</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>IsShow</td>
+				<td>bit</td>
+				<td>是否显示对应类别</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Usable</td>
+				<td>bit</td>
+				<td>可用状态</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Level</td>
+				<td>int</td>
+				<td>该分类所在层数</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>IsLeaf</td>
+				<td>bit</td>
+				<td>是否为叶子节点</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>ParentMenuClassId</td>
+				<td>nvarchar(6)</td>
+				<td>隶属于父类号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Menus</th>
+				<th></th>
+				<th>菜品信息表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>nvarchar(6)</td>
+				<td>菜品编号</td>
+				<td>手动设置</td>
+			</tr>
+			<tr>
+				<td>Code</td>
+				<td>nvarchar(10)</td>
+				<td>菜品编码</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(30)</td>
+				<td>菜品名称</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>NameAbbr</td>
+				<td>nvarchar(15)</td>
+				<td>菜品简称</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>PicturePath</td>
+				<td>nvarchar(MAX)</td>
+				<td>菜品图片</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>isfixed</td>
+				<td>bit</td>
+				<td>是否在购物车中显示</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Unit</td>
+				<td>nvarchar(3)</td>
+				<td>菜品单位</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Status</td>
+				<td>int</td>
+				<td>状态</td>
+				<td>
+					<p>0 正常</p>
+					<p>1 已售完</p>
+				</td>
+			</tr>
+			<tr>
+				<td>Supplydate</td>
+				<td>int</td>
+				<td>提供日期</td>
+				<td>一个7位二进制1代表提供0代表不提供，最后存储转换为十进制</td>
+			</tr>
+			<tr>
+				<td>Ordered</td>
+				<td>int</td>
+				<td>有多少个人点过这个菜</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>SourDegree</td>
+				<td>int</td>
+				<td>酸度</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>SweetDegree</td>
+				<td>int</td>
+				<td>甜度</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>SatlyDegree</td>
+				<td>int</td>
+				<td>咸度</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>SpicyDegree</td>
+				<td>int</td>
+				<td>辣度</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>DepartmentId</td>
+				<td>nvarchar(6)</td>
+				<td>(打印)部门编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>MinOrderCount</td>
+				<td>int</td>
+				<td>最低数量</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>IsSetMeal</td>
+				<td>bit</td>
+				<td>是否为套餐</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Usable</td>
+				<td>bit</td>
+				<td>可用状态</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>MenuClassMenus</th>
+				<th></th>
+				<th>菜品隶属于小类表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Menu_Id</td>
+				<td>nvarchar(6)</td>
+				<td>菜品号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>MenuClass_Id</td>
+				<td>nvarchar(6)</td>
+				<td>类号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>MenuPrices</th>
+				<th></th>
+				<th>菜品价格表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>nvarchar(6)</td>
+				<td>菜品号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Price</td>
+				<td>decimal(11, 2)</td>
+				<td>价格</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>ExcludePayDiscount</td>
+				<td>bit</td>
+				<td>是否排除在整单打折之外</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Discount</td>
+				<td>float</td>
+				<td>折扣</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Point</td>
+				<td>int</td>
+				<td>菜品所用积分</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>MenuRemarks</th>
+				<th></th>
+				<th>菜品备注表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Menu_Id</td>
+				<td>nvarchar(6)</td>
+				<td>菜品编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>Remark_Id</td>
+				<td>int</td>
+				<td>备注编号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>MenuOnSales</th>
+				<th></th>
+				<th>打折菜品表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>nvarchar(6)</td>
+				<td>菜品号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>OnSaleWeek</td>
+				<td>int</td>
+				<td>打折星期</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Price</td>
+				<td>decimal(11, 2)</td>
+				<td>价格</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>MenuSetMeals</th>
+				<th></th>
+				<th>套餐表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>MenuId</td>
+				<td>nvarchar(6)</td>
+				<td>菜品号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>MenuSetId</td>
+				<td>nvarchar(6)</td>
+				<td>套餐号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Count</td>
+				<td>int</td>
+				<td>套餐里面单个菜的数量</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Dines</th>
+				<th></th>
+				<th>订餐信息表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>nvarchar(14)</td>
+				<td>订餐编号</td>
+				<td>数据库自定义函数自增</td>
+			</tr>
+			<tr>
+				<td>ClerkID</td>
+				<td>nvarchar(8)</td>
+				<td>收银员编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>WaiterID</td>
+				<td>nvarchar(8)</td>
+				<td>服务员编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>UserID</td>
+				<td>nvarchar(10)</td>
+				<td>顾客编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>HeadCount</td>
+				<td>int</td>
+				<td>顾客人数</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Type</td>
+				<td>int</td>
+				<td>点单种类</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>DeskId</td>
+				<td>nvarchar(3)</td>
+				<td>桌台编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>BeginTime</td>
+				<td>datetime</td>
+				<td>开始时间</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Status</td>
+				<td>int</td>
+				<td>状态</td>
+				<td>
+					<p>0 用户刚下单，未处理</p>
+					<p>1 已打印</p>
+					<p>2 上菜完毕，订单完成</p>
+					<p>3 已完成交接班</p>
+				</td>
+			</tr>
+			<tr>
+				<td>OriPrice</td>
+				<td>decimal(11, 2)</td>
+				<td>原总价</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Price</td>
+				<td>decimal(11, 2)</td>
+				<td>总价</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Discount</td>
+				<td>float</td>
+				<td>折扣率</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>DiscountName</td>
+				<td>nvarchar(25)</td>
+				<td>折扣方案名称</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>IsPaid</td>
+				<td>bit</td>
+				<td>是否支付</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Invoice</td>
+				<td>nvarchar(20)</td>
+				<td>发票抬头</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>IsInvoiced</td>
+				<td>bit</td>
+				<td>是否要开发票</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Footer</td>
+				<td>nvarchar(15)</td>
+				<td>发票语句模板</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>IsOnline</td>
+				<td>bit</td>
+				<td>是否线上支付</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>DineRemarks</th>
+				<th></th>
+				<th>点单备注表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>DineId</td>
+				<td>nvarchar(14)</td>
+				<td>点单号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>Remark_Id</td>
+				<td>int</td>
+				<td>备注号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>DineMenus</th>
+				<th></th>
+				<th>订餐详情表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>DineId</td>
+				<td>nvarchar(14)</td>
+				<td>订单id</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>MenuId</td>
+				<td>nvarchar(6)</td>
+				<td>菜品id</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Count</td>
+				<td>int</td>
+				<td>菜品数量</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Price</td>
+				<td>decimal(11, 2)</td>
+				<td>菜品价格</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>OriPrice</td>
+				<td>decimal(11, 2)</td>
+				<td>菜品原价格</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>RemarkPrice</td>
+				<td>decimal(11, 2)</td>
+				<td>菜品所有备注价格</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Status</td>
+				<td>int</td>
+				<td>点单状态</td>
+				<td>
+					<p>0 普通</p>
+					<p>1 退回</p>
+				</td>
+			</tr>
+			<tr>
+				<td>ReturnedWaiterId</td>
+				<td>nvarchar(max)</td>
+				<td>退菜服务员</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>DineMenuRemarks</th>
+				<th></th>
+				<th>点单菜品备注表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>DineMenu_Id</td>
+				<td>int</td>
+				<td>点单菜品编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>Remark_Id</td>
+				<td>int</td>
+				<td>备注号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>DinePaidDetail</th>
+				<th></th>
+				<th>支付详情表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>DineId</td>
+				<td>nvarchar(14)</td>
+				<td>菜品id</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>PayKindId</td>
+				<td>int</td>
+				<td>支付种类</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Price</td>
+				<td>decimal(11, 2)</td>
+				<td>金额</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>RecordId</td>
+				<td>nvarchar(max)</td>
+				<td>支付凭证号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Takeouts</th>
+				<th></th>
+				<th>外卖信息表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>varchar(14)</td>
+				<td>点单编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>PhoneNumber</td>
+				<td>varchar(11)</td>
+				<td>电话号码</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Address</td>
+				<td>varchar(128)</td>
+				<td>地址</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>PayKinds</th>
+				<th></th>
+				<th>支付种类表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>支付种类号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(20)</td>
+				<td>支付种类名字</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Type</td>
+				<td>int</td>
+				<td>种类</td>
+				<td>
+					<p>0 线上（如微信等）</p>
+					<p>1 线下（如银行卡等）</p>
+					<p>2 积分抵扣</p>
+					<p>3 其他支付方式（用户点餐时显示）</p>
+					<p>4 现金</p>
+				</td>
+			</tr>
+			<tr>
+				<td>Description</td>
+				<td>nvarchar(128)</td>
+				<td>支付种类描述</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Discount</td>
+				<td>float</td>
+				<td>打折金额</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Usable</td>
+				<td>bit</td>
+				<td>可用状态</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>RedirectUrl</td>
+				<td>nvarchar(128)</td>
+				<td>支付跳转地址</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>CompleteUrl</td>
+				<td>nvarchar(128)</td>
+				<td>支付完成跳转地址</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>NotifyUrl</td>
+				<td>nvarchar(128)</td>
+				<td>支付成功异步通知地址</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Reserves</th>
+				<th></th>
+				<th>预订表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>预订编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>PhoneNumber</td>
+				<td>nvarchar(128)</td>
+				<td>电话号码</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>HeadCount</td>
+				<td>int</td>
+				<td>人数</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Time</td>
+				<td>datetime</td>
+				<td>预约时间</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>createTime</td>
+				<td>datetime</td>
+				<td>创建时间</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>DeskId</td>
+				<td>int</td>
+				<td>桌位号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Remarks</th>
+				<th></th>
+				<th>备注表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>备注编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(10)</td>
+				<td>备注名</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Price</td>
+				<td>decimal(11, 2)</td>
+				<td>金额</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Customers</th>
+				<th></th>
+				<th>饭店自定义会员表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>用户编号</td>
+				<td>总数据库Users.Id</td>
+			</tr>
+			<tr>
+				<td>Points</td>
+				<td>int</td>
+				<td>会员积分</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>VipLevelId</td>
+				<td>int</td>
+				<td>会员等级</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>VipLevels</th>
+				<th></th>
+				<th>会员等级表</th>
+				<th>自增</th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(10)</td>
+				<td>等级名称</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Staffs</th>
+				<th></th>
+				<th>工作职员表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>nvarchar(8)</td>
+				<td>工作职员id</td>
+				<td>总数据库 Staffs.Id</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(10)</td>
+				<td>工作职员姓名</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>DineCount</td>
+				<td>int</td>
+				<td>完成点单数</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>DinePrice</td>
+				<td>decimal(11, 2)</td>
+				<td>完成点单总金额</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>WorkTimeFrom</td>
+				<td>time(7)</td>
+				<td>开始工作时间</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>WorkTimeTo</td>
+				<td>time(7)</td>
+				<td>结束工作时间</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>StaffRoles</th>
+				<th></th>
+				<th>工作职员角色表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>角色编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(5)</td>
+				<td>角色名称</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>StaffStaffRoles</th>
+				<th></th>
+				<th>工作职员角色一对多表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Staff_Id</td>
+				<td>nvarchar(8)</td>
+				<td>职员编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>StaffRole_Id</td>
+				<td>int</td>
+				<td>角色编号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>StaffRoleSchemas</th>
+				<th></th>
+				<th>角色架构一对多表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>StaffRoleId</td>
+				<td>int</td>
+				<td>职员角色编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>Schema</td>
+				<td>int</td>
+				<td>架构</td>
+				<td>
+					<p>0 读取面向会员数据</p>
+					<p>1 提交面向会员的订单</p>
+					<p>2 职员支付</p>
+					<p>3 职员退菜</p>
+					<p>4 职员修改基础信息</p>
+				</td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>HotelConfigs</th>
+				<th></th>
+				<th>饭店自定义设置</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>NeedCodeImg</td>
+				<td>bit</td>
+				<td>是否需要验证码服务</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>PointsRatio</td>
+				<td>int</td>
+				<td>积分比率</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>TrimZero</td>
+				<td>int</td>
+				<td>抹零位数</td>
+				<td>
+					<p>0 默认精度到分，不抹零</p>
+					<p>1 分抹零</p>
+					<p>2 角抹零</p>
+					<p>3 元抹零</p>
+				</td>
+			</tr>
+			<tr>
+				<td>HasAutoPrinter</td>
+				<td>bit</td>
+				<td>是否需要AutoPrinter打印机</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Logs</th>
+				<th></th>
+				<th>饭店日志表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>DateTime</td>
+				<td>datetime</td>
+				<td>日志时间</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Level</td>
+				<td>int</td>
+				<td>日志级别</td>
+				<td>
+					<p>0 Debug</p>
+					<p>1 Error</p>
+					<p>2 Info</p>
+					<p>3 Success</p>
+					<p>4 Warning</p>
+				</td>
+			</tr>
+			<tr>
+				<td>Message</td>
+				<td>nvarchar(MAX)</td>
+				<td>日志</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>TimeDiscounts</th>
+				<th></th>
+				<th>时段打折方案表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>From</td>
+				<td>time(7)</td>
+				<td>时段开始</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>To</td>
+				<td>time(7)</td>
+				<td>时段结束</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>Week</td>
+				<td>int</td>
+				<td>星期</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Discount</td>
+				<td>float</td>
+				<td>折扣率</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(25)</td>
+				<td>折扣方案名称</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>VipDiscounts</th>
+				<th></th>
+				<th>Vip打折方案表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>会员等级</td>
+				<td>参考会员表</td>
+			</tr>
+			<tr>
+				<td>Discount</td>
+				<td>float</td>
+				<td>折扣率</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(25)</td>
+				<td>折扣方案名称</td>
+				<td></td>
+			</tr>
+		</table>
+
+		<h3>YummyOnlineDB</h3>
+
+
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>SystemConfigs</th>
+				<th></th>
+				<th>总数据库配置</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>配置编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>TcpServerIp</td>
+				<td>nvarchar(15)</td>
+				<td>Tcp服务IP</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>TcpServerPort</td>
+				<td>int</td>
+				<td>Tcp服务端口</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>TcpServerDir</td>
+				<td>nvarchar(MAX)</td>
+				<td>Tcp服务器目录</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Token</td>
+				<td>nvarchar(MAX)</td>
+				<td>令牌</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>NewDineInformClientGuids</th>
+				<th></th>
+				<th>新订单通知Tcp客户端的GUID授权</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Guid</td>
+				<td>uniqueidentifier</td>
+				<td>Guid号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Hotels</th>
+				<th></th>
+				<th>基本信息表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>饭店编号</td>
+				<td>非自增</td>
+			</tr>
+			<tr>
+				<td>ConnectionString</td>
+				<td>nvarchar(max)</td>
+				<td>连接字符串</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>CssThemePath</td>
+				<td>nvarchar(max)</td>
+				<td>点菜界面主题css路径</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(20)</td>
+				<td>饭店名字</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Address</td>
+				<td>nvarchar(128)</td>
+				<td>饭店地址</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Tel</td>
+				<td>nvarchar(20)</td>
+				<td>饭店电话</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>CreateDate</td>
+				<td>datetime</td>
+				<td>登记时间</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>OpenTime</td>
+				<td>time(7)</td>
+				<td>营业时间</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>CloseTime</td>
+				<td>time(7)</td>
+				<td>关门时间</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Staffs</th>
+				<th></th>
+				<th>职员信息表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>nvarchar(8)</td>
+				<td>职员编号</td>
+				<td>自定义函数自增</td>
+			</tr>
+			<tr>
+				<td>SigninName</td>
+				<td>nvarchar(20)</td>
+				<td>职员登录用户名</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>PhoneNumber</td>
+				<td>nvarchar(11)</td>
+				<td>电话号码</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Email</td>
+				<td>nvarchar(128)</td>
+				<td>电子邮件地址</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>UserName</td>
+				<td>nvarchar(20)</td>
+				<td>职员姓名</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>PasswordHash</td>
+				<td>nvarchar(max)</td>
+				<td>登录密码</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>CreateDate</td>
+				<td>datetime</td>
+				<td>创建时间</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>HotelId</td>
+				<td>int</td>
+				<td>饭店编号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Users</th>
+				<th></th>
+				<th>用户表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>nvarchar(10)</td>
+				<td>用户编号</td>
+				<td>自定义函数自增</td>
+			</tr>
+			<tr>
+				<td>PhoneNumber</td>
+				<td>nvarchar(11)</td>
+				<td>电话</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Email</td>
+				<td>nvarchar(128)</td>
+				<td>邮箱</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>UserName</td>
+				<td>nvarchar(20)</td>
+				<td>用户姓名</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>PasswordHash</td>
+				<td>nvarchar(max)</td>
+				<td>密码</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Confirmed</td>
+				<td>bit</td>
+				<td>是否已确认</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>IsSendRecommedation</td>
+				<td>bit</td>
+				<td>是否接受推荐信息</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>CreateDate</td>
+				<td>datetime</td>
+				<td>创建日期</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>UserRoles</th>
+				<th></th>
+				<th>用户角色一对多表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>UserId</td>
+				<td>nvarchar(10)</td>
+				<td>用户编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>Role</td>
+				<td>int</td>
+				<td>角色编号</td>
+				<td>
+					<p>0 匿名</p>
+					<p>1 普通用户</p>
+					<p>2 超级管理员</p>
+				</td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>MenuGathers</th>
+				<th></th>
+				<th>所有饭店对应的菜品表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>nvarchar(6)</td>
+				<td>编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>HotelId</td>
+				<td>int</td>
+				<td>饭店编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(20)</td>
+				<td>菜品表名称</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Flavors</th>
+				<th></th>
+				<th>口味表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>口味编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(20)</td>
+				<td>口味名称</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Nutritions</th>
+				<th></th>
+				<th>营养表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>营养编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(20)</td>
+				<td>营养的名称</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>FlavorMenuGathers</th>
+				<th></th>
+				<th>多对多口味表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Flavor_Id</td>
+				<td>int</td>
+				<td>口味编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>MenuGather_Id</td>
+				<td>nvarchar(6)</td>
+				<td>所对应饭店菜品表</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>MenuGather_HotelId</td>
+				<td>int</td>
+				<td>所对应饭店编号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>NutritionMenuGathers</th>
+				<th></th>
+				<th>多对多营养表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Nutrition_Id</td>
+				<td>int</td>
+				<td>营养编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>MenuGather_Id</td>
+				<td>nvarchar(6)</td>
+				<td>所对应饭店菜品表</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>MenuGather_HotelId</td>
+				<td>int</td>
+				<td>所对应饭店编号</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Logs</th>
+				<th></th>
+				<th>饭店日志表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>DateTime</td>
+				<td>datetime</td>
+				<td>日志时间</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Program</td>
+				<td>int</td>
+				<td>记录日志的程序</td>
+				<td>
+					<p>0 OrderSystem</p>
+					<p>1 Identity</p>
+					<p>2 TcpServer</p>
+					<p>3 System</p>
+					<p>4 Manager</p>
+					<p>5 Remote</p>
+				</td>
+			</tr>
+			<tr>
+				<td>Level</td>
+				<td>int</td>
+				<td>日志级别</td>
+				<td>
+					<p>0 Debug</p>
+					<p>1 Error</p>
+					<p>2 Info</p>
+					<p>3 Success</p>
+					<p>4 Warning</p>
+				</td>
+			</tr>
+			<tr>
+				<td>Message</td>
+				<td>nvarchar(MAX)</td>
+				<td>日志</td>
+				<td></td>
+			</tr>
+		</table>
+
+		<div class="alert alert-danger">
+			<p>PayKinds删除IsOnline和IsShow两个字段，该信息可以在Type中导出</p>
+			<p>HotelConfig增加HasAutoPrinter字段</p>
+			<p class="text-right">
+				<small>2016-4-15 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>DineMenus主键变为int自增类型</p>
+			<p>DineMenuRemarks修改</p>
+			<p class="text-right">
+				<small>2016-4-14 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>SystemConfigs增加TcpServer所在目录字段</p>
+			<p>Schemas增加三项架构</p>
+			<p class="text-right">
+				<small>2016-4-3 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>HotelConfigs增加抹零</p>
+			<p class="text-right">
+				<small>2016-3-19 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>DineMenus增加所有备注价格</p>
+			<p class="text-right">
+				<small>2016-3-18 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>Desks增加餐桌座位数</p>
+			<p>职员增加角色架构表</p>
+			<p>会员增加自定义会员等级表，修改VipDiscounts</p>
+			<p class="text-right">
+				<small>2016-3-17 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>区域所对应的部门改为收银部门与传菜部门</p>
+			<p class="text-right">
+				<small>2016-3-14 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>删除DinePaidDetails中的IsPaid，增加Dines中的IsPaid</p>
+			<p>删除Dines中的IsRefund, ReturnedWaiterId</p>
+			<p class="text-right">
+				<small>2016-3-12 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>新增两个支付方式表，修改Dines表</p>
+			<p class="text-right">
+				<small>2016-2-27 张朕煜</small>
+			</p>
+		</div>
+	</div>
+</body>
+
+</html>

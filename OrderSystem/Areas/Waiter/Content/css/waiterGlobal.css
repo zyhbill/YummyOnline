@@ -1,0 +1,222 @@
+﻿.btn.btn-primary {
+	background: #0E3A57;
+	border-color: #0A2B41;
+}
+
+.btn-primary:hover {
+	background-color: #0B2A41;
+	border-color: #071C2B;
+}
+
+.index {
+}
+
+	.index .img-logo {
+		margin-top: 30px;
+	}
+
+	.index .title {
+		font-size: 20px;
+		color: #113A57;
+	}
+
+	.index .btn-signin {
+		color: #113A57;
+		background-color: #FF9700;
+		border-radius: 17px;
+		width: 230px;
+	}
+
+	.index .form-control {
+		display: inline-block;
+		border-radius: 17px;
+		width: 230px;
+	}
+
+
+.remark-modal p {
+	margin-bottom: 5px;
+}
+
+.remark-modal .btn.btn-sm {
+	margin-right: 2px;
+	margin-bottom: 2px;
+}
+
+.menu-btn {
+	position: relative;
+	padding: 5px;
+	float: left;
+	width: 33.33%;
+	height: 100px;
+	background-color: #EEEEEE;
+	border-right: solid 1px #D5D2D7;
+	border-bottom: solid 1px #D5D2D7;
+}
+
+	.menu-btn:nth-child(3n+3) {
+		border-right: none;
+	}
+
+	.menu-btn .row {
+		margin-right: -5px;
+		margin-left: -5px;
+	}
+
+		.menu-btn .row .col-xs-1,
+		.menu-btn .row .col-xs-2,
+		.menu-btn .row .col-xs-3,
+		.menu-btn .row .col-xs-4,
+		.menu-btn .row .col-xs-5,
+		.menu-btn .row .col-xs-6,
+		.menu-btn .row .col-xs-7,
+		.menu-btn .row .col-xs-8,
+		.menu-btn .row .col-xs-9,
+		.menu-btn .row .col-xs-10,
+		.menu-btn .row .col-xs-11,
+		.menu-btn .row .col-xs-12 {
+			padding-right: 5px;
+			padding-left: 5px;
+		}
+
+	.menu-btn .menu-control {
+		position: absolute;
+		bottom: 5px;
+		width: 100%;
+	}
+
+.menu-title {
+	margin-bottom: 0;
+}
+
+.menu-remark-btn {
+	margin-top: 5px;
+}
+
+.menu-remark {
+	position: absolute;
+	z-index: 1;
+}
+
+.control {
+	padding: 0;
+	margin: 0;
+	position: fixed;
+	bottom: 0;
+	width: 100%;
+	list-style: none;
+}
+
+	.control .control-btn {
+		float: left;
+		height: 50px;
+		border-left: 1px solid #EEEEEE;
+		color: #fff;
+		background-color: #0E3A57;
+		line-height: 50px;
+		text-align: center;
+	}
+
+	.control .control-btn-3 {
+		width: 25%;
+	}
+
+	.control .control-btn-4 {
+		width: 33.33%;
+	}
+
+	.control .control-btn-6 {
+		width: 50%;
+	}
+
+	.control .control-btn-9 {
+		width: 75%;
+	}
+
+	.control .control-btn-12 {
+		width: 100%;
+	}
+
+	.control .control-btn.no-border {
+		border-left: none;
+	}
+
+
+
+	.control .control-btn .dropdown-menu {
+		padding: 0;
+		top: auto;
+		bottom: 50px;
+		border: none;
+		border-radius: 0;
+		width: 400%;
+		box-shadow: 0 0 20px rgba(0,0,0,.5);
+	}
+
+		.control .control-btn .dropdown-menu li {
+			float: left;
+			padding: 0 5px;
+			width: 33.33%;
+			color: #000;
+			border-right: solid 1px #D5D2D7;
+			border-bottom: solid 1px #D5D2D7;
+		}
+
+			.control .control-btn .dropdown-menu li.active {
+				color: #fff;
+				background: #a94442;
+			}
+
+			.control .control-btn .dropdown-menu li:nth-child(3n+3) {
+				border-right: none;
+			}
+
+
+	.control .control-btn.control-btn-desk .dropdown-menu {
+		left: -100%;
+	}
+
+	.control .control-btn.control-btn-desk.control-btn-6 .dropdown-menu {
+		width: 200%;
+		left: -50%;
+	}
+	.control .control-btn.control-btn-desk.control-btn-12 .dropdown-menu {
+		width: 100%;
+		left: 0;
+	}
+
+	.control .control-btn.control-btn-desk .dropdown-menu li {
+		width: 20%;
+		font-size: 15px;
+		border-right: solid 1px #D5D2D7;
+		border-bottom: solid 1px #D5D2D7;
+	}
+
+
+		.control .control-btn.control-btn-desk .dropdown-menu li:nth-child(5n) {
+			border-right: none;
+		}
+
+		.control .control-btn.control-btn-desk .dropdown-menu li:nth-child(10n),
+		.control .control-btn.control-btn-desk .dropdown-menu li:nth-child(10n-1),
+		.control .control-btn.control-btn-desk .dropdown-menu li:nth-child(10n-2),
+		.control .control-btn.control-btn-desk .dropdown-menu li:nth-child(10n-3),
+		.control .control-btn.control-btn-desk .dropdown-menu li:nth-child(10n-4) {
+			background-color: #EEEEEE;
+		}
+
+		.control .control-btn.control-btn-desk .dropdown-menu li.active {
+			color: #fff;
+			background: #a94442;
+		}
+
+
+	.control .control-btn.control-btn-option .dropdown-menu {
+		border-radius: 2px;
+	}
+
+		.control .control-btn.control-btn-option .dropdown-menu li {
+			float: none;
+			padding: 0 10px;
+			width: auto;
+		}

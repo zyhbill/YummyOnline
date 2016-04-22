@@ -18,7 +18,7 @@ namespace OrderSystem.Areas.Waiter.Controllers {
 				return Json(new JsonError("没有此登录名"));
 			}
 			if(!await StaffManager.CheckPasswordAsync(staff, password)) {
-				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"{signinName} {password} Signin Failed");
+				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"Staff Signin: {signinName} {password} Signin Failed");
 				return Json(new JsonError("密码不正确"));
 			}
 
@@ -26,6 +26,7 @@ namespace OrderSystem.Areas.Waiter.Controllers {
 			CurrHotel = hotel;
 
 			if(!await HotelManager.IsStaffHasSchema(staff.Id, HotelDAO.Models.Schema.ReadWaiterData)) {
+				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"Staff Signin: {signinName} {password} No Authority");
 				return Json(new JsonError("没有权限"));
 			}
 			await SigninManager.Signin(staff, true);

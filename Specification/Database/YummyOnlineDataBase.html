@@ -50,6 +50,13 @@
 	<div class="container-fluid">
 		<h2>YummyOnline Database Specification</h2>
 		<div class="alert alert-danger">
+			<p>MenuClass 删除Level</p>
+			<p>Menu中 咸度字段名为SaltyDegree, 感谢杨彦博同学</p>
+			<p class="text-right">
+				<small>2016-4-22 翟鑫奕&杨彦博</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
 			<p>VipDiscounts主键字段名称为Id, 不是Level, 感谢王徐峰同学的火眼金睛</p>
 			<p class="text-right">
 				<small>2016-4-20 王徐峰</small>
@@ -61,12 +68,7 @@
 				<small>2016-4-20 张朕煜</small>
 			</p>
 		</div>
-		<div class="alert alert-danger">
-			<p>饭店数据库中的CSS路径移动到总数据库中</p>
-			<p class="text-right">
-				<small>2016-4-19 张朕煜</small>
-			</p>
-		</div>
+		
 
 		<ul>
 			<li>Database version : SQLSERVER 2014</li>
@@ -340,12 +342,6 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td>Level</td>
-				<td>int</td>
-				<td>该分类所在层数</td>
-				<td></td>
-			</tr>
-			<tr>
 				<td>IsLeaf</td>
 				<td>bit</td>
 				<td>是否为叶子节点</td>
@@ -441,7 +437,7 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td>SatlyDegree</td>
+				<td>SaltyDegree</td>
 				<td>int</td>
 				<td>咸度</td>
 				<td></td>
@@ -1754,6 +1750,13 @@
 			</tr>
 		</table>
 
+
+		<div class="alert alert-danger">
+			<p>饭店数据库中的CSS路径移动到总数据库中</p>
+			<p class="text-right">
+				<small>2016-4-19 张朕煜</small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>PayKinds删除IsOnline和IsShow两个字段，该信息可以在Type中导出</p>
 			<p>HotelConfig增加HasAutoPrinter字段</p>

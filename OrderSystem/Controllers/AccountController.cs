@@ -64,6 +64,8 @@ namespace OrderSystem.Controllers {
 				user.PasswordHash = UserManager.GetMd5(model.Password);
 				succeeded = await UserManager.UpdateAsync(user);
 				await UserManager.RemoveFromRoleAsync(user.Id, Role.Nemo);
+
+				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Update: {User.Identity.GetUserId()}");
 			}
 			else {
 				user = new User {
@@ -95,17 +97,20 @@ namespace OrderSystem.Controllers {
 			}
 			User user = await UserManager.FindByPhoneNumberAsync(model.PhoneNumber);
 			if(user == null) {
+				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Signin: {model.PhoneNumber} {model.Password} No PhoneNumber");
 				return Json(new JsonError("手机未注册"));
 			}
 			if(!await UserManager.CheckPasswordAsync(user, model.Password)) {
+				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Signin: {model.PhoneNumber} {model.Password} Password Error");
 				return Json(new JsonError("密码不正确"));
 			}
 			if(User.Identity.IsAuthenticated) {
 				User oldUser = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-
 				if(oldUser != null && await UserManager.IsInRoleAsync(oldUser.Id, Role.Nemo)) {
 					await HotelManager.TransferOrders(oldUser.Id, user.Id);
 					await UserManager.DeleteAsync(oldUser);
+
+					await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Transfer: {oldUser.Id} -> {user.Id}");
 				}
 			}
 			await SigninManager.Signin(user, true);
@@ -148,6 +153,9 @@ namespace OrderSystem.Controllers {
 				return Json(new JsonError("验证码不正确", "code"));
 			}
 			await UserManager.ChangePasswordAsync(model.PhoneNumber, model.Password);
+
+			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"{model.PhoneNumber} {model.Password} Change Password");
+
 			return Json(new JsonSuccess());
 		}
 		#endregion

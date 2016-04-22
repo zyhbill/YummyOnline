@@ -20,10 +20,6 @@ namespace HotelDAO.Models {
 		public bool IsShow { get; set; }
 		public bool Usable { get; set; }
 
-		/// <summary>
-		/// 该分类所在层数
-		/// </summary>
-		public int? Level { get; set; }
 		public bool IsLeaf { get; set; }
 
 		public string ParentMenuClassId { get; set; }

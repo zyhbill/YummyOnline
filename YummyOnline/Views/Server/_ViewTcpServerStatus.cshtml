@@ -1,0 +1,153 @@
+﻿
+<div class="row">
+	<div class="col-md-12" ng-if="tcpServerInfo==null">
+		<div class="alert alert-danger">
+			<h4><i class="icon fa fa-warning"></i> 服务器未在运行!</h4>
+			<button class="btn btn-default"
+					ng-click="refreshTcpServerInfo()">
+				立即刷新
+			</button>
+			<button class="btn btn-success"
+					ng-click="startTcpServer()">
+				启动Tcp服务器
+			</button>
+		</div>
+	</div>
+
+	<div ng-if="tcpServerInfo!=null">
+		<div class="col-md-3">
+			<div class="info-box bg-green">
+				<span class="info-box-icon"><i class="fa fa-calendar-o"></i></span>
+				<div class="info-box-content">
+					<span class="info-box-text">启动时间</span>
+					<span class="info-box-number">{{tcpServerInfo.StartTime | date:'yyyy/M/d HH:mm:ss'}}</span>
+				</div>
+			</div>
+
+			<div class="info-box bg-red">
+				<span class="info-box-icon"><i class="fa fa-percent"></i></span>
+				<div class="info-box-content">
+					<span class="info-box-text">CPU 使用率</span>
+					<span class="info-box-number">{{tcpServerInfo.Cpu | number : 2}} %</span>
+				</div>
+			</div>
+
+			<div class="info-box bg-yellow">
+				<span class="info-box-icon"><i class="fa fa-signal"></i></span>
+				<div class="info-box-content">
+					<span class="info-box-text">内存使用</span>
+					<span class="info-box-number">{{tcpServerInfo.Memory | number : 2}} MB</span>
+				</div>
+			</div>
+
+			<p>
+				<div class="row">
+					<div class="col-xs-6">
+						<button class="btn btn-default"
+								ng-click="refreshTcpServerInfo()">
+							立即刷新
+						</button>
+					</div>
+					@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+						<div class="col-xs-6 text-right">
+							<button class="btn btn-danger"
+									ng-click="stopTcpServer()">
+								关闭Tcp服务器
+							</button>
+						</div>
+					}
+				</div>
+			</p>
+		</div>
+
+		<div class="col-md-4">
+			<div class="box box-default">
+				<div class="box-header">
+					<h3 class="box-title">等待身份验证客户端</h3>
+				</div>
+				<div class="table-responsive">
+					<table class="table no-margin">
+						<tr>
+							<th class="col-md-4">IP</th>
+							<th class="col-md-3">端口</th>
+							<th class="col-md-5">连接时间</th>
+						</tr>
+						<tr ng-repeat="c in tcpServerInfo.Status.WaitingForVerificationClients">
+							<td>{{c.IpAddress}}</td>
+							<td>{{c.Port}}</td>
+							<td>{{c.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<div class="box box-default">
+				<div class="box-header">
+					<h3 class="box-title">点菜系统</h3>
+				</div>
+				<div class="table-responsive">
+					<table class="table no-margin" ng-if="tcpServerInfo.Status.OrderSystemClient.IsConnected">
+						<tr>
+							<td class="col-md-4">{{tcpServerInfo.Status.OrderSystemClient.IpAddress}}</td>
+							<td class="col-md-3">{{tcpServerInfo.Status.OrderSystemClient.Port}}</td>
+							<td class="col-md-5">{{tcpServerInfo.Status.OrderSystemClient.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+						</tr>
+					</table>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="col-md-5">
+			<div class="box box-default">
+				<div class="box-header">
+					<h3 class="box-title">接收新订单通知客户端</h3>
+				</div>
+				<div class="table-responsive">
+					<table class="table no-margin">
+						<tr>
+							<th class="col-md-2">GUID</th>
+							<th class="col-md-3">描述</th>
+							<th class="col-md-3">IP</th>
+							<th class="col-md-1">端口</th>
+							<th class="col-md-3">连接时间</th>
+						</tr>
+						<tr ng-repeat="c in tcpServerInfo.Status.NewDineInformClients">
+							<td>{{c.Guid.substr(0,4)}}...{{c.Guid.substr(c.Guid.length-4,4)}}</td>
+							<td>{{c.Description}}</td>
+							<td colspan="3" class="danger" ng-hide="c.Status.IsConnected">Disconnected</td>
+							<td ng-show="c.Status.IsConnected">{{c.Status.IpAddress}}</td>
+							<td ng-show="c.Status.IsConnected">{{c.Status.Port}}</td>
+							<td ng-show="c.Status.IsConnected">{{c.Status.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<div class="box box-default">
+				<div class="box-header">
+					<h3 class="box-title">打印客户端</h3>
+				</div>
+				<div class="table-responsive">
+					<table class="table no-margin">
+						<tr>
+							<th class="col-md-2">饭店号</th>
+							<th class="col-md-3">IP</th>
+							<th class="col-md-2">端口</th>
+							<th class="col-md-3">连接时间</th>
+							<th class="col-md-2">等待发送队列数量</th>
+						</tr>
+						<tr ng-repeat="c in tcpServerInfo.Status.PrintDineClients">
+							<td>{{c.HotelId}}</td>
+							<td colspan="3" class="danger" ng-hide="c.Status.IsConnected">Disconnected</td>
+							<td ng-show="c.Status.IsConnected">{{c.Status.IpAddress}}</td>
+							<td ng-show="c.Status.IsConnected">{{c.Status.Port}}</td>
+							<td ng-show="c.Status.IsConnected">{{c.Status.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+							<td>{{c.WaitedCount}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

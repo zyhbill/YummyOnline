@@ -61,6 +61,10 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.Web.Administration, Version=7.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Windows\System32\inetsrv\Microsoft.Web.Administration.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -125,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\DriveSpace.cs" />
+    <Compile Include="App_Code\IISManager.cs" />
     <Compile Include="App_Code\TcpServerProcess.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -134,7 +139,7 @@
     <Compile Include="Controllers\DashBoardController.cs" />
     <Compile Include="Controllers\HotelController.cs" />
     <Compile Include="Controllers\LogController.cs" />
-    <Compile Include="Controllers\TcpServerController.cs" />
+    <Compile Include="Controllers\ServerController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -200,8 +205,8 @@
     <Content Include="Scripts\lib\jquery-2.2.0.min.js" />
     <Content Include="Scripts\Log\controllers.js" />
     <Content Include="Scripts\Log\route.js" />
-    <Content Include="Scripts\TcpServer\controller.js" />
-    <Content Include="Scripts\TcpServer\route.js" />
+    <Content Include="Scripts\Server\controller.js" />
+    <Content Include="Scripts\Server\route.js" />
     <Content Include="Scripts\Users\controllers.js" />
     <Content Include="Scripts\Users\route.js" />
     <Content Include="Views\Shared\_LayoutGlobal.cshtml" />
@@ -266,14 +271,15 @@
   <ItemGroup>
     <None Include="Properties\PublishProfiles\Config.pubxml" />
     <Content Include="Views\Log\_ViewYummyOnline.cshtml" />
-    <Content Include="Views\TcpServer\Index.cshtml" />
+    <Content Include="Views\Server\Index.cshtml" />
     <Content Include="Views\Log\_ViewSpecification.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
     <Content Include="Views\Users\_ViewCustomer.cshtml" />
     <Content Include="Views\Users\_ViewAdmin.cshtml" />
-    <Content Include="Views\TcpServer\_ViewStatus.cshtml" />
-    <Content Include="Views\TcpServer\_ViewGuids.cshtml" />
+    <Content Include="Views\Server\_ViewTcpServerStatus.cshtml" />
+    <Content Include="Views\Server\_ViewGuids.cshtml" />
+    <Content Include="Views\Server\_ViewIISStatus.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

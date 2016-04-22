@@ -6,22 +6,39 @@ using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
 using Protocal;
 using Newtonsoft.Json;
+using YummyOnline.Utility;
 
 namespace YummyOnline.Controllers {
 	[Authorize(Roles = nameof(Role.Admin))]
-	public class TcpServerController : BaseController {
-		static string processName = "YummyOnlineTcpServer";
-		static PerformanceCounter curtime = new PerformanceCounter("Process", "% Processor Time", processName);
-		static PerformanceCounter curpcp = new PerformanceCounter("Process", "Working Set - Private", processName);
+	public class ServerController : BaseController {
 
 		public ActionResult Index() {
 			return View();
 		}
-		public ActionResult _ViewStatus() {
+		public ActionResult _ViewIISStatus() {
+			return View();
+		}
+		public ActionResult _ViewTcpServerStatus() {
 			return View();
 		}
 		public ActionResult _ViewGuids() {
 			return View();
+		}
+
+		public JsonResult GetIISInfo() {
+			return Json(IISManager.GetSites());
+		}
+		public JsonResult StartSite(int siteId) {
+			if(IISManager.StartSite(siteId)) {
+				return Json(new JsonSuccess());
+			}
+			return Json(new JsonError("无法启动"));
+		}
+		public JsonResult StopSite(int siteId) {
+			if(IISManager.StopSite(siteId)) {
+				return Json(new JsonSuccess());
+			}
+			return Json(new JsonError("无法停止"));
 		}
 
 		public async Task<JsonResult> GetTcpServerInfo() {

@@ -1,0 +1,40 @@
+﻿<div class="box box-default">
+	<div class="table-responsive">
+		<table class="table no-margin">
+			<tr>
+				<th>网站名</th>
+				<th>应用程序池名</th>
+				<th>物理路径</th>
+				<th>协议</th>
+
+				<th>IP地址</th>
+				<th>端口</th>
+				<th>主机名</th>
+				<th>状态</th>
+				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+					<th></th>
+				}
+			</tr>
+			<tr ng-repeat="info in iisInfos">
+				<td>{{info.Name}}</td>
+				<td>{{info.ApplicationPoolName}}</td>
+				<td>{{info.PhysicalPath}}</td>
+				<td>{{info.Protocal}}</td>
+
+				<td ng-if="info.Protocal=='ftp'" colspan="5"></td>
+				<td ng-if="info.Protocal!='ftp'">{{info.Address}}</td>
+				<td ng-if="info.Protocal!='ftp'">{{info.Port}}</td>
+				<td ng-if="info.Protocal!='ftp'">{{info.Host}}</td>
+				<td ng-if="info.Protocal!='ftp'">{{info.State}}</td>
+				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+					<td class="text-right" ng-if="info.State == 'Started' && info.Protocal!='ftp'">
+						<button class="btn btn-danger" ng-click="stopSite(info.Id)">关闭</button>
+					</td>
+					<td class="text-right" ng-if="info.State == 'Stopped' && info.Protocal!='ftp'">
+						<button class="btn btn-primary" ng-click="startSite(info.Id)">开启</button>
+					</td>
+				}
+			</tr>
+		</table>
+	</div>
+</div>

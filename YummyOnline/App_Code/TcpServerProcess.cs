@@ -9,7 +9,7 @@ using System.Web;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
 
-namespace YummyOnline {
+namespace YummyOnline.Utility {
 	public static class TcpServerProcess {
 		private static string processName = "YummyOnlineTcpServer";
 		private static PerformanceCounter curtime = new PerformanceCounter("Process", "% Processor Time", processName);

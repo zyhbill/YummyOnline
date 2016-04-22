@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.IO;
 
-namespace YummyOnline {
+namespace YummyOnline.Utility {
 	public class DriveSpace {
 		/// <summary>
 		/// 获取驱动器空间大小

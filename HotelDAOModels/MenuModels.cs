@@ -14,6 +14,7 @@ namespace HotelDAO.Models {
 		public string Name { get; set; }
 		[MaxLength(50)]
 		public string Description { get; set; }
+		public int? Level { get; set; }
 		/// <summary>
 		/// 是否在点菜界面上显示
 		/// </summary>

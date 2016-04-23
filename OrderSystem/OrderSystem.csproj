@@ -137,7 +137,6 @@
     <Content Include="Content\css\lib\animate.min.css" />
     <Content Include="Content\css\lib\awesome-bootstrap-checkbox.css" />
     <Content Include="Content\css\lib\toastr.min.css" />
-    <Content Include="Content\css\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\image\1\btn-cart.png" />
     <Content Include="Content\image\1\completed.gif" />
     <Content Include="Content\image\1\index.png" />
@@ -158,11 +157,6 @@
     <Content Include="Scripts\Order\controllers.js" />
     <Content Include="Scripts\lib\angularjs-storage.min.js" />
     <Content Include="Scripts\lib\toastr.min.js" />
-    <Content Include="Content\css\fonts\FontAwesome.otf" />
-    <Content Include="Content\css\fonts\fontawesome-webfont.woff2" />
-    <Content Include="Content\css\fonts\fontawesome-webfont.woff" />
-    <Content Include="Content\css\fonts\fontawesome-webfont.ttf" />
-    <Content Include="Content\css\fonts\fontawesome-webfont.eot" />
     <Content Include="Areas\Waiter\Views\Order\_ViewCurrent.cshtml" />
     <Content Include="Areas\Waiter\Views\Shared\_LayoutGlobal.cshtml" />
     <Content Include="Areas\Waiter\Views\web.config" />

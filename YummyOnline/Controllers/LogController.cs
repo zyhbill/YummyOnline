@@ -62,28 +62,14 @@ namespace YummyOnline.Controllers {
 			}
 			return Json(programs);
 		}
-		public async Task<JsonResult> GetYummyOnlineLogs(int program) {
-			List<Log> logs = await YummyOnlineManager.GetLogsByProgram((Log.LogProgram)program, 100);
-
-			return Json(logs.Select(p => new {
-				Level = p.Level.ToString(),
-				Message = p.Message,
-				DateTime = p.DateTime
-			}));
+		public async Task<JsonResult> GetYummyOnlineLogs(Log.LogProgram program, DateTime dateTime, int? count) {
+			return Json(await YummyOnlineManager.GetLogsByProgram(program, dateTime, count));
 		}
-		public async Task<JsonResult> GetHotelLogs(int hotelId) {
+
+		public async Task<JsonResult> GetHotelLogs(int hotelId, DateTime dateTime, int? count) {
 			Hotel hotel = await YummyOnlineManager.GetHotelById(hotelId);
 			HotelDAO.HotelManager manager = new HotelDAO.HotelManager(hotel.ConnectionString);
-			return Json((await manager.GetLogs(100)).Select(p => new {
-				Level = p.Level.ToString(),
-				Message = p.Message,
-				DateTime = p.DateTime
-			}));
-		}
-
-		public async Task<JsonResult> DeleteLogs() {
-			await YummyOnlineManager.DeleteLogs(1);
-			return Json(new JsonSuccess());
+			return Json(await manager.GetLogs(dateTime, count));
 		}
 
 		public async Task<ActionResult> RemoteRecord(int? hotelId, int level, string message) {

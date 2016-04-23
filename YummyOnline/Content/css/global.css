@@ -25,3 +25,15 @@ h6,
 .table > thead > tr > th {
 	vertical-align: middle;
 }
+
+.uib-datepicker-popup {
+	padding: 5px;
+}
+
+@media (max-width: 768px) {
+	.uib-datepicker-popup {
+		left:50% !important;
+		transform: translateX(-50%);
+	}
+
+}

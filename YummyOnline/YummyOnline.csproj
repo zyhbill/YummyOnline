@@ -128,9 +128,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Code\DriveSpace.cs" />
-    <Compile Include="App_Code\IISManager.cs" />
-    <Compile Include="App_Code\TcpServerProcess.cs" />
+    <Compile Include="Utility\DriveSpace.cs" />
+    <Compile Include="Utility\IISManager.cs" />
+    <Compile Include="Utility\TcpServerProcess.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -179,12 +179,7 @@
     <Content Include="Content\css\AdminLTE\skins\_all-skins.min.css" />
     <Content Include="Content\css\lib\animate.min.css" />
     <Content Include="Content\css\lib\awesome-bootstrap-checkbox.css" />
-    <Content Include="Content\css\lib\bootstrap-theme.min.css" />
-    <Content Include="Content\css\lib\bootstrap.min.css" />
-    <Content Include="Content\css\lib\font-awesome.min.css" />
     <Content Include="Content\css\lib\toastr.min.css" />
-    <Content Include="Content\css\lib\ui-bootstrap-csp.css" />
-    <Content Include="Content\css\fonts\fontawesome-webfont.svg" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\css\global.css" />
@@ -193,16 +188,11 @@
     <Content Include="Scripts\app.js" />
     <Content Include="Scripts\DashBoard\controller.js" />
     <Content Include="Scripts\DashBoard\directives.js" />
+    <Content Include="Scripts\lib\angular-animate.min.js" />
     <Content Include="Scripts\lib\highcharts.js" />
     <Content Include="Scripts\directives.js" />
     <Content Include="Scripts\Layout\factories.js" />
-    <Content Include="Scripts\lib\angular-animate.min.js" />
-    <Content Include="Scripts\lib\angular-route.min.js" />
-    <Content Include="Scripts\lib\bootstrap.min.js" />
     <Content Include="Scripts\lib\toastr.min.js" />
-    <Content Include="Scripts\lib\ui-bootstrap-tpls.min.js" />
-    <Content Include="Scripts\lib\angular.min.js" />
-    <Content Include="Scripts\lib\jquery-2.2.0.min.js" />
     <Content Include="Scripts\Log\controllers.js" />
     <Content Include="Scripts\Log\route.js" />
     <Content Include="Scripts\Server\controller.js" />
@@ -230,11 +220,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <Content Include="Content\css\fonts\fontawesome-webfont.eot" />
-    <Content Include="Content\css\fonts\fontawesome-webfont.ttf" />
-    <Content Include="Content\css\fonts\fontawesome-webfont.woff" />
-    <Content Include="Content\css\fonts\fontawesome-webfont.woff2" />
-    <Content Include="Content\css\fonts\FontAwesome.otf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Shared\_PartialNavBarRight.cshtml" />

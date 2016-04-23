@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -178,8 +179,18 @@ namespace HotelDAO {
 			ctx.Logs.Add(log);
 			await ctx.SaveChangesAsync();
 		}
-		public async Task<List<Log>> GetLogs(int count) {
-			return await ctx.Logs.OrderByDescending(p => p.Id).Take(count).ToListAsync();
+		public async Task<dynamic> GetLogs(DateTime date, int? count) {
+			IQueryable<Log> linq = ctx.Logs.Where(p => SqlFunctions.DateDiff("day", p.DateTime, date) == 0)
+				.OrderByDescending(p => p.Id);
+			if(count != null) {
+				linq = linq.Take((int)count);
+			}
+
+			return await linq.Select(p => new {
+				Level = p.Level.ToString(),
+				p.Message,
+				p.DateTime
+			}).ToListAsync();
 		}
 
 		public static IQueryable<dynamic> FormatDines(IQueryable<Dine> dine) {

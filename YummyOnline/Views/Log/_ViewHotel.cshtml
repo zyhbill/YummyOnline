@@ -1,19 +1,39 @@
 ﻿
 <div class="box">
 	<div class="box-header">
-		<h3 class="box-title">饭店 {{currHotel.Id}} {{currHotel.Name}} 日志</h3>
+		<h3 class="box-title">
+			饭店 {{currHotel.Id}} {{currHotel.Name}} 日志
+			<small class="hidden-xs">{{currDateTime | date:'yyyy-M-d'}} {{currCount}}</small>
+		</h3>
 		<div class="box-tools pull-right">
+			<button class="btn btn-box-tool"
+					uib-datepicker-popup
+					show-button-bar="false"
+					popup-placement="bottom-right"
+					datepicker-append-to-body="true"
+					ng-model="currDateTime"
+					ng-click="isOpen = true"
+					is-open="isOpen">
+				<i class="fa fa-calendar"></i>
+			</button>
+
 			<div class="btn-group" uib-dropdown>
-				<button class="btn btn-box-tool" uib-dropdown-toggle><i class="fa fa-chevron-down"></i></button>
+				<button class="btn btn-box-tool" uib-dropdown-toggle>
+					<i class="fa fa-chevron-down"></i>
+				</button>
 				<ul uib-dropdown-menu>
 					<li ng-repeat="hotel in hotels">
-						<a href="/Log#/Hotel/{{hotel.Id}}">{{hotel.Name}}</a>
+						<a href="javascript:;" ng-click="changeLogHotel(hotel)">{{hotel.Id}} {{hotel.Name}}</a>
 					</li>
+					<li class="divider"></li>
+					<li><a href="javascript:;" ng-click="changeLogCount(100)">100</a></li>
+					<li><a href="javascript:;" ng-click="changeLogCount(200)">200 </a></li>
+					<li><a href="javascript:;" ng-click="changeLogCount()">All</a></li>
 				</ul>
 			</div>
 
 			<button class="btn btn-box-tool"
-					ng-click="loadHotelLog(currHotel)">
+					ng-click="refresh()">
 				<i class="fa fa-refresh"></i>
 			</button>
 		</div>
@@ -32,7 +52,6 @@
 					<td>{{log.Message}}</td>
 					<td>{{log.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
 				</tr>
-
 			</table>
 		</div>
 	</div>

@@ -20,32 +20,42 @@ app.controller('YummyOnlineCtrl', [
 	'layout',
 	function ($scope, $http, $route, $layout) {
 		$layout.Set('系统日志', '');
+
 		$http.post('/Log/GetYummyOnlinePrograms').then(function (response) {
 			$scope.programs = response.data;
-			for (var i in $scope.programs) {
-				if ($scope.programs[i].Id == $route.current.params.ProgramId) {
-					$scope.loadProgramLog($scope.programs[i]);
-					return;
-				}
-			}
-			$scope.loadProgramLog($scope.programs[0]);
+
+			$scope.currProgram = $scope.programs[0];
+			$scope.currCount = 100;
+			$scope.currDateTime = new Date();
 		});
 
-		$scope.loadProgramLog = function (program) {
-			$scope.currProgram = program;
-			$http.post('/Log/GetYummyOnlineLogs', { Program: program.Id }).then(function (response) {
+		$scope.refresh = function () {
+			if ($scope.currProgram == null)
+				return;
+
+			$http.post('/Log/GetYummyOnlineLogs', {
+				Program: $scope.currProgram.Id,
+				DateTime: $scope.currDateTime,
+				Count: $scope.currCount
+			}).then(function (response) {
 				var data = response.data;
 				for (var i in data) {
 					data[i].Class = _getCssClass(data[i].Level);
 				}
 				$scope.logs = data;
 			});
-		};
+		}
 
-		$scope.deleteLog = function () {
-			$http.post('/Log/DeleteLogs').then(function (response) {
-				$scope.loadProgramLog($scope.currProgram);
-			});
+		$scope.$watch('currDateTime', function () {
+			$scope.refresh();
+		});
+		$scope.changeLogProgram = function (program) {
+			$scope.currProgram = program;
+			$scope.refresh();
+		}
+		$scope.changeLogCount = function (count) {
+			$scope.currCount = count == undefined ? null : count;
+			$scope.refresh();
 		}
 	}
 ]).controller('HotelCtrl', [
@@ -58,25 +68,40 @@ app.controller('YummyOnlineCtrl', [
 
 		$http.post('/Hotel/GetHotelNames').then(function (response) {
 			$scope.hotels = response.data;
-			for (var i in $scope.hotels) {
-				if ($scope.hotels[i].Id == $route.current.params.HotelId) {
-					$scope.loadHotelLog($scope.hotels[i]);
-					return;
-				}
-			}
-			$scope.loadHotelLog($scope.hotels[0]);
+
+			$scope.currHotel = $scope.hotels[0];
+			$scope.currCount = 100;
+			$scope.currDateTime = new Date();
 		});
 
-		$scope.loadHotelLog = function (hotel) {
-			$scope.currHotel = hotel;
-			$http.post('/Log/GetHotelLogs', { HotelId: hotel.Id }).then(function (response) {
+		$scope.refresh = function () {
+			if ($scope.currHotel == null)
+				return;
+
+			$http.post('/Log/GetHotelLogs', {
+				HotelId: $scope.currHotel.Id,
+				DateTime: $scope.currDateTime,
+				Count: $scope.currCount
+			}).then(function (response) {
 				var data = response.data;
 				for (var i in data) {
 					data[i].Class = _getCssClass(data[i].Level);
 				}
 				$scope.logs = data;
 			});
-		};
+		}
+
+		$scope.$watch('currDateTime', function () {
+			$scope.refresh();
+		});
+		$scope.changeLogHotel = function (hotel) {
+			$scope.currHotel = hotel;
+			$scope.refresh();
+		}
+		$scope.changeLogCount = function (count) {
+			$scope.currCount = count == undefined ? null : count;
+			$scope.refresh();
+		}
 	}
 ]);
 

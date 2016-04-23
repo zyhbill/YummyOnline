@@ -61,20 +61,20 @@ namespace YummyOnlineDAO {
 			await ctx.SaveChangesAsync();
 		}
 
-		public async Task<List<Log>> GetLogsByProgram(Log.LogProgram program, int count) {
-			return await ctx.Logs.Where(p => p.Program == program)
-				.OrderByDescending(p => p.Id).Take(count).ToListAsync();
-		}
-		public async Task<List<Log>> GetLogsByProgram(Log.LogProgram program, DateTime date, int count) {
-			return await ctx.Logs.Where(p => p.Program == program && SqlFunctions.DateDiff("day", p.DateTime, date) == 0)
-				.OrderByDescending(p => p.Id).Take(count).ToListAsync();
-		}
-		public async Task DeleteLogs(int days) {
-			var logs = await ctx.Logs.Where(p => SqlFunctions.DateDiff("day", p.DateTime, DateTime.Now) >= days).ToListAsync();
-			ctx.Logs.RemoveRange(logs);
-			await ctx.SaveChangesAsync();
-		}
 
+		public async Task<dynamic> GetLogsByProgram(Log.LogProgram program, DateTime date, int? count) {
+			IQueryable<Log> linq = ctx.Logs.Where(p => p.Program == program && SqlFunctions.DateDiff("day", p.DateTime, date) == 0)
+				.OrderByDescending(p => p.Id);
+			if(count != null) {
+				linq = linq.Take((int)count);
+			}
+
+			return await linq.Select(p => new {
+				Level = p.Level.ToString(),
+				p.Message,
+				p.DateTime
+			}).ToListAsync();
+		}
 
 		public async Task<List<User>> GetUsers(Role role) {
 			return await ctx.UserRoles.Where(p => p.Role == role).Select(p => p.User).ToListAsync();

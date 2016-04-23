@@ -17,6 +17,7 @@ namespace YummyOnline.Utility {
 		public int Port { get; set; }
 		public string Host { get; set; }
 	}
+
 	public static class IISManager {
 		private static ServerManager sm {
 			get {

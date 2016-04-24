@@ -7,7 +7,8 @@
 
 		function refresh() {
 			$http.post('/Server/GetIISInfo').then(function (response) {
-				$scope.iisInfos = response.data;
+				$scope.sites = response.data.Sites;
+				$scope.w3wps = response.data.W3wps;
 			});
 		}
 

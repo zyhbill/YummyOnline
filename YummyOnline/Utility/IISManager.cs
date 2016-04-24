@@ -17,6 +17,11 @@ namespace YummyOnline.Utility {
 		public int Port { get; set; }
 		public string Host { get; set; }
 	}
+	public class W3wpInfo {
+		public int Pid { get; set; }
+		public string ApplicationPoolName { get; set; }
+		public string State { get; set; }
+	}
 
 	public static class IISManager {
 		private static ServerManager sm {
@@ -72,6 +77,18 @@ namespace YummyOnline.Utility {
 				}
 			}
 			return null;
+		}
+
+		public static List<W3wpInfo> GetWorkerProcesses() {
+			List<W3wpInfo> w3wps = new List<W3wpInfo>();
+			foreach(WorkerProcess w3wp in sm.WorkerProcesses) {
+				w3wps.Add(new W3wpInfo {
+					Pid = w3wp.ProcessId,
+					ApplicationPoolName = w3wp.AppPoolName,
+					State = w3wp.State.ToString()
+				});
+			}
+			return w3wps;
 		}
 	}
 }

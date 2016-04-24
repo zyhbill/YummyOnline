@@ -1,4 +1,9 @@
 ﻿<div class="box box-default">
+	<div class="box-header">
+		<h3 class="box-title">
+			站点状态
+		</h3>
+	</div>
 	<div class="table-responsive">
 		<table class="table no-margin">
 			<tr>
@@ -15,25 +20,47 @@
 					<th></th>
 				}
 			</tr>
-			<tr ng-repeat="info in iisInfos">
-				<td>{{info.Name}}</td>
-				<td>{{info.ApplicationPoolName}}</td>
-				<td>{{info.PhysicalPath}}</td>
-				<td>{{info.Protocal}}</td>
+			<tr ng-repeat="site in sites">
+				<td>{{site.Name}}</td>
+				<td>{{site.ApplicationPoolName}}</td>
+				<td>{{site.PhysicalPath}}</td>
+				<td>{{site.Protocal}}</td>
 
-				<td ng-if="info.Protocal=='ftp'" colspan="5"></td>
-				<td ng-if="info.Protocal!='ftp'">{{info.Address}}</td>
-				<td ng-if="info.Protocal!='ftp'">{{info.Port}}</td>
-				<td ng-if="info.Protocal!='ftp'">{{info.Host}}</td>
-				<td ng-if="info.Protocal!='ftp'">{{info.State}}</td>
+				<td ng-if="site.Protocal=='ftp'" colspan="5"></td>
+				<td ng-if="site.Protocal!='ftp'">{{site.Address}}</td>
+				<td ng-if="site.Protocal!='ftp'">{{site.Port}}</td>
+				<td ng-if="site.Protocal!='ftp'">{{site.Host}}</td>
+				<td ng-if="site.Protocal!='ftp'">{{site.State}}</td>
 				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
-					<td class="text-right" ng-if="info.State == 'Started' && info.Protocal!='ftp'">
-						<button class="btn btn-danger" ng-click="stopSite(info.Id)">关闭</button>
+					<td class="text-right" ng-if="site.State == 'Started' && site.Protocal!='ftp'">
+						<button class="btn btn-danger" ng-click="stopSite(site.Id)">关闭</button>
 					</td>
-					<td class="text-right" ng-if="info.State == 'Stopped' && info.Protocal!='ftp'">
-						<button class="btn btn-primary" ng-click="startSite(info.Id)">开启</button>
+					<td class="text-right" ng-if="site.State == 'Stopped' && site.Protocal!='ftp'">
+						<button class="btn btn-primary" ng-click="startSite(site.Id)">开启</button>
 					</td>
 				}
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div class="box box-default">
+	<div class="box-header">
+		<h3 class="box-title">
+			应用程序池状态
+		</h3>
+	</div>
+	<div class="table-responsive">
+		<table class="table no-margin">
+			<tr>
+				<th>Pid</th>
+				<th>应用程序池名</th>
+				<th>状态</th>
+			</tr>
+			<tr ng-repeat="w3wp in w3wps">
+				<td>{{w3wp.Pid}}</td>
+				<td>{{w3wp.ApplicationPoolName}}</td>
+				<td>{{w3wp.State}}</td>
 			</tr>
 		</table>
 	</div>

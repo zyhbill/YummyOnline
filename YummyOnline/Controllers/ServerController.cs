@@ -26,7 +26,10 @@ namespace YummyOnline.Controllers {
 		}
 
 		public JsonResult GetIISInfo() {
-			return Json(IISManager.GetSites());
+			return Json(new {
+				Sites = IISManager.GetSites(),
+				W3wps = IISManager.GetWorkerProcesses()
+			});
 		}
 		public JsonResult StartSite(int siteId) {
 			if(IISManager.StartSite(siteId)) {

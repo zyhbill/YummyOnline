@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
 using Protocal;
+using OrderSystem.Utility;
 
 namespace OrderSystem.Areas.Waiter.Controllers {
 	[Authorize(Roles = nameof(Schema.ReadWaiterData))]

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
 
-namespace OrderSystem {
+namespace OrderSystem.Utility {
 	public class DynamicsCombination {
 		public static dynamic CombineDynamics(object item1, object item2) {
 			IDictionary<string, object> result = new ExpandoObject();

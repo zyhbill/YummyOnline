@@ -183,10 +183,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Code\SMSSender.cs" />
-    <Compile Include="App_Code\CodeImg.cs" />
-    <Compile Include="App_Code\DynamicsCombination.cs" />
-    <Compile Include="App_Code\OrderManager.cs" />
+    <Compile Include="Utility\SMSSender.cs" />
+    <Compile Include="Utility\CodeImg.cs" />
+    <Compile Include="Utility\DynamicsCombination.cs" />
+    <Compile Include="Utility\OrderManager.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\NewDineInformTcpClient.cs" />

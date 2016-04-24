@@ -6,8 +6,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 	<meta charset="UTF-8">
 	<title>店小二</title>
-	<link href="~/Content/css/lib/bootstrap.min.css" rel="stylesheet" />
-	<link href="~/Content/css/lib/font-awesome.min.css" rel="stylesheet" />
+	@Styles.Render("~/css/bootstrap")
+	@Styles.Render("~/css/fontawesome")
 
 	<link href="~/Content/css/lib/animate.min.css" rel="stylesheet">
 	<link href="~/Content/css/lib/toastr.min.css" rel="stylesheet" />
@@ -18,12 +18,12 @@
 <body>
 	@RenderBody()
 
-	<script src="~/Scripts/lib/jquery-2.2.0.min.js"></script>
-	<script src="~/Scripts/lib/angular.min.js"></script>
-	<script src="~/Scripts/lib/angular-route.min.js"></script>
+	@Scripts.Render("~/scripts/jquery")
+	@Scripts.Render("~/scripts/bootstrap")
+	@Scripts.Render("~/scripts/angular")
+	@Scripts.Render("~/scripts/angular-route")
+	@Scripts.Render("~/scripts/angular-ui-bootstrap")
 	<script src="~/Scripts/lib/angularjs-storage.min.js"></script>
-	<script src="~/Scripts/lib/ui-bootstrap-tpls.min.js"></script>
-	<script src="~/Scripts/lib/bootstrap.min.js"></script>
 	<script src="~/Scripts/lib/toastr.min.js"></script>
 
 	<script src="~/Areas/Waiter/Scripts/app.js"></script>

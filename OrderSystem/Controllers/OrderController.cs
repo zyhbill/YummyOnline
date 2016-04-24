@@ -8,6 +8,7 @@ using Protocal;
 using YummyOnlineDAO;
 using System.Collections.Generic;
 using OrderSystem.Models;
+using OrderSystem.Utility;
 
 namespace OrderSystem.Controllers {
 	public class OrderController : BaseCommonController {

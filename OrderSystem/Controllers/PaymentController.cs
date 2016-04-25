@@ -12,6 +12,7 @@ using System;
 using Protocal;
 using System.Text;
 using System.Collections.Generic;
+using System.Web;
 
 namespace OrderSystem.Controllers {
 	public class PaymentController : BaseCommonController {
@@ -198,7 +199,7 @@ namespace OrderSystem.Controllers {
 			return await WaiterPayCompleted(paidDetails);
 		}
 
-		
+
 
 		/// <summary>
 		/// 重新支付
@@ -269,9 +270,10 @@ namespace OrderSystem.Controllers {
 
 			StringBuilder redirectUrl = new StringBuilder();
 			redirectUrl.Append($"{dinePaidDetail.PayKind.RedirectUrl}?");
-			redirectUrl.Append($"HotelId={hotelConfig.Id}&DineId={dineId}&Price={Cryptography.DesCryptography.DesEncrypt(dinePaidDetail.Price.ToString())}&");
-			redirectUrl.Append($"NotifyUrl={dinePaidDetail.PayKind.NotifyUrl}&");
-			redirectUrl.Append($"CompleteUrl={dinePaidDetail.PayKind.CompleteUrl}");
+			string priceCrypted = Cryptography.DesCryptography.DesEncrypt(dinePaidDetail.Price.ToString());
+			redirectUrl.Append($"HotelId={hotelConfig.Id}&DineId={dineId}&Price={HttpUtility.UrlEncode(priceCrypted)}&");
+			redirectUrl.Append($"NotifyUrl={HttpUtility.UrlEncode(dinePaidDetail.PayKind.NotifyUrl)}&");
+			redirectUrl.Append($"CompleteUrl={HttpUtility.UrlEncode(dinePaidDetail.PayKind.CompleteUrl)}");
 			return redirectUrl.ToString();
 		}
 		private async Task onlinePayCompleted(string dineId, string recordId) {

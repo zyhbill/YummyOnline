@@ -252,7 +252,8 @@
 ```json
 {
 	"Succeeded": <bool>,
-	"ErrorMessage": <string>
+	"ErrorMessage": <string>,
+	"Data": <string: DineId>
 }
 ```
 
@@ -281,7 +282,8 @@
 ```json
 {
 	"Succeeded": <bool>,
-	"ErrorMessage": <string>
+	"ErrorMessage": <string>,
+	"Data": <string: DineId>
 }
 ```
 
@@ -315,7 +317,8 @@
 ```json
 {
 	"Succeeded": <bool>,
-	"ErrorMessage": <string>
+	"ErrorMessage": <string>,
+	"Data": <string: DineId>
 }
 ```
 

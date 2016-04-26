@@ -38,8 +38,8 @@ namespace OrderSystem.Waiter.Controllers {
 				HttpResponseMessage response = await httpClient.PostAsync($"{url}/Payment/WaiterPay", content);
 				if(response != null) {
 					if(response.StatusCode == HttpStatusCode.OK) {
-						string json = await response.Content.ReadAsStringAsync();
-						return Json(JsonConvert.DeserializeObject(json));
+						string jsonResponse = await response.Content.ReadAsStringAsync();
+						return Json(JsonConvert.DeserializeObject(jsonResponse));
 					}
 				}
 			}

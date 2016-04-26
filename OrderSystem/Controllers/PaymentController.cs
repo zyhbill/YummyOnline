@@ -148,7 +148,7 @@ namespace OrderSystem.Controllers {
 
 			await newDineInform(dine.Id, "Waiter");
 
-			return Json(new JsonSuccess());
+			return Json(new JsonSuccess(dine.Id));
 		}
 
 		/// <summary>
@@ -165,7 +165,7 @@ namespace OrderSystem.Controllers {
 
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, paidDetails.DineId, true);
 
-			return Json(new JsonSuccess());
+			return Json(new JsonSuccess(paidDetails.DineId));
 		}
 		/// <summary>
 		/// 服务员支付并且带所有支付详情

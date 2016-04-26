@@ -247,7 +247,7 @@ namespace YummyOnlineTcpServer {
 		/// OrderSystem通知有新的订单
 		/// </summary>
 		private void orderSystemNewDineInform(TcpClientInfo clientInfo, OrderSystemNewDineInformProtocal protocal) {
-			log($"{clientInfo.OriginalRemotePoint} (NewDineInform): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}", Log.LogLevel.Success);
+			log($"{clientInfo.OriginalRemotePoint} (NewDineInform): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, IsPaid: {protocal.IsPaid}", Log.LogLevel.Success);
 
 			foreach(var p in NewDineInformClients) {
 				if(p.Value == null)

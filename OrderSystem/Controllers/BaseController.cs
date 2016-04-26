@@ -22,11 +22,10 @@ namespace OrderSystem.Controllers {
 			};
 		}
 		protected override void OnActionExecuted(ActionExecutedContext filterContext) {
+			ViewBag.HotelId = CurrHotel?.Id;
+			ViewBag.CssThemePath = CurrHotel?.CssThemePath;
+
 			base.OnActionExecuted(filterContext);
-			if(CurrHotel != null) {
-				ViewBag.HotelId = CurrHotel.Id;
-				ViewBag.CssThemePath = CurrHotel.CssThemePath;
-			}
 		}
 		private YummyOnlineManager _yummyOnlineManager;
 		public YummyOnlineManager YummyOnlineManager {
@@ -36,12 +35,6 @@ namespace OrderSystem.Controllers {
 				}
 				return _yummyOnlineManager;
 			}
-		}
-
-		public void HotelMissingError() {
-			Response.ContentType = "application/json; charset=utf-8";
-			Response.Write(JsonConvert.SerializeObject(new JsonError("Hotel Missing")));
-			Response.End();
 		}
 
 		public Hotel CurrHotel {
@@ -54,7 +47,7 @@ namespace OrderSystem.Controllers {
 		}
 	}
 
-	public class BaseCommonController : BaseController {
+	public class BaseOrderSystemController : BaseController {
 		private UserManager _userManager;
 		public UserManager UserManager {
 			get {
@@ -78,12 +71,7 @@ namespace OrderSystem.Controllers {
 		public HotelManager HotelManager {
 			get {
 				if(_hotelManager == null) {
-					Hotel hotel = CurrHotel;
-					if(hotel == null) {
-						HotelMissingError();
-					}
-					string connString = hotel.ConnectionString;
-					_hotelManager = new HotelManager(connString);
+					_hotelManager = new HotelManager(CurrHotel.ConnectionString);
 				}
 				return _hotelManager;
 			}
@@ -115,6 +103,24 @@ namespace OrderSystem.Controllers {
 				scriptSerializer.Serialize(sw, this.Data);
 				response.Write(sw.ToString());
 			}
+		}
+	}
+
+	public class RequireHotelAttribute : ActionFilterAttribute {
+		public override void OnActionExecuted(ActionExecutedContext filterContext) {
+			HttpContextBase context = filterContext.HttpContext;
+			if(context.Session["Hotel"] == null) {
+				if(context.Request.IsAjaxRequest()) {
+					context.Response.ContentType = "application/json; charset=utf-8";
+					context.Response.Write(JsonConvert.SerializeObject(new JsonError("Hotel Missing")));
+				}
+				else {
+					context.Response.Redirect("/Error/HotelMissing");
+				}
+				context.Response.End();
+			}
+
+			base.OnActionExecuted(filterContext);
 		}
 	}
 }

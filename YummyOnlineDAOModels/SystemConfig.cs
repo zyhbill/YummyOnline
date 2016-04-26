@@ -20,8 +20,11 @@ namespace YummyOnlineDAO.Models {
 		/// <summary>
 		/// tcp服务器目录
 		/// </summary>
+		[Required]
 		public string TcpServerDir { get; set; }
-
+		[Required]
+		public string OrderSystemUrl { get; set; }
+		[Required]
 		public string Token { get; set; }
 	}
 

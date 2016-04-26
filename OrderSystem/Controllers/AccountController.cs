@@ -9,7 +9,8 @@ using YummyOnlineDAO.Models;
 using Protocal;
 
 namespace OrderSystem.Controllers {
-	public class AccountController : BaseCommonController {
+	[RequireHotel]
+	public class AccountController : BaseOrderSystemController {
 		// GET: Account
 		public ActionResult Index() {
 			return View();

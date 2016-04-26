@@ -7,7 +7,7 @@ using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
 
 namespace OrderSystem.Controllers {
-	public class HomeController : BaseCommonController {
+	public class HomeController : BaseOrderSystemController {
 		// GET: 店小二点菜系统入口 Home/Index/[hotelId]/[qrCode]
 		public async Task<ActionResult> Index(int? hotelId, string qrCode) {
 			if(hotelId == null || qrCode == null) {
@@ -19,6 +19,7 @@ namespace OrderSystem.Controllers {
 				return RedirectToAction("HotelMissing", "Error");
 			}
 			Session.Timeout = 120;
+
 			CurrHotel = hotel;
 
 			Desk desk = await new HotelManager(hotel.ConnectionString).GetDeskByQrCode(qrCode);

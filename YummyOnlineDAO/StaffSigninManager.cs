@@ -23,12 +23,15 @@ namespace YummyOnlineDAO.Identity {
 			string userData = String.Join(",", roleStrs);
 
 			// 将用户Id作为票据的Name
-			FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, staff.Id.ToString(), DateTime.Now, DateTime.Now.AddDays(1), isPersistent, userData);
+			FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, staff.Id.ToString(), DateTime.Now,
+				DateTime.Now.AddDays(7),
+				isPersistent, userData);
 			string authTicket = FormsAuthentication.Encrypt(ticket);
-			HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName) {
-				Value = authTicket,
-				Expires = DateTime.Now.AddDays(365),
-			};
+			HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, authTicket);
+			if(isPersistent) {
+				cookie.Expires = ticket.Expiration;
+			}
+
 			httpCtx.Response.SetCookie(cookie);
 		}
 	}

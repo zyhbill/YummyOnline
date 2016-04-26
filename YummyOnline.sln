@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TcpClientTest", "TcpClientT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YummyOnlineTcpServer", "YummyOnlineTcpServer\YummyOnlineTcpServer.csproj", "{AF4CAA4D-3EBA-4A06-9BAF-2F096784D06E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderSystem.Waiter", "OrderSystem.Waiter\OrderSystem.Waiter.csproj", "{E7C8F610-DF4E-4C30-A7A3-60C1F7EBCE79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,10 @@ Global
 		{AF4CAA4D-3EBA-4A06-9BAF-2F096784D06E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF4CAA4D-3EBA-4A06-9BAF-2F096784D06E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF4CAA4D-3EBA-4A06-9BAF-2F096784D06E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7C8F610-DF4E-4C30-A7A3-60C1F7EBCE79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7C8F610-DF4E-4C30-A7A3-60C1F7EBCE79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7C8F610-DF4E-4C30-A7A3-60C1F7EBCE79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7C8F610-DF4E-4C30-A7A3-60C1F7EBCE79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

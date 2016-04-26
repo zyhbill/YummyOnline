@@ -11,12 +11,10 @@ using OrderSystem.Models;
 using OrderSystem.Utility;
 
 namespace OrderSystem.Controllers {
-	public class OrderController : BaseCommonController {
+	[RequireHotel]
+	public class OrderController : BaseOrderSystemController {
 		// GET: Order
 		public ActionResult Index() {
-			if(CurrHotel == null) {
-				return RedirectToAction("HotelMissing", "Error");
-			}
 			return View();
 		}
 
@@ -38,18 +36,14 @@ namespace OrderSystem.Controllers {
 		}
 
 		public async Task<JsonResult> GetMenuInfos() {
-			Hotel hotel = CurrHotel;
-			if(hotel == null) {
-				return Json(new JsonError("Hotel Missing"));
-			}
-			var t1 = new HotelManager(hotel.ConnectionString).GetMenuClasses();
-			var t2 = new HotelManager(hotel.ConnectionString).GetMenus();
-			var t3 = new HotelManager(hotel.ConnectionString).GetMenuOnSales();
-			var t4 = new HotelManager(hotel.ConnectionString).GetMenuSetMeals();
-			var t5 = new HotelManager(hotel.ConnectionString).GetPayKinds();
-			var t6 = new HotelManager(hotel.ConnectionString).GetHotelConfig();
-			var t7 = new HotelManager(hotel.ConnectionString).GetTimeDiscounts();
-			var t8 = new HotelManager(hotel.ConnectionString).GetVipDiscounts();
+			var t1 = new HotelManager(CurrHotel.ConnectionString).GetMenuClasses();
+			var t2 = new HotelManager(CurrHotel.ConnectionString).GetMenus();
+			var t3 = new HotelManager(CurrHotel.ConnectionString).GetMenuOnSales();
+			var t4 = new HotelManager(CurrHotel.ConnectionString).GetMenuSetMeals();
+			var t5 = new HotelManager(CurrHotel.ConnectionString).GetPayKinds();
+			var t6 = new HotelManager(CurrHotel.ConnectionString).GetHotelConfig();
+			var t7 = new HotelManager(CurrHotel.ConnectionString).GetTimeDiscounts();
+			var t8 = new HotelManager(CurrHotel.ConnectionString).GetVipDiscounts();
 
 			var result = new {
 				MenuClasses = await t1,
@@ -62,11 +56,11 @@ namespace OrderSystem.Controllers {
 					VipDiscounts = await t8
 				},
 				Hotel = DynamicsCombination.CombineDynamics(await t6, new {
-					hotel.Name,
-					hotel.Address,
-					hotel.Tel,
-					hotel.OpenTime,
-					hotel.CloseTime
+					CurrHotel.Name,
+					CurrHotel.Address,
+					CurrHotel.Tel,
+					CurrHotel.OpenTime,
+					CurrHotel.CloseTime
 				})
 			};
 			return Json(result);

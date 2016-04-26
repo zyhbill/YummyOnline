@@ -10,14 +10,12 @@ using System.Web.Security;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
 
-
 namespace OrderSystem {
 	public class MvcApplication : HttpApplication {
-		protected void Application_Start() {
+		protected virtual void Application_Start() {
 			var _ = new YummyOnlineManager().RecordLog(Log.LogProgram.OrderSystem, Log.LogLevel.Info, "OrderSystem Initializing");
 			_ = NewDineInformTcpClient.Initialize();
 
-			AreaRegistration.RegisterAllAreas();
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 		}

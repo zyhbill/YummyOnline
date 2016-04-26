@@ -1,21 +1,18 @@
 ﻿using HotelDAO;
 using HotelDAO.Models;
+using Newtonsoft.Json;
 using OrderSystem.Models;
+using Protocal;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
-using Newtonsoft.Json;
-using System.Linq;
-using System;
-using Protocal;
-using System.Text;
-using System.Collections.Generic;
-using System.Web;
 
 namespace OrderSystem.Controllers {
-	public class PaymentController : BaseCommonController {
+	public class PaymentController : BaseOrderSystemController {
 		private StaffManager _staffManager;
 		public StaffManager StaffManager {
 			get {
@@ -30,12 +27,7 @@ namespace OrderSystem.Controllers {
 		public OrderManager OrderManager {
 			get {
 				if(_orderManager == null) {
-					Hotel hotel = CurrHotel;
-					if(hotel == null) {
-						HotelMissingError();
-					}
-					string connString = hotel.ConnectionString;
-					_orderManager = new OrderManager(connString);
+					_orderManager = new OrderManager(CurrHotel.ConnectionString);
 				}
 				return _orderManager;
 			}
@@ -271,9 +263,9 @@ namespace OrderSystem.Controllers {
 			StringBuilder redirectUrl = new StringBuilder();
 			redirectUrl.Append($"{dinePaidDetail.PayKind.RedirectUrl}?");
 			string priceCrypted = Cryptography.DesCryptography.DesEncrypt(dinePaidDetail.Price.ToString());
-			redirectUrl.Append($"HotelId={hotelConfig.Id}&DineId={dineId}&Price={HttpUtility.UrlEncode(priceCrypted)}&");
-			redirectUrl.Append($"NotifyUrl={HttpUtility.UrlEncode(dinePaidDetail.PayKind.NotifyUrl)}&");
-			redirectUrl.Append($"CompleteUrl={HttpUtility.UrlEncode(dinePaidDetail.PayKind.CompleteUrl)}");
+			redirectUrl.Append($"HotelId={hotelConfig.Id}&DineId={dineId}&Price={Server.UrlEncode(priceCrypted)}&");
+			redirectUrl.Append($"NotifyUrl={Server.UrlEncode(dinePaidDetail.PayKind.NotifyUrl)}&");
+			redirectUrl.Append($"CompleteUrl={Server.UrlEncode(dinePaidDetail.PayKind.CompleteUrl)}");
 			return redirectUrl.ToString();
 		}
 		private async Task onlinePayCompleted(string dineId, string recordId) {
@@ -283,6 +275,9 @@ namespace OrderSystem.Controllers {
 		}
 
 		private async Task<FunctionResult> waiterPay(Cart cart, WaiterCartAddition cartAddition) {
+			if(cartAddition.HotelId != null) {
+				CurrHotel = await YummyOnlineManager.GetHotelById((int)cartAddition.HotelId);
+			}
 			var staff = await StaffManager.FindStaffById(User.Identity.GetUserId());
 
 			cart.PayKindId = await new HotelManagerForWaiter(CurrHotel.ConnectionString).GetOtherPayKindId();

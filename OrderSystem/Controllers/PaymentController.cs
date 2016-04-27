@@ -97,8 +97,7 @@ namespace OrderSystem.Controllers {
 		/// <param name="cartAddition"></param>
 		/// <returns></returns>
 		public async Task<JsonResult> ManagerPay(Cart cart, ManagerCartAddition cartAddition) {
-			SystemConfig system = await YummyOnlineManager.GetSystemConfig();
-			if(system.Token != cartAddition.Token) {
+			if(!await verifyToken(cartAddition.Token)) {
 				return Json(new JsonError("身份验证失败"));
 			}
 
@@ -136,8 +135,11 @@ namespace OrderSystem.Controllers {
 		/// <param name="cart"></param>
 		/// <param name="cartAddition"></param>
 		/// <returns></returns>
-		[Authorize(Roles = nameof(Schema.SubmitWaiterPay))]
-		public async Task<JsonResult> WaiterPay(Cart cart, WaiterCartAddition cartAddition) {
+		public async Task<JsonResult> WaiterPay(Cart cart, WaiterCartAddition cartAddition, string token) {
+			if(!await verifyToken(token)) {
+				return Json(new JsonError("身份验证失败"));
+			}
+
 			FunctionResult result = await waiterPay(cart, cartAddition);
 
 			if(!result.Succeeded) {
@@ -156,8 +158,11 @@ namespace OrderSystem.Controllers {
 		/// </summary>
 		/// <param name="paidDetails"></param>
 		/// <returns></returns>
-		[Authorize(Roles = nameof(Schema.SubmitWaiterPay))]
-		public async Task<JsonResult> WaiterPayCompleted(WaiterPaidDetails paidDetails) {
+		public async Task<JsonResult> WaiterPayCompleted(WaiterPaidDetails paidDetails, string token) {
+			if(!await verifyToken(token)) {
+				return Json(new JsonError("身份验证失败"));
+			}
+
 			bool succeeded = await OrderManager.OfflinePayCompleted(paidDetails);
 			if(!succeeded) {
 				return Json(new JsonError("支付金额与应付金额不匹配"));
@@ -174,8 +179,11 @@ namespace OrderSystem.Controllers {
 		/// <param name="cartAddition"></param>
 		/// <param name="paidDetails"></param>
 		/// <returns></returns>
-		[Authorize(Roles = nameof(Schema.SubmitWaiterPay))]
-		public async Task<JsonResult> WaiterPayWithPaidDetails(Cart cart, WaiterCartAddition cartAddition, WaiterPaidDetails paidDetails) {
+		public async Task<JsonResult> WaiterPayWithPaidDetails(Cart cart, WaiterCartAddition cartAddition, WaiterPaidDetails paidDetails, string token) {
+			if(!await verifyToken(token)) {
+				return Json(new JsonError("身份验证失败"));
+			}
+
 			FunctionResult result = await waiterPay(cart, cartAddition);
 
 			if(!result.Succeeded) {
@@ -188,7 +196,7 @@ namespace OrderSystem.Controllers {
 
 			paidDetails.DineId = dine.Id;
 
-			return await WaiterPayCompleted(paidDetails);
+			return await WaiterPayCompleted(paidDetails, token);
 		}
 
 
@@ -207,7 +215,6 @@ namespace OrderSystem.Controllers {
 		/// </summary>
 		public async Task<JsonResult> OnlineNotify(string encryptedInfo) {
 			string decryptedInfo = Cryptography.DesCryptography.DesDecrypt(encryptedInfo);
-
 			NetworkNotifyViewModels model = null;
 
 			try {
@@ -274,11 +281,21 @@ namespace OrderSystem.Controllers {
 			await requestPrintDine(dineId);
 		}
 
-		private async Task<FunctionResult> waiterPay(Cart cart, WaiterCartAddition cartAddition) {
-			if(cartAddition.HotelId != null) {
-				CurrHotel = await YummyOnlineManager.GetHotelById((int)cartAddition.HotelId);
+		private async Task<bool> verifyToken(string token) {
+			SystemConfig system = await YummyOnlineManager.GetSystemConfig();
+			if(system.Token != token) {
+				return false;
 			}
-			var staff = await StaffManager.FindStaffById(User.Identity.GetUserId());
+			return true;
+		}
+
+		private async Task<FunctionResult> waiterPay(Cart cart, WaiterCartAddition cartAddition) {
+			var staff = await StaffManager.FindStaffById(cartAddition.WaiterId);
+			if(staff == null) {
+				return new FunctionResult(false, "未找到服务员");
+			}
+
+			CurrHotel = await YummyOnlineManager.GetHotelById(staff.HotelId);
 
 			cart.PayKindId = await new HotelManagerForWaiter(CurrHotel.ConnectionString).GetOtherPayKindId();
 			CartAddition addition = new CartAddition {

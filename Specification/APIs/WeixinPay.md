@@ -73,7 +73,15 @@ Des加密解密类
 ```
 
 ##### Eg
-`http://ordersystem.yummyonline.net/encryptedInfo=AUuAdrGRMGIdde324ASDee23`
+POST
+`http://ordersystem.yummyonline.net/Payment/OnlineNotify
+
+Data:
+```json
+{
+	"EncryptedInfo": <string>
+}
+```
 
 2.3 支付完成，跳转支付完成页面
 ##### URL

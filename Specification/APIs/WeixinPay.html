@@ -40,7 +40,13 @@
 }
 </code></pre><p>将构造好的json字符串利用DES加密作为异步通知的参数传递</p><h5 id="params"><a name="params" href="#params"></a>Params</h5><pre><code data-origin="<pre><code>&quot;encryptedInfo&quot; 加密之后的信息
 </code></pre>">"encryptedInfo" 加密之后的信息
-</code></pre><h5 id="eg"><a name="eg" href="#eg"></a>Eg</h5><p><code>http://ordersystem.yummyonline.net/encryptedInfo=AUuAdrGRMGIdde324ASDee23</code></p><p>2.3 支付完成，跳转支付完成页面</p><h5 id="url"><a name="url" href="#url"></a>URL</h5><p><code>CompleteUrl</code></p><h5 id="params"><a name="params" href="#params"></a>Params</h5><pre><code data-origin="<pre><code>&quot;Succeeded&quot; 是否成功支付，可以省略此参数，默认为true
+</code></pre><h5 id="eg"><a name="eg" href="#eg"></a>Eg</h5><p>POST<br>`<a href="http://ordersystem.yummyonline.net/Payment/OnlineNotify">http://ordersystem.yummyonline.net/Payment/OnlineNotify</a></p><p>Data:</p><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
+    &quot;EncryptedInfo&quot;: &amp;lt;string&amp;gt;
+}
+</code></pre>">{
+    "<span class="hljs-attribute">EncryptedInfo</span>": <span class="hljs-value">&lt;string&gt;
+</span>}
+</code></pre><p>2.3 支付完成，跳转支付完成页面</p><h5 id="url"><a name="url" href="#url"></a>URL</h5><p><code>CompleteUrl</code></p><h5 id="params"><a name="params" href="#params"></a>Params</h5><pre><code data-origin="<pre><code>&quot;Succeeded&quot; 是否成功支付，可以省略此参数，默认为true
 &quot;DineId&quot; 订单号
 </code></pre>">"Succeeded" 是否成功支付，可以省略此参数，默认为true
 "DineId" 订单号

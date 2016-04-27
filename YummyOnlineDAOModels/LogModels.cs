@@ -32,7 +32,8 @@ namespace YummyOnlineDAO.Models {
 			/// <summary>
 			/// 其他远程日志
 			/// </summary>
-			Remote = 5
+			Remote = 5,
+			OrderSystem_Waiter = 6
 		}
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]

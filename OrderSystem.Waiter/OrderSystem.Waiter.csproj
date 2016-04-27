@@ -158,6 +158,7 @@
     <Content Include="Views\Order\_ViewPayment.cshtml" />
     <Content Include="Views\Shared\_LayoutGlobal.cshtml" />
     <Content Include="Views\Shared\_PartialLoading.cshtml" />
+    <None Include="Properties\PublishProfiles\OrderSystem.Waiter.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

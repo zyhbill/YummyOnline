@@ -37,7 +37,7 @@ namespace OrderSystem.Models {
 
 
 	public class WaiterCartAddition {
-		public int? HotelId { get; set; }
+		public string WaiterId { get; set; }
 		public string UserId { get; set; }
 		public double? Discount { get; set; }
 		public string DiscountName { get; set; }

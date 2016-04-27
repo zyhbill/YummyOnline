@@ -1,7 +1,7 @@
 ### 服务员登录
 #### POST
 #### URL
-	/Waiter/Account/Signin
+	/Account/Signin
 #### Parameters
 ```json
 {
@@ -22,7 +22,7 @@
 ### 服务员登出
 #### POST ***AUTHORIZED***
 #### URL
-	/Waiter/Account/Signout
+	/Account/Signout
 #### Parameters
 #### Results
 ```json
@@ -36,7 +36,7 @@
 ### 获取所有数据
 #### POST ***AUTHORIZED***
 #### URL
-	/Waiter/Order/GetMenuInfos
+	/Order/GetMenuInfos
 #### Parameters
 #### Results
 ```json
@@ -137,7 +137,7 @@
 ### 获取饭店基本信息
 #### POST ***AUTHORIZED***
 #### URL
-	/Waiter/Order/GetHotelInfos
+	/Order/GetHotelInfos
 #### Parameters
 #### Results
 ```json
@@ -176,7 +176,7 @@
 ### 获取会员信息
 #### POST ***AUTHORIZED***
 #### URL
-	/Waiter/Account/VerifyCustomer
+	/Account/VerifyCustomer
 #### Parameters
 ```json
 {
@@ -201,7 +201,7 @@
 ### 验证是否为会员
 #### POST ***AUTHORIZED***
 #### URL
-	/Waiter/Account/IsCustomer
+	/Account/IsCustomer
 #### Parameters
 ```json
 {
@@ -342,7 +342,7 @@
 ### 获取当前的点单
 #### POST ***AUTHORIZED***
 #### URL
-	/Waiter/Order/GetCurrentDines
+	/Order/GetCurrentDines
 #### Parameters
 ```json
 {
@@ -361,7 +361,7 @@
 ### 根据订单号获取点单
 #### POST ***AUTHORIZED***
 #### URL
-	/Waiter/Order/GetDineById
+	/Order/GetDineById
 #### Parameters
 ```json
 {

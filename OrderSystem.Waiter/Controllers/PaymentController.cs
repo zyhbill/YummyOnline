@@ -1,15 +1,12 @@
-﻿using OrderSystem.Models;
+﻿using HotelDAO.Models;
+using Newtonsoft.Json;
+using OrderSystem.Models;
 using Protocal;
-using System.Web;
-using System.Web.Mvc;
+using System;
 using System.Net;
 using System.Net.Http;
-using System;
 using System.Threading.Tasks;
-using System.IO;
-using System.Text;
-using Newtonsoft.Json;
-using HotelDAO.Models;
+using System.Web.Mvc;
 using YummyOnlineDAO.Models;
 
 namespace OrderSystem.Waiter.Controllers {

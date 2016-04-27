@@ -123,8 +123,8 @@ namespace HotelDAO {
 		}
 
 		public async Task<bool> IsDinePaid(string dineId) {
-			var dine = await ctx.Dines.FirstOrDefaultAsync(p => p.Id == dineId && p.IsPaid == true);
-			return dine != null;
+			bool isPaid = await ctx.Dines.Where(p => p.Id == dineId).Select(p => p.IsPaid).FirstOrDefaultAsync();
+			return isPaid;
 		}
 	}
 }

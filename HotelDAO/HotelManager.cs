@@ -10,7 +10,7 @@ namespace HotelDAO {
 	public partial class HotelManager : BaseHotelManager {
 		public HotelManager(string connString) : base(connString) { }
 
-		public async Task<Customer> GetOrCreateCustomerOrCreate(string userId) {
+		public async Task<Customer> GetOrCreateCustomer(string userId) {
 			Customer customer = await ctx.Customers.FirstOrDefaultAsync(p => p.Id == userId);
 			if(customer == null) {
 				customer = new Customer {

@@ -121,5 +121,10 @@ namespace HotelDAO {
 				.FirstOrDefaultAsync();
 			return dine;
 		}
+
+		public async Task<bool> IsDinePaid(string dineId) {
+			var dine = await ctx.Dines.FirstOrDefaultAsync(p => p.Id == dineId && p.IsPaid == true);
+			return dine != null;
+		}
 	}
 }

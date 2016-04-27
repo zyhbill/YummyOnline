@@ -55,7 +55,7 @@ namespace OrderSystem.Waiter.Controllers {
 
 			HotelManager hotelManager = new HotelManager(CurrHotel.ConnectionString);
 
-			return Json(new JsonSuccess(await hotelManager.GetOrCreateCustomerOrCreate(user.Id)));
+			return Json(new JsonSuccess(await hotelManager.GetOrCreateCustomer(user.Id)));
 		}
 		[Authorize(Roles = nameof(HotelDAO.Models.Schema.ReadWaiterData))]
 		public async Task<JsonResult> IsCustomer(string userId) {
@@ -65,7 +65,7 @@ namespace OrderSystem.Waiter.Controllers {
 			}
 
 			HotelManager hotelManager = new HotelManager(CurrHotel.ConnectionString);
-			return Json(new JsonSuccess(await hotelManager.GetOrCreateCustomerOrCreate(userId)));
+			return Json(new JsonSuccess(await hotelManager.GetOrCreateCustomer(userId)));
 		}
 	}
 }

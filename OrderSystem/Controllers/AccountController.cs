@@ -178,7 +178,7 @@ namespace OrderSystem.Controllers {
 			if(user == null) {
 				return null;
 			}
-			HotelDAO.Models.Customer customer = await HotelManager.GetOrCreateCustomerOrCreate(userId);
+			HotelDAO.Models.Customer customer = await HotelManager.GetOrCreateCustomer(userId);
 
 			return new {
 				user.Id,

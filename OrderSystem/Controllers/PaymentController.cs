@@ -3,6 +3,7 @@ using HotelDAO.Models;
 using Newtonsoft.Json;
 using OrderSystem.Models;
 using Protocal;
+using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -74,7 +75,7 @@ namespace OrderSystem.Controllers {
 
 			if(payKind.Type == PayKindType.Online) {
 				DinePaidDetail paidDetail = dine.DinePaidDetails.FirstOrDefault(p => p.PayKind.Id == payKind.Id);
-				if(paidDetail.Price == 0) {
+				if(Math.Abs((double)(paidDetail.Price - 0)) < 0.01) {
 					redirectUrl = $"{payKind.CompleteUrl}?Succeeded={true}&DineId={dine.Id}";
 					await onlinePayCompleted(dine.Id, null);
 				}
@@ -226,7 +227,7 @@ namespace OrderSystem.Controllers {
 
 			CurrHotel = await YummyOnlineManager.GetHotelById(model.HotelId);
 
-			await new HotelManager(CurrHotel.ConnectionString).RecordLog(HotelDAO.Models.Log.LogLevel.Info, $"Notified DineId: {model.DineId}");
+			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Info, $"Notified DineId: {model.DineId}");
 			await onlinePayCompleted(model.DineId, model.RecordId);
 
 			return Json(new JsonSuccess());
@@ -276,6 +277,11 @@ namespace OrderSystem.Controllers {
 			return redirectUrl.ToString();
 		}
 		private async Task onlinePayCompleted(string dineId, string recordId) {
+			bool isPaid = await new HotelManagerForWaiter(CurrHotel.ConnectionString).IsDinePaid(dineId);
+			if(isPaid) {
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Warning, $"DineId: {dineId} Has Been Paid");
+				return;
+			}
 			await OrderManager.OnlinePayCompleted(dineId, recordId);
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dineId, true);
 			await requestPrintDine(dineId);

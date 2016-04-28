@@ -19,16 +19,14 @@ ALTER DATABASE [YummyOnlineHotelBaseDB] ADD FILE(
 GO
 ALTER PARTITION SCHEME DinePartitionSchema NEXT USED DinePartition1
 GO
-alter partition function DinePartitionFun() split range(N'16041300000001')
+alter partition function DinePartitionFun() split range(N'16041500000001')
 
 
 
-select * from Dines where $partition.DinePartitionFun(Id)=2
 
 
-/* 合并分区函数
+--合并分区函数
 
-alter partition function [DineParitionFun]() 
-merge range(N'16041300000001')
+alter partition function DinePartitionFun() 
+merge range(N'16041400000001')
 
-*/

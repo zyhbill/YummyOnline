@@ -1,5 +1,5 @@
 SELECT
-      OBJECT_NAME(p.object_id) AS ObjectName,
+      OBJECT_NAME(p.object_id) AS TableName,
       i.name                   AS IndexName,
       p.index_id               AS IndexID,
       ds.name                  AS PartitionScheme,   
@@ -34,30 +34,39 @@ LEFT JOIN sys.partition_range_values AS prv_right
       AND prv_right.boundary_id = p.partition_number 
 WHERE
       OBJECTPROPERTY(p.object_id, 'ISMSShipped') = 0
-UNION ALL
+
+
+select  $partition.[DinePartitionFun](id) as PartitionId
+,count(*) as Rows
+,min(id) as MinVal
+,max(id) as MaxVal
+from dbo.Dines
+group by $partition.[DinePartitionFun](id)
+order by PartitionId
+
 --non-partitioned table/indexes
-SELECT
-      OBJECT_NAME(p.object_id)    AS ObjectName,
-      i.name                      AS IndexName,
-      p.index_id                  AS IndexID,
-      NULL                        AS PartitionScheme,
-      p.partition_number          AS PartitionNumber,
-      fg.name                     AS FileGroupName,  
-      NULL                        AS LowerBoundaryValue,
-      NULL                        AS UpperBoundaryValue,
-      NULL                        AS Boundary, 
-      p.rows                      AS Rows
-FROM sys.partitions     AS p
-JOIN sys.indexes        AS i
-      ON i.object_id = p.object_id
-      AND i.index_id = p.index_id
-JOIN sys.data_spaces    AS ds
-      ON ds.data_space_id = i.data_space_id
-JOIN sys.filegroups           AS fg
-      ON fg.data_space_id = i.data_space_id
-WHERE
-      OBJECTPROPERTY(p.object_id, 'ISMSShipped') = 0
-ORDER BY
-      ObjectName,
-      IndexID,
-      PartitionNumber;
+--SELECT
+--      OBJECT_NAME(p.object_id)    AS ObjectName,
+--      i.name                      AS IndexName,
+--      p.index_id                  AS IndexID,
+--      NULL                        AS PartitionScheme,
+--      p.partition_number          AS PartitionNumber,
+--      fg.name                     AS FileGroupName,  
+--      NULL                        AS LowerBoundaryValue,
+--      NULL                        AS UpperBoundaryValue,
+--      NULL                        AS Boundary, 
+--      p.rows                      AS Rows
+--FROM sys.partitions     AS p
+--JOIN sys.indexes        AS i
+--      ON i.object_id = p.object_id
+--      AND i.index_id = p.index_id
+--JOIN sys.data_spaces    AS ds
+--      ON ds.data_space_id = i.data_space_id
+--JOIN sys.filegroups           AS fg
+--      ON fg.data_space_id = i.data_space_id
+--WHERE
+--      OBJECTPROPERTY(p.object_id, 'ISMSShipped') = 0
+--ORDER BY
+--      ObjectName,
+--      IndexID,
+--      PartitionNumber;

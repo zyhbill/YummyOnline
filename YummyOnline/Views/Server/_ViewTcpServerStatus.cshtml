@@ -83,18 +83,27 @@
 
 			<div class="box box-default">
 				<div class="box-header">
-					<h3 class="box-title">点菜系统</h3>
+					<h3 class="box-title">打印客户端</h3>
 				</div>
 				<div class="table-responsive">
-					<table class="table no-margin" ng-if="tcpServerInfo.Status.OrderSystemClient.IsConnected">
+					<table class="table no-margin">
 						<tr>
-							<td class="col-md-4">{{tcpServerInfo.Status.OrderSystemClient.IpAddress}}</td>
-							<td class="col-md-3">{{tcpServerInfo.Status.OrderSystemClient.Port}}</td>
-							<td class="col-md-5">{{tcpServerInfo.Status.OrderSystemClient.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+							<th class="col-md-2">饭店号</th>
+							<th class="col-md-3">IP</th>
+							<th class="col-md-2">端口</th>
+							<th class="col-md-3">连接时间</th>
+							<th class="col-md-2">等待发送队列数量</th>
+						</tr>
+						<tr ng-repeat="c in tcpServerInfo.Status.PrintDineClients">
+							<td>{{c.HotelId}}</td>
+							<td colspan="3" class="danger" ng-hide="c.Status.IsConnected">Disconnected</td>
+							<td ng-show="c.Status.IsConnected">{{c.Status.IpAddress}}</td>
+							<td ng-show="c.Status.IsConnected">{{c.Status.Port}}</td>
+							<td ng-show="c.Status.IsConnected">{{c.Status.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+							<td>{{c.WaitedCount}}</td>
 						</tr>
 					</table>
 				</div>
-
 			</div>
 		</div>
 
@@ -119,31 +128,6 @@
 							<td ng-show="c.Status.IsConnected">{{c.Status.IpAddress}}</td>
 							<td ng-show="c.Status.IsConnected">{{c.Status.Port}}</td>
 							<td ng-show="c.Status.IsConnected">{{c.Status.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
-						</tr>
-					</table>
-				</div>
-			</div>
-
-			<div class="box box-default">
-				<div class="box-header">
-					<h3 class="box-title">打印客户端</h3>
-				</div>
-				<div class="table-responsive">
-					<table class="table no-margin">
-						<tr>
-							<th class="col-md-2">饭店号</th>
-							<th class="col-md-3">IP</th>
-							<th class="col-md-2">端口</th>
-							<th class="col-md-3">连接时间</th>
-							<th class="col-md-2">等待发送队列数量</th>
-						</tr>
-						<tr ng-repeat="c in tcpServerInfo.Status.PrintDineClients">
-							<td>{{c.HotelId}}</td>
-							<td colspan="3" class="danger" ng-hide="c.Status.IsConnected">Disconnected</td>
-							<td ng-show="c.Status.IsConnected">{{c.Status.IpAddress}}</td>
-							<td ng-show="c.Status.IsConnected">{{c.Status.Port}}</td>
-							<td ng-show="c.Status.IsConnected">{{c.Status.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
-							<td>{{c.WaitedCount}}</td>
 						</tr>
 					</table>
 				</div>

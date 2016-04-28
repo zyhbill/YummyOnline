@@ -5,14 +5,14 @@ using YummyOnlineDAO.Models;
 
 namespace Protocal {
 	public static class TcpProtocalType {
-		/// <summary>
-		/// OrderSystem服务器连接
-		/// </summary>
-		public const string OrderSystemConnect = "{A9E2A3DE-60A0-4E92-B7FF-2B033B27DBB4}";
-		/// <summary>
-		/// OrderSystem通知新订单生成（未支付/已支付）
-		/// </summary>
-		public const string OrderSystemNewDineInform = "{6B5D94C5-AEBA-4725-AE83-F7145083A4DD}";
+		///// <summary>
+		///// OrderSystem服务器连接
+		///// </summary>
+		//public const string OrderSystemConnect = "{A9E2A3DE-60A0-4E92-B7FF-2B033B27DBB4}";
+		///// <summary>
+		///// OrderSystem通知新订单生成（未支付/已支付）
+		///// </summary>
+		//public const string OrderSystemNewDineInform = "{6B5D94C5-AEBA-4725-AE83-F7145083A4DD}";
 		/// <summary>
 		/// 需要及时收到新订单消息的客户端连接
 		/// </summary>
@@ -41,9 +41,9 @@ namespace Protocal {
 		public string Type { get; set; }
 	}
 
-	public class OrderSystemConnectProtocal : BaseTcpProtocal {
-		public OrderSystemConnectProtocal() : base(TcpProtocalType.OrderSystemConnect) { }
-	}
+	//public class OrderSystemConnectProtocal : BaseTcpProtocal {
+	//	public OrderSystemConnectProtocal() : base(TcpProtocalType.OrderSystemConnect) { }
+	//}
 	public class NewDineInformClientConnectProtocal : BaseTcpProtocal {
 		public NewDineInformClientConnectProtocal() : base(TcpProtocalType.NewDineInformClientConnect) { }
 		public NewDineInformClientConnectProtocal(string guidStr) : base(TcpProtocalType.NewDineInformClientConnect) {
@@ -59,9 +59,21 @@ namespace Protocal {
 		public int HotelId { get; set; }
 	}
 
-	public class OrderSystemNewDineInformProtocal : BaseTcpProtocal {
-		public OrderSystemNewDineInformProtocal(int hotelId, string dineId, bool isPaid)
-			: base(TcpProtocalType.OrderSystemNewDineInform) {
+	//public class OrderSystemNewDineInformProtocal : BaseTcpProtocal {
+	//	public OrderSystemNewDineInformProtocal(int hotelId, string dineId, bool isPaid)
+	//		: base(TcpProtocalType.OrderSystemNewDineInform) {
+	//		HotelId = hotelId;
+	//		DineId = dineId;
+	//		IsPaid = isPaid;
+	//	}
+	//	public int HotelId { get; set; }
+	//	public string DineId { get; set; }
+	//	public bool IsPaid { get; set; }
+	//}
+
+	public class NewDineInformProtocal : BaseTcpProtocal {
+		public NewDineInformProtocal(int hotelId, string dineId, bool isPaid)
+			: base(TcpProtocalType.NewDineInform) {
 			HotelId = hotelId;
 			DineId = dineId;
 			IsPaid = isPaid;
@@ -69,13 +81,6 @@ namespace Protocal {
 		public int HotelId { get; set; }
 		public string DineId { get; set; }
 		public bool IsPaid { get; set; }
-	}
-
-	public class NewDineInformProtocal : OrderSystemNewDineInformProtocal {
-		public NewDineInformProtocal(int hotelId, string dineId, bool isPaid)
-			: base(hotelId, dineId, isPaid) {
-			Type = TcpProtocalType.NewDineInform;
-		}
 	}
 
 	public enum PrintType {

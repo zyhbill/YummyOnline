@@ -35,10 +35,6 @@ namespace YummyOnlineTcpServer {
 		public List<TcpClientInfo> WaitingForVerificationClients { get; set; } = new List<TcpClientInfo>();
 
 		/// <summary>
-		/// OrderySystem Socket
-		/// </summary>
-		public TcpClientInfo OrderSystemClient { get; set; }
-		/// <summary>
 		/// 接收新订单的socket
 		/// </summary>
 		public Dictionary<NewDineInformClientGuid, TcpClientInfo> NewDineInformClients { get; set; } = new Dictionary<NewDineInformClientGuid, TcpClientInfo>();
@@ -104,17 +100,14 @@ namespace YummyOnlineTcpServer {
 				TcpClientInfo clientInfo = new TcpClientInfo(client);
 
 				switch(baseProtocal.Type) {
-					case TcpProtocalType.OrderSystemConnect:
-						orderSystemConnected(clientInfo, JsonConvert.DeserializeObject<OrderSystemConnectProtocal>(content));
-						break;
 					case TcpProtocalType.NewDineInformClientConnect:
 						newDineInfromClientConnected(clientInfo, JsonConvert.DeserializeObject<NewDineInformClientConnectProtocal>(content));
 						break;
 					case TcpProtocalType.PrintDineClientConnect:
 						printDineClientConnected(clientInfo, JsonConvert.DeserializeObject<PrintDineClientConnectProtocal>(content));
 						break;
-					case TcpProtocalType.OrderSystemNewDineInform:
-						orderSystemNewDineInform(clientInfo, JsonConvert.DeserializeObject<OrderSystemNewDineInformProtocal>(content));
+					case TcpProtocalType.NewDineInform:
+						newDineInform(clientInfo, JsonConvert.DeserializeObject<NewDineInformProtocal>(content));
 						break;
 					case TcpProtocalType.RequestPrintDine:
 						requestPrintDine(clientInfo, JsonConvert.DeserializeObject<RequestPrintDineProtocal>(content));
@@ -136,12 +129,6 @@ namespace YummyOnlineTcpServer {
 				return;
 			}
 
-			if(client == OrderSystemClient?.Client) {
-				OrderSystemClient = null;
-				log($"OrderSystem Disconnected", Log.LogLevel.Error);
-				return;
-			}
-
 			foreach(KeyValuePair<NewDineInformClientGuid, TcpClientInfo> pair in NewDineInformClients) {
 				if(pair.Value?.Client == client) {
 					NewDineInformClients[pair.Key] = null;
@@ -157,18 +144,6 @@ namespace YummyOnlineTcpServer {
 					return;
 				}
 			}
-		}
-
-		/// <summary>
-		/// OrderSystem连接
-		/// </summary>
-		private void orderSystemConnected(TcpClientInfo clientInfo, OrderSystemConnectProtocal protocal) {
-			OrderSystemClient?.Client.Close();
-			OrderSystemClient = clientInfo;
-
-			log($"{clientInfo.OriginalRemotePoint} (OrderSystem) Connected", Log.LogLevel.Success);
-
-			_clientVerified(OrderSystemClient);
 		}
 
 		/// <summary>
@@ -244,13 +219,25 @@ namespace YummyOnlineTcpServer {
 		}
 
 		/// <summary>
-		/// OrderSystem通知有新的订单
+		/// 新订单通知
 		/// </summary>
-		private void orderSystemNewDineInform(TcpClientInfo clientInfo, OrderSystemNewDineInformProtocal protocal) {
-			log($"{clientInfo.OriginalRemotePoint} (NewDineInform): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, IsPaid: {protocal.IsPaid}", Log.LogLevel.Success);
+		/// <param name="clientInfo"></param>
+		/// <param name="protocal"></param>
+		private void newDineInform(TcpClientInfo clientInfo, NewDineInformProtocal protocal) {
+			NewDineInformClientGuid sender = NewDineInformClients
+				.Where(p => p.Value?.Client == clientInfo.Client)
+				.Select(p => p.Key)
+				.FirstOrDefault();
+
+			if(sender == null) {
+				log($"{clientInfo.OriginalRemotePoint} (NewDineInform): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, IsPaid: {protocal.IsPaid} No Such Client", Log.LogLevel.Warning);
+				return;
+			}
+			log($"{clientInfo.OriginalRemotePoint} (NewDineInform): From: {sender.Description}, HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, IsPaid: {protocal.IsPaid}", Log.LogLevel.Success);
 
 			foreach(var p in NewDineInformClients) {
-				if(p.Value == null)
+				// 不向未连接的客户端与发送方客户端 发送新订单通知信息
+				if(p.Value == null )
 					continue;
 
 				string content = JsonConvert.SerializeObject(new NewDineInformProtocal(protocal.HotelId, protocal.DineId, protocal.IsPaid));
@@ -292,7 +279,6 @@ namespace YummyOnlineTcpServer {
 			foreach(var p in WaitingForVerificationClients) {
 				protocal.WaitingForVerificationClients.Add(getClientStatus(p));
 			}
-			protocal.OrderSystemClient = getClientStatus(OrderSystemClient);
 			foreach(var pair in NewDineInformClients) {
 				protocal.NewDineInformClients.Add(new NewDineInformClientStatus {
 					Guid = pair.Key.Guid,

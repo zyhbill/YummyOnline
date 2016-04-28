@@ -5,6 +5,7 @@ using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
 using YummyOnlineTcpClient;
 using System.Collections.Generic;
+using System.Configuration;
 
 namespace OrderSystem {
 	public class NewDineInformTcpClient {
@@ -12,7 +13,8 @@ namespace OrderSystem {
 		public async static Task Initialize() {
 			YummyOnlineManager manager = new YummyOnlineManager();
 			SystemConfig config = await manager.GetSystemConfig();
-			client = new TcpClient(IPAddress.Parse(config.TcpServerIp), config.TcpServerPort, new OrderSystemConnectProtocal());
+			string guid = ConfigurationManager.AppSettings["NewDineInformClientGuid"];
+			client = new TcpClient(IPAddress.Parse(config.TcpServerIp), config.TcpServerPort, new NewDineInformClientConnectProtocal(guid));
 
 			client.CallBackWhenConnected = async () => {
 				await manager.RecordLog(Log.LogProgram.OrderSystem, Log.LogLevel.Success, "TcpServer Connected");
@@ -25,7 +27,7 @@ namespace OrderSystem {
 			client.Start();
 		}
 		public static void SendNewDineInfrom(int hotelId, string dineId, bool isPaid) {
-			client.Send(new OrderSystemNewDineInformProtocal(hotelId, dineId, isPaid));
+			client.Send(new NewDineInformProtocal(hotelId, dineId, isPaid));
 		}
 		public static void SendRequestPrintDine(int hotelId, string dineId) {
 			client.Send(new RequestPrintDineProtocal(hotelId, dineId, new List<PrintType>() { PrintType.Recipt, PrintType.KitchenOrder, PrintType.ServeOrder }));

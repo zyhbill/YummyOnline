@@ -47,17 +47,10 @@ namespace YummyOnlineTcpServer {
 				foreach(var p in status.WaitingForVerificationClients) {
 					displayClientStatus(p);
 				}
-
-				Console.Write("OrderSystemClient: ");
-				if(status.OrderSystemClient.IsConnected) {
-					displayClientStatus(status.OrderSystemClient);
-				}
-				else {
-					Console.WriteLine("Disconnected");
-				}
-
+				Console.WriteLine("========================");
 				Console.WriteLine("NewDineInformClients:");
 				foreach(var p in status.NewDineInformClients) {
+					Console.WriteLine("---------------------");
 					string guid = p.Guid.ToString();
 					Console.WriteLine($"Guid: {guid.Substring(0, 4)}...{guid.Substring(guid.Length - 4, 4)}, Description: {p.Description}");
 					if(p.Status.IsConnected) {
@@ -67,7 +60,7 @@ namespace YummyOnlineTcpServer {
 						Console.WriteLine("Disconnected");
 					}
 				}
-
+				Console.WriteLine("========================");
 				foreach(var p in status.PrintDineClients) {
 					Console.Write($"Hotel {p.HotelId}: ");
 					if(p.Status.IsConnected) {

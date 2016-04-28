@@ -1,0 +1,163 @@
+BEGIN TRANSACTION
+SET QUOTED_IDENTIFIER ON
+SET ARITHABORT ON
+SET NUMERIC_ROUNDABORT OFF
+SET CONCAT_NULL_YIELDS_NULL ON
+SET ANSI_NULLS ON
+SET ANSI_PADDING ON
+SET ANSI_WARNINGS ON
+COMMIT
+BEGIN TRANSACTION
+GO
+ALTER TABLE dbo.Dines
+	DROP CONSTRAINT FK_Dines_Desks
+GO
+ALTER TABLE dbo.Desks SET (LOCK_ESCALATION = TABLE)
+GO
+COMMIT
+BEGIN TRANSACTION
+GO
+ALTER TABLE dbo.Dines
+	DROP CONSTRAINT DF_Dines_Id
+GO
+ALTER TABLE dbo.Dines
+	DROP CONSTRAINT DF_Dines_BeginTime
+GO
+CREATE TABLE dbo.Tmp_Dines
+	(
+	Id nvarchar(14) NOT NULL,
+	Status int NOT NULL,
+	Type int NOT NULL,
+	HeadCount int NOT NULL,
+	OriPrice decimal(11, 2) NOT NULL,
+	Price decimal(11, 2) NOT NULL,
+	Discount float(53) NOT NULL,
+	DiscountName nvarchar(50) NULL,
+	IsPaid bit NOT NULL,
+	IsInvoiced bit NOT NULL,
+	Invoice nvarchar(20) NULL,
+	Footer nvarchar(20) NULL,
+	BeginTime datetime NOT NULL,
+	IsOnline bit NOT NULL,
+	ClerkId nvarchar(8) NULL,
+	WaiterId nvarchar(8) NULL,
+	UserId nvarchar(10) NULL,
+	DeskId nvarchar(4) NULL
+	)  ON [PRIMARY]
+GO
+ALTER TABLE dbo.Tmp_Dines SET (LOCK_ESCALATION = TABLE)
+GO
+ALTER TABLE dbo.Tmp_Dines ADD CONSTRAINT
+	DF_Dines_Id DEFAULT ([dbo].[getDineId]((8))) FOR Id
+GO
+ALTER TABLE dbo.Tmp_Dines ADD CONSTRAINT
+	DF_Dines_BeginTime DEFAULT (getdate()) FOR BeginTime
+GO
+IF EXISTS(SELECT * FROM dbo.Dines)
+	 EXEC('INSERT INTO dbo.Tmp_Dines (Id, Status, Type, HeadCount, OriPrice, Price, Discount, DiscountName, IsPaid, IsInvoiced, Invoice, Footer, BeginTime, IsOnline, ClerkId, WaiterId, UserId, DeskId)
+		SELECT Id, Status, Type, HeadCount, OriPrice, Price, Discount, DiscountName, IsPaid, IsInvoiced, Invoice, Footer, BeginTime, IsOnline, ClerkId, WaiterId, UserId, DeskId FROM dbo.Dines WITH (HOLDLOCK TABLOCKX)')
+GO
+ALTER TABLE dbo.DineMenus
+	DROP CONSTRAINT FK_DineMenus_Dines
+GO
+ALTER TABLE dbo.DinePaidDetails
+	DROP CONSTRAINT FK_DinePaidDetails_Dines
+GO
+ALTER TABLE dbo.DineRemarks
+	DROP CONSTRAINT FK_DineRemarks_Dines
+GO
+ALTER TABLE dbo.TakeOuts
+	DROP CONSTRAINT FK_TakeOuts_Dines
+GO
+DROP TABLE dbo.Dines
+GO
+EXECUTE sp_rename N'dbo.Tmp_Dines', N'Dines', 'OBJECT' 
+GO
+ALTER TABLE dbo.Dines ADD CONSTRAINT
+	PK_Dines PRIMARY KEY CLUSTERED 
+	(
+	Id
+	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+
+GO
+CREATE NONCLUSTERED INDEX IX_DeskId ON dbo.Dines
+	(
+	DeskId
+	) WITH( STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+GO
+ALTER TABLE dbo.Dines ADD CONSTRAINT
+	FK_Dines_Desks FOREIGN KEY
+	(
+	DeskId
+	) REFERENCES dbo.Desks
+	(
+	Id
+	) ON UPDATE  NO ACTION 
+	 ON DELETE  CASCADE 
+	
+GO
+COMMIT
+BEGIN TRANSACTION
+GO
+ALTER TABLE dbo.TakeOuts ADD CONSTRAINT
+	FK_TakeOuts_Dines FOREIGN KEY
+	(
+	Id
+	) REFERENCES dbo.Dines
+	(
+	Id
+	) ON UPDATE  NO ACTION 
+	 ON DELETE  CASCADE 
+	
+GO
+ALTER TABLE dbo.TakeOuts SET (LOCK_ESCALATION = TABLE)
+GO
+COMMIT
+BEGIN TRANSACTION
+GO
+ALTER TABLE dbo.DineRemarks ADD CONSTRAINT
+	FK_DineRemarks_Dines FOREIGN KEY
+	(
+	Dine_Id
+	) REFERENCES dbo.Dines
+	(
+	Id
+	) ON UPDATE  NO ACTION 
+	 ON DELETE  CASCADE 
+	
+GO
+ALTER TABLE dbo.DineRemarks SET (LOCK_ESCALATION = TABLE)
+GO
+COMMIT
+BEGIN TRANSACTION
+GO
+ALTER TABLE dbo.DinePaidDetails ADD CONSTRAINT
+	FK_DinePaidDetails_Dines FOREIGN KEY
+	(
+	DineId
+	) REFERENCES dbo.Dines
+	(
+	Id
+	) ON UPDATE  NO ACTION 
+	 ON DELETE  CASCADE 
+	
+GO
+ALTER TABLE dbo.DinePaidDetails SET (LOCK_ESCALATION = TABLE)
+GO
+COMMIT
+BEGIN TRANSACTION
+GO
+ALTER TABLE dbo.DineMenus ADD CONSTRAINT
+	FK_DineMenus_Dines FOREIGN KEY
+	(
+	DineId
+	) REFERENCES dbo.Dines
+	(
+	Id
+	) ON UPDATE  NO ACTION 
+	 ON DELETE  CASCADE 
+	
+GO
+ALTER TABLE dbo.DineMenus SET (LOCK_ESCALATION = TABLE)
+GO
+COMMIT

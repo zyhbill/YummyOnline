@@ -101,7 +101,9 @@ namespace YummyOnlineTcpClient {
 				waitedQueue.Enqueue(p);
 				return;
 			}
-			var _ = tcp.Send(client, JsonConvert.SerializeObject(p), null);
+			var _ = tcp.Send(client, JsonConvert.SerializeObject(p), ()=>{
+				Console.WriteLine("!");
+			});
 		}
 	}
 }

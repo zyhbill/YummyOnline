@@ -140,6 +140,7 @@ Tcp连接成功回调函数，默认NULL
 ```
 ==*特别注意！ Guid请向管理员申请，同一时刻，只能有一个GUID对应的Socket连入*==
 #### ReceivingProtocal
+新订单通知
 ```json
 {
 	"Type": "{6309155D-B9D9-4417-B1BF-C985F2EA6630}",
@@ -150,13 +151,22 @@ Tcp连接成功回调函数，默认NULL
 
 ```
 ### SendingProtocal
-
+请求打印
 ```json
 {
 	"Type": "{FCAC99D2-1807-4FD0-8B5C-71D00B91A927}",
 	"HotelId": <int>,
 	"DineId": <string>,
 	"PrintTypes": [<int>, ...]
+}
+```
+新订单通知
+```json
+{
+	"Type": "{6309155D-B9D9-4417-B1BF-C985F2EA6630}",
+	"HotelId": <int>,
+	"DineId": <string>,
+	"IsPaid": <bool
 }
 ```
 

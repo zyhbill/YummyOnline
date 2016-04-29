@@ -10,7 +10,7 @@ using Protocal;
 
 namespace TcpClientTest {
 	class Program {
-		static string ip = "127.0.0.1";
+		static string ip = "122.114.96.157";
 		static TcpManager tcp = null;
 		static System.Net.Sockets.TcpClient client = null;
 		static void Main(string[] args) {

@@ -80,7 +80,7 @@ client.Start();
     "<span class="hljs-attribute">Type</span>": <span class="hljs-value"><span class="hljs-string">"{053A168C-D4B8-409A-A058-7E2208B57CDA}"</span></span>,
     "<span class="hljs-attribute">Guid</span>": <span class="hljs-value">&lt;string&gt;
 </span>}
-</code></pre><p><mark><em>特别注意！ Guid请向管理员申请，同一时刻，只能有一个GUID对应的Socket连入</em></mark></p><h4 id="receivingprotocal"><a name="receivingprotocal" href="#receivingprotocal"></a>ReceivingProtocal</h4><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
+</code></pre><p><mark><em>特别注意！ Guid请向管理员申请，同一时刻，只能有一个GUID对应的Socket连入</em></mark></p><h4 id="receivingprotocal"><a name="receivingprotocal" href="#receivingprotocal"></a>ReceivingProtocal</h4><p>新订单通知</p><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
     &quot;Type&quot;: &quot;{6309155D-B9D9-4417-B1BF-C985F2EA6630}&quot;,
     &quot;HotelId&quot;: &amp;lt;int&amp;gt;,
     &quot;DineId&quot;: &amp;lt;string&amp;gt;,
@@ -92,7 +92,7 @@ client.Start();
     "<span class="hljs-attribute">DineId</span>": <span class="hljs-value">&lt;string&gt;</span>,
     "<span class="hljs-attribute">IsPaid</span>": <span class="hljs-value">&lt;bool
 </span>}
-</code></pre><h3 id="sendingprotocal"><a name="sendingprotocal" href="#sendingprotocal"></a>SendingProtocal</h3><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
+</code></pre><h3 id="sendingprotocal"><a name="sendingprotocal" href="#sendingprotocal"></a>SendingProtocal</h3><p>请求打印</p><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
     &quot;Type&quot;: &quot;{FCAC99D2-1807-4FD0-8B5C-71D00B91A927}&quot;,
     &quot;HotelId&quot;: &amp;lt;int&amp;gt;,
     &quot;DineId&quot;: &amp;lt;string&amp;gt;,
@@ -103,6 +103,18 @@ client.Start();
     "<span class="hljs-attribute">HotelId</span>": <span class="hljs-value">&lt;int&gt;</span>,
     "<span class="hljs-attribute">DineId</span>": <span class="hljs-value">&lt;string&gt;</span>,
     "<span class="hljs-attribute">PrintTypes</span>": <span class="hljs-value">[&lt;int&gt;, ...]
+</span>}
+</code></pre><p>新订单通知</p><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
+    &quot;Type&quot;: &quot;{6309155D-B9D9-4417-B1BF-C985F2EA6630}&quot;,
+    &quot;HotelId&quot;: &amp;lt;int&amp;gt;,
+    &quot;DineId&quot;: &amp;lt;string&amp;gt;,
+    &quot;IsPaid&quot;: &amp;lt;bool
+}
+</code></pre>">{
+    "<span class="hljs-attribute">Type</span>": <span class="hljs-value"><span class="hljs-string">"{6309155D-B9D9-4417-B1BF-C985F2EA6630}"</span></span>,
+    "<span class="hljs-attribute">HotelId</span>": <span class="hljs-value">&lt;int&gt;</span>,
+    "<span class="hljs-attribute">DineId</span>": <span class="hljs-value">&lt;string&gt;</span>,
+    "<span class="hljs-attribute">IsPaid</span>": <span class="hljs-value">&lt;bool
 </span>}
 </code></pre><h2 id="tcp-bytes-array-stream"><a name="tcp-bytes-array-stream" href="#tcp-bytes-array-stream"></a>Tcp Bytes Array Stream</h2><h3 id="to-do"><a name="to-do" href="#to-do"></a>To Do</h3><ul>
 <li>原始字符串转换为UTF8编码的字节数组</li><li>构造传输字节数组，传输字节数组分为三部分:</li></ul><table>

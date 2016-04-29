@@ -237,10 +237,10 @@ namespace YummyOnlineTcpServer {
 
 			foreach(var p in NewDineInformClients) {
 				// 不向未连接的客户端与发送方客户端 发送新订单通知信息
-				if(p.Value == null )
+				if(p.Value == null || p.Value.Client == clientInfo.Client)
 					continue;
 
-				string content = JsonConvert.SerializeObject(new NewDineInformProtocal(protocal.HotelId, protocal.DineId, protocal.IsPaid));
+				string content = JsonConvert.SerializeObject(protocal);
 				var _ = tcp.Send(p.Value.Client, content, null);
 			}
 		}

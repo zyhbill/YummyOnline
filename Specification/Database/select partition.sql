@@ -34,15 +34,16 @@ LEFT JOIN sys.partition_range_values AS prv_right
       AND prv_right.boundary_id = p.partition_number 
 WHERE
       OBJECTPROPERTY(p.object_id, 'ISMSShipped') = 0
+order by PartitionNumber
 
 
-select  $partition.[DinePartitionFun](id) as PartitionId
-,count(*) as Rows
-,min(id) as MinVal
-,max(id) as MaxVal
-from dbo.Dines
-group by $partition.[DinePartitionFun](id)
-order by PartitionId
+--select  $partition.[DinePartitionFun](id) as PartitionId
+--,count(*) as Rows
+--,min(id) as MinVal
+--,max(id) as MaxVal
+--from dbo.Dines
+--group by $partition.[DinePartitionFun](id)
+--order by PartitionId
 
 --non-partitioned table/indexes
 --SELECT

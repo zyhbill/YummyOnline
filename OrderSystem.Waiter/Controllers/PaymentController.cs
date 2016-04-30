@@ -15,10 +15,10 @@ namespace OrderSystem.Waiter.Controllers {
 		public async Task<JsonResult> WaiterPay(Cart cart, WaiterCartAddition cartAddition) {
 			SystemConfig config = await YummyOnlineManager.GetSystemConfig();
 
-			cartAddition.WaiterId = User.Identity.Name;
 			string responseContent = await postAsync($"{config.OrderSystemUrl}/Payment/{nameof(WaiterPay)}", new {
 				Cart = cart,
 				CartAddition = cartAddition,
+				WaiterId = User.Identity.Name,
 				Token = config.Token
 			});
 
@@ -44,11 +44,11 @@ namespace OrderSystem.Waiter.Controllers {
 		public async Task<JsonResult> WaiterPayWithPaidDetails(Cart cart, WaiterCartAddition cartAddition, WaiterPaidDetails paidDetails) {
 			SystemConfig config = await YummyOnlineManager.GetSystemConfig();
 
-			cartAddition.WaiterId = User.Identity.Name;
 			string responseContent = await postAsync($"{config.OrderSystemUrl}/Payment/{nameof(WaiterPayWithPaidDetails)}", new {
 				Cart = cart,
 				CartAddition = cartAddition,
 				PaidDetails = paidDetails,
+				WaiterId = User.Identity.Name,
 				Token = config.Token
 			});
 

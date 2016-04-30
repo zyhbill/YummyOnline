@@ -136,12 +136,12 @@ namespace OrderSystem.Controllers {
 		/// <param name="cart"></param>
 		/// <param name="cartAddition"></param>
 		/// <returns></returns>
-		public async Task<JsonResult> WaiterPay(Cart cart, WaiterCartAddition cartAddition, string token) {
+		public async Task<JsonResult> WaiterPay(Cart cart, WaiterCartAddition cartAddition, string waiterId, string token) {
 			if(!await verifyToken(token)) {
 				return Json(new JsonError("身份验证失败"));
 			}
 
-			FunctionResult result = await waiterPay(cart, cartAddition);
+			FunctionResult result = await waiterPay(cart, cartAddition, waiterId);
 
 			if(!result.Succeeded) {
 				return Json(new JsonError(result.Message));
@@ -187,12 +187,12 @@ namespace OrderSystem.Controllers {
 		/// <param name="cartAddition"></param>
 		/// <param name="paidDetails"></param>
 		/// <returns></returns>
-		public async Task<JsonResult> WaiterPayWithPaidDetails(Cart cart, WaiterCartAddition cartAddition, WaiterPaidDetails paidDetails, string token) {
+		public async Task<JsonResult> WaiterPayWithPaidDetails(Cart cart, WaiterCartAddition cartAddition, WaiterPaidDetails paidDetails, string waiterId, string token) {
 			if(!await verifyToken(token)) {
 				return Json(new JsonError("身份验证失败"));
 			}
 
-			FunctionResult result = await waiterPay(cart, cartAddition);
+			FunctionResult result = await waiterPay(cart, cartAddition, waiterId);
 
 			if(!result.Succeeded) {
 				return Json(new JsonError(result.Message));
@@ -309,8 +309,8 @@ namespace OrderSystem.Controllers {
 			return true;
 		}
 
-		private async Task<FunctionResult> waiterPay(Cart cart, WaiterCartAddition cartAddition) {
-			var staff = await StaffManager.FindStaffById(cartAddition.WaiterId);
+		private async Task<FunctionResult> waiterPay(Cart cart, WaiterCartAddition cartAddition, string waiterId) {
+			var staff = await StaffManager.FindStaffById(waiterId);
 			if(staff == null) {
 				return new FunctionResult(false, "未找到服务员");
 			}

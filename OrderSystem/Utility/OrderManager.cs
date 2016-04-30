@@ -36,16 +36,18 @@ namespace OrderSystem {
 			};
 
 			// 订单备注
-			cart.Remarks?.ForEach(r => {
-				Remark remark = ctx.Remarks.FirstOrDefault(p => p.Id == r);
+			foreach(int remarkId in cart.Remarks) {
+				Remark remark = ctx.Remarks.FirstOrDefault(p => p.Id == remarkId);
+				if(remark == null)
+					return new FunctionResult(false, "未找到备注信息");
 				dine.Price += remark.Price;
 				dine.OriPrice += remark.Price;
 				dine.Remarks.Add(remark);
-			});
+			}
 
 			// 是否有自定义折扣方案
-			if(addition.Discount != null) {
-				dine.Discount = (double)addition.Discount;
+			if(addition.Discount.HasValue) {
+				dine.Discount = addition.Discount.Value;
 				dine.DiscountName = addition.DiscountName;
 			}
 			else {

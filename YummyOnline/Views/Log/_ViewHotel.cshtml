@@ -2,7 +2,7 @@
 <div class="box">
 	<div class="box-header">
 		<h3 class="box-title">
-			饭店 {{currHotel.Id}} {{currHotel.Name}} 日志
+			{{logDetail.Hotel.Name}} <small>{{logDetail.Hotel.Id}}</small> 日志
 			<small class="hidden-xs">{{currDateTime | date:'yyyy-M-d'}} {{currCount}}</small>
 		</h3>
 		<div class="box-tools pull-right">
@@ -23,7 +23,7 @@
 				</button>
 				<ul uib-dropdown-menu>
 					<li ng-repeat="hotel in hotels">
-						<a href="javascript:;" ng-click="changeLogHotel(hotel)">{{hotel.Id}} {{hotel.Name}}</a>
+						<a href="/Log#/Hotel/{{hotel.Id}}">{{hotel.Id}} {{hotel.Name}}</a>
 					</li>
 					<li class="divider"></li>
 					<li><a href="javascript:;" ng-click="changeLogCount(100)">100</a></li>
@@ -47,7 +47,7 @@
 					<th>时间</th>
 				</tr>
 
-				<tr ng-class="log.Class" ng-repeat="log in logs">
+				<tr ng-class="log.Class" ng-repeat="log in logDetail.Logs">
 					<td>{{log.Level}}</td>
 					<td>{{log.Message}}</td>
 					<td>{{log.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>

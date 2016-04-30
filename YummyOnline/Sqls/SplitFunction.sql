@@ -1,0 +1,1 @@
+ALTER PARTITION FUNCTION DateTimePartitionFun() split range('@@splitCondition')

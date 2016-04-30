@@ -32,6 +32,7 @@ namespace OrderSystem.Waiter.Controllers {
 
 			string responseContent = await postAsync($"{config.OrderSystemUrl}/Payment/{nameof(WaiterPayCompleted)}", new {
 				PaidDetails = paidDetails,
+				WaiterId = User.Identity.Name,
 				Token = config.Token
 			});
 

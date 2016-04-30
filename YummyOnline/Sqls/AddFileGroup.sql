@@ -1,0 +1,1 @@
+ALTER DATABASE [@@dataBaseName] ADD FILEGROUP @@fileGroupName

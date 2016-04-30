@@ -68,7 +68,7 @@ namespace OrderSystem.Controllers {
 
 			Dine dine = ((Dine)result.Data);
 
-			await newDineInform(dine.Id, "OrderSystem");
+			await newDineInform(dine, "OrderSystem");
 
 			PayKind payKind = await HotelManager.GetPayKind(cart.PayKindId);
 			string redirectUrl = null;
@@ -125,7 +125,7 @@ namespace OrderSystem.Controllers {
 
 			Dine dine = ((Dine)result.Data);
 
-			await newDineInform(dine.Id, "Manager");
+			await newDineInform(dine, "Manager");
 
 			return Json(new JsonSuccess());
 		}
@@ -149,9 +149,9 @@ namespace OrderSystem.Controllers {
 
 			Dine dine = ((Dine)result.Data);
 
-			await newDineInform(dine.Id, "Waiter");
+			await newDineInform(dine, "Waiter");
 
-			return Json(new JsonSuccess(dine.Id));
+			return Json(new JsonSuccess { Data = dine.Id });
 		}
 
 		/// <summary>
@@ -159,10 +159,17 @@ namespace OrderSystem.Controllers {
 		/// </summary>
 		/// <param name="paidDetails"></param>
 		/// <returns></returns>
-		public async Task<JsonResult> WaiterPayCompleted(WaiterPaidDetails paidDetails, string token) {
+		public async Task<JsonResult> WaiterPayCompleted(WaiterPaidDetails paidDetails, string waiterId, string token) {
 			if(!await verifyToken(token)) {
 				return Json(new JsonError("身份验证失败"));
 			}
+
+			var staff = await StaffManager.FindStaffById(waiterId);
+			if(staff == null) {
+				return Json(new JsonError("未找到服务员"));
+			}
+
+			CurrHotel = await YummyOnlineManager.GetHotelById(staff.HotelId);
 
 			bool succeeded = await OrderManager.OfflinePayCompleted(paidDetails);
 			if(!succeeded) {
@@ -171,7 +178,7 @@ namespace OrderSystem.Controllers {
 
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, paidDetails.DineId, true);
 
-			return Json(new JsonSuccess(paidDetails.DineId));
+			return Json(new JsonSuccess { Data = paidDetails.DineId });
 		}
 		/// <summary>
 		/// 服务员支付并且带所有支付详情
@@ -193,11 +200,18 @@ namespace OrderSystem.Controllers {
 
 			Dine dine = ((Dine)result.Data);
 
-			await newDineInform(dine.Id, "WaiterWithPaidDetail");
+			await newDineInform(dine, "WaiterWithPaidDetail");
 
 			paidDetails.DineId = dine.Id;
 
-			return await WaiterPayCompleted(paidDetails, token);
+			bool succeeded = await OrderManager.OfflinePayCompleted(paidDetails);
+			if(!succeeded) {
+				return Json(new JsonError("支付金额与应付金额不匹配"));
+			}
+
+			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, paidDetails.DineId, true);
+
+			return Json(new JsonSuccess { Data = paidDetails.DineId });
 		}
 
 
@@ -258,9 +272,9 @@ namespace OrderSystem.Controllers {
 			}
 			return user;
 		}
-		private async Task newDineInform(string dineId, string via) {
-			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Dine recorded DineId: {dineId}, Via {via}");
-			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dineId, false);
+		private async Task newDineInform(Dine dine, string via) {
+			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Dine recorded DineId: {dine.Id}, OriPrice: {dine.OriPrice}, Price: {dine.Price}, IsOnline: {dine.IsOnline}, Via {via}");
+			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dine.Id, false);
 		}
 		private async Task<string> getOnlineRedirectUrl(string dineId) {
 			HotelConfig hotelConfig = await HotelManager.GetHotelConfig();

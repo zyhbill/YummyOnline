@@ -38,6 +38,9 @@ namespace YummyOnlineDAO {
 			return true;
 		}
 
+		public async Task<Hotel> GetFirstHotel() {
+			return await ctx.Hotels.FirstOrDefaultAsync();
+		}
 		public async Task<Hotel> GetHotelById(int id) {
 			return await ctx.Hotels.FirstOrDefaultAsync(p => p.Id == id);
 		}

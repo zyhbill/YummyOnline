@@ -129,6 +129,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controllers\AuthController.cs" />
+    <Compile Include="Controllers\DatabaseController.cs" />
+    <Compile Include="Utility\DbPartition.cs" />
     <Compile Include="Utility\DriveSpace.cs" />
     <Compile Include="Utility\IISManager.cs" />
     <Compile Include="Utility\TcpServerProcess.cs" />
@@ -194,12 +196,22 @@
     <Content Include="Scripts\directives.js" />
     <Content Include="Scripts\Layout\factories.js" />
     <Content Include="Scripts\lib\toastr.min.js" />
+    <Content Include="Scripts\Database\controllers.js" />
+    <Content Include="Scripts\Database\route.js" />
     <Content Include="Scripts\Log\controllers.js" />
     <Content Include="Scripts\Log\route.js" />
     <Content Include="Scripts\Server\controller.js" />
     <Content Include="Scripts\Server\route.js" />
     <Content Include="Scripts\Users\controllers.js" />
     <Content Include="Scripts\Users\route.js" />
+    <Content Include="Sqls\AddFile.sql" />
+    <Content Include="Sqls\AddFileGroup.sql" />
+    <Content Include="Sqls\AlterScheme.sql" />
+    <Content Include="Sqls\CreatePartitionFunAndSchema.sql" />
+    <Content Include="Sqls\GetDbPartitionInfos.sql" />
+    <Content Include="Sqls\GetDefaultDataPath.sql" />
+    <Content Include="Sqls\Merge.sql" />
+    <Content Include="Sqls\SplitFunction.sql" />
     <Content Include="Views\Shared\_LayoutGlobal.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -249,7 +261,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Views\Log\Index.cshtml" />
+    <Content Include="Views\Database\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Log\_ViewHotel.cshtml" />
@@ -266,6 +278,9 @@
     <Content Include="Views\Server\_ViewTcpServerStatus.cshtml" />
     <Content Include="Views\Server\_ViewGuids.cshtml" />
     <Content Include="Views\Server\_ViewIISStatus.cshtml" />
+    <Content Include="Views\Database\_ViewPartitionDetail.cshtml" />
+    <Content Include="Views\Log\Index.cshtml" />
+    <Content Include="Views\Database\_ViewPartitionHandle.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

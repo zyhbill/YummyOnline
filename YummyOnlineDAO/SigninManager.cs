@@ -31,22 +31,8 @@ namespace YummyOnlineDAO.Identity {
 		/// <param name="user"></param>
 		/// <param name="isPersistent"></param>
 		/// <returns></returns>
-		public async Task Signin(User user, bool isPersistent) {
-			// 添加用户的权限
-			Role[] roles = (await new UserManager().GetRolesAsync(user.Id)).ToArray();
-			string userData = String.Join(",", roles);
-
-			// 将用户Id作为票据的Name
-			FormsAuthenticationTicket ticket = new FormsAuthenticationTicket(1, user.Id.ToString(), DateTime.Now,
-				DateTime.Now.AddDays(7),
-				isPersistent, userData);
-			string authTicket = FormsAuthentication.Encrypt(ticket);
-			HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, authTicket);
-			if(isPersistent) {
-				cookie.Expires = ticket.Expiration;
-			}
-
-			httpCtx.Response.SetCookie(cookie);
+		public void Signin(User user, bool isPersistent) {
+			FormsAuthentication.SetAuthCookie(user.Id.ToString(), isPersistent);
 		}
 
 		public async Task<bool> IsAuthenticated() {

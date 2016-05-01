@@ -16,12 +16,36 @@
 	}]
 );
 
-app.directive('confirmBtn', [
+app.directive('confirmClick', [
 	function () {
 		return {
-			link: function (scope, element, attrs) {
-
+			scope: {
+				confirmClick: '&',
+				confirmText: '@',
+			},
+			transclude: true,
+			template: '<span ng-show="confirming">{{confirmText}}</span><span ng-transclude ng-show="!confirming"></span>',
+			priority: -1,
+			link: function (scope, elem, attrs) {
+				if (attrs.confirmText == null) {
+					attrs.confirmText = '确认';
+				}
+				elem.click(function (e) {
+					e.stopImmediatePropagation();
+					if (scope.confirming) {
+						scope.confirmClick();
+					}
+					scope.confirming = true;
+					elem.addClass(attrs.confirmClass)
+					scope.$apply();
+				});
+				elem.on('mouseleave', function () {
+					scope.confirming = false;
+					elem.removeClass(attrs.confirmClass)
+					scope.$apply();
+				});
 			}
 		}
+		
 	}
 ])

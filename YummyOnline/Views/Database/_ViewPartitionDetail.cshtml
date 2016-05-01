@@ -1,6 +1,9 @@
 ﻿<div class="box" ng-repeat="partitionDetail in partitionDetails">
 	<div class="box-header">
-		<h3 class="box-title">{{partitionDetail.Hotel.Name}} <small>{{partitionDetail.Hotel.Id}}</small></h3>
+		<h3 class="box-title">
+			<span ng-hide="partitionDetail.Hotel==null">{{partitionDetail.Hotel.Name}} <small>{{partitionDetail.Hotel.Id}}</small></span>
+			<span ng-show="partitionDetail.Hotel==null">YummyOnline 总数据库</span>
+		</h3>
 	</div>
 	<div class="table-responsive">
 		<table class="table no-margin">

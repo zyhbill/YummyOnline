@@ -9,6 +9,7 @@ using YummyOnlineDAO;
 using System.Collections.Generic;
 using OrderSystem.Models;
 using OrderSystem.Utility;
+using Utility;
 
 namespace OrderSystem.Controllers {
 	[RequireHotel]

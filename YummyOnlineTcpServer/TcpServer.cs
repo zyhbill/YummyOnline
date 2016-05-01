@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
@@ -28,6 +29,8 @@ namespace YummyOnlineTcpServer {
 		private TcpManager tcp;
 		private Action<string, Log.LogLevel> logDelegate;
 		private Action<TcpServerStatusProtocal> clientsStatusDelegate;
+
+		private ManualResetEvent clientCloseMutex = new ManualResetEvent(true);
 
 		/// <summary>
 		/// 已经链接但是等待身份验证的socket
@@ -129,10 +132,11 @@ namespace YummyOnlineTcpServer {
 				return;
 			}
 
-			foreach(KeyValuePair<NewDineInformClientGuid, TcpClientInfo> pair in NewDineInformClients) {
+			foreach(var pair in NewDineInformClients) {
 				if(pair.Value?.Client == client) {
 					NewDineInformClients[pair.Key] = null;
 					log($"NewDineInformClient ({pair.Key.Description}) {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
+					clientCloseMutex.Set();
 					return;
 				}
 			}
@@ -168,6 +172,8 @@ namespace YummyOnlineTcpServer {
 				if(pair.Value != null) {
 					log($"NewDineInformClient Guid {pair.Key.Guid} Repeated", Log.LogLevel.Warning);
 					pair.Value.Client.Client.Close();
+					clientCloseMutex.Reset();
+					clientCloseMutex.WaitOne();
 				}
 
 				NewDineInformClients[pair.Key] = clientInfo;
@@ -195,6 +201,9 @@ namespace YummyOnlineTcpServer {
 			if(pair.Value != null) {
 				log($"Printer HotelId {pair.Key} Repeated", Log.LogLevel.Warning);
 				pair.Value.Client.Client.Close();
+
+				clientCloseMutex.Reset();
+				clientCloseMutex.WaitOne();
 			}
 
 			PrintDineClients[pair.Key] = clientInfo;

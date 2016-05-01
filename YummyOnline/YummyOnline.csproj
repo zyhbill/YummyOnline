@@ -207,9 +207,11 @@
     <Content Include="Sqls\AddFile.sql" />
     <Content Include="Sqls\AddFileGroup.sql" />
     <Content Include="Sqls\AlterScheme.sql" />
-    <Content Include="Sqls\CreatePartitionFunAndSchema.sql" />
+    <Content Include="Sqls\CreateYummyOnlinePartition.sql" />
+    <Content Include="Sqls\CreateHotelPartition.sql" />
     <Content Include="Sqls\GetDbPartitionInfos.sql" />
     <Content Include="Sqls\GetDefaultDataPath.sql" />
+    <Content Include="Sqls\GetFileGroupInfos.sql" />
     <Content Include="Sqls\Merge.sql" />
     <Content Include="Sqls\SplitFunction.sql" />
     <Content Include="Views\Shared\_LayoutGlobal.cshtml" />
@@ -250,6 +252,10 @@
     <ProjectReference Include="..\Protocal\Protocal.csproj">
       <Project>{08106e56-c685-4860-af3a-396dd9333299}</Project>
       <Name>Protocal</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Utility\Utility.csproj">
+      <Project>{8b2af470-27a1-4dc9-b228-0942dc9e85a1}</Project>
+      <Name>Utility</Name>
     </ProjectReference>
     <ProjectReference Include="..\YummyOnlineDAOModels\YummyOnlineDAOModels.csproj">
       <Project>{3625134d-bf70-4481-a2e8-4150256def32}</Project>

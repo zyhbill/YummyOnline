@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace OrderSystem.Utility {
+namespace Utility {
 	public static class AsyncInline {
 		public static void Run(Func<Task> item) {
 			var oldContext = SynchronizationContext.Current;

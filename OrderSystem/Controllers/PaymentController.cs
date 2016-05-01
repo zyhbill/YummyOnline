@@ -57,7 +57,7 @@ namespace OrderSystem.Controllers {
 			if(user == null) {
 				return Json(new JsonError("创建匿名用户失败"));
 			}
-			await SigninManager.Signin(user, true);
+			SigninManager.Signin(user, true);
 			addition.UserId = user.Id;
 
 			// 创建新订单

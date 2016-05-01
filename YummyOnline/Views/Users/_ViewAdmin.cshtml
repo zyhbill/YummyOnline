@@ -25,7 +25,7 @@
 				<td>{{admin.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
 				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
 					<td class="text-right">
-						<button class="btn btn-danger" ng-click="deleteAdmin(admin)">删除</button>
+						<button class="btn btn-danger" confirm-click="deleteAdmin(admin)">删除</button>
 					</td>
 				}
 			</tr>
@@ -36,7 +36,7 @@
 			<div class="input-group">
 				<input type="text" class="form-control" ng-model="newAdminPhoneNumber">
 				<div class="input-group-btn">
-					<button type="button" class="btn btn-primary" ng-click="addAdmin()">添加</button>
+					<button type="button" class="btn btn-primary" confirm-class="btn-danger" confirm-click="addAdmin()">添加</button>
 				</div>
 			</div>
 		</div>

@@ -8,7 +8,11 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 using YummyOnlineDAO;
+using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
+using OrderSystem.Utility;
+using System.Collections.Generic;
+using Utility;
 
 namespace OrderSystem {
 	public class MvcApplication : HttpApplication {
@@ -32,10 +36,17 @@ namespace OrderSystem {
 				//could not decrypt cookie
 				return;
 			}
+
 			//get the role
-			string[] roles = authTicket.UserData.Split(new[] { ',' });
+			List<Role> roles = AsyncInline.Run(() => new UserManager().GetRolesAsync(authTicket.Name));
+
+			List<string> roleStrs = new List<string>();
+			roles.ForEach(r => {
+				roleStrs.Add(r.ToString());
+			});
+
 			var id = new FormsIdentity(authTicket);
-			Context.User = new GenericPrincipal(id, roles);
+			Context.User = new GenericPrincipal(id, roleStrs.ToArray());
 		}
 	}
 }

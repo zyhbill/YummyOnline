@@ -18,8 +18,8 @@
 					$window.location.href = '/';
 				} else {
 					toastr.error(response.data.ErrorMessage);
+					$scope.isSigning = false;
 				}
-				$scope.isSigning = false;
 			}, function (response) {
 				toastr.error(response.status + ' ' + response.statusText);
 				$scope.isSigning = false;

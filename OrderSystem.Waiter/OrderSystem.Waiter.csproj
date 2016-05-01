@@ -187,6 +187,10 @@
       <Project>{08106e56-c685-4860-af3a-396dd9333299}</Project>
       <Name>Protocal</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Utility\Utility.csproj">
+      <Project>{8b2af470-27a1-4dc9-b228-0942dc9e85a1}</Project>
+      <Name>Utility</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YummyOnlineDAOModels\YummyOnlineDAOModels.csproj">
       <Project>{3625134d-bf70-4481-a2e8-4150256def32}</Project>
       <Name>YummyOnlineDAOModels</Name>

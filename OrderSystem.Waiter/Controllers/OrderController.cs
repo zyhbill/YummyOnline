@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Utility;
 using YummyOnlineDAO.Identity;
 
 namespace OrderSystem.Waiter.Controllers {

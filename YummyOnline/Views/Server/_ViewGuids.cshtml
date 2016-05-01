@@ -13,7 +13,7 @@
 				<td>{{guid.Description}}</td>
 				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
 					<td class="text-right">
-						<button class="btn btn-danger" ng-click="deleteGuid(guid)">删除</button>
+						<button class="btn btn-danger" confirm-click="deleteGuid(guid)">删除</button>
 					</td>
 				}
 			</tr>
@@ -22,7 +22,7 @@
 					<td><input type="text" class="form-control" ng-model="newGuid.Guid"></td>
 					<td><input type="text" class="form-control" ng-model="newGuid.Description"></td>
 					<td class="text-right">
-						<button class="btn btn-primary btn-block" ng-click="addGuid()">添加</button>
+						<button class="btn btn-primary" confirm-class="btn-danger" confirm-click="addGuid()">添加</button>
 					</td>
 				</tr>
 			}

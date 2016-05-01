@@ -84,6 +84,7 @@ namespace YummyOnline.Controllers {
 			})) {
 				return Json(new JsonError());
 			}
+			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"Guid {guid} ({description}) Added");
 			return Json(new JsonSuccess());
 		}
 		[Authorize(Roles = nameof(Role.SuperAdmin))]
@@ -91,6 +92,7 @@ namespace YummyOnline.Controllers {
 			if(!await YummyOnlineManager.DeleteGuid(guid)) {
 				return Json(new JsonError());
 			}
+			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Warning, $"Guid {guid} Removed");
 			return Json(new JsonSuccess());
 		}
 	}

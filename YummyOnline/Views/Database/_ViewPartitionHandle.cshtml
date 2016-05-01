@@ -1,6 +1,9 @@
 ﻿<div class="box">
 	<div class="box-header">
-		<h3 class="box-title">{{partitionDetail.Hotel.Name}} <small>{{partitionDetail.Hotel.Id}}</small></h3>
+		<h3 class="box-title">
+			<span ng-hide="partitionDetail.Hotel==null">{{partitionDetail.Hotel.Name}} <small>{{partitionDetail.Hotel.Id}}</small></span>
+			<span ng-show="partitionDetail.Hotel==null">YummyOnline 总数据库</span>
+		</h3>
 
 		<div class="box-tools pull-right">
 			<div class="btn-group" uib-dropdown>
@@ -8,6 +11,10 @@
 					<i class="fa fa-chevron-down"></i>
 				</button>
 				<ul uib-dropdown-menu>
+					<li>
+						<a href="/Database#/PartitionHandle">YummyOnline 总数据库</a>
+					</li>
+					<li class="divider"></li>
 					<li ng-repeat="hotel in hotels">
 						<a href="/Database#/PartitionHandle/{{hotel.Id}}">{{hotel.Id}} {{hotel.Name}}</a>
 					</li>
@@ -16,7 +23,7 @@
 		</div>
 	</div>
 	<div class="table-responsive">
-		<table class="table no-margin">
+		<table class="table">
 			<tr>
 				<th>表名</th>
 				<th>索引名</th>
@@ -31,7 +38,7 @@
 			</tr>
 
 			<tr class="danger" ng-if="partitionDetail.DbPartitionInfos.length == 0">
-				<td colspan="10">该数据库未做分区</td>
+				<td colspan="10">该数据库未做分区 <button class="btn btn-danger" ng-click="createDbPartition()">立即分区</button></td>
 			</tr>
 
 			<tr ng-if="partitionDetail.DbPartitionInfos.length > 0" ng-repeat="partitionInfo in partitionDetail.DbPartitionInfos">
@@ -53,4 +60,56 @@
 			</tr>
 		</table>
 	</div>
+	<div class="table-responsive">
+		<table class="table no-margin">
+			<tr>
+				<th>文件组号</th>
+				<th>文件组名称</th>
+				<th>文件名称</th>
+				<th>文件路径</th>
+				<th>大小</th>
+				<th>增量</th>
+			</tr>
+			<tr ng-repeat="fileGroupInfo in partitionDetail.FileGroupInfos">
+				<td>{{fileGroupInfo.DataSpaceId}}</td>
+				<td>{{fileGroupInfo.FileGroupName}}</td>
+				<td>{{fileGroupInfo.FileName}}</td>
+				<td>{{fileGroupInfo.FilePath}}</td>
+				<td>{{fileGroupInfo.Size}}</td>
+				<td>{{fileGroupInfo.Growth}}</td>
+			</tr>
+		</table>
+	</div>
+	@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+		<div class="box-body" ng-show="partitionDetail.DbPartitionInfos.length > 0">
+			
+			<div class="btn-group">
+				<button class="btn btn-default"
+						uib-datepicker-popup
+						show-button-bar="false"
+						popup-placement="top-left"
+						datepicker-append-to-body="true"
+						ng-model="dateTime"
+						ng-click="isOpen = true"
+						is-open="isOpen">
+					<span ng-if="dateTime == null">选择日期</span>
+					<span ng-if="dateTime != null">{{dateTime | date:'yyyy/MM/dd'}}</span>
+				</button>
+
+				<button class="btn btn-primary"
+						confirm-click="split()"
+						confirm-class="btn-danger"
+						ng-disabled="dateTime == null">
+					分割
+				</button>
+
+				<button class="btn btn-primary"
+						confirm-click="merge()"
+						confirm-class="btn-danger"
+						ng-disabled="dateTime == null">
+					合并
+				</button>
+			</div>
+		</div>
+	}
 </div>

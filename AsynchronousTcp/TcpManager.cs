@@ -31,9 +31,7 @@ namespace AsynchronousTcp {
 				listener.Start(int.MaxValue);
 				while(true) {
 					TcpClient client = await listener.AcceptTcpClientAsync();
-					if(callBack != null) {
-						callBack(client);
-					}
+					callBack?.Invoke(client);
 					var _ = startReceiving(client);
 				}
 			});
@@ -51,9 +49,7 @@ namespace AsynchronousTcp {
 			try {
 				await client.ConnectAsync(address, port);
 
-				if(callBack != null) {
-					callBack(client);
-				}
+				callBack?.Invoke(client);
 
 				var _ = startReceiving(client);
 			}

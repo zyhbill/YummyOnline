@@ -19,6 +19,14 @@ namespace YummyOnline.Utility {
 		public string Range { get; set; }
 		public long Rows { get; set; }
 	}
+	public class FileGroupInfo {
+		public int DataSpaceId { get; set; }
+		public string FileGroupName { get; set; }
+		public string FileName { get; set; }
+		public string FilePath { get; set; }
+		public int Size { get; set; }
+		public int Growth { get; set; }
+	}
 
 	public class DbPartition {
 		private DbContext ctx;
@@ -33,8 +41,16 @@ namespace YummyOnline.Utility {
 			string sql = File.ReadAllText($"{sqlsPath}\\GetDbPartitionInfos.sql");
 			return await ctx.Database.SqlQuery<DbPartitionInfo>(sql).ToListAsync();
 		}
-		public async Task<FunctionResult> CreatePartitionFunAndSchema() {
-			string sql = File.ReadAllText($"{sqlsPath}\\CreatePartitionFunAndSchema.sql");
+		public async Task<List<FileGroupInfo>> GetFileGroupInfos() {
+			string sql = File.ReadAllText($"{sqlsPath}\\GetFileGroupInfos.sql");
+			return await ctx.Database.SqlQuery<FileGroupInfo>(sql).ToListAsync();
+		}
+		public async Task<FunctionResult> CreateYummyOnlinePartition() {
+			string sql = File.ReadAllText($"{sqlsPath}\\CreateYummyOnlinePartition.sql");
+			return await executeSql(sql);
+		}
+		public async Task<FunctionResult> CreateHotelPartition() {
+			string sql = File.ReadAllText($"{sqlsPath}\\CreateHotelPartition.sql");
 			return await executeSql(sql);
 		}
 
@@ -57,28 +73,33 @@ namespace YummyOnline.Utility {
 
 			FunctionResult result = await AddFileGroup(dataBaseName, fileGroupName);
 			if(!result.Succeeded) {
-				return result;
+				return new FunctionResult(false, $"AddFileGroup Failed, {result.Message}");
 			}
 
 			result = await AddFile(dataBaseName, path, fileGroupName);
 			if(!result.Succeeded) {
-				return result;
+				return new FunctionResult(false, $"AddFile Failed, {result.Message}");
 			}
 
 			result = await AlterScheme(fileGroupName);
 			if(!result.Succeeded) {
-				return result;
+				return new FunctionResult(false, $"AlterScheme Failed, {result.Message}");
 			}
 
 			result = await SplitFunction(dateTime);
 			if(!result.Succeeded) {
-				return result;
+				return new FunctionResult(false, $"SplitFunction Failed, {result.Message}");
 			}
 
 			return new FunctionResult();
 		}
 
 		public async Task<FunctionResult> AddFileGroup(string dataBaseName, string fileGroupName) {
+			var fileGroups = await GetFileGroupInfos();
+			if(fileGroups.Exists(p => p.FileGroupName == fileGroupName)) {
+				return new FunctionResult();
+			}
+
 			string sql = File.ReadAllText($"{sqlsPath}\\AddFileGroup.sql");
 			sql = sql.Replace("@@dataBaseName", dataBaseName);
 			sql = sql.Replace("@@fileGroupName", fileGroupName);
@@ -88,6 +109,11 @@ namespace YummyOnline.Utility {
 		public async Task<FunctionResult> AddFile(string dataBaseName, string path, string fileGroupName) {
 			if(!Directory.Exists(path)) {
 				Directory.CreateDirectory(path);
+			}
+
+			var fileGroups = await GetFileGroupInfos();
+			if(fileGroups.Exists(p => p.FileName == fileGroupName)) {
+				return new FunctionResult();
 			}
 
 			string sql = File.ReadAllText($"{sqlsPath}\\AddFile.sql");

@@ -29,8 +29,8 @@ namespace OrderSystem.Waiter.Controllers {
 				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"Staff Signin: {signinName} {password} No Authority");
 				return Json(new JsonError("没有权限"));
 			}
-			await SigninManager.Signin(staff, true);
-
+			SigninManager.Signin(staff, true);
+			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"Staff Signin: {staff.Id} ({staff.PhoneNumber})");
 			return Json(new JsonSuccess());
 		}
 

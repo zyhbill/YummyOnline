@@ -80,7 +80,8 @@ namespace OrderSystem.Controllers {
 				return Json(new JsonError("注册失败"));
 			}
 			await UserManager.AddToRoleAsync(user.Id, Role.Customer);
-			await SigninManager.Signin(user, true);
+			SigninManager.Signin(user, true);
+			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"User Signup: {user.Id} ({user.PhoneNumber})");
 			return Json(new JsonSuccess());
 		}
 		#endregion
@@ -114,7 +115,8 @@ namespace OrderSystem.Controllers {
 					await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Transfer: {oldUser.Id} -> {user.Id}");
 				}
 			}
-			await SigninManager.Signin(user, true);
+			SigninManager.Signin(user, true);
+			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"User Signin: {user.Id} ({user.PhoneNumber})");
 			return Json(new JsonSuccess());
 		}
 		#endregion

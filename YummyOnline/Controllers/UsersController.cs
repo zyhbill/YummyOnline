@@ -36,12 +36,14 @@ namespace YummyOnline.Controllers {
 				return Json(new JsonError("已经为管理员"));
 			}
 			await UserManager.AddToRoleAsync(user.Id, Role.Admin);
+			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"User {user.Id} Added to Admin");
 			return Json(new JsonSuccess());
 		}
 
 		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> DeleteAdmin(string id) {
 			await UserManager.RemoveFromRoleAsync(id, Role.Admin);
+			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Warning, $"User {id} Removed from Admin");
 			return Json(new JsonSuccess());
 		}
 	}

@@ -8,7 +8,7 @@
 						title: null,
 						chart: {
 							height: 400,
-							type: 'column',
+							type: 'spline',
 						},
 						xAxis: {
 							categories: dinePerHourCount.categories,

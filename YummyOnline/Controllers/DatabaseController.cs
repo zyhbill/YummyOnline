@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Protocal;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
+using Utility;
 using YummyOnline.Utility;
 using YummyOnlineDAO.Models;
-using Protocal;
 
 namespace YummyOnline.Controllers {
 	[Authorize(Roles = nameof(Role.Admin))]
@@ -37,7 +36,7 @@ namespace YummyOnline.Controllers {
 						hotel.Id,
 						hotel.Name
 					},
-					DbPartitionInfos = await new DbPartition(hotel.ConnectionString).GetDbPartitionInfos()
+					DbPartitionInfos = await new DbPartition(hotel.AdminConnectionString).GetDbPartitionInfos()
 				});
 			}
 
@@ -49,7 +48,7 @@ namespace YummyOnline.Controllers {
 			DbPartition dbPartition;
 			if(hotelId.HasValue) {
 				hotel = await YummyOnlineManager.GetHotelById(hotelId.Value);
-				dbPartition = new DbPartition(hotel.ConnectionString);
+				dbPartition = new DbPartition(hotel.AdminConnectionString);
 			}
 			else {
 				hotel = null;
@@ -70,7 +69,7 @@ namespace YummyOnline.Controllers {
 			FunctionResult result;
 			if(hotelId.HasValue) {
 				Hotel hotel = await YummyOnlineManager.GetHotelById(hotelId.Value);
-				result = await new DbPartition(hotel.ConnectionString).CreateHotelPartition();
+				result = await new DbPartition(hotel.AdminConnectionString).CreateHotelPartition();
 			}
 			else {
 				result = await new DbPartition(getYummyOnlineConntionString()).CreateYummyOnlinePartition();
@@ -88,7 +87,7 @@ namespace YummyOnline.Controllers {
 			FunctionResult result;
 			if(hotelId.HasValue) {
 				Hotel hotel = await YummyOnlineManager.GetHotelById(hotelId.Value);
-				result = await new DbPartition(hotel.ConnectionString).Split(dateTime);
+				result = await new DbPartition(hotel.AdminConnectionString).Split(dateTime);
 			}
 			else {
 				result = await new DbPartition(getYummyOnlineConntionString()).Split(dateTime);
@@ -105,7 +104,7 @@ namespace YummyOnline.Controllers {
 			FunctionResult result;
 			if(hotelId.HasValue) {
 				Hotel hotel = await YummyOnlineManager.GetHotelById(hotelId.Value);
-				result = await new DbPartition(hotel.ConnectionString).Merge(dateTime);
+				result = await new DbPartition(hotel.AdminConnectionString).Merge(dateTime);
 			}
 			else {
 				result = await new DbPartition(getYummyOnlineConntionString()).Merge(dateTime);
@@ -122,6 +121,7 @@ namespace YummyOnline.Controllers {
 		private string getYummyOnlineConntionString() {
 			return new YummyOnlineContext().Database.Connection.ConnectionString;
 		}
+
 		private async Task logPartition(int? hotelId, string method) {
 			if(hotelId.HasValue) {
 				Hotel hotel = await YummyOnlineManager.GetHotelById(hotelId.Value);

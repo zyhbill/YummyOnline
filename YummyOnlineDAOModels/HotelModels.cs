@@ -11,6 +11,8 @@ namespace YummyOnlineDAO.Models {
 		[Required]
 		public string ConnectionString { get; set; }
 		[Required]
+		public string AdminConnectionString { get; set; }
+		[Required]
 		public string CssThemePath { get; set; }
 		/// <summary>
 		/// 酒店名称
@@ -33,17 +35,17 @@ namespace YummyOnlineDAO.Models {
 		[MaxLength(20)]
 		[Required]
 		public string Tel { get; set; }
-		
+
 		/// <summary>
 		/// 酒店营业时间
 		/// </summary>
 		public TimeSpan OpenTime { get; set; }
 		public TimeSpan CloseTime { get; set; }
-		
+
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public DateTime CreateDate { get; set; }
 
 		public ICollection<MenuGather> MenuGathers { get; set; }
-		public ICollection<Staff> Staffs { get; set;}
+		public ICollection<Staff> Staffs { get; set; }
 	}
 }

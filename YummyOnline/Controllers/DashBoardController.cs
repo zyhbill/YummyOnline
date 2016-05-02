@@ -30,8 +30,46 @@ namespace YummyOnline.Controllers {
 			};
 			return Json(result);
 		}
+
 		public async Task<JsonResult> GetDineDailyCount() {
-			return Json(await YummyOnlineManager.GetDineDailyCount());
+			List<dynamic> list = new List<dynamic>();
+			List<Hotel> hotels = await YummyOnlineManager.GetHotels();
+			foreach(Hotel h in hotels) {
+				List<dynamic> dailyCount = new List<dynamic>();
+				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+				for(int i = -30; i <= 0; i++) {
+					DateTime t = DateTime.Now.AddDays(i);
+					int count = await hotelManager.GetDineCount(t);
+					dailyCount.Add(new {
+						DateTime = t,
+						Count = count
+					});
+				}
+
+				list.Add(new {
+					HotelName = h.Name,
+					DailyCount = dailyCount
+				});
+			}
+
+			return Json(list);
+		}
+
+		public async Task<JsonResult> GetDinePerHourCount(DateTime? dateTime) {
+			DateTime dt = dateTime.HasValue ? dateTime.Value : DateTime.Now;
+
+			List<dynamic> list = new List<dynamic>();
+			List<Hotel> hotels = await YummyOnlineManager.GetHotels();
+			foreach(Hotel h in hotels) {
+				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+
+				list.Add(new {
+					HotelName = h.Name,
+					Counts = await hotelManager.GetDinePerHourCount(dt)
+				});
+			}
+
+			return Json(list);
 		}
 	}
 }

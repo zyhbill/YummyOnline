@@ -49,6 +49,29 @@
 	</div>
 
 	<div class="row">
+		<div class="col-md-12">
+			<div class="box">
+				<div class="box-header with-border">
+					<h3 class="box-title">每小时点单量</h3>
+					<div class="box-tools pull-right">
+						<button class="btn btn-box-tool"
+								uib-datepicker-popup
+								show-button-bar="false"
+								popup-placement="bottom-right"
+								datepicker-append-to-body="true"
+								ng-model="currDateTime"
+								ng-click="isOpen = true"
+								is-open="isOpen">
+							<i class="fa fa-calendar"></i>
+						</button>
+						<button class="btn btn-box-tool" ng-click="refreshDinePerHourLine()"><i class="fa fa-refresh"></i></button>
+					</div>
+				</div>
+				<div class="box-body">
+					<div highcharts-dine-per-hour-line></div>
+				</div>
+			</div>
+		</div>
 		<div class="col-md-6">
 			<div class="box">
 				<div class="box-header with-border">

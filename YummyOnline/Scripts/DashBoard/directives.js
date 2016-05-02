@@ -1,4 +1,42 @@
-﻿app.directive('highchartsUserLine', [
+﻿app.directive('highchartsDinePerHourLine', [
+	function () {
+		return {
+			link: function (scope, elem, attr) {
+				scope.$watch('dinePerHourCount', function (dinePerHourCount) {
+					elem.highcharts({
+						
+						title: null,
+						chart: {
+							height: 400,
+							type: 'column',
+						},
+						xAxis: {
+							categories: dinePerHourCount.categories,
+							tickInterval: 2,
+						},
+						yAxis: {
+							title: null
+						},
+
+						plotOptions: {
+							series: {
+								marker: {
+									lineWidth: 1
+								}
+							},
+							spline: {
+								marker: {
+									enabled: true
+								}
+							}
+						},
+						series: dinePerHourCount.series
+					});
+				}, true);
+			}
+		}
+	}]
+).directive('highchartsUserLine', [
 	function () {
 		return {
 			link: function (scope, elem, attr) {
@@ -15,7 +53,7 @@
 						yAxis: {
 							title: null
 						},
-						
+
 						plotOptions: {
 							series: {
 								marker: {

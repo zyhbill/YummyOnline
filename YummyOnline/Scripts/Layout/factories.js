@@ -10,7 +10,7 @@
 			Set: function (title, subtitle) {
 				this.Title = title;
 				this.Subtitle = subtitle;
-				document.title = title;
+				document.title = 'YummyOnline - ' + title;
 			},
 
 			Signout: function () {

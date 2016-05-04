@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using YummyOnlineDAO.Models;
-using Protocal;
 
 namespace YummyOnline.Controllers {
 	[Authorize(Roles = nameof(Role.Admin))]
@@ -17,7 +16,7 @@ namespace YummyOnline.Controllers {
 			return View();
 		}
 		public ActionResult _ViewSpecification() {
-			Dictionary<string, List<string>> dirFiles = new Dictionary<string, List<string>>();
+			Dictionary<string, List<FileInfo>> dirFiles = new Dictionary<string, List<FileInfo>>();
 
 
 			string[] dirs = Directory.GetDirectories($"{bin.Parent.FullName}\\Specification");
@@ -26,10 +25,10 @@ namespace YummyOnline.Controllers {
 				string[] files = Directory.GetFiles(dir);
 
 				string dirStr = dir.Split('\\').Last();
-				dirFiles.Add(dirStr, new List<string>());
+				dirFiles.Add(dirStr, new List<FileInfo>());
 
 				foreach(string file in files) {
-					dirFiles[dirStr].Add(file.Split('\\').Last());
+					dirFiles[dirStr].Add(new FileInfo(file));
 				}
 			}
 

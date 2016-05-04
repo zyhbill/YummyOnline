@@ -1,5 +1,5 @@
 ﻿<div class="row">
-	@foreach(KeyValuePair<string, List<string>> dirFile in ViewBag.DirFiles) {
+	@foreach(KeyValuePair<string, List<FileInfo>> dirFile in ViewBag.DirFiles) {
 		<div class="col-md-6">
 			<div class="box">
 				<div class="box-header">
@@ -7,17 +7,18 @@
 				</div>
 				<div class="table-responsive">
 					<table class="table no-margin">
-						@foreach(string file in dirFile.Value) {
+						@foreach(FileInfo file in dirFile.Value) {
 							<tr>
-								<td class="col-md-11">@file</td>
+								<td class="col-md-5">@file.Name</td>
+								<td class="col-md-6 text-right">@file.LastWriteTime.ToString("yy-MM-dd hh:mm:ss")</td>
 								<td class="col-md-1 text-right">
-									@if(file.EndsWith(".html") || file.EndsWith(".htm")) {
-										<a class="btn btn-primary btn-sm" href="/Log/GetFile?dir=@dirFile.Key&name=@file" target="_blank">
+									@if(file.Name.EndsWith(".html") || file.Name.EndsWith(".htm")) {
+										<a class="btn btn-primary btn-sm" href="/Log/GetFile?dir=@dirFile.Key&name=@file.Name" target="_blank">
 											预览
 										</a>
 									}
 									else {
-										<a class="btn btn-danger btn-sm" href="/Log/GetFile?dir=@dirFile.Key&name=@file" target="_blank">
+										<a class="btn btn-danger btn-sm" href="/Log/GetFile?dir=@dirFile.Key&name=@file.Name" target="_blank">
 											下载
 										</a>
 									}

@@ -3,27 +3,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Microsoft.Web.Administration;
+using System.Diagnostics;
 
 namespace YummyOnline.Utility {
-	public class SiteInfo {
-		public long Id { get; set; }
-		public string Name { get; set; }
-		public string PhysicalPath { get; set; }
-		public string ApplicationPoolName { get; set; }
-		public string Protocal { get; set; }
-		public bool AutoStart { get; set; }
-		public string State { get; set; }
-		public string Address { get; set; }
-		public int Port { get; set; }
-		public string Host { get; set; }
-	}
-	public class W3wpInfo {
-		public int Pid { get; set; }
-		public string ApplicationPoolName { get; set; }
-		public string State { get; set; }
-	}
+	
 
 	public static class IISManager {
+		public class SiteInfo {
+			public long Id { get; set; }
+			public string Name { get; set; }
+			public string PhysicalPath { get; set; }
+			public string ApplicationPoolName { get; set; }
+			public string Protocal { get; set; }
+			public bool AutoStart { get; set; }
+			public string State { get; set; }
+			public string Address { get; set; }
+			public int Port { get; set; }
+			public string Host { get; set; }
+			public float CurrentConnections { get; set; }
+		}
+		public class W3wpInfo {
+			public int Pid { get; set; }
+			public string ApplicationPoolName { get; set; }
+			public string State { get; set; }
+		}
+
 		private static ServerManager sm {
 			get {
 				return new ServerManager();
@@ -32,7 +36,7 @@ namespace YummyOnline.Utility {
 
 		public static List<SiteInfo> GetSites() {
 			List<SiteInfo> infos = new List<SiteInfo>();
-			
+
 			foreach(Site s in sm.Sites) {
 				string protocal = s.Bindings[0].Protocol;
 				SiteInfo info = new SiteInfo {
@@ -40,7 +44,8 @@ namespace YummyOnline.Utility {
 					Name = s.Name,
 					PhysicalPath = s.Applications[0].VirtualDirectories["/"].PhysicalPath,
 					ApplicationPoolName = s.Applications[0].ApplicationPoolName,
-					Protocal = s.Bindings[0].Protocol
+					Protocal = s.Bindings[0].Protocol,
+					CurrentConnections = getPerformanceCounter(s.Name).NextValue()
 				};
 				if(protocal == "http") {
 					info.State = s.State.ToString();
@@ -78,16 +83,23 @@ namespace YummyOnline.Utility {
 			}
 			return null;
 		}
+		private static PerformanceCounter getPerformanceCounter(string siteName) {
+			return new PerformanceCounter("Web Service", "Current Connections", siteName);
+		}
 
 		public static List<W3wpInfo> GetWorkerProcesses() {
 			List<W3wpInfo> w3wps = new List<W3wpInfo>();
-			foreach(WorkerProcess w3wp in sm.WorkerProcesses) {
-				w3wps.Add(new W3wpInfo {
-					Pid = w3wp.ProcessId,
-					ApplicationPoolName = w3wp.AppPoolName,
-					State = w3wp.State.ToString()
-				});
+			try {
+				foreach(WorkerProcess w3wp in sm.WorkerProcesses) {
+					w3wps.Add(new W3wpInfo {
+						Pid = w3wp.ProcessId,
+						ApplicationPoolName = w3wp.AppPoolName,
+						State = w3wp.State.ToString()
+					});
+				}
 			}
+			catch { }
+
 			return w3wps;
 		}
 	}

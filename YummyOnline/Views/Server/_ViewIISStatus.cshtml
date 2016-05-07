@@ -11,6 +11,7 @@
 				<th>应用程序池名</th>
 				<th>物理路径</th>
 				<th>协议</th>
+				<th>连接并发数</th>
 
 				<th>IP地址</th>
 				<th>端口</th>
@@ -25,6 +26,7 @@
 				<td>{{site.ApplicationPoolName}}</td>
 				<td>{{site.PhysicalPath}}</td>
 				<td>{{site.Protocal}}</td>
+				<td>{{site.CurrentConnections}}</td>
 
 				<td ng-if="site.Protocal=='ftp'" colspan="5"></td>
 				<td ng-if="site.Protocal!='ftp'">{{site.Address}}</td>

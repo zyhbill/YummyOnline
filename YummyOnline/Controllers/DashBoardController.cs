@@ -10,7 +10,10 @@ using YummyOnline.Utility;
 namespace YummyOnline.Controllers {
 	[Authorize(Roles = nameof(Role.Admin))]
 	public class DashBoardController : BaseController {
-		public async Task<ActionResult> Index() {
+		public ActionResult Index() {
+			return View();
+		}
+		public async Task<ActionResult> _ViewDashBoard() {
 			ViewBag.DiskFreeSpace = DriveSpace.GetHardDiskFreeSpace();
 			ViewBag.DiskSpace = DriveSpace.GetHardDiskSpace();
 			ViewBag.HotelCount = await YummyOnlineManager.GetHotelCount();
@@ -21,6 +24,12 @@ namespace YummyOnline.Controllers {
 			ViewBag.DineCount = await YummyOnlineManager.GetDineCount();
 			return View();
 		}
+		public async Task<ActionResult> _ViewMonitor() {
+			var config = await YummyOnlineManager.GetSystemConfig();
+			ViewBag.WebSocketLocation = $"ws://{config.TcpServerIp}:{config.WebSocketPort}";
+			return View();
+		}
+
 		public async Task<JsonResult> GetUserDailyCount() {
 			var result = new {
 				CustomerDailyCount = await YummyOnlineManager.GetUserDailyCount(Role.Customer),

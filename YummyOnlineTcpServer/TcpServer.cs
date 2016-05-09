@@ -27,6 +27,8 @@ namespace YummyOnlineTcpServer {
 		}
 
 		private TcpManager tcp;
+		private string ip;
+		private int port;
 		private Action<string, Log.LogLevel> logDelegate;
 		private Action<TcpServerStatusProtocal> clientsStatusDelegate;
 
@@ -53,8 +55,10 @@ namespace YummyOnlineTcpServer {
 		/// </summary>
 		/// <param name="logDelegate">记录日志回调函数, 参数1: 日志信息, 参数2: 日志等级</param>
 		/// <param name="clientsStatusDelegate">socket客户端状态变化回调函数</param>
-		public TcpServer(Action<string, Log.LogLevel> logDelegate, Action<TcpServerStatusProtocal> clientsStatusDelegate) {
+		public TcpServer(string ip, int port, Action<string, Log.LogLevel> logDelegate, Action<TcpServerStatusProtocal> clientsStatusDelegate) {
 			tcp = new TcpManager();
+			this.ip = ip;
+			this.port = port;
 			tcp.MessageReceivedEvent += Tcp_MessageReceivedEvent;
 			tcp.ErrorEvent += Tcp_ErrorEvent;
 			this.logDelegate = logDelegate;
@@ -62,7 +66,7 @@ namespace YummyOnlineTcpServer {
 		}
 		public async Task Initialize() {
 			YummyOnlineManager manager = new YummyOnlineManager();
-			SystemConfig config = await manager.GetSystemConfig();
+			//SystemConfig config = await manager.GetSystemConfig();
 
 			List<Hotel> hotels = await manager.GetHotels();
 			hotels.ForEach(h => {
@@ -74,9 +78,9 @@ namespace YummyOnlineTcpServer {
 				NewDineInformClients.Add(g, null);
 			});
 
-			log($"Binding {config.TcpServerIp}:{config.TcpServerPort}", Log.LogLevel.Info);
+			log($"Binding {ip}:{port}", Log.LogLevel.Info);
 
-			tcp.StartListening(IPAddress.Parse(config.TcpServerIp), config.TcpServerPort, client => {
+			tcp.StartListening(IPAddress.Parse(ip), port, client => {
 				TcpClientInfo clientInfo = new TcpClientInfo(client);
 				lock(WaitingForVerificationClients) {
 					WaitingForVerificationClients.Add(clientInfo);

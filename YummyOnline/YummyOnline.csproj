@@ -132,7 +132,6 @@
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Utility\DbPartition.cs" />
     <Compile Include="Utility\DriveSpace.cs" />
-    <Compile Include="Utility\IISManager.cs" />
     <Compile Include="Utility\TcpServerProcess.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
@@ -191,6 +190,7 @@
     <Content Include="Scripts\app.js" />
     <Content Include="Scripts\DashBoard\controller.js" />
     <Content Include="Scripts\DashBoard\directives.js" />
+    <Content Include="Scripts\DashBoard\route.js" />
     <Content Include="Scripts\lib\angular-animate.min.js" />
     <Content Include="Scripts\lib\highcharts.js" />
     <Content Include="Scripts\directives.js" />
@@ -204,6 +204,7 @@
     <Content Include="Scripts\Server\route.js" />
     <Content Include="Scripts\Users\controllers.js" />
     <Content Include="Scripts\Users\route.js" />
+    <Content Include="Scripts\DashBoard\websocket.js" />
     <Content Include="Sqls\AddFile.sql" />
     <Content Include="Sqls\AddFileGroup.sql" />
     <Content Include="Sqls\AlterScheme.sql" />
@@ -287,6 +288,8 @@
     <Content Include="Views\Database\_ViewPartitionDetail.cshtml" />
     <Content Include="Views\Log\Index.cshtml" />
     <Content Include="Views\Database\_ViewPartitionHandle.cshtml" />
+    <Content Include="Views\DashBoard\_ViewDashBoard.cshtml" />
+    <Content Include="Views\DashBoard\_ViewMonitor.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

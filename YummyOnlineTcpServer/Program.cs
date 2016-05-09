@@ -19,11 +19,16 @@ namespace YummyOnlineTcpServer {
 				return;
 			}
 
-			TcpServer tcp = new TcpServer(async (log, level) => {
+			SystemConfig config = new YummyOnlineManager().GetSystemConfig().Result;
+			TcpServer tcp = new TcpServer(config.TcpServerIp, config.TcpServerPort, async (log, level) => {
 				await new YummyOnlineManager().RecordLog(Log.LogProgram.TcpServer, level, log);
 			}, clientsStatusChange);
+			Task _ = tcp.Initialize();
 
-			Task t = tcp.Initialize();
+
+			WebSocketServer webSocket = new WebSocketServer(config.TcpServerIp, config.WebSocketPort, async (log, level) => {
+				await new YummyOnlineManager().RecordLog(Log.LogProgram.System, level, log);
+			});
 
 			while(true) {
 				Console.Read();

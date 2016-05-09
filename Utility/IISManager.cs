@@ -5,9 +5,7 @@ using System.Web;
 using Microsoft.Web.Administration;
 using System.Diagnostics;
 
-namespace YummyOnline.Utility {
-	
-
+namespace Utility {
 	public static class IISManager {
 		public class SiteInfo {
 			public long Id { get; set; }

@@ -89,7 +89,7 @@ namespace YummyOnlineDAO {
 			List<dynamic> list = new List<dynamic>();
 			for(int i = -30; i <= 0; i++) {
 				DateTime t = DateTime.Now.AddDays(i);
-				int count = await ctx.UserRoles.CountAsync(p => p.Role == role && SqlFunctions.DateDiff("d", p.User.CreateDate, t) == 0);
+				int count = await ctx.UserRoles.CountAsync(p => p.Role == role && SqlFunctions.DateDiff("day", p.User.CreateDate, t) == 0);
 				list.Add(new {
 					DateTime = t,
 					Count = count

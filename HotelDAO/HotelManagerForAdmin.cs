@@ -12,7 +12,7 @@ namespace HotelDAO {
 			: base(connStr) { }
 
 		public async Task<int> GetDineCount(DateTime dateTime) {
-			return await ctx.Dines.CountAsync(p => SqlFunctions.DateDiff("d", p.BeginTime, dateTime) == 0);
+			return await ctx.Dines.CountAsync(p => SqlFunctions.DateDiff("day", p.BeginTime, dateTime) == 0);
 		}
 		public async Task<int[]> GetDinePerHourCount(DateTime dateTime) {
 			int[] counts = new int[24];

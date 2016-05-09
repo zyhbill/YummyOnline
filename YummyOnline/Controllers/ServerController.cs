@@ -6,6 +6,7 @@ using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
 using Protocal;
 using Newtonsoft.Json;
+using Utility;
 using YummyOnline.Utility;
 
 namespace YummyOnline.Controllers {

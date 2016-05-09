@@ -182,7 +182,7 @@
     <Content Include="Content\css\lib\animate.min.css" />
     <Content Include="Content\css\lib\awesome-bootstrap-checkbox.css" />
     <Content Include="Content\css\lib\toastr.min.css" />
-    <Content Include="favicon.ico" />
+    <Content Include="Content\image\favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\css\global.css" />
     <Content Include="Scripts\Account\controllers.js" />
@@ -192,7 +192,6 @@
     <Content Include="Scripts\DashBoard\directives.js" />
     <Content Include="Scripts\DashBoard\route.js" />
     <Content Include="Scripts\lib\angular-animate.min.js" />
-    <Content Include="Scripts\lib\highcharts.js" />
     <Content Include="Scripts\directives.js" />
     <Content Include="Scripts\Layout\factories.js" />
     <Content Include="Scripts\lib\toastr.min.js" />

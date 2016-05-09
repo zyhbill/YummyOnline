@@ -1,11 +1,12 @@
 ﻿app.controller('CartCtrl', [
 	'$scope',
 	'$rootScope',
-	'$filter',
+	'$http',
+	'$window',
 	'$uibModal',
 	'cart',
 	'menuFilter',
-	function ($scope, $rootScope, $filter, $modal, $cart, $menuFilter) {
+	function ($scope, $rootScope, $http,$window, $modal, $cart, $menuFilter) {
 		$scope.openRemarkModal = function (menu) {
 			var modalInstance = $modal.open({
 				templateUrl: 'remarkModal.html',
@@ -23,6 +24,13 @@
 				templateUrl: 'customerModal.html',
 				controller: 'CustomerModalCtrl'
 			});
+		}
+		$rootScope.signout = function () {
+			$http.post('/Account/Signout').then(function (response) {
+				if (response.data.Succeeded) {
+					window.location.href = '/';
+				}
+			})
 		}
 
 		$cart.Initialize(function () {
@@ -99,7 +107,7 @@ app.controller('PaymentCtrl', [
 
 			if ($scope.isSubmitting) return;
 			$scope.isSubmitting = true;
-			
+
 			$cart.Submit().then(function (data) {
 				if (data.Succeeded) {
 					toastr.success('下单成功');

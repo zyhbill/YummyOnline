@@ -5,3 +5,7 @@ app.filter('trustHtml', function ($sce) {
 		return $sce.trustAsHtml(input);
 	}
 });
+
+toastr.options = {
+	"progressBar": true,
+}

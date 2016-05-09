@@ -8,9 +8,8 @@
 	<title>店小二</title>
 	@Styles.Render("~/css/bootstrap")
 	@Styles.Render("~/css/fontawesome")
-
+	@Styles.Render("~/css/toastr")
 	<link href="~/Content/css/lib/animate.min.css" rel="stylesheet">
-	<link href="~/Content/css/lib/toastr.min.css" rel="stylesheet" />
 	<link href="~/Content/css/global.css" rel="stylesheet" />
 	<link href="~/Content/css/waiterGlobal.css" rel="stylesheet" />
 	@RenderSection("Style", false)
@@ -24,7 +23,7 @@
 	@Scripts.Render("~/scripts/angular-route")
 	@Scripts.Render("~/scripts/angular-ui-bootstrap")
 	<script src="~/Scripts/lib/angularjs-storage.min.js"></script>
-	<script src="~/Scripts/lib/toastr.min.js"></script>
+	@Scripts.Render("~/scripts/toastr")
 
 	<script src="~/Scripts/app.js"></script>
 	<script src="~/Scripts/directives.js"></script>

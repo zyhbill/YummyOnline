@@ -202,12 +202,7 @@ app.controller('MonitorCtrl', [
 			plotOptions: {
 				series: {
 					marker: {
-						lineWidth: 1
-					}
-				},
-				spline: {
-					marker: {
-						enabled: true
+						enabled: false
 					}
 				}
 			},
@@ -244,12 +239,7 @@ app.controller('MonitorCtrl', [
 			plotOptions: {
 				series: {
 					marker: {
-						lineWidth: 1
-					}
-				},
-				spline: {
-					marker: {
-						enabled: true
+						enabled: false
 					}
 				}
 			},
@@ -264,7 +254,7 @@ app.controller('MonitorCtrl', [
 			var systemLine = $systemLine.highcharts();
 			var shift = systemLine.series[0].data.length >= 50;
 			var dateTime = new Date(data.DateTime).getTime();
-			dateTime += 8*60 * 60 * 1000;
+			dateTime += 8 * 60 * 60 * 1000;
 
 			systemLine.series[0].addPoint([dateTime, data.CpuTime], true, shift);
 			systemLine.series[1].addPoint([dateTime, data.MemoryUsage], true, shift);

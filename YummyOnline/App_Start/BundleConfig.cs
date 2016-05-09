@@ -24,7 +24,8 @@ namespace YummyOnline {
 
 			List<BundleInfo> styleInfos = new List<BundleInfo> {
 				new BundleInfo("bootstrap","//cdn.bootcss.com/bootstrap/3.3.6/css/bootstrap.min.css"),
-				new BundleInfo("fontawesome","//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css")
+				new BundleInfo("fontawesome","//cdn.bootcss.com/font-awesome/4.5.0/css/font-awesome.min.css"),
+				new BundleInfo("toastr","//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css")
 			};
 
 
@@ -34,6 +35,8 @@ namespace YummyOnline {
 				new BundleInfo("angular","//cdn.bootcss.com/angular.js/1.5.0/angular.min.js"),
 				new BundleInfo("angular-route","//cdn.bootcss.com/angular.js/1.5.0/angular-route.min.js"),
 				new BundleInfo("angular-ui-bootstrap","//cdn.bootcss.com/angular-ui-bootstrap/1.2.1/ui-bootstrap-tpls.min.js"),
+
+				new BundleInfo("toastr","//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"),
 
 				new BundleInfo("highcharts","//cdn.bootcss.com/highcharts/4.2.3/highcharts.js"),
 				//new BundleInfo("highcharts-more","//cdn.bootcss.com/highcharts/4.2.3/highcharts-more.src.js",null)

@@ -125,7 +125,7 @@
 					});
 					for (var j in data[i].Counts) {
 						if (i == 0) {
-							categories.push(j + ':00');
+							categories.push(j + ' - ' + (parseInt(j) + 1));
 						}
 						series[i].data.push(data[i].Counts[j]);
 					}
@@ -134,12 +134,12 @@
 				$('#dine-perhour-line').highcharts({
 					title: null,
 					chart: {
-						height: 400,
+						height: 300,
 						type: 'spline',
 					},
 					xAxis: {
 						categories: categories,
-						tickInterval: 2,
+						tickInterval: 5
 					},
 					yAxis: {
 						title: null
@@ -186,7 +186,8 @@ app.controller('MonitorCtrl', [
 			title: null,
 			chart: {
 				type: 'line',
-				animation: false
+				height: 300,
+				animation: false,
 			},
 
 			xAxis: {
@@ -197,14 +198,6 @@ app.controller('MonitorCtrl', [
 				title: null,
 				max: 100,
 				min: 0
-			},
-
-			plotOptions: {
-				series: {
-					marker: {
-						enabled: false
-					}
-				}
 			},
 			tooltip: {
 				enabled: false
@@ -234,14 +227,6 @@ app.controller('MonitorCtrl', [
 			},
 			yAxis: {
 				title: null,
-			},
-
-			plotOptions: {
-				series: {
-					marker: {
-						enabled: false
-					}
-				}
 			},
 			tooltip: {
 				enabled: false

@@ -166,7 +166,7 @@ app.factory('cart', [
 	function ($rootScope, $q, $http, $dataSet, $localStorage, generateData) {
 		var cart = {
 			/* Cart Data */
-			HeadCount: 0, // 总人数
+			HeadCount: 1, // 总人数
 			Price: 0, // 总价
 			PriceInPoints: 0, // 通过积分支付的价格
 			Invoice: null, // 发票抬头

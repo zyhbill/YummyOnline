@@ -3,7 +3,11 @@
 	Layout = "~/Views/Shared/_LayoutGlobal.cshtml";
 	ViewBag.BodyClass = "index";
 }
-
+@section Script{
+	<script>
+		history.replaceState(null, null, '/');
+	</script>
+}
 @section Style{
 	<link href="~/Content/css/index.css" rel="stylesheet">
 }

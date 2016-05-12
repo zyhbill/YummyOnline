@@ -2,13 +2,12 @@
 using System.Collections.Generic;
 
 namespace OrderSystem.Models {
+	public class MenuExtension {
+		public string Id { get; set; }
+		public int Ordered { get; set; }
+		public List<int> Remarks { get; set; }
+	}
 	public class Cart {
-		public class MenuExtension {
-			public string Id { get; set; }
-			public int Ordered { get; set; }
-			public List<int> Remarks { get; set; }
-		}
-
 		public int HeadCount { get; set; }
 		/// <summary>
 		/// 实际支付价格
@@ -33,6 +32,7 @@ namespace OrderSystem.Models {
 		public string ClerkId { get; set; }
 		public double? Discount { get; set; }
 		public string DiscountName { get; set; }
+		public List<MenuExtension> GiftMenus { get; set; } = new List<MenuExtension>();
 	}
 
 
@@ -49,6 +49,7 @@ namespace OrderSystem.Models {
 		public string UserId { get; set; }
 		public double? Discount { get; set; }
 		public string DiscountName { get; set; }
+		public List<MenuExtension> GiftMenus { get; set; } = new List<MenuExtension>();
 	}
 
 

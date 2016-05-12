@@ -108,7 +108,8 @@ namespace OrderSystem.Controllers {
 			CartAddition addition = new CartAddition {
 				ClerkId = cartAddition.ClerkId,
 				Discount = cartAddition.Discount,
-				DiscountName = cartAddition.DiscountName
+				DiscountName = cartAddition.DiscountName,
+				GiftMenus = cartAddition.GiftMenus
 			};
 
 			User user = await createOrGetUser(cartAddition.UserId);

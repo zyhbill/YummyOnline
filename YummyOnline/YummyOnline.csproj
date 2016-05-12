@@ -182,7 +182,6 @@
     <Content Include="Content\css\lib\animate.min.css" />
     <Content Include="Content\css\lib\awesome-bootstrap-checkbox.css" />
     <Content Include="Content\css\lib\toastr.min.css" />
-    <Content Include="Content\image\favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\css\global.css" />
     <Content Include="Scripts\Account\controllers.js" />

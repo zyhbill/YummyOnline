@@ -126,7 +126,7 @@ namespace HotelDAO.Models {
 		public TakeOut TakeOut { get; set; }
 	}
 
-	public enum DineMneuStatus {
+	public enum DineMenuStatus {
 		/// <summary>
 		/// 普通
 		/// </summary>
@@ -134,7 +134,11 @@ namespace HotelDAO.Models {
 		/// <summary>
 		/// 退回
 		/// </summary>
-		Returned = 1
+		Returned = 1,
+		/// <summary>
+		/// 赠菜
+		/// </summary>
+		Gift = 2
 	}
 	/// <summary>
 	/// 订单菜品详情，一对多表
@@ -149,7 +153,7 @@ namespace HotelDAO.Models {
 		public string MenuId { get; set; }
 		public Menu Menu { get; set; }
 
-		public DineMneuStatus Status { get; set; } = DineMneuStatus.Normal;
+		public DineMenuStatus Status { get; set; } = DineMenuStatus.Normal;
 		public int Count { get; set; }
 		public decimal OriPrice { get; set; }
 		public decimal Price { get; set; }

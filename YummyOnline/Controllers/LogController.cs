@@ -43,11 +43,15 @@ namespace YummyOnline.Controllers {
 			return View();
 		}
 
-		public ActionResult GetFile(string dir, string name) {
+		public async Task<ActionResult> GetFile(string dir, string name) {
+			User user = await UserManager.FindByIdAsync(User.Identity.Name);
+
 			string path = $"{bin.Parent.FullName}\\Specification\\{dir}\\{name}";
 			if(name.EndsWith(".html") || name.EndsWith(".htm")) {
+				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Info, $"{user.Id}({user.UserName}) Reads {dir}\\{name}");
 				return File(path, "text/html");
 			}
+			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Info, $"{user.Id}({user.UserName}) Downloads {dir}\\{name}");
 			return File(path, "application/octet-stream", name);
 		}
 

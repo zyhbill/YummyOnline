@@ -6,7 +6,7 @@
 				   ng-model="signinFormData.PhoneNumber" required ng-minlength="11" ng-maxlength="11">
 		</div>
 
-		<div class="input-group">
+		<div class="form-group input-group">
 			<input class="form-control form-control-round" type="password" name="Password" placeholder="密码"
 				   ng-model="signinFormData.Password" required>
 			<div class="input-group-btn">
@@ -15,16 +15,14 @@
 		</div>
 
 		@if(ViewBag.NeedCodeImg) {
-			@*<li class="list-group-item">
-					<div class="input-group input-group-sm ">
-						<span class="input-group-addon"><i class="fa fa-fw fa-key"></i></span>
-						<input class="form-control input-sm form-control-inline" type="text" name="CodeImg" placeholder="验证码"
-							   ng-model="signinFormData.CodeImg" required>
-						<span class="input-group-addon input-group-addon-img">
-							<img ng-src="{{codeImgSrc}}" ng-click="changeCodeImg()">
-						</span>
-					</div>
-				</li>*@
+			<div class="form-group">
+				<input class="form-control form-control-round" type="text" name="CodeImg" placeholder="验证码"
+					   ng-model="signinFormData.CodeImg" required>
+				<div class="text-center">
+					<img ng-src="{{codeImgSrc}}" ng-click="changeCodeImg()">
+				</div>
+			</div>
+			
 		}
 		<button class="btn btn-primary btn-round btn-block btn-signin" type="button"
 				ng-disabled="!form.$valid" ng-click="signin()">

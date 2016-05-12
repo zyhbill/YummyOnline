@@ -50,29 +50,12 @@
 	<div class="container-fluid">
 		<h2>YummyOnline Database Specification</h2>
 		<div class="alert alert-danger">
-			<p>DinePaidDetails中 DineId代表点单Id, 不是菜品Id, DinePaidDetails为表名, 再次感谢王徐峰同学的火眼金睛</p>
+			<p>SystemConfigs中加入若干配置字段，Menus中增加赠菜状态</p>
 			<p class="text-right">
-				<small>2016-4-23 王徐峰</small>
+				<small>2016-5-12 张朕煜</small>
 			</p>
 		</div>
-		<div class="alert alert-danger">
-			<p>Menu中 咸度字段名为SaltyDegree, 感谢杨彦博同学</p>
-			<p class="text-right">
-				<small>2016-4-22 杨彦博</small>
-			</p>
-		</div>
-		<div class="alert alert-danger">
-			<p>VipDiscounts主键字段名称为Id, 不是Level, 感谢王徐峰同学的火眼金睛</p>
-			<p class="text-right">
-				<small>2016-4-20 王徐峰</small>
-			</p>
-		</div>
-		<div class="alert alert-danger">
-			<p>总数据中添加新订单通知客户端的GUID授权表</p>
-			<p class="text-right">
-				<small>2016-4-20 张朕煜</small>
-			</p>
-		</div>
+		
 		
 
 		<ul>
@@ -811,6 +794,7 @@
 				<td>
 					<p>0 普通</p>
 					<p>1 退回</p>
+					<p>2 赠菜</p>
 				</td>
 			</tr>
 			<tr>
@@ -1373,6 +1357,24 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>OrderSystemUrl</td>
+				<td>nvarchar(MAX)</td>
+				<td>点菜系统地址</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>WebSocketPort</td>
+				<td>int</td>
+				<td>总系统WebScoket端口</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>ManagementWebSocketPort</td>
+				<td>int</td>
+				<td>收银管理系统WebSocket端口</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>Token</td>
 				<td>nvarchar(MAX)</td>
 				<td>令牌</td>
@@ -1390,6 +1392,12 @@
 				<td>Guid</td>
 				<td>uniqueidentifier</td>
 				<td>Guid号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Description</td>
+				<td>nvarchar(25)</td>
+				<td>描述</td>
 				<td></td>
 			</tr>
 		</table>
@@ -1769,6 +1777,32 @@
 		</table>
 
 
+
+
+		<div class="alert alert-danger">
+			<p>DinePaidDetails中 DineId代表点单Id, 不是菜品Id, DinePaidDetails为表名, 再次感谢王徐峰同学的火眼金睛</p>
+			<p class="text-right">
+				<small>2016-4-23 王徐峰</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>Menu中 咸度字段名为SaltyDegree, 感谢杨彦博同学</p>
+			<p class="text-right">
+				<small>2016-4-22 杨彦博</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>VipDiscounts主键字段名称为Id, 不是Level, 感谢王徐峰同学的火眼金睛</p>
+			<p class="text-right">
+				<small>2016-4-20 王徐峰</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>总数据中添加新订单通知客户端的GUID授权表</p>
+			<p class="text-right">
+				<small>2016-4-20 张朕煜</small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>饭店数据库中的CSS路径移动到总数据库中</p>
 			<p class="text-right">

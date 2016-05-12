@@ -18,7 +18,6 @@ namespace Utility {
 			public string Address { get; set; }
 			public int Port { get; set; }
 			public string Host { get; set; }
-			public float CurrentConnections { get; set; }
 		}
 		public class W3wpInfo {
 			public int Pid { get; set; }
@@ -42,8 +41,7 @@ namespace Utility {
 					Name = s.Name,
 					PhysicalPath = s.Applications[0].VirtualDirectories["/"].PhysicalPath,
 					ApplicationPoolName = s.Applications[0].ApplicationPoolName,
-					Protocal = s.Bindings[0].Protocol,
-					CurrentConnections = getPerformanceCounter(s.Name).NextValue()
+					Protocal = s.Bindings[0].Protocol
 				};
 				if(protocal == "http") {
 					info.State = s.State.ToString();
@@ -80,9 +78,6 @@ namespace Utility {
 				}
 			}
 			return null;
-		}
-		private static PerformanceCounter getPerformanceCounter(string siteName) {
-			return new PerformanceCounter("Web Service", "Current Connections", siteName);
 		}
 
 		public static List<W3wpInfo> GetWorkerProcesses() {

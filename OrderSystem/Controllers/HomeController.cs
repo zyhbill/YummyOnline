@@ -10,11 +10,10 @@ namespace OrderSystem.Controllers {
 	public class HomeController : BaseOrderSystemController {
 		// GET: 店小二点菜系统入口 Home/Index/[hotelId]/[qrCode]
 		public async Task<ActionResult> Index(int? hotelId, string qrCode) {
-			if(CurrHotel != null && Session["CurrentDesk"] != null) {
-				return View();
-			}
-
 			if(hotelId == null || qrCode == null) {
+				if(CurrHotel != null && Session["CurrentDesk"] != null) {
+					return View();
+				}
 				return RedirectToAction("HotelMissing", "Error");
 			}
 

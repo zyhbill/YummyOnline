@@ -1,6 +1,7 @@
 ﻿using HotelDAO;
 using HotelDAO.Models;
 using OrderSystem.Models;
+using Protocal;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -8,10 +9,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
-using Protocal;
 
 namespace OrderSystem {
 	public class OrderManager : BaseHotelManager {
+		private class MenuExtensionWithGift {
+			public MenuExtension MenuExtension { get; set; }
+			public bool IsGift { get; set; }
+		}
 		public OrderManager(string connString) : base(connString) { }
 
 		public async Task<FunctionResult> CreateDine(Cart cart, CartAddition addition) {
@@ -54,56 +58,80 @@ namespace OrderSystem {
 				await handleDiscount(mainPaidDetail.PayKind, dine);
 			}
 
-			foreach(Cart.MenuExtension menuExtension in cart.OrderedMenus) {
+			List<MenuExtensionWithGift> menuExtensionWithGifts = new List<MenuExtensionWithGift>();
+			foreach(MenuExtension menuExtension in addition.GiftMenus) {
+				menuExtensionWithGifts.Add(new MenuExtensionWithGift {
+					MenuExtension = menuExtension,
+					IsGift = true
+				});
+			}
+			foreach(MenuExtension menuExtension in cart.OrderedMenus) {
+				menuExtensionWithGifts.Add(new MenuExtensionWithGift {
+					MenuExtension = menuExtension,
+					IsGift = false
+				});
+			}
+
+			foreach(MenuExtensionWithGift menuExtensionWithGift in menuExtensionWithGifts) {
+				MenuExtension menuExtension = menuExtensionWithGift.MenuExtension;
 				Menu menu = await ctx.Menus
 					.Include(p => p.MenuPrice)
 					.FirstOrDefaultAsync(p => p.Id == menuExtension.Id);
-				DineMenu dineDetail = new DineMenu {
+				DineMenu dineMenu = new DineMenu {
 					Count = menuExtension.Ordered,
 					OriPrice = menu.MenuPrice.Price,
-					Price = menu.MenuPrice.Price,
+					Price = menuExtensionWithGift.IsGift ? 0 : menu.MenuPrice.Price,
+					RemarkPrice = 0,
+
 					Menu = menu,
-					Remarks = new List<Remark>()
+					Remarks = new List<Remark>(),
+					Status = menuExtensionWithGift.IsGift? DineMenuStatus.Gift: DineMenuStatus.Normal
 				};
 
-				// 是否排除在总单打折之外
-				bool excludePayDiscount = menu.MenuPrice.ExcludePayDiscount;
+				if(!menuExtensionWithGift.IsGift) {
+					// 是否排除在总单打折之外
+					bool excludePayDiscount = menu.MenuPrice.ExcludePayDiscount;
 
-				// 是否打折
-				if(menu.MenuPrice.Discount < 1) {
-					excludePayDiscount = true;
-					dineDetail.Price = menu.MenuPrice.Price * (decimal)menu.MenuPrice.Discount;
-				}
-				// 是否为特价菜
-				DayOfWeek week = DateTime.Now.DayOfWeek;
-				MenuOnSale menuOnSales = await ctx.MenuOnSales.FirstOrDefaultAsync(p => p.Id == menu.Id && p.OnSaleWeek == week);
-				if(menuOnSales != null) {
-					excludePayDiscount = true;
-					dineDetail.Price = menuOnSales.Price;
-				}
-				// 是否为套餐
-				var menuSetMeals = await ctx.MenuSetMeals.FirstOrDefaultAsync(p => p.MenuSetId == menu.Id);
-				if(menuSetMeals != null) {
-					excludePayDiscount = true;
+					// 是否打折
+					if(menu.MenuPrice.Discount < 1) {
+						excludePayDiscount = true;
+						dineMenu.Price = menu.MenuPrice.Price * (decimal)menu.MenuPrice.Discount;
+					}
+					// 是否为特价菜
+					DayOfWeek week = DateTime.Now.DayOfWeek;
+					MenuOnSale menuOnSales = await ctx.MenuOnSales.FirstOrDefaultAsync(p => p.Id == menu.Id && p.OnSaleWeek == week);
+					if(menuOnSales != null) {
+						excludePayDiscount = true;
+						dineMenu.Price = menuOnSales.Price;
+					}
+					// 是否为套餐
+					var menuSetMeals = await ctx.MenuSetMeals.FirstOrDefaultAsync(p => p.MenuSetId == menu.Id);
+					if(menuSetMeals != null) {
+						excludePayDiscount = true;
+					}
+
+					if(!excludePayDiscount) {
+						dineMenu.Price = menu.MenuPrice.Price * (decimal)dine.Discount;
+					}
 				}
 
-				if(!excludePayDiscount) {
-					dineDetail.Price = menu.MenuPrice.Price * (decimal)dine.Discount;
-				}
-
+				// 菜品备注处理
 				menuExtension.Remarks?.ForEach(r => {
 					Remark remark = ctx.Remarks.FirstOrDefault(p => p.Id == r);
 
-					dineDetail.RemarkPrice += remark.Price;
-					dineDetail.Remarks.Add(remark);
+					if(!menuExtensionWithGift.IsGift) {
+						dineMenu.RemarkPrice += remark.Price;
+					}
+
+					dineMenu.Remarks.Add(remark);
 				});
 
-				dine.Price += dineDetail.Price * dineDetail.Count + dineDetail.RemarkPrice;
-				dine.OriPrice += dineDetail.OriPrice * dineDetail.Count + dineDetail.RemarkPrice;
+				dine.Price += dineMenu.Price * dineMenu.Count + dineMenu.RemarkPrice;
+				dine.OriPrice += dineMenu.OriPrice * dineMenu.Count + dineMenu.RemarkPrice;
 
-				dine.DineMenus.Add(dineDetail);
+				dine.DineMenus.Add(dineMenu);
 
-				menu.Ordered += dineDetail.Count;
+				menu.Ordered += dineMenu.Count;
 			}
 			mainPaidDetail.Price = dine.Price;
 

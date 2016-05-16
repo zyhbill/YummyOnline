@@ -6,7 +6,7 @@ namespace OrderSystem.Models {
 	public class MenuExtension {
 		public string Id { get; set; }
 		public int Ordered { get; set; }
-		public List<int> Remarks { get; set; }
+		public List<int> Remarks { get; set; } = new List<int>();
 	}
 	public class Cart {
 		public int HeadCount { get; set; }
@@ -60,6 +60,6 @@ namespace OrderSystem.Models {
 		}
 
 		public string DineId { get; set; }
-		public List<PaidDetail> PaidDetails { get; set; }
+		public List<PaidDetail> PaidDetails { get; set; } = new List<PaidDetail>();
 	}
 }

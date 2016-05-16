@@ -23,6 +23,9 @@ namespace OrderSystem {
 				PayKind = await ctx.PayKinds.FirstOrDefaultAsync(p => p.Id == cart.PayKindId),
 				Price = 0,
 			};
+			if(mainPaidDetail.PayKind == null) {
+				return new FunctionResult(false, "未找到该支付方式");
+			}
 			Dine dine = new Dine {
 				Type = DineType.ToStay,
 				HeadCount = cart.HeadCount,
@@ -32,7 +35,6 @@ namespace OrderSystem {
 
 				UserId = addition.UserId,
 				WaiterId = addition.WaiterId,
-				ClerkId = addition.ClerkId,
 
 				DineMenus = new List<DineMenu>(),
 				Remarks = new List<Remark>(),
@@ -77,6 +79,9 @@ namespace OrderSystem {
 				Menu menu = await ctx.Menus
 					.Include(p => p.MenuPrice)
 					.FirstOrDefaultAsync(p => p.Id == menuExtension.Id);
+				if(menu == null) {
+					return new FunctionResult(false, "未找到菜品");
+				}
 				DineMenu dineMenu = new DineMenu {
 					Count = menuExtension.Ordered,
 					OriPrice = menu.MenuPrice.Price,
@@ -85,7 +90,7 @@ namespace OrderSystem {
 
 					Menu = menu,
 					Remarks = new List<Remark>(),
-					Status = menuExtensionWithGift.IsGift? DineMenuStatus.Gift: DineMenuStatus.Normal
+					Status = menuExtensionWithGift.IsGift ? DineMenuStatus.Gift : DineMenuStatus.Normal
 				};
 
 				if(!menuExtensionWithGift.IsGift) {
@@ -116,15 +121,19 @@ namespace OrderSystem {
 				}
 
 				// 菜品备注处理
-				menuExtension.Remarks?.ForEach(r => {
-					Remark remark = ctx.Remarks.FirstOrDefault(p => p.Id == r);
+				foreach(int r in menuExtension.Remarks) {
+					Remark remark = await ctx.Remarks.FirstOrDefaultAsync(p => p.Id == r);
+
+					if(remark == null) {
+						return new FunctionResult(false, "未找到备注信息");
+					}
 
 					if(!menuExtensionWithGift.IsGift) {
 						dineMenu.RemarkPrice += remark.Price;
 					}
 
 					dineMenu.Remarks.Add(remark);
-				});
+				}
 
 				dine.Price += dineMenu.Price * dineMenu.Count + dineMenu.RemarkPrice;
 				dine.OriPrice += dineMenu.OriPrice * dineMenu.Count + dineMenu.RemarkPrice;
@@ -135,15 +144,15 @@ namespace OrderSystem {
 			}
 			mainPaidDetail.Price = dine.Price;
 
-			if(!await handlePoints(cart.PriceInPoints, mainPaidDetail, dine)) {
+			if(cart.PriceInPoints.HasValue && !await handlePoints(cart.PriceInPoints.Value, mainPaidDetail, dine)) {
 				return new FunctionResult(false, "积分不足");
 			}
 
 			// 检测前端计算的金额与后台计算的金额是否相同，如果前端金额为null则检测
-			if(cart.Price != null && Math.Abs(mainPaidDetail.Price - (decimal)cart.Price) > 0.01m) {
+			if(cart.Price.HasValue && Math.Abs(mainPaidDetail.Price - cart.Price.Value) > 0.01m) {
 				ctx.Logs.Add(new HotelDAO.Models.Log {
 					Level = HotelDAO.Models.Log.LogLevel.Error,
-					Message = $"Price Error, Cart Price: {cart.Price}, Cal Price: {mainPaidDetail.Price}"
+					Message = $"Price Error, Cart Price: {cart.Price.Value}, Cal Price: {mainPaidDetail.Price}"
 				});
 				await ctx.SaveChangesAsync();
 				return new FunctionResult(false, "金额有误");
@@ -213,28 +222,31 @@ namespace OrderSystem {
 		/// 积分处理
 		/// </summary>
 		private async Task<bool> handlePoints(decimal priceInPoints, DinePaidDetail mainPaidDetail, Dine dine) {
-			if(priceInPoints != 0) {
-				HotelConfig hotelConfig = await ctx.HotelConfigs.FirstOrDefaultAsync();
-
-				DinePaidDetail pointsPaidDetail = new DinePaidDetail {
-					PayKind = await ctx.PayKinds.FirstOrDefaultAsync(p => p.Type == PayKindType.Points),
-					Price = priceInPoints
-				};
-
-				Customer customer = await ctx.Customers.FirstOrDefaultAsync(p => p.Id == dine.UserId);
-				int customerPoints = customer == null ? 0 : customer.Points;
-
-				if(pointsPaidDetail.Price > customerPoints / hotelConfig.PointsRatio) {
-					return false;
-				}
-				if(pointsPaidDetail.Price > dine.Price) {
-					pointsPaidDetail.Price = dine.Price;
-				}
-
-				mainPaidDetail.Price -= pointsPaidDetail.Price;
-
-				dine.DinePaidDetails.Add(pointsPaidDetail);
+			if(priceInPoints == 0) {
+				return true;
 			}
+
+			HotelConfig hotelConfig = await ctx.HotelConfigs.FirstOrDefaultAsync();
+
+			DinePaidDetail pointsPaidDetail = new DinePaidDetail {
+				PayKind = await ctx.PayKinds.FirstOrDefaultAsync(p => p.Type == PayKindType.Points),
+				Price = priceInPoints
+			};
+
+			Customer customer = await ctx.Customers.FirstOrDefaultAsync(p => p.Id == dine.UserId);
+			int customerPoints = customer == null ? 0 : customer.Points;
+
+			if(pointsPaidDetail.Price > customerPoints / hotelConfig.PointsRatio) {
+				return false;
+			}
+			if(pointsPaidDetail.Price > dine.Price) {
+				pointsPaidDetail.Price = dine.Price;
+			}
+
+			mainPaidDetail.Price -= pointsPaidDetail.Price;
+
+			dine.DinePaidDetails.Add(pointsPaidDetail);
+
 			return true;
 		}
 

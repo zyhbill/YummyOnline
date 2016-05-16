@@ -74,7 +74,7 @@ namespace YummyOnline.Controllers {
 					Id = program.Value,
 					Name = program.Value.ToString()
 				},
-				Logs = await YummyOnlineManager.GetLogsByProgram(program.Value, dateTime, count)
+				Logs = await YummyOnlineManager.GetLogs(program.Value, dateTime, count)
 			});
 		}
 

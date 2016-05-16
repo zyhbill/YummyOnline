@@ -16,6 +16,7 @@ namespace YummyOnlineDAO {
 		public async Task<SystemConfig> GetSystemConfig() {
 			return await ctx.SystemConfigs.FirstOrDefaultAsync();
 		}
+
 		public async Task<bool> IsInNewDineInformClientGuids(Guid guid) {
 			NewDineInformClientGuid clientGuid = await ctx.NewDineInformClientGuids.FirstOrDefaultAsync(p => p.Guid == guid);
 			return clientGuid != null;
@@ -65,7 +66,7 @@ namespace YummyOnlineDAO {
 		}
 
 
-		public async Task<dynamic> GetLogsByProgram(Log.LogProgram program, DateTime date, int? count) {
+		public async Task<dynamic> GetLogs(Log.LogProgram program, DateTime date, int? count) {
 			IQueryable<Log> linq = ctx.Logs.Where(p => p.Program == program && SqlFunctions.DateDiff("day", p.DateTime, date) == 0)
 				.OrderByDescending(p => p.Id);
 			if(count != null) {

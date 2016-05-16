@@ -31,11 +31,16 @@ namespace YummyOnline.Controllers {
 		}
 
 		public async Task<JsonResult> GetUserDailyCount() {
+			var customerDailyCountTask = new YummyOnlineDAO.YummyOnlineManager().GetUserDailyCount(Role.Customer);
+			var customerCountTask = new YummyOnlineDAO.YummyOnlineManager().GetUserCount(Role.Customer);
+			var nemoDailyCountTask = new YummyOnlineDAO.YummyOnlineManager().GetUserDailyCount(Role.Nemo);
+			var nemoCountTask = new YummyOnlineDAO.YummyOnlineManager().GetUserCount(Role.Nemo);
+			
 			var result = new {
-				CustomerDailyCount = await YummyOnlineManager.GetUserDailyCount(Role.Customer),
-				CustomerCount = await YummyOnlineManager.GetUserCount(Role.Customer),
-				NemoDailyCount = await YummyOnlineManager.GetUserDailyCount(Role.Nemo),
-				NemoCount = await YummyOnlineManager.GetUserCount(Role.Nemo),
+				CustomerDailyCount = await customerDailyCountTask,
+				CustomerCount = await customerCountTask,
+				NemoDailyCount = await nemoDailyCountTask,
+				NemoCount = await nemoCountTask,
 			};
 			return Json(result);
 		}

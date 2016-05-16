@@ -1,9 +1,4 @@
-﻿using HotelDAO;
-using HotelDAO.Models;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System.Web;
+﻿using System.Web;
 using System.Web.Security;
 
 namespace YummyOnlineDAO.Identity {

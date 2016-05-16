@@ -23,13 +23,12 @@ namespace HotelDAO {
 			return customer;
 		}
 
-		public bool GetNeedCodeImgSync() {
+		public bool IsNeedCodeImgSync() {
 			return ctx.HotelConfigs.FirstOrDefault().NeedCodeImg;
 		}
 
 		public async Task<HotelConfig> GetHotelConfig() {
-			var t = ctx.HotelConfigs.FirstOrDefaultAsync();
-			return await t.ConfigureAwait(false);
+			return await ctx.HotelConfigs.FirstOrDefaultAsync();
 		}
 
 		public async Task<PayKind> GetPayKind(int payKindId) {

@@ -1,5 +1,6 @@
 ﻿using HotelDAO.Models;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace OrderSystem.Models {
 	public class MenuExtension {
@@ -16,10 +17,9 @@ namespace OrderSystem.Models {
 		/// <summary>
 		/// 积分抵扣价格
 		/// </summary>
-		public decimal PriceInPoints { get; set; }
+		public decimal? PriceInPoints { get; set; }
 
 		public string Invoice { get; set; }
-
 		public int PayKindId { get; set; }
 		public string DeskId { get; set; }
 
@@ -29,7 +29,6 @@ namespace OrderSystem.Models {
 	public class CartAddition {
 		public string UserId { get; set; }
 		public string WaiterId { get; set; }
-		public string ClerkId { get; set; }
 		public double? Discount { get; set; }
 		public string DiscountName { get; set; }
 		public List<MenuExtension> GiftMenus { get; set; } = new List<MenuExtension>();
@@ -45,7 +44,7 @@ namespace OrderSystem.Models {
 	public class ManagerCartAddition {
 		public string Token { get; set; }
 		public int HotelId { get; set; }
-		public string ClerkId { get; set; }
+		public string WaiterId { get; set; }
 		public string UserId { get; set; }
 		public double? Discount { get; set; }
 		public string DiscountName { get; set; }

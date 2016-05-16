@@ -106,7 +106,7 @@ namespace OrderSystem.Controllers {
 
 			cart.PayKindId = await new HotelManagerForWaiter(CurrHotel.ConnectionString).GetOtherPayKindId();
 			CartAddition addition = new CartAddition {
-				ClerkId = cartAddition.ClerkId,
+				WaiterId = cartAddition.WaiterId,
 				Discount = cartAddition.Discount,
 				DiscountName = cartAddition.DiscountName,
 				GiftMenus = cartAddition.GiftMenus

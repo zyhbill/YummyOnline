@@ -1,12 +1,8 @@
-﻿using System;
-using System.Security.Principal;
+﻿using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Security;
 using YummyOnlineDAO.Models;
-using HotelDAO;
-using HotelDAO.Models;
-using System.Collections.Generic;
 
 namespace YummyOnlineDAO.Identity {
 	public class BaseSigninManager {
@@ -20,17 +16,12 @@ namespace YummyOnlineDAO.Identity {
 		}
 	}
 
+	/// <summary>
+	/// 普通用户登录
+	/// </summary>
 	public class SigninManager : BaseSigninManager {
-		public SigninManager(HttpContextBase httpCtx) : base(httpCtx) {
+		public SigninManager(HttpContextBase httpCtx) : base(httpCtx) { }
 
-		}
-
-		/// <summary>
-		/// 普通用户登录
-		/// </summary>
-		/// <param name="user"></param>
-		/// <param name="isPersistent"></param>
-		/// <returns></returns>
 		public void Signin(User user, bool isPersistent) {
 			FormsAuthentication.SetAuthCookie(user.Id.ToString(), isPersistent);
 		}

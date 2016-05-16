@@ -20,7 +20,7 @@
 	"CartAddition": {
 		"Token": <string>,
 		"HotelId": <int>,
-		"ClerkId": <string>,
+		"WaiterId": <string>,
 		"UserId": <string>,
 		"Discount": <float>,
 		"DiscountName": <string>

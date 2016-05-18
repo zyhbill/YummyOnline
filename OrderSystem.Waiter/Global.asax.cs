@@ -3,8 +3,10 @@ using HotelDAO.Models;
 using OrderSystem.Utility;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Principal;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
@@ -15,13 +17,13 @@ using YummyOnlineDAO;
 using YummyOnlineDAO.Identity;
 
 namespace OrderSystem.Waiter {
-	public class MvcApplication : HttpApplication {
-		protected virtual void Application_Start() {
+	public class MvcApplication : OrderSystem.MvcApplication {
+		protected override void Application_Start() {
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 		}
 
-		protected void Application_AuthenticateRequest(Object sender, EventArgs e) {
+		protected override void Application_AuthenticateRequest(Object sender, EventArgs e) {
 			//Construst the GeneralPrincipal and FormsIdentity objects
 			var authCookie = Context.Request.Cookies[FormsAuthentication.FormsCookieName];
 			if(null == authCookie) {

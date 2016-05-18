@@ -16,8 +16,10 @@
 	<link href="~/Content/css/lib/awesome-bootstrap-checkbox.css" rel="stylesheet" />
 	<link href="~/Content/css/global.css" rel="stylesheet" />
 
-	<link href="~/Content/css/themes/@ViewBag.CssThemePath" rel="stylesheet" />
-
+	@if(!string.IsNullOrEmpty(ViewBag.CssThemePath)) {
+		<link href="~/Content/css/themes/@ViewBag.CssThemePath" rel="stylesheet" />
+	}
+	
 	@RenderSection("Style", false)
 
 </head>

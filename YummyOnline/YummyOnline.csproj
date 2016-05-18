@@ -130,6 +130,7 @@
   <ItemGroup>
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
+    <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Utility\DbPartition.cs" />
     <Compile Include="Utility\DriveSpace.cs" />
     <Compile Include="Utility\TcpServerProcess.cs" />
@@ -288,6 +289,8 @@
     <Content Include="Views\Database\_ViewPartitionHandle.cshtml" />
     <Content Include="Views\DashBoard\_ViewDashBoard.cshtml" />
     <Content Include="Views\DashBoard\_ViewMonitor.cshtml" />
+    <Content Include="Views\Error\HttpError404.cshtml" />
+    <Content Include="Views\Error\HttpError500.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

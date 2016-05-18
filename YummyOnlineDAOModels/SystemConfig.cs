@@ -24,6 +24,8 @@ namespace YummyOnlineDAO.Models {
 		public string TcpServerDir { get; set; }
 		[Required]
 		public string OrderSystemUrl { get; set; }
+		[Required]
+		public string ManagementUrl { get; set; }
 		public int WebSocketPort { get; set; }
 		public int ManagementWebSocketPort { get; set; }
 		[Required]

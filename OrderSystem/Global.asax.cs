@@ -13,6 +13,8 @@ using YummyOnlineDAO.Models;
 using OrderSystem.Utility;
 using System.Collections.Generic;
 using Utility;
+using System.IO;
+using System.Text;
 
 namespace OrderSystem {
 	public class MvcApplication : HttpApplication {
@@ -24,7 +26,7 @@ namespace OrderSystem {
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 		}
 
-		protected void Application_AuthenticateRequest(Object sender, EventArgs e) {
+		protected virtual void Application_AuthenticateRequest(object sender, EventArgs e) {
 			//Construst the GeneralPrincipal and FormsIdentity objects
 			var authCookie = Context.Request.Cookies[FormsAuthentication.FormsCookieName];
 			if(null == authCookie) {
@@ -47,6 +49,30 @@ namespace OrderSystem {
 
 			var id = new FormsIdentity(authTicket);
 			Context.User = new GenericPrincipal(id, roleStrs.ToArray());
+		}
+
+		protected virtual void Application_Error(object sender, EventArgs e) {
+			Exception exception = Server.GetLastError();
+			Response.Clear();
+			Server.ClearError();
+
+			Stream s = Request.InputStream;
+			byte[] b = new byte[s.Length];
+			s.Read(b, 0, (int)s.Length);
+			string postData = Encoding.UTF8.GetString(b);
+
+			string action = "HttpError500";
+
+			HttpException httpException = exception as HttpException;
+			if(httpException != null) {
+				switch(httpException.GetHttpCode()) {
+					case 404:
+						action = "HttpError404";
+						break;
+				}
+			}
+
+			Response.Redirect($"~/Error/{action}?RequestUrl={HttpUtility.UrlEncode(Request.RawUrl)}&PostData={HttpUtility.UrlEncode(postData)}&Exception={exception.Message}", true);
 		}
 	}
 }

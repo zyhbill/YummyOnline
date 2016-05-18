@@ -159,6 +159,8 @@
     <Content Include="Views\Shared\_PartialBarStatic.cshtml" />
     <Content Include="Views\Account\_ViewUser.cshtml" />
     <Content Include="Views\Order\_ViewCart.cshtml" />
+    <Content Include="Views\Error\HttpError404.cshtml" />
+    <Content Include="Views\Error\HttpError500.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

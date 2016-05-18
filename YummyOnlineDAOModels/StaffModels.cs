@@ -14,8 +14,6 @@ namespace YummyOnlineDAO.Models {
 		public string PhoneNumber { get; set; }
 		[MaxLength(128)]
 		public string Email { get; set; }
-		[MaxLength(20)]
-		public string UserName { get; set; }
 		[Required]
 		public string PasswordHash { get; set; }
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]

@@ -105,6 +105,16 @@ namespace HotelDAO {
 			};
 			return false;
 		}
+		public async Task<bool> AddStaffDine(string staffId, decimal dinePrice) {
+			Staff staff = await ctx.Staffs.FirstOrDefaultAsync(p => p.Id == staffId);
+			if(staff == null) {
+				return false;
+			}
+			staff.DineCount++;
+			staff.DinePrice += dinePrice;
+			await ctx.SaveChangesAsync();
+			return true;
+		}
 
 
 		public async Task<List<dynamic>> GetCurrentDines(string waiterId, string deskId) {

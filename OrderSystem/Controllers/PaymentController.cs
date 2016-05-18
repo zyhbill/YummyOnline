@@ -318,7 +318,8 @@ namespace OrderSystem.Controllers {
 
 			CurrHotel = await YummyOnlineManager.GetHotelById(staff.HotelId);
 
-			cart.PayKindId = await new HotelManagerForWaiter(CurrHotel.ConnectionString).GetOtherPayKindId();
+			HotelManagerForWaiter hotelManager = new HotelManagerForWaiter(CurrHotel.ConnectionString);
+			cart.PayKindId = await hotelManager.GetOtherPayKindId();
 			CartAddition addition = new CartAddition {
 				WaiterId = staff.Id,
 				Discount = cartAddition.Discount,
@@ -332,7 +333,11 @@ namespace OrderSystem.Controllers {
 			addition.UserId = user.Id;
 
 			// 创建新订单
-			return await OrderManager.CreateDine(cart, addition);
+			FunctionResult result = await OrderManager.CreateDine(cart, addition);
+			if(result.Succeeded) {
+				await hotelManager.AddStaffDine(staff.Id, ((Dine)result.Data).Price);
+			}
+			return result;
 		}
 
 		private async Task requestPrintDine(string dineId) {

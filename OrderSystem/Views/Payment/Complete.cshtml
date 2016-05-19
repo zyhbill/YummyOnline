@@ -8,12 +8,25 @@
 	<link href="~/Content/css/payment.css" rel="stylesheet" />
 }
 
-@Html.Partial("_PartialNavTitle", "点餐成功")
+@if(ViewBag.Succeeded) {
+	@Html.Partial("_PartialNavTitle", "点餐成功")
+}
+else {
+	@Html.Partial("_PartialNavTitle", "点餐失败")
+}
+
 
 <div class="container-fluid">
 	<img src="~/Content/image/@ViewBag.HotelId/completed.gif" class="logo" />
-	<p class="title">您的订单已提交</p>
-	<p class="title">请耐心等待！</p>
+	@if(ViewBag.Succeeded) {
+		<p class="title">您的订单 @ViewBag.DineId 已提交</p>
+		<p class="title">请耐心等待！</p>
+	}
+	else {
+		<p class="title">支付失败</p>
+		<p class="title">详情请见历史订单</p>
+	}
+	
 </div>
 
 @Html.Partial("_PartialBarBase")

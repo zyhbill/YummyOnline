@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Protocal;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -97,7 +98,8 @@ namespace YummyOnline.Controllers {
 			});
 		}
 
-		public async Task<ActionResult> RemoteRecord(int? hotelId, int level, string message) {
+		[AllowAnonymous]
+		public async Task<JsonResult> RemoteRecord(int? hotelId, int level, string message) {
 			if(hotelId == null) {
 				await YummyOnlineManager.RecordLog(Log.LogProgram.Remote, (Log.LogLevel)level, message);
 			}
@@ -106,7 +108,11 @@ namespace YummyOnline.Controllers {
 				HotelDAO.HotelManager hotelManager = new HotelDAO.HotelManager(connStr);
 				await hotelManager.RecordLog((HotelDAO.Models.Log.LogLevel)level, message);
 			}
-			return Content(null);
+
+			Response.Headers.Add("Access-Control-Allow-Origin", "*");
+			Response.Headers.Add("Access-Control-Allow-Methods", "POST");
+			Response.Headers.Add("Access-Control-Allow-Headers", "x-requested-with,content-type");
+			return Json(new JsonSuccess());
 		}
 	}
 }

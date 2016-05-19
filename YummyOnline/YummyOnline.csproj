@@ -291,6 +291,7 @@
     <Content Include="Views\DashBoard\_ViewMonitor.cshtml" />
     <Content Include="Views\Error\HttpError404.cshtml" />
     <Content Include="Views\Error\HttpError500.cshtml" />
+    <Content Include="Views\Users\_ViewNemo.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

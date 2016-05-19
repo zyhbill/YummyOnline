@@ -1,0 +1,45 @@
+﻿
+<div class="row">
+	<div class="col-md-3">
+		<div class="box box-default">
+			<div class="box-header">
+				<h3 class="box-title">统计操作</h3>
+			</div>
+			<div class="box-body">
+				<p><b>匿名用户总数：</b> {{nemoes.Count}}</p>
+				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+					<p>
+						<b>删除一个月之前的匿名用户：</b>
+						<button class="btn btn-danger" confirm-click="deleteNemoesMonthAge()">删除</button>
+					</p>
+					<p class="no-margin">
+						<b>删除未点单的匿名用户：</b>
+						<button class="btn btn-danger" confirm-click="deleteNemoesHavenotDine()">删除</button>
+					</p>
+				}
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-9">
+		<div class="box box-default">
+			<div class="box-header">
+				<h3 class="box-title">近7日匿名用户</h3>
+			</div>
+			<div class="table-responsive">
+				<table class="table no-margin">
+					<tr>
+						<th>Id</th>
+						<th>生成日期</th>
+						<th>历史点单数量</th>
+					</tr>
+					<tr ng-repeat="nemo in nemoes.Users">
+						<td>{{nemo.Id}}</td>
+						<td>{{nemo.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
+						<td>{{nemo.DineCount}}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

@@ -24,5 +24,8 @@ namespace HotelDAO {
 
 			return counts;
 		}
+		public async Task<int> GetDineCount(string userId) {
+			return await ctx.Dines.Where(p => p.UserId == userId).CountAsync();
+		}
 	}
 }

@@ -72,6 +72,10 @@
       <Project>{b17fc72a-8690-4072-b49f-ec98ab59f944}</Project>
       <Name>HotelDAO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Utility\Utility.csproj">
+      <Project>{8b2af470-27a1-4dc9-b228-0942dc9e85a1}</Project>
+      <Name>Utility</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YummyOnlineDAOModels\YummyOnlineDAOModels.csproj">
       <Project>{3625134d-bf70-4481-a2e8-4150256def32}</Project>
       <Name>YummyOnlineDAOModels</Name>

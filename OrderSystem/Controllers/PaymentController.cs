@@ -266,6 +266,7 @@ namespace OrderSystem.Controllers {
 			User user = await UserManager.FindByIdAsync(userId);
 			if(user == null) {
 				user = await UserManager.CreateVoidUserAsync();
+				await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Success, $"Anonymous User Created {user.Id}");
 				if(user == null) {
 					return null;
 				}

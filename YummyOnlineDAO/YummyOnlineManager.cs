@@ -80,8 +80,52 @@ namespace YummyOnlineDAO {
 			}).ToListAsync();
 		}
 
-		public async Task<List<User>> GetUsers(Role role) {
-			return await ctx.UserRoles.Where(p => p.Role == role).Select(p => p.User).ToListAsync();
+		private class UserDineInfo {
+			public string UserId { get; set; }
+			public int Count { get; set; }
+		}
+		public async Task<dynamic> GetUsers(Role role, bool withDineCount = false, DateTime? from = null, DateTime? to = null) {
+			var linq = ctx.UserRoles.Where(p => p.Role == role);
+			if(from.HasValue && to.HasValue) {
+				linq = linq.Where(p => p.User.CreateDate >= from && p.User.CreateDate < to);
+			}
+
+			Dictionary<string, int> userDineCounts = new Dictionary<string, int>();
+
+			if(withDineCount) {
+				string[] userIds = await linq.Select(p => p.User.Id).ToArrayAsync();
+
+				List<Hotel> hotels = await GetHotels();
+				foreach(var h in hotels) {
+					HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+					foreach(string userId in userIds) {
+						if(!userDineCounts.ContainsKey(userId)) {
+							userDineCounts[userId] = await hotelManager.GetDineCount(userId);
+						}
+						else {
+							userDineCounts[userId] += await hotelManager.GetDineCount(userId);
+						}
+					}
+				}
+			}
+
+			var users = await linq.Select(p => new {
+				p.User.Id,
+				p.User.CreateDate,
+				p.User.UserName,
+				p.User.PhoneNumber,
+				p.User.Email,
+			}).ToListAsync();
+
+			List<dynamic> userWithDineCounts = new List<dynamic>();
+
+			foreach(var user in users) {
+				userWithDineCounts.Add(Utility.DynamicsCombination.CombineDynamics(user, new {
+					DineCount = userDineCounts.FirstOrDefault(p => p.Key == user.Id).Value
+				}));
+			}
+
+			return userWithDineCounts;
 		}
 		public async Task<int> GetUserCount(Role role) {
 			return await ctx.UserRoles.CountAsync(p => p.Role == role);
@@ -97,6 +141,36 @@ namespace YummyOnlineDAO {
 				});
 			}
 			return list;
+		}
+		public async Task DeleteNemoes(DateTime before) {
+			List<User> nemoes = await ctx.UserRoles.Where(p => p.Role == Role.Nemo && p.User.CreateDate < before).Select(p => p.User).ToListAsync();
+			ctx.Users.RemoveRange(nemoes);
+			await ctx.SaveChangesAsync();
+		}
+		public async Task DeleteNemoesHavenotDine() {
+			List<User> nemoes = await ctx.UserRoles.Where(p => p.Role == Role.Nemo).Select(p => p.User).ToListAsync();
+
+			Dictionary<string, int> userDineCounts = new Dictionary<string, int>();
+
+			List<Hotel> hotels = await GetHotels();
+			foreach(var h in hotels) {
+				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+				foreach(User nemo in nemoes) {
+					if(!userDineCounts.ContainsKey(nemo.Id)) {
+						userDineCounts[nemo.Id] = await hotelManager.GetDineCount(nemo.Id);
+					}
+					else {
+						userDineCounts[nemo.Id] += await hotelManager.GetDineCount(nemo.Id);
+					}
+				}
+			}
+
+			foreach(User nemo in nemoes) {
+				if(userDineCounts[nemo.Id] == 0) {
+					ctx.Users.Remove(nemo);
+				}
+			}
+			await ctx.SaveChangesAsync();
 		}
 
 		public async Task<int> GetDineCount() {

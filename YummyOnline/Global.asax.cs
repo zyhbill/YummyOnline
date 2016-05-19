@@ -48,6 +48,7 @@ namespace YummyOnline {
 		}
 
 		protected void Application_Error(object sender, EventArgs e) {
+#if !DEBUG
 			Exception exception = Server.GetLastError();
 			Response.Clear();
 			Server.ClearError();
@@ -69,6 +70,7 @@ namespace YummyOnline {
 			}
 
 			Response.Redirect($"~/Error/{action}?RequestUrl={HttpUtility.UrlEncode(Request.RawUrl)}&PostData={HttpUtility.UrlEncode(postData)}&Exception={exception.Message}", true);
+#endif
 		}
 	}
 }

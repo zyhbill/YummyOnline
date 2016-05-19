@@ -35,7 +35,7 @@ namespace YummyOnline.Controllers {
 			var customerCountTask = new YummyOnlineDAO.YummyOnlineManager().GetUserCount(Role.Customer);
 			var nemoDailyCountTask = new YummyOnlineDAO.YummyOnlineManager().GetUserDailyCount(Role.Nemo);
 			var nemoCountTask = new YummyOnlineDAO.YummyOnlineManager().GetUserCount(Role.Nemo);
-			
+
 			var result = new {
 				CustomerDailyCount = await customerDailyCountTask,
 				CustomerCount = await customerCountTask,

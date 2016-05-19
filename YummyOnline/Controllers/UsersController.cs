@@ -18,6 +18,9 @@ namespace YummyOnline.Controllers {
 		public ActionResult _ViewCustomer() {
 			return View();
 		}
+		public ActionResult _ViewNemo() {
+			return View();
+		}
 		public ActionResult _ViewAdmin() {
 			return View();
 		}
@@ -44,6 +47,23 @@ namespace YummyOnline.Controllers {
 		public async Task<JsonResult> DeleteAdmin(string id) {
 			await UserManager.RemoveFromRoleAsync(id, Role.Admin);
 			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Warning, $"User {id} Removed from Admin");
+			return Json(new JsonSuccess());
+		}
+
+		public async Task<JsonResult> GetRecent7DaysNemoes() {
+			return Json(new {
+				Users = await YummyOnlineManager.GetUsers(Role.Nemo, true, DateTime.Now.Date.AddDays(-7), DateTime.Now.Date.AddDays(1)),
+				Count = await YummyOnlineManager.GetUserCount(Role.Nemo)
+			});
+		}
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
+		public async Task<JsonResult> DeleteNemoesMonthAge() {
+			await YummyOnlineManager.DeleteNemoes(DateTime.Now.Date.AddMonths(-1));
+			return Json(new JsonSuccess());
+		}
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
+		public async Task<JsonResult> DeleteNemoesHavenotDine() {
+			await YummyOnlineManager.DeleteNemoesHavenotDine();
 			return Json(new JsonSuccess());
 		}
 	}

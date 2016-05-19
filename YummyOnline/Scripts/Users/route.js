@@ -10,5 +10,8 @@
 	.when('/Admin', {
 		templateUrl: '/Users/_ViewAdmin',
 		controller: 'AdminCtrl'
+	}).when('/Nemo', {
+		templateUrl: '/Users/_ViewNemo',
+		controller: 'NemoCtrl'
 	});
 });

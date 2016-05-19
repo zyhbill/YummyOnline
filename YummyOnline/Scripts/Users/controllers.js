@@ -46,3 +46,34 @@ app.controller('AdminCtrl', [
 		}
 	}
 ]);
+
+app.controller('NemoCtrl', [
+	'$scope',
+	'$http',
+	'layout',
+	function ($scope, $http, $layout) {
+		$layout.Set('匿名用户管理', '');
+
+		function refresh() {
+			$http.post('/Users/GetRecent7DaysNemoes').then(function (response) {
+				$scope.nemoes = response.data;
+			});
+		}
+		refresh();
+
+		$scope.deleteNemoesMonthAge = function () {
+			$http.post('/Users/DeleteNemoesMonthAge').then(function (response) {
+				if (response.data.Succeeded) {
+					refresh();
+				}
+			});
+		}
+		$scope.deleteNemoesHavenotDine = function () {
+			$http.post('/Users/DeleteNemoesHavenotDine').then(function (response) {
+				if (response.data.Succeeded) {
+					refresh();
+				}
+			});
+		}
+	}
+]);

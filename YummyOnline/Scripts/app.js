@@ -1,9 +1,7 @@
 ﻿var app = angular.module('adminApp', ['ngRoute', 'ui.bootstrap']);
 
-app.filter('trustHtml', function ($sce) {
-	return function (input) {
-		return $sce.trustAsHtml(input);
-	}
+app.config(function ($httpProvider) {
+	$httpProvider.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 });
 
 toastr.options = {

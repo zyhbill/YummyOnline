@@ -132,9 +132,10 @@ app.controller('HistoryCtrl', [
 	'dineToCart',
 	function ($scope, $http, $window, $location, $cart, $dineToCart) {
 		$cart.Initialize();
-
+		$rootScope.isLoading = true;
 		$http.post('/Order/GetHistoryDines').then(function (response) {
 			$scope.dines = response.data;
+			$rootScope.isLoading = false;
 		});
 
 		$scope.tryAgain = function (dine) {

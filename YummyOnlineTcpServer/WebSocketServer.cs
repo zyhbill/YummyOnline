@@ -26,9 +26,13 @@ namespace YummyOnlineTcpServer {
 			this.logDelegate = logDelegate;
 			server.Start(serverConnected);
 
-			IISManager.GetSites().ForEach(info => {
-				siteCurrentConnections.Add(new PerformanceCounter("Web Service", "Current Connections", info.Name));
-			});
+			try {
+				IISManager.GetSites().ForEach(info => {
+					siteCurrentConnections.Add(new PerformanceCounter("Web Service", "Current Connections", info.Name));
+				});
+			}
+			catch { }
+
 
 			Timer timer = new Timer(1000);
 			timer.Elapsed += Timer_Elapsed;

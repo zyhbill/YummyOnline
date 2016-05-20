@@ -32,9 +32,10 @@ namespace Protocal {
 		public FunctionResult(bool succeeded = true) {
 			Succeeded = succeeded;
 		}
-		public FunctionResult(bool succeeded, string msg) {
+		public FunctionResult(bool succeeded, string msg, string detail = null) {
 			Succeeded = succeeded;
 			Message = msg;
+			Detail = detail;
 		}
 		public FunctionResult(bool succeeded, object data) {
 			Succeeded = succeeded;
@@ -46,6 +47,7 @@ namespace Protocal {
 		}
 		public bool Succeeded { get; set; }
 		public string Message { get; set; }
+		public string Detail { get; set; }
 		public object Data { get; set; }
 	}
 }

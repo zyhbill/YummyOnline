@@ -19,19 +19,33 @@ namespace OrderSystem {
 		public OrderManager(string connString) : base(connString) { }
 
 		public async Task<FunctionResult> CreateDine(Cart cart, CartAddition addition) {
+			// 主要支付方式判断
 			DinePaidDetail mainPaidDetail = new DinePaidDetail {
 				PayKind = await ctx.PayKinds.FirstOrDefaultAsync(p => p.Id == cart.PayKindId),
 				Price = 0,
 			};
 			if(mainPaidDetail.PayKind == null) {
-				return new FunctionResult(false, "未找到该支付方式");
+				return new FunctionResult(false, "未找到该支付方式", $"No PayKind {cart.PayKindId}");
 			}
+			if(!mainPaidDetail.PayKind.Usable) {
+				return new FunctionResult(false, $"{mainPaidDetail.PayKind.Name}不可用", $"PayKind Disabled {mainPaidDetail.PayKind.Id}");
+			}
+
+			// 桌号判断
+			Desk Desk = await ctx.Desks.FirstOrDefaultAsync(p => p.Id == cart.DeskId);
+			if(Desk == null) {
+				return new FunctionResult(false, "未找到当前桌号", $"No Desk {cart.DeskId}");
+			}
+			if(!Desk.Usable) {
+				return new FunctionResult(false, $"{Desk.Name}不可用", $"Desk Disabled {Desk.Id}");
+			}
+
 			Dine dine = new Dine {
 				Type = DineType.ToStay,
 				HeadCount = cart.HeadCount,
 				IsOnline = mainPaidDetail.PayKind.Type == PayKindType.Online,
 				IsPaid = false,
-				Desk = await ctx.Desks.FirstOrDefaultAsync(p => p.Id == cart.DeskId),
+				Desk = Desk,
 
 				UserId = addition.UserId,
 				WaiterId = addition.WaiterId,
@@ -44,8 +58,10 @@ namespace OrderSystem {
 			// 订单备注
 			foreach(int remarkId in cart.Remarks) {
 				Remark remark = ctx.Remarks.FirstOrDefault(p => p.Id == remarkId);
-				if(remark == null)
-					return new FunctionResult(false, "未找到备注信息");
+				if(remark == null) {
+					return new FunctionResult(false, "未找到备注信息", $"No Remark {remarkId}");
+				}
+
 				dine.Price += remark.Price;
 				dine.OriPrice += remark.Price;
 				dine.Remarks.Add(remark);
@@ -79,9 +95,14 @@ namespace OrderSystem {
 				Menu menu = await ctx.Menus
 					.Include(p => p.MenuPrice)
 					.FirstOrDefaultAsync(p => p.Id == menuExtension.Id);
+				// 菜品判断
 				if(menu == null) {
-					return new FunctionResult(false, "未找到菜品");
+					return new FunctionResult(false, "未找到菜品", $"No Menu {menuExtension.Id}");
 				}
+				if(!menu.Usable) {
+					return new FunctionResult(false, $"{menu.Name} 不可用", $"Menu Disabled {menu.Id}: {menu.Name}");
+				}
+
 				DineMenu dineMenu = new DineMenu {
 					Count = menuExtension.Ordered,
 					OriPrice = menu.MenuPrice.Price,
@@ -121,11 +142,11 @@ namespace OrderSystem {
 				}
 
 				// 菜品备注处理
-				foreach(int r in menuExtension.Remarks) {
-					Remark remark = await ctx.Remarks.FirstOrDefaultAsync(p => p.Id == r);
+				foreach(int remarkId in menuExtension.Remarks) {
+					Remark remark = await ctx.Remarks.FirstOrDefaultAsync(p => p.Id == remarkId);
 
 					if(remark == null) {
-						return new FunctionResult(false, "未找到备注信息");
+						return new FunctionResult(false, "未找到备注信息", $"No Remark {remarkId}");
 					}
 
 					if(!menuExtensionWithGift.IsGift) {
@@ -144,18 +165,17 @@ namespace OrderSystem {
 			}
 			mainPaidDetail.Price = dine.Price;
 
-			if(cart.PriceInPoints.HasValue && !await handlePoints(cart.PriceInPoints.Value, mainPaidDetail, dine)) {
-				return new FunctionResult(false, "积分不足");
+			if(cart.PriceInPoints.HasValue) {
+				FunctionResult result = await handlePoints(cart.PriceInPoints.Value, mainPaidDetail, dine);
+				if(!result.Succeeded)
+					return result;
 			}
 
 			// 检测前端计算的金额与后台计算的金额是否相同，如果前端金额为null则检测
 			if(cart.Price.HasValue && Math.Abs(mainPaidDetail.Price - cart.Price.Value) > 0.01m) {
-				ctx.Logs.Add(new HotelDAO.Models.Log {
-					Level = HotelDAO.Models.Log.LogLevel.Error,
-					Message = $"Price Error, Cart Price: {cart.Price.Value}, Cal Price: {mainPaidDetail.Price}"
-				});
 				await ctx.SaveChangesAsync();
-				return new FunctionResult(false, "金额有误");
+				return new FunctionResult(false, "金额有误",
+					$"Price Error, Cart Price: {cart.Price.Value}, Cal Price: {mainPaidDetail.Price}");
 			}
 
 			// 如果是线上支付，则添加DinePaidDetail信息，否则不添加，交给收银系统处理
@@ -221,9 +241,9 @@ namespace OrderSystem {
 		/// <summary>
 		/// 积分处理
 		/// </summary>
-		private async Task<bool> handlePoints(decimal priceInPoints, DinePaidDetail mainPaidDetail, Dine dine) {
+		private async Task<FunctionResult> handlePoints(decimal priceInPoints, DinePaidDetail mainPaidDetail, Dine dine) {
 			if(priceInPoints == 0) {
-				return true;
+				return new FunctionResult();
 			}
 
 			HotelConfig hotelConfig = await ctx.HotelConfigs.FirstOrDefaultAsync();
@@ -237,7 +257,8 @@ namespace OrderSystem {
 			int customerPoints = customer == null ? 0 : customer.Points;
 
 			if(pointsPaidDetail.Price > customerPoints / hotelConfig.PointsRatio) {
-				return false;
+				return new FunctionResult(false, "积分不足",
+					$"Points Error, Cart PointsPrice: {pointsPaidDetail.Price}, Real Points Price {customerPoints / hotelConfig.PointsRatio}");
 			}
 			if(pointsPaidDetail.Price > dine.Price) {
 				pointsPaidDetail.Price = dine.Price;
@@ -247,7 +268,7 @@ namespace OrderSystem {
 
 			dine.DinePaidDetails.Add(pointsPaidDetail);
 
-			return true;
+			return new FunctionResult();
 		}
 
 		public async Task<bool> OfflinePayCompleted(WaiterPaidDetails paidDetails) {

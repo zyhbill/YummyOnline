@@ -49,6 +49,7 @@ namespace OrderSystem.Controllers {
 		/// </summary>
 		/// <param name="cart"></param>
 		/// <returns></returns>
+		[RequireHotel]
 		public async Task<JsonResult> Pay(Cart cart) {
 			CartAddition addition = new CartAddition();
 
@@ -63,6 +64,7 @@ namespace OrderSystem.Controllers {
 			// 创建新订单
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
 			if(!result.Succeeded) {
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, result.Detail);
 				return Json(new JsonError(result.Message));
 			}
 
@@ -121,6 +123,7 @@ namespace OrderSystem.Controllers {
 			// 创建新订单
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
 			if(!result.Succeeded) {
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, result.Detail);
 				return Json(new JsonError(result.Message));
 			}
 
@@ -266,10 +269,10 @@ namespace OrderSystem.Controllers {
 			User user = await UserManager.FindByIdAsync(userId);
 			if(user == null) {
 				user = await UserManager.CreateVoidUserAsync();
-				await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Success, $"Anonymous User Created {user.Id}");
 				if(user == null) {
 					return null;
 				}
+				await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Success, $"Anonymous User Created {user.Id}");
 				await UserManager.AddToRoleAsync(user.Id, Role.Nemo);
 			}
 			return user;
@@ -329,7 +332,7 @@ namespace OrderSystem.Controllers {
 
 			User user = await createOrGetUser(cartAddition.UserId);
 			if(user == null) {
-				return new FunctionResult(false, "无法创建匿名用户");
+				return new FunctionResult(false, "创建匿名用户失败");
 			}
 			addition.UserId = user.Id;
 
@@ -337,6 +340,9 @@ namespace OrderSystem.Controllers {
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
 			if(result.Succeeded) {
 				await hotelManager.AddStaffDine(staff.Id, ((Dine)result.Data).Price);
+			}
+			else {
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, result.Detail);
 			}
 			return result;
 		}

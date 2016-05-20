@@ -23,34 +23,29 @@ namespace OrderSystem.Waiter {
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 		}
 
-		protected override void Application_AuthenticateRequest(Object sender, EventArgs e) {
-			//Construst the GeneralPrincipal and FormsIdentity objects
+		protected override void Application_AuthenticateRequest(object sender, EventArgs e) {
 			var authCookie = Context.Request.Cookies[FormsAuthentication.FormsCookieName];
 			if(null == authCookie) {
-				//no authentication cokie present
 				return;
 			}
 			var authTicket = FormsAuthentication.Decrypt(authCookie.Value);
 			if(null == authTicket) {
-				//could not decrypt cookie
 				return;
 			}
-			
+
 			YummyOnlineDAO.Models.Staff staff = AsyncInline.Run(() => new StaffManager().FindStaffById(authTicket.Name));
 			if(staff == null) {
+				FormsAuthentication.SignOut();
 				return;
 			}
 			string connStr = AsyncInline.Run(() => new YummyOnlineManager().GetHotelConnectionStringById(staff.HotelId));
 			HotelManagerForWaiter hotelManager4Waiter = new HotelManagerForWaiter(connStr);
 			List<StaffRoleSchema> schemas = AsyncInline.Run(() => hotelManager4Waiter.GetStaffRoles(staff.Id));
 
-			List<string> roleStrs = new List<string>();
-			schemas?.ForEach(schema => {
-				roleStrs.Add(schema.Schema.ToString());
-			});
+			string[] roleStrs = schemas.Select(p => p.Schema.ToString()).ToArray();
 
 			var id = new FormsIdentity(authTicket);
-			Context.User = new GenericPrincipal(id, roleStrs.ToArray());
+			Context.User = new GenericPrincipal(id, roleStrs);
 		}
 	}
 }

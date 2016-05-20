@@ -22,33 +22,27 @@ namespace YummyOnline {
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 		}
 
-		protected void Application_AuthenticateRequest(Object sender, EventArgs e) {
-			//Construst the GeneralPrincipal and FormsIdentity objects
+		protected void Application_AuthenticateRequest(object sender, EventArgs e) {
 			var authCookie = Context.Request.Cookies[FormsAuthentication.FormsCookieName];
 			if(null == authCookie) {
-				//no authentication cokie present
 				return;
 			}
 			var authTicket = FormsAuthentication.Decrypt(authCookie.Value);
 			if(null == authTicket) {
-				//could not decrypt cookie
 				return;
 			}
 
-			//get the role
 			List<Role> roles = AsyncInline.Run(() => new UserManager().GetRolesAsync(authTicket.Name));
 
-			List<string> roleStrs = new List<string>();
-			roles.ForEach(r => {
-				roleStrs.Add(r.ToString());
-			});
+			string[] roleStrs = roles.Select(p => p.ToString()).ToArray();
 
 			var id = new FormsIdentity(authTicket);
-			Context.User = new GenericPrincipal(id, roleStrs.ToArray());
+			Context.User = new GenericPrincipal(id, roleStrs);
 		}
 
-		protected void Application_Error(object sender, EventArgs e) {
 #if !DEBUG
+		protected void Application_Error(object sender, EventArgs e) {
+
 			Exception exception = Server.GetLastError();
 			Response.Clear();
 			Server.ClearError();
@@ -70,7 +64,7 @@ namespace YummyOnline {
 			}
 
 			Response.Redirect($"~/Error/{action}?RequestUrl={HttpUtility.UrlEncode(Request.RawUrl)}&PostData={HttpUtility.UrlEncode(postData)}&Exception={exception.Message}", true);
-#endif
 		}
+#endif
 	}
 }

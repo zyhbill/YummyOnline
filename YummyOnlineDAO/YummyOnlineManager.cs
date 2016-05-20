@@ -147,8 +147,15 @@ namespace YummyOnlineDAO {
 			ctx.Users.RemoveRange(nemoes);
 			await ctx.SaveChangesAsync();
 		}
+		/// <summary>
+		/// 删除不是当天的未点单的匿名用户
+		/// </summary>
+		/// <returns></returns>
 		public async Task DeleteNemoesHavenotDine() {
-			List<User> nemoes = await ctx.UserRoles.Where(p => p.Role == Role.Nemo).Select(p => p.User).ToListAsync();
+			List<User> nemoes = await ctx.UserRoles
+				.Where(p => p.Role == Role.Nemo && SqlFunctions.DateDiff("day", p.User.CreateDate, DateTime.Now) != 0)
+				.Select(p => p.User)
+				.ToListAsync();
 
 			Dictionary<string, int> userDineCounts = new Dictionary<string, int>();
 

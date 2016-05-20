@@ -21,6 +21,9 @@ namespace OrderSystem.Controllers {
 			if(hotel == null) {
 				return RedirectToAction("HotelMissing", "Error");
 			}
+			if(!hotel.Usable) {
+				return RedirectToAction("HotelUnavailable", "Error");
+			}
 
 			CurrHotel = hotel;
 

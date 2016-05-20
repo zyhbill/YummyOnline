@@ -1,1 +1,108 @@
-﻿<h1>正在建设中...</h1>
+﻿<div class="box box-default">
+	<div class="table-responsive">
+		<table class="table no-margin">
+			<tr>
+				<th>Id</th>
+				<th>注册日期</th>
+				<th>手机</th>
+				<th>邮箱</th>
+				<th>用户名</th>
+				<th>历史点单数量</th>
+				<th></th>
+			</tr>
+			<tbody ng-repeat="customer in customers">
+				<tr>
+					<td>{{customer.Id}}</td>
+					<td>{{customer.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
+					<td>{{customer.PhoneNumber}}</td>
+					<td>{{customer.Email}}</td>
+					<td>{{customer.UserName}}</td>
+					<td>{{customer.DineCount}}</td>
+					<td class="text-right">
+						<button class="btn btn-primary" ng-click="showUserDines(customer)">
+							<span ng-show="customer.IsLoading">正在查询...</span>
+							<span ng-hide="customer.IsLoading">查询历史订单</span>
+						</button>
+					</td>
+				</tr>
+				<tr ng-show="customer.IsShowUserDines">
+					<td colspan="7">
+						<p class="text-danger no-margin" ng-if="customer.DineHotels.length == 0">无订单</p>
+						<div ng-repeat="dineHotel in customer.DineHotels">
+							<h4>{{dineHotel.Hotel.Name}} <small>{{dineHotel.Hotel.Id}}</small></h4>
+							<div class="waterfall-4">
+								<div class="waterfall-item" ng-repeat="dine in dineHotel.Dines">
+									<ul class="list-group">
+										<li class="list-group-item">
+											<p class="title">点单号：{{dine.Id}}</p>
+											<p>下单时间：{{dine.BeginTime | date:'yyyy/M/d HH:mm:ss'}}</p>
+
+											<div class="row no-padding">
+												<div class="col-xs-6">
+													桌号：{{dine.Desk.Name}}
+												</div>
+												<div class="col-xs-6 text-right">
+													人数：{{dine.HeadCount}}
+												</div>
+											</div>
+										</li>
+										<li class="list-group-item">
+											@* ngRepeat menu *@
+											<div class="row no-padding" ng-repeat="menu in dine.DineMenus">
+												<div class="col-xs-6">
+													{{menu.Menu.Name}}
+													<span class="label label-default"
+														  ng-repeat="remark in menu.Remarks">
+														{{remark.Name}}
+													</span>
+												</div>
+												<div class="col-xs-2 text-right">
+													&times;{{menu.Count}}
+												</div>
+												<div class="col-xs-4 text-right">
+													<s ng-show="menu.OriPrice!=menu.Price">
+														{{menu.OriPrice | currency : "￥"}}
+													</s>
+													<span class="text-danger">
+														{{menu.Price | currency : "￥"}}
+													</span>
+												</div>
+											</div>
+										</li>
+
+										<li class="list-group-item">
+											<div class="row no-padding">
+												<div class="col-xs-6">
+													<span class="fa fa-shopping-cart"></span> 共计：
+												</div>
+												<div class="col-xs-6 text-right">
+													<s ng-show="dine.OriPrice!=dine.Price">
+														{{dine.OriPrice | currency : "￥"}}
+													</s>
+													<span class="text-danger">
+														{{dine.Price | currency : "￥"}}
+													</span>
+												</div>
+												<div ng-if="dine.Discount<1">
+													<div class="col-xs-6">
+														{{dine.DiscountName}}
+													</div>
+													<div class="col-xs-6 text-right">
+														{{dine.Discount * 10}} 折
+													</div>
+												</div>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<hr ng-show="$index + 1 != customer.DineHotels.length" />
+						</div>
+					</td>
+				</tr>
+			</tbody>
+
+
+		</table>
+	</div>
+</div>

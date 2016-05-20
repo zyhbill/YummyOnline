@@ -61,5 +61,13 @@ namespace YummyOnline.Controllers {
 			await YummyOnlineManager.DeleteNemoesHavenotDine();
 			return Json(new JsonSuccess());
 		}
+
+		public async Task<JsonResult> GetCustomers() {
+			return Json(await YummyOnlineManager.GetUsers(Role.Customer, true));
+		}
+
+		public async Task<JsonResult> GetUserDines(string userId) {
+			return Json(await YummyOnlineManager.GetDinesByUserId(userId));
+		}
 	}
 }

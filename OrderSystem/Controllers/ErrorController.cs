@@ -5,8 +5,17 @@ using YummyOnlineDAO.Models;
 
 namespace OrderSystem.Controllers {
 	public class ErrorController : BaseOrderSystemController {
-		// GET: Error
 		public ActionResult HotelMissing() {
+			if(Request.IsAjaxRequest()) {
+				return Json(new JsonError("没有饭店信息，请重新扫一扫"), JsonRequestBehavior.AllowGet);
+			}
+			return View();
+		}
+
+		public ActionResult HotelUnavailable() {
+			if(Request.IsAjaxRequest()) {
+				return Json(new JsonError("该饭店不可用，请重新扫一扫"), JsonRequestBehavior.AllowGet);
+			}
 			return View();
 		}
 

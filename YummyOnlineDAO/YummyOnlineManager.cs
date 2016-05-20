@@ -80,33 +80,21 @@ namespace YummyOnlineDAO {
 			}).ToListAsync();
 		}
 
-		private class UserDineInfo {
-			public string UserId { get; set; }
-			public int Count { get; set; }
+		public async Task<dynamic> GetUserById(string userId) {
+			return await ctx.Users
+				.Where(p => p.Id == userId)
+				.Select(p => new {
+					p.Id,
+					p.CreateDate,
+					p.UserName,
+					p.PhoneNumber,
+					p.Email
+				}).FirstOrDefaultAsync();
 		}
 		public async Task<dynamic> GetUsers(Role role, bool withDineCount = false, DateTime? from = null, DateTime? to = null) {
 			var linq = ctx.UserRoles.Where(p => p.Role == role);
 			if(from.HasValue && to.HasValue) {
 				linq = linq.Where(p => p.User.CreateDate >= from && p.User.CreateDate < to);
-			}
-
-			Dictionary<string, int> userDineCounts = new Dictionary<string, int>();
-
-			if(withDineCount) {
-				string[] userIds = await linq.Select(p => p.User.Id).ToArrayAsync();
-
-				List<Hotel> hotels = await GetHotels();
-				foreach(var h in hotels) {
-					HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
-					foreach(string userId in userIds) {
-						if(!userDineCounts.ContainsKey(userId)) {
-							userDineCounts[userId] = await hotelManager.GetDineCount(userId);
-						}
-						else {
-							userDineCounts[userId] += await hotelManager.GetDineCount(userId);
-						}
-					}
-				}
 			}
 
 			var users = await linq.Select(p => new {
@@ -117,11 +105,30 @@ namespace YummyOnlineDAO {
 				p.User.Email,
 			}).ToListAsync();
 
+			if(!withDineCount) {
+				return users;
+			}
+
+			Dictionary<string, int> userDineCounts = new Dictionary<string, int>();
+
+			List<Hotel> hotels = await GetHotels();
+			foreach(var h in hotels) {
+				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+				foreach(var user in users) {
+					if(!userDineCounts.ContainsKey(user.Id)) {
+						userDineCounts[user.Id] = await hotelManager.GetDineCount(user.Id);
+					}
+					else {
+						userDineCounts[user.Id] += await hotelManager.GetDineCount(user.Id);
+					}
+				}
+			}
+
 			List<dynamic> userWithDineCounts = new List<dynamic>();
 
 			foreach(var user in users) {
 				userWithDineCounts.Add(Utility.DynamicsCombination.CombineDynamics(user, new {
-					DineCount = userDineCounts.FirstOrDefault(p => p.Key == user.Id).Value
+					DineCount = userDineCounts[user.Id]
 				}));
 			}
 
@@ -180,6 +187,26 @@ namespace YummyOnlineDAO {
 			await ctx.SaveChangesAsync();
 		}
 
+
+		public async Task<List<dynamic>> GetDinesByUserId(string userId) {
+			List<dynamic> allDines = new List<dynamic>();
+
+			List<Hotel> hotels = await GetHotels();
+			foreach(Hotel h in hotels) {
+				List<dynamic> dines = await new HotelDAO.HotelManager(h.ConnectionString).GetHistoryDines(userId);
+				if(dines.Count > 0) {
+					allDines.Add(new {
+						Hotel = new {
+							h.Id,
+							h.Name
+						},
+						Dines = dines
+					});
+				}
+			}
+
+			return allDines;
+		}
 		public async Task<int> GetDineCount() {
 			int dineCount = 0;
 			List<Hotel> hotels = await GetHotels();
@@ -189,8 +216,6 @@ namespace YummyOnlineDAO {
 			}
 			return dineCount;
 		}
-
-
 		public async Task<List<dynamic>> GetDinePerHourCount(DateTime dateTime) {
 			List<dynamic> list = new List<dynamic>();
 			List<Hotel> hotels = await GetHotels();

@@ -45,6 +45,8 @@ namespace YummyOnlineDAO.Models {
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public DateTime CreateDate { get; set; }
 
+		public bool Usable { get; set; }
+
 		public ICollection<MenuGather> MenuGathers { get; set; }
 		public ICollection<Staff> Staffs { get; set; }
 	}

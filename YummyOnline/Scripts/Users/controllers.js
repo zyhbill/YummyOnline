@@ -4,6 +4,34 @@
 	'layout',
 	function ($scope, $http, $layout) {
 		$layout.Set('普通用户管理', '');
+
+		function refresh() {
+			$http.post('/Users/GetCustomers').then(function (response) {
+				for (var i in response.data) {
+					response.data.IsShowUserDines = false;
+					response.data.IsLoading = false;
+					response.data.DineHotels = [];
+				}
+				$scope.customers = response.data;
+			});
+		}
+		refresh();
+
+		$scope.showUserDines = function (customer) {
+			if (!customer.IsShowUserDines) {
+				customer.IsLoading = true;
+				$http.post('/Users/GetUserDines', {
+					UserId: customer.Id
+				}).then(function (response) {
+					customer.DineHotels = response.data;
+					customer.IsShowUserDines = true;
+					customer.IsLoading = false;
+				});
+			} else {
+				customer.DineHotels = [];
+				customer.IsShowUserDines = false;
+			}
+		}
 	}
 ]);
 
@@ -59,6 +87,11 @@ app.controller('NemoCtrl', [
 			$http.post('/Users/GetRecentNemoes', {
 				days: $scope.days
 			}).then(function (response) {
+				for (var i in response.data) {
+					response.data.IsShowUserDines = false;
+					response.data.IsLoading = false;
+					response.data.DineHotels = [];
+				}
 				$scope.nemoes = response.data;
 			});
 		}
@@ -75,6 +108,21 @@ app.controller('NemoCtrl', [
 					refresh();
 				}
 			});
+		}
+		$scope.showUserDines = function (nemo) {
+			if (!nemo.IsShowUserDines) {
+				nemo.IsLoading = true;
+				$http.post('/Users/GetUserDines', {
+					UserId: nemo.Id
+				}).then(function (response) {
+					nemo.DineHotels = response.data;
+					nemo.IsShowUserDines = true;
+					nemo.IsLoading = false;
+				});
+			} else {
+				nemo.DineHotels = [];
+				nemo.IsShowUserDines = false;
+			}
 		}
 	}
 ]);

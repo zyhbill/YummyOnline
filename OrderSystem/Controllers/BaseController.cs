@@ -10,6 +10,8 @@ using YummyOnlineDAO;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
 using Protocal;
+using System.Web.Routing;
+using Utility;
 
 namespace OrderSystem.Controllers {
 	public class BaseController : Controller {
@@ -44,6 +46,19 @@ namespace OrderSystem.Controllers {
 			set {
 				Session["Hotel"] = value;
 			}
+		}
+
+		protected override void OnActionExecuting(ActionExecutingContext filterContext) {
+			if(CurrHotel != null) {
+				Hotel hotel = AsyncInline.Run(() => YummyOnlineManager.GetHotelById(CurrHotel.Id));
+				if(!hotel.Usable) {
+					CurrHotel = null;
+					filterContext.Result = RedirectToAction("HotelUnavailable", "Error", null);
+					return;
+				}
+			}
+
+			base.OnActionExecuting(filterContext);
 		}
 	}
 
@@ -106,21 +121,18 @@ namespace OrderSystem.Controllers {
 		}
 	}
 
+	/// <summary>
+	/// 必须有饭店信息Session
+	/// </summary>
 	public class RequireHotelAttribute : ActionFilterAttribute {
-		public override void OnActionExecuted(ActionExecutedContext filterContext) {
+		public override void OnActionExecuting(ActionExecutingContext filterContext) {
 			HttpContextBase context = filterContext.HttpContext;
 			if(context.Session["Hotel"] == null) {
-				if(context.Request.IsAjaxRequest()) {
-					context.Response.ContentType = "application/json; charset=utf-8";
-					context.Response.Write(JsonConvert.SerializeObject(new JsonError("Hotel Missing")));
-				}
-				else {
-					context.Response.Redirect("/Error/HotelMissing");
-				}
-				context.Response.End();
+				filterContext.Result = new RedirectResult("/Error/HotelMissing");
+				return;
 			}
 
-			base.OnActionExecuted(filterContext);
+			base.OnActionExecuting(filterContext);
 		}
 	}
 }

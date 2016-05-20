@@ -17,6 +17,10 @@ h6,
 	font-family: "Microsoft Yahei";
 }
 
+.table > tbody + tbody {
+	border-top: none;
+}
+
 .table > tbody > tr > td,
 .table > tbody > tr > th,
 .table > tfoot > tr > td,
@@ -30,6 +34,21 @@ h6,
 	padding: 5px;
 }
 
+.list-group{
+	box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.waterfall-4 {
+	-moz-column-count: 4;
+	-webkit-column-count: 4;
+	column-count: 4;
+}
+
+.waterfall-item {
+	display: inline-block;
+	width: 100%;
+}
+
 @media (max-width: 768px) {
 	.uib-datepicker-popup {
 		left: 50% !important;
@@ -40,4 +59,13 @@ h6,
 		transform: translateX(-50%);
 	}
 
+	.waterfall-4 {
+		-moz-column-count: auto;
+		-webkit-column-count: auto;
+		column-count: auto;
+	}
+
+	.waterfall-item {
+		display: block;
+	}
 }

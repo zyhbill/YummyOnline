@@ -123,6 +123,7 @@ app.controller('PaymentCtrl', [
 
 
 app.controller('HistoryCtrl', [
+	'$rootScope',
 	'$scope',
 	'$http',
 	'$window',
@@ -130,7 +131,7 @@ app.controller('HistoryCtrl', [
 
 	'cart',
 	'dineToCart',
-	function ($scope, $http, $window, $location, $cart, $dineToCart) {
+	function ($rootScope, $scope, $http, $window, $location, $cart, $dineToCart) {
 		$cart.Initialize();
 		$rootScope.isLoading = true;
 		$http.post('/Order/GetHistoryDines').then(function (response) {

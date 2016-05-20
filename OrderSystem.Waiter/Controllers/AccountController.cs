@@ -23,6 +23,9 @@ namespace OrderSystem.Waiter.Controllers {
 			}
 
 			Hotel hotel = await YummyOnlineManager.GetHotelById(staff.HotelId);
+			if(!hotel.Usable) {
+				return Json(new JsonError("该饭店不可用，请联系管理员"));
+			}
 			CurrHotel = hotel;
 
 			if(!await HotelManager.IsStaffHasSchema(staff.Id, HotelDAO.Models.Schema.ReadWaiterData)) {

@@ -161,6 +161,7 @@
     <Content Include="Views\Order\_ViewCart.cshtml" />
     <Content Include="Views\Error\HttpError404.cshtml" />
     <Content Include="Views\Error\HttpError500.cshtml" />
+    <Content Include="Views\Error\HotelUnavailable.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

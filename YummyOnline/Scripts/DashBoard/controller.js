@@ -6,10 +6,6 @@
 	function ($scope, $http, $filter, $layout) {
 		$layout.Set('概览', '');
 
-		$http.post('/DashBoard/Test').then(function (response) {
-			console.log(response.data);
-		})
-
 		$scope.refreshUserLine = function () {
 
 			$http.post('/DashBoard/GetUserDailyCount').then(function (response) {

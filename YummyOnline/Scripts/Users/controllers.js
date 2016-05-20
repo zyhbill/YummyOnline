@@ -54,20 +54,21 @@ app.controller('NemoCtrl', [
 	function ($scope, $http, $layout) {
 		$layout.Set('匿名用户管理', '');
 
+		$scope.days = 7;
 		function refresh() {
-			$http.post('/Users/GetRecent7DaysNemoes').then(function (response) {
+			$http.post('/Users/GetRecentNemoes', {
+				days: $scope.days
+			}).then(function (response) {
 				$scope.nemoes = response.data;
 			});
 		}
 		refresh();
 
-		$scope.deleteNemoesMonthAge = function () {
-			$http.post('/Users/DeleteNemoesMonthAge').then(function (response) {
-				if (response.data.Succeeded) {
-					refresh();
-				}
-			});
+		$scope.refresh = function (days) {
+			$scope.days = days;
+			refresh();
 		}
+
 		$scope.deleteNemoesHavenotDine = function () {
 			$http.post('/Users/DeleteNemoesHavenotDine').then(function (response) {
 				if (response.data.Succeeded) {

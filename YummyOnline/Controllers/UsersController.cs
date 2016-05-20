@@ -50,16 +50,11 @@ namespace YummyOnline.Controllers {
 			return Json(new JsonSuccess());
 		}
 
-		public async Task<JsonResult> GetRecent7DaysNemoes() {
+		public async Task<JsonResult> GetRecentNemoes(int days) {
 			return Json(new {
-				Users = await YummyOnlineManager.GetUsers(Role.Nemo, true, DateTime.Now.Date.AddDays(-7), DateTime.Now.Date.AddDays(1)),
+				Users = await YummyOnlineManager.GetUsers(Role.Nemo, true, DateTime.Now.Date.AddDays(-days), DateTime.Now.Date.AddDays(1)),
 				Count = await YummyOnlineManager.GetUserCount(Role.Nemo)
 			});
-		}
-		[Authorize(Roles = nameof(Role.SuperAdmin))]
-		public async Task<JsonResult> DeleteNemoesMonthAge() {
-			await YummyOnlineManager.DeleteNemoes(DateTime.Now.Date.AddMonths(-1));
-			return Json(new JsonSuccess());
 		}
 		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> DeleteNemoesHavenotDine() {

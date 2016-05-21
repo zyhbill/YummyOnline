@@ -83,6 +83,7 @@ namespace HotelDAO.Models {
 		public double Discount { get; set; }
 		[MaxLength(25)]
 		public string DiscountName { get; set; }
+		public DiscountType DiscountType { get; set; }
 
 		/// <summary>
 		/// 是否已经打印发票

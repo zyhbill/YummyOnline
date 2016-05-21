@@ -188,6 +188,7 @@
     <Content Include="Scripts\Account\controllers.js" />
     <Content Include="Scripts\adminLTEApp.js" />
     <Content Include="Scripts\app.js" />
+    <Content Include="Scripts\Hotel\controllers.js" />
     <Content Include="Scripts\DashBoard\controller.js" />
     <Content Include="Scripts\DashBoard\directives.js" />
     <Content Include="Scripts\DashBoard\route.js" />
@@ -231,7 +232,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="Views\Hotel\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -292,6 +292,8 @@
     <Content Include="Views\Error\HttpError404.cshtml" />
     <Content Include="Views\Error\HttpError500.cshtml" />
     <Content Include="Views\Users\_ViewNemo.cshtml" />
+    <Content Include="Views\Hotel\Index.cshtml" />
+    <Content Include="Views\Users\_PartialDines.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

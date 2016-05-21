@@ -30,12 +30,31 @@ h6,
 	vertical-align: middle;
 }
 
+.row.no-padding {
+	margin: 0 -1px;
+}
+
+	.row.no-padding .col-xs-1,
+	.row.no-padding .col-xs-2,
+	.row.no-padding .col-xs-3,
+	.row.no-padding .col-xs-4,
+	.row.no-padding .col-xs-5,
+	.row.no-padding .col-xs-6,
+	.row.no-padding .col-xs-7,
+	.row.no-padding .col-xs-8,
+	.row.no-padding .col-xs-9,
+	.row.no-padding .col-xs-10,
+	.row.no-padding .col-xs-11,
+	.row.no-padding .col-xs-12 {
+		padding: 0 1px;
+	}
+
 .uib-datepicker-popup {
 	padding: 5px;
 }
 
-.list-group{
-	box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+.list-group {
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .waterfall-4 {
@@ -47,6 +66,14 @@ h6,
 .waterfall-item {
 	display: inline-block;
 	width: 100%;
+}
+
+@media (max-width: 1200px) {
+	.waterfall-4 {
+		-moz-column-count: 2;
+		-webkit-column-count: 2;
+		column-count: 2;
+	}
 }
 
 @media (max-width: 768px) {

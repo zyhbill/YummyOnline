@@ -71,6 +71,7 @@ namespace OrderSystem {
 			if(addition.Discount.HasValue) {
 				dine.Discount = addition.Discount.Value;
 				dine.DiscountName = addition.DiscountName;
+				dine.DiscountType = DiscountType.Custom;
 			}
 			else {
 				await handleDiscount(mainPaidDetail.PayKind, dine);
@@ -204,10 +205,12 @@ namespace OrderSystem {
 		private async Task handleDiscount(PayKind payKind, Dine dine) {
 			double minDiscount = 1;
 			string minDiscountName = null;
+			DiscountType minDiscountType = DiscountType.None;
 
 			if(payKind.Discount < minDiscount) {
 				minDiscount = payKind.Discount;
 				minDiscountName = payKind.Name + "折扣";
+				minDiscountType = DiscountType.PayKind;
 			}
 
 			DayOfWeek week = DateTime.Now.DayOfWeek;
@@ -218,6 +221,7 @@ namespace OrderSystem {
 					if(timeDiscount.Discount < minDiscount) {
 						minDiscount = timeDiscount.Discount;
 						minDiscountName = timeDiscount.Name;
+						minDiscountType = DiscountType.Time;
 					}
 					break;
 				}
@@ -230,12 +234,14 @@ namespace OrderSystem {
 					if(vipDiscounts.Discount < minDiscount) {
 						minDiscount = vipDiscounts.Discount;
 						minDiscountName = vipDiscounts.Name;
+						minDiscountType = DiscountType.Vip;
 					}
 				}
 			}
 
 			dine.Discount = minDiscount;
 			dine.DiscountName = minDiscountName;
+			dine.DiscountType = minDiscountType;
 		}
 
 		/// <summary>

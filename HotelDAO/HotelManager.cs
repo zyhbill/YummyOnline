@@ -202,6 +202,7 @@ namespace HotelDAO {
 				p.OriPrice,
 				p.Discount,
 				p.DiscountName,
+				p.DiscountType,
 				p.BeginTime,
 				p.IsPaid,
 				p.IsOnline,

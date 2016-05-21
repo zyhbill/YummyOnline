@@ -54,6 +54,13 @@ namespace YummyOnlineDAO {
 		public async Task<int> GetHotelCount() {
 			return await ctx.Hotels.CountAsync();
 		}
+		public async Task UpdateHotel(Hotel hotel) {
+			Hotel currHotel = await GetHotelById(hotel.Id);
+			currHotel.ConnectionString = hotel.ConnectionString;
+			currHotel.CssThemePath = hotel.CssThemePath;
+			currHotel.Usable = hotel.Usable;
+			await ctx.SaveChangesAsync();
+		}
 
 		public async Task RecordLog(Log.LogProgram program, Log.LogLevel level, string message) {
 			Log log = new Log {

@@ -1,0 +1,40 @@
+﻿
+@{
+	ViewBag.Title = "饭店管理";
+	Layout = "~/Views/Shared/_LayoutGlobal.cshtml";
+}
+@section Script{
+	<script src="~/Scripts/Hotel/controllers.js"></script>
+}
+<h1>正在建设中... 限制功能版</h1>
+<div class="box" ng-controller="HotelCtrl">
+	<div class="box-body no-padding">
+		<div class="table-responsive">
+			<table class="table no-margin">
+				<tr>
+					<th>Id</th>
+					<th>名称</th>
+					<th>CSS文件名</th>
+					<th>创建日期</th>
+					<th>电话</th>
+					<th>地址</th>
+					<th>开门时间</th>
+					<th>关门时间</th>
+					<th>是否可用</th>
+				</tr>
+
+				<tr ng-repeat="hotel in hotels">
+					<td>{{hotel.Id}}</td>
+					<td>{{hotel.Name}}</td>
+					<td>{{hotel.CssThemePath}}</td>
+					<td>{{hotel.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
+					<td>{{hotel.Tel}}</td>
+					<td>{{hotel.Address}}</td>
+					<td>{{hotel.OpenTime | date:'HH:mm:ss'}}</td>
+					<td>{{hotel.CloseTime | date:'HH:mm:ss'}}</td>
+					<td>{{hotel.Usable}}</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>

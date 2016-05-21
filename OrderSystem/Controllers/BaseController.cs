@@ -47,19 +47,6 @@ namespace OrderSystem.Controllers {
 				Session["Hotel"] = value;
 			}
 		}
-
-		protected override void OnActionExecuting(ActionExecutingContext filterContext) {
-			if(CurrHotel != null) {
-				Hotel hotel = AsyncInline.Run(() => YummyOnlineManager.GetHotelById(CurrHotel.Id));
-				if(!hotel.Usable) {
-					CurrHotel = null;
-					filterContext.Result = RedirectToAction("HotelUnavailable", "Error", null);
-					return;
-				}
-			}
-
-			base.OnActionExecuting(filterContext);
-		}
 	}
 
 	public class BaseOrderSystemController : BaseController {
@@ -130,6 +117,23 @@ namespace OrderSystem.Controllers {
 			if(context.Session["Hotel"] == null) {
 				filterContext.Result = new RedirectResult("/Error/HotelMissing");
 				return;
+			}
+
+			base.OnActionExecuting(filterContext);
+		}
+	}
+	/// <summary>
+	/// 饭店必须可用
+	/// </summary>
+	public class HotelAvailableAttribute : ActionFilterAttribute {
+		public override void OnActionExecuting(ActionExecutingContext filterContext) {
+			Hotel currHotel = filterContext.HttpContext.Session["Hotel"] as Hotel;
+			if(currHotel != null) {
+				Hotel hotel = AsyncInline.Run(() => new YummyOnlineManager().GetHotelById(currHotel.Id));
+				if(!hotel.Usable) {
+					filterContext.Result = new RedirectResult("/Error/HotelUnavailable"); 
+					return;
+				}
 			}
 
 			base.OnActionExecuting(filterContext);

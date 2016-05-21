@@ -31,7 +31,6 @@ namespace SMS {
 			ret = sr.ReadToEnd();
 			sr.Close();
 			response.Close();
-			newStream.Close();
 			return ret;
 		}
 	}

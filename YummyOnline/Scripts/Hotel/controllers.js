@@ -12,5 +12,16 @@
 		}
 
 		refresh();
+
+		$scope.update = function (hotel) {
+			$http.post('/Hotel/UpdateHotelUsable', {
+				Hotel: hotel
+			}).then(function (response) {
+				if (!response.data.Succeeded) {
+					toastr.error('修改失败');
+					refresh();
+				}
+			})
+		}
 	}
 ]);

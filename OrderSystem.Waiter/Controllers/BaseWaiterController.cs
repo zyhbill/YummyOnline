@@ -52,4 +52,9 @@ namespace OrderSystem.Waiter.Controllers {
 			}
 		}
 	}
+
+	/// <summary>
+	/// 饭店必须可用
+	/// </summary>
+	public class HotelAvailableAttribute : OrderSystem.Controllers.HotelAvailableAttribute { }
 }

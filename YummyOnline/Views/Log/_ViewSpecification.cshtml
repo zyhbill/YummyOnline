@@ -10,7 +10,7 @@
 						@foreach(FileInfo file in dirFile.Value) {
 							<tr>
 								<td class="col-md-5">@file.Name</td>
-								<td class="col-md-6 text-right">@file.LastWriteTime.ToString("yy-MM-dd hh:mm:ss")</td>
+								<td class="col-md-6 text-right">@file.LastWriteTime.ToString("yy-MM-dd HH:mm:ss")</td>
 								<td class="col-md-1 text-right">
 									@if(file.Name.EndsWith(".html") || file.Name.EndsWith(".htm")) {
 										<a class="btn btn-primary btn-sm" href="/Log/GetFile?dir=@dirFile.Key&name=@file.Name" target="_blank">

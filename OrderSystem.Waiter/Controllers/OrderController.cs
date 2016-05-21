@@ -12,6 +12,7 @@ using YummyOnlineDAO.Identity;
 
 namespace OrderSystem.Waiter.Controllers {
 	[Authorize(Roles = nameof(Schema.ReadWaiterData))]
+	[HotelAvailable]
 	public class OrderController : BaseWaiterController {
 		// GET: Order
 

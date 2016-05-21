@@ -10,6 +10,7 @@ using Protocal;
 
 namespace OrderSystem.Controllers {
 	[RequireHotel]
+	[HotelAvailable]
 	public class AccountController : BaseOrderSystemController {
 		// GET: Account
 		public ActionResult Index() {

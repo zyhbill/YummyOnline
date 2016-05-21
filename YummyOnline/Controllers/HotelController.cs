@@ -24,9 +24,26 @@ namespace YummyOnline.Controllers {
 		}
 		public async Task<JsonResult> GetHotels() {
 			List<Hotel> hotels = await YummyOnlineManager.GetHotels();
+
+			if(User.IsInRole(nameof(Role.SuperAdmin))) {
+				return Json(hotels.Select(p => new {
+					p.Id,
+					p.Name,
+					p.ConnectionString,
+					p.AdminConnectionString,
+					p.CssThemePath,
+					p.CreateDate,
+					p.Tel,
+					p.Address,
+					p.OpenTime,
+					p.CloseTime,
+					p.Usable
+				}));
+			}
 			return Json(hotels.Select(p => new {
 				p.Id,
 				p.Name,
+				p.ConnectionString,
 				p.CssThemePath,
 				p.CreateDate,
 				p.Tel,
@@ -36,7 +53,7 @@ namespace YummyOnline.Controllers {
 				p.Usable
 			}));
 		}
-		public async Task<JsonResult> UpdateHotel(Hotel hotel) {
+		public async Task<JsonResult> UpdateHotelUsable(Hotel hotel) {
 			await YummyOnlineManager.UpdateHotel(hotel);
 			return Json(new JsonSuccess());
 		}

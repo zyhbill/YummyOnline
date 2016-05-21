@@ -50,6 +50,7 @@ namespace OrderSystem.Controllers {
 		/// <param name="cart"></param>
 		/// <returns></returns>
 		[RequireHotel]
+		[HotelAvailable]
 		public async Task<JsonResult> Pay(Cart cart) {
 			CartAddition addition = new CartAddition();
 
@@ -99,12 +100,14 @@ namespace OrderSystem.Controllers {
 		/// <param name="cart"></param>
 		/// <param name="cartAddition"></param>
 		/// <returns></returns>
-		public async Task<JsonResult> ManagerPay(Cart cart, ManagerCartAddition cartAddition) {
+		public async Task<ActionResult> ManagerPay(Cart cart, ManagerCartAddition cartAddition) {
 			if(!await verifyToken(cartAddition.Token)) {
 				return Json(new JsonError("身份验证失败"));
 			}
 
 			CurrHotel = await YummyOnlineManager.GetHotelById(cartAddition.HotelId);
+			if(!CurrHotel.Usable)
+				return RedirectToAction("HotelUnavailable", "Error");
 
 			cart.PayKindId = await new HotelManagerForWaiter(CurrHotel.ConnectionString).GetOtherPayKindId();
 			CartAddition addition = new CartAddition {
@@ -140,10 +143,14 @@ namespace OrderSystem.Controllers {
 		/// <param name="cart"></param>
 		/// <param name="cartAddition"></param>
 		/// <returns></returns>
-		public async Task<JsonResult> WaiterPay(Cart cart, WaiterCartAddition cartAddition, string waiterId, string token) {
+		public async Task<ActionResult> WaiterPay(Cart cart, WaiterCartAddition cartAddition, string waiterId, string token) {
 			if(!await verifyToken(token)) {
 				return Json(new JsonError("身份验证失败"));
 			}
+
+			ActionResult actionResult = await setAndVerifyHotel(waiterId);
+			if(actionResult != null)
+				return actionResult;
 
 			FunctionResult result = await waiterPay(cart, cartAddition, waiterId);
 
@@ -163,17 +170,14 @@ namespace OrderSystem.Controllers {
 		/// </summary>
 		/// <param name="paidDetails"></param>
 		/// <returns></returns>
-		public async Task<JsonResult> WaiterPayCompleted(WaiterPaidDetails paidDetails, string waiterId, string token) {
+		public async Task<ActionResult> WaiterPayCompleted(WaiterPaidDetails paidDetails, string waiterId, string token) {
 			if(!await verifyToken(token)) {
 				return Json(new JsonError("身份验证失败"));
 			}
 
-			var staff = await StaffManager.FindStaffById(waiterId);
-			if(staff == null) {
-				return Json(new JsonError("未找到服务员"));
-			}
-
-			CurrHotel = await YummyOnlineManager.GetHotelById(staff.HotelId);
+			ActionResult actionResult = await setAndVerifyHotel(waiterId);
+			if(actionResult != null)
+				return actionResult;
 
 			bool succeeded = await OrderManager.OfflinePayCompleted(paidDetails);
 			if(!succeeded) {
@@ -191,10 +195,14 @@ namespace OrderSystem.Controllers {
 		/// <param name="cartAddition"></param>
 		/// <param name="paidDetails"></param>
 		/// <returns></returns>
-		public async Task<JsonResult> WaiterPayWithPaidDetails(Cart cart, WaiterCartAddition cartAddition, WaiterPaidDetails paidDetails, string waiterId, string token) {
+		public async Task<ActionResult> WaiterPayWithPaidDetails(Cart cart, WaiterCartAddition cartAddition, WaiterPaidDetails paidDetails, string waiterId, string token) {
 			if(!await verifyToken(token)) {
 				return Json(new JsonError("身份验证失败"));
 			}
+
+			ActionResult actionResult = await setAndVerifyHotel(waiterId);
+			if(actionResult != null)
+				return actionResult;
 
 			FunctionResult result = await waiterPay(cart, cartAddition, waiterId);
 
@@ -218,7 +226,23 @@ namespace OrderSystem.Controllers {
 			return Json(new JsonSuccess { Data = paidDetails.DineId });
 		}
 
+		/// <summary>
+		/// 设置并验证当前饭店
+		/// </summary>
+		/// <param name="waiterId"></param>
+		/// <returns></returns>
+		private async Task<ActionResult> setAndVerifyHotel(string waiterId) {
+			var staff = await StaffManager.FindStaffById(waiterId);
+			if(staff == null) {
+				return Json(new JsonError("未找到服务员"));
+			}
 
+			CurrHotel = await YummyOnlineManager.GetHotelById(staff.HotelId);
+			if(!CurrHotel.Usable) {
+				return RedirectToAction("HotelUnavailable", "Error");
+			}
+			return null;
+		}
 
 		/// <summary>
 		/// 重新支付
@@ -315,17 +339,10 @@ namespace OrderSystem.Controllers {
 		}
 
 		private async Task<FunctionResult> waiterPay(Cart cart, WaiterCartAddition cartAddition, string waiterId) {
-			var staff = await StaffManager.FindStaffById(waiterId);
-			if(staff == null) {
-				return new FunctionResult(false, "未找到服务员");
-			}
-
-			CurrHotel = await YummyOnlineManager.GetHotelById(staff.HotelId);
-
 			HotelManagerForWaiter hotelManager = new HotelManagerForWaiter(CurrHotel.ConnectionString);
 			cart.PayKindId = await hotelManager.GetOtherPayKindId();
 			CartAddition addition = new CartAddition {
-				WaiterId = staff.Id,
+				WaiterId = waiterId,
 				Discount = cartAddition.Discount,
 				DiscountName = cartAddition.DiscountName
 			};
@@ -339,7 +356,7 @@ namespace OrderSystem.Controllers {
 			// 创建新订单
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
 			if(result.Succeeded) {
-				await hotelManager.AddStaffDine(staff.Id, ((Dine)result.Data).Price);
+				await hotelManager.AddStaffDine(waiterId, ((Dine)result.Data).Price);
 			}
 			else {
 				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, result.Detail);

@@ -11,6 +11,7 @@ using YummyOnlineDAO.Models;
 
 namespace OrderSystem.Waiter.Controllers {
 	[Authorize(Roles = nameof(Schema.SubmitWaiterPay))]
+	[HotelAvailable]
 	public class PaymentController : BaseWaiterController {
 		public async Task<JsonResult> WaiterPay(Cart cart, WaiterCartAddition cartAddition) {
 			SystemConfig config = await YummyOnlineManager.GetSystemConfig();

@@ -46,6 +46,25 @@ app.directive('confirmClick', [
 				});
 			}
 		}
-		
+	}
+]);
+
+app.directive('switch', [
+	function () {
+		return {
+			scope: {
+				ngModel: '=',
+				ngClick: '&'
+			},
+			link: function (scope, elem, attrs) {
+				$(elem).bootstrapSwitch({
+					state: scope.ngModel
+				}).bootstrapSwitch('onSwitchChange', function (e, s) {
+					scope.ngModel = s;
+					scope.$apply();
+					scope.ngClick();
+				});
+			}
+		}
 	}
 ])

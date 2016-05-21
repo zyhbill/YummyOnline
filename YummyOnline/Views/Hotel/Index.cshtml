@@ -3,10 +3,14 @@
 	ViewBag.Title = "饭店管理";
 	Layout = "~/Views/Shared/_LayoutGlobal.cshtml";
 }
+@section Style{
+	<link href="//cdn.bootcss.com/bootstrap-switch/3.3.2/css/bootstrap3/bootstrap-switch.min.css" rel="stylesheet">
+}
 @section Script{
+	<script src="//cdn.bootcss.com/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js"></script>
 	<script src="~/Scripts/Hotel/controllers.js"></script>
 }
-<h1>正在建设中... 限制功能版</h1>
+
 <div class="box" ng-controller="HotelCtrl">
 	<div class="box-body no-padding">
 		<div class="table-responsive">
@@ -14,6 +18,10 @@
 				<tr>
 					<th>Id</th>
 					<th>名称</th>
+					<th>连接字符串</th>
+					@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+						<th>高权限连接字符串</th>
+					}
 					<th>CSS文件名</th>
 					<th>创建日期</th>
 					<th>电话</th>
@@ -26,13 +34,31 @@
 				<tr ng-repeat="hotel in hotels">
 					<td>{{hotel.Id}}</td>
 					<td>{{hotel.Name}}</td>
+					<td>
+						<button class="btn btn-sm btn-default" uib-popover="{{hotel.ConnectionString}}">查看</button>
+					</td>
+					@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+						<td>
+							<button class="btn btn-sm btn-default" uib-popover="{{hotel.AdminConnectionString}}">查看</button>
+						</td>
+					}
 					<td>{{hotel.CssThemePath}}</td>
 					<td>{{hotel.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
 					<td>{{hotel.Tel}}</td>
 					<td>{{hotel.Address}}</td>
 					<td>{{hotel.OpenTime | date:'HH:mm:ss'}}</td>
 					<td>{{hotel.CloseTime | date:'HH:mm:ss'}}</td>
-					<td>{{hotel.Usable}}</td>
+					<td>
+						@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+							<input switch data-on-text="可用" data-off-text="禁用" data-size="small" type="checkbox" 
+								   ng-model="hotel.Usable" ng-click="update(hotel)">
+						}
+						else {
+							<input switch data-on-text="可用" data-off-text="禁用" data-size="small" disabled type="checkbox" 
+								   ng-model="hotel.Usable" ng-click="update(hotel)">
+						}
+
+					</td>
 				</tr>
 			</table>
 		</div>

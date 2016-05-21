@@ -43,6 +43,7 @@ namespace OrderSystem.Waiter.Controllers {
 		}
 
 		[Authorize(Roles = nameof(HotelDAO.Models.Schema.ReadWaiterData))]
+		[HotelAvailable]
 		public async Task<JsonResult> VerifyCustomer(string phoneNumber, string password) {
 			UserManager userManager = new UserManager();
 			User user = await userManager.FindByPhoneNumberAsync(phoneNumber);
@@ -61,6 +62,7 @@ namespace OrderSystem.Waiter.Controllers {
 			return Json(new JsonSuccess(await hotelManager.GetOrCreateCustomer(user.Id)));
 		}
 		[Authorize(Roles = nameof(HotelDAO.Models.Schema.ReadWaiterData))]
+		[HotelAvailable]
 		public async Task<JsonResult> IsCustomer(string userId) {
 			UserManager userManager = new UserManager();
 			if(!await userManager.IsInRoleAsync(userId, Role.Customer)) {

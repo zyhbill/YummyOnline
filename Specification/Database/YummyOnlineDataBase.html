@@ -49,15 +49,15 @@
 <body>
 	<div class="container-fluid">
 		<h2>YummyOnline Database Specification</h2>
+		
 		<div class="alert alert-danger">
-			<p>SystemConfigs中加入若干配置字段，Menus中增加赠菜状态</p>
+			<p>Hotels中加入Usable</p>
+			<p>Dines中加入DiscountType Type</p>
 			<p class="text-right">
-				<small>2016-5-12 张朕煜</small>
+				<small>2016-5-21 张朕煜</small>
 			</p>
 		</div>
 		
-		
-
 		<ul>
 			<li>Database version : SQLSERVER 2014</li>
 			<li>Windows version : Windows Server 2012</li>
@@ -638,7 +638,10 @@
 				<td>Type</td>
 				<td>int</td>
 				<td>点单种类</td>
-				<td></td>
+				<td>
+					<p>0 堂吃</p>
+					<p>1 外卖</p>
+				</td>
 			</tr>
 			<tr>
 				<td>DeskId</td>
@@ -686,6 +689,18 @@
 				<td>nvarchar(25)</td>
 				<td>折扣方案名称</td>
 				<td></td>
+			</tr>
+			<tr>
+				<td>DiscountType</td>
+				<td>int</td>
+				<td>折扣方案类型</td>
+				<td>
+					<p>0 不打折</p>
+					<p>1 支付打折</p>
+					<p>2 分时段打折</p>
+					<p>3 会员打折</p>
+					<p>4 自定义折扣</p>
+				</td>
 			</tr>
 			<tr>
 				<td>IsPaid</td>
@@ -1468,6 +1483,12 @@
 				<td>关门时间</td>
 				<td></td>
 			</tr>
+			<tr>
+				<td>Usable</td>
+				<td>bit</td>
+				<td>饭店是否可用</td>
+				<td></td>
+			</tr>
 		</table>
 		<table class="table table-bordered table-hover table-condensed">
 			<tr>
@@ -1772,7 +1793,13 @@
 
 
 
-
+		
+		<div class="alert alert-danger">
+			<p>SystemConfigs中加入若干配置字段，Menus中增加赠菜状态</p>
+			<p class="text-right">
+				<small>2016-5-12 张朕煜</small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>DinePaidDetails中 DineId代表点单Id, 不是菜品Id, DinePaidDetails为表名, 再次感谢王徐峰同学的火眼金睛</p>
 			<p class="text-right">

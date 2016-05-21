@@ -13,6 +13,7 @@ using Utility;
 
 namespace OrderSystem.Controllers {
 	[RequireHotel]
+	[HotelAvailable]
 	public class OrderController : BaseOrderSystemController {
 		// GET: Order
 		public ActionResult Index() {

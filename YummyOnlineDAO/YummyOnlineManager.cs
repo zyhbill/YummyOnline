@@ -56,8 +56,6 @@ namespace YummyOnlineDAO {
 		}
 		public async Task UpdateHotel(Hotel hotel) {
 			Hotel currHotel = await GetHotelById(hotel.Id);
-			currHotel.ConnectionString = hotel.ConnectionString;
-			currHotel.CssThemePath = hotel.CssThemePath;
 			currHotel.Usable = hotel.Usable;
 			await ctx.SaveChangesAsync();
 		}

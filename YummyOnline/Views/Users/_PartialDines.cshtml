@@ -1,11 +1,20 @@
 ﻿
 <ul class="list-group">
 	<li class="list-group-item">
-		<p class="title">
-			点单号：{{dine.Id}}
-			<span class="text-danger" ng-if="!dine.IsPaid">[未支付]</span>
-			<span class="text-success" ng-if="dine.IsPaid">[已支付]</span>
-		</p>
+		<div class="row  no-padding">
+			<div class="col-xs-8">
+				<p>
+					点单号：{{dine.Id}}
+					<span class="text-danger" ng-if="!dine.IsPaid">[未支付]</span>
+					<span class="text-success" ng-if="dine.IsPaid">[已支付]</span>
+				</p>
+			</div>
+			<div class="col-xs-4 text-right">
+				<p ng-show="dine.IsOnline">线上订单</p>
+				<p ng-hide="dine.IsOnline">线下订单</p>
+			</div>
+		</div>
+
 		<p>下单时间：{{dine.BeginTime | date:'yyyy/M/d HH:mm:ss'}}</p>
 
 		<div class="row no-padding">
@@ -93,9 +102,6 @@
 	</li>
 	<li class="list-group-item" ng-show="dine.DinePaidDetails.length>0">
 		<div class="row no-padding" ng-repeat="dinePaidDetail in dine.DinePaidDetails">
-			<div class="col-xs-12">
-				是否线上支付：{{dine.IsOnline}}
-			</div>
 			<div class="col-xs-6">
 				支付名称：{{dinePaidDetail.PayKind.Name}}
 			</div>

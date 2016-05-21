@@ -32,14 +32,18 @@ namespace YummyOnline.Controllers {
 				W3wps = IISManager.GetWorkerProcesses()
 			});
 		}
-		public JsonResult StartSite(int siteId) {
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
+		public async Task<JsonResult> StartSite(int siteId) {
 			if(IISManager.StartSite(siteId)) {
+				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"Site {IISManager.GetSiteById(siteId).Name} Started");
 				return Json(new JsonSuccess());
 			}
 			return Json(new JsonError("无法启动"));
 		}
-		public JsonResult StopSite(int siteId) {
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
+		public async Task<JsonResult> StopSite(int siteId) {
 			if(IISManager.StopSite(siteId)) {
+				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Warning, $"Site {IISManager.GetSiteById(siteId).Name} Stoped");
 				return Json(new JsonSuccess());
 			}
 			return Json(new JsonError("无法停止"));
@@ -48,19 +52,21 @@ namespace YummyOnline.Controllers {
 		public async Task<JsonResult> GetTcpServerInfo() {
 			return Json(await TcpServerProcess.GetTcpServerInfo());
 		}
-
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> StartTcpServer() {
 			bool result = await TcpServerProcess.StartTcpServer();
 			if(result) {
+				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, "TcpServer Started");
 				return Json(new JsonSuccess());
 			}
 			return Json(new JsonError("开启失败"));
 		}
 
 		[Authorize(Roles = nameof(Role.SuperAdmin))]
-		public JsonResult StopTcpServer() {
+		public async Task<JsonResult> StopTcpServer() {
 			bool result = TcpServerProcess.StopTcpServer();
 			if(result) {
+				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Warning, "TcpServer Stoped");
 				return Json(new JsonSuccess());
 			}
 			return Json(new JsonError("关闭失败"));

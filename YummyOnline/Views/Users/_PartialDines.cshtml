@@ -10,8 +10,10 @@
 				</p>
 			</div>
 			<div class="col-xs-4 text-right">
-				<p ng-show="dine.IsOnline">线上订单</p>
-				<p ng-hide="dine.IsOnline">线下订单</p>
+				<p>
+					<i class="fa fa-paper-plane" ng-show="dine.IsOnline"></i>
+					<i class="fa fa-money" ng-hide="dine.IsOnline"></i>
+				</p>
 			</div>
 		</div>
 
@@ -38,15 +40,15 @@
 		<div class="row">
 			<div class="col-xs-6">
 				类型：
-				<span ng-show="dine.Type==0">堂吃</span>
-				<span ng-show="dine.Type==1">堂吃</span>
+				<span ng-if="dine.Type==0">堂吃</span>
+				<span ng-if="dine.Type==1">堂吃</span>
 			</div>
 			<div class="col-xs-6 text-right">
 				状态：
-				<span ng-show="dine.Status==0">未处理</span>
-				<span ng-show="dine.Status==1">已打印</span>
-				<span ng-show="dine.Status==2">上菜完毕</span>
-				<span ng-show="dine.Status==3">已完成交接班</span>
+				<span ng-if="dine.Status==0">未处理</span>
+				<span ng-if="dine.Status==1">已打印</span>
+				<span ng-if="dine.Status==2">上菜完毕</span>
+				<span ng-if="dine.Status==3">已完成交接班</span>
 			</div>
 		</div>
 	</li>
@@ -88,7 +90,12 @@
 				</span>
 			</div>
 			<div class="col-xs-12">
-				折扣类型：{{dine.DiscountType}}
+				折扣类型：
+				<span ng-if="dine.DiscountType==0">无折扣</span>
+				<span ng-if="dine.DiscountType==1">支付打折</span>
+				<span ng-if="dine.DiscountType==2">分时段打折</span>
+				<span ng-if="dine.DiscountType==3">会员打折</span>
+				<span ng-if="dine.DiscountType==4">自定义折扣</span>
 			</div>
 			<div ng-if="dine.Discount<1">
 				<div class="col-xs-6">
@@ -107,11 +114,11 @@
 			</div>
 			<div class="col-xs-6 text-right">
 				类型：
-				<span ng-show="dinePaidDetail.PayKind.Type==0">线上</span>
-				<span ng-show="dinePaidDetail.PayKind.Type==1">线下</span>
-				<span ng-show="dinePaidDetail.PayKind.Type==2">积分抵扣</span>
-				<span ng-show="dinePaidDetail.PayKind.Type==3">其他</span>
-				<span ng-show="dinePaidDetail.PayKind.Type==4">现金</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==0">线上</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==1">线下</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==2">积分抵扣</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==3">其他</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==4">现金</span>
 			</div>
 		</div>
 	</li>

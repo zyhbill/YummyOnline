@@ -38,21 +38,19 @@
 			</button>
 		</div>
 	</div>
-	<div class="box-body no-padding">
-		<div class="table-responsive">
-			<table class="table table-bordered no-margin">
-				<tr>
-					<th>等级</th>
-					<th>内容</th>
-					<th>时间</th>
-				</tr>
+	<div class="table-responsive">
+		<table class="table table-bordered no-margin">
+			<tr>
+				<th>等级</th>
+				<th>内容</th>
+				<th>时间</th>
+			</tr>
 
-				<tr ng-class="log.Class" ng-repeat="log in logDetail.Logs">
-					<td>{{log.Level}}</td>
-					<td>{{log.Message}}</td>
-					<td>{{log.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
-				</tr>
-			</table>
-		</div>
+			<tr ng-class="log.Class" ng-repeat="log in logDetail.Logs">
+				<td>{{log.Level}}</td>
+				<td>{{log.Message}}</td>
+				<td>{{log.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+			</tr>
+		</table>
 	</div>
 </div>

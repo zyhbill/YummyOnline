@@ -55,6 +55,8 @@ namespace YummyOnline.Controllers {
 		}
 		public async Task<JsonResult> UpdateHotelUsable(Hotel hotel) {
 			await YummyOnlineManager.UpdateHotel(hotel);
+			Log.LogLevel level = hotel.Usable ? Log.LogLevel.Success : Log.LogLevel.Warning;
+			await YummyOnlineManager.RecordLog(Log.LogProgram.System, level, $"Set Hotel {hotel.Id} Usable {hotel.Usable}");
 			return Json(new JsonSuccess());
 		}
 	}

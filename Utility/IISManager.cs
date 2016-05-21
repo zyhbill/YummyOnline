@@ -55,7 +55,7 @@ namespace Utility {
 		}
 
 		public static bool StartSite(long id) {
-			Site site = getSiteById(id);
+			Site site = GetSiteById(id);
 			if(site == null || site.State == ObjectState.Started || site.State == ObjectState.Starting) {
 				return false;
 			}
@@ -63,7 +63,7 @@ namespace Utility {
 			return true;
 		}
 		public static bool StopSite(long id) {
-			Site site = getSiteById(id);
+			Site site = GetSiteById(id);
 			if(site == null || site.State == ObjectState.Stopped || site.State == ObjectState.Stopping) {
 				return false;
 			}
@@ -71,7 +71,7 @@ namespace Utility {
 			return true;
 		}
 
-		private static Site getSiteById(long id) {
+		public static Site GetSiteById(long id) {
 			foreach(Site s in sm.Sites) {
 				if(s.Id == id) {
 					return s;

@@ -56,7 +56,7 @@
 					</td>
 				</tr>
 				<tr ng-show="nemo.IsShowUserDines">
-					<td colspan="4">
+					<td colspan="4" class="bg-gray-light">
 						<p class="text-danger no-margin" ng-if="nemo.DineHotels.length == 0">无订单</p>
 						<div ng-repeat="dineHotel in nemo.DineHotels">
 							<h4>{{dineHotel.Hotel.Name}} <small>{{dineHotel.Hotel.Id}}</small></h4>

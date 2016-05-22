@@ -1,16 +1,17 @@
 ﻿using AsynchronousTcp;
 using Newtonsoft.Json;
+using Protocal;
 using System;
 using System.Collections.Generic;
 using System.Net;
-using Protocal;
+using System.Threading.Tasks;
 
 namespace YummyOnlineTcpClient {
 	public class TcpClient {
 		private IPAddress ip;
 		private int port;
 		private BaseTcpProtocal connectSender;
-		
+
 		private TcpManager tcp;
 		private System.Net.Sockets.TcpClient client = null;
 
@@ -66,11 +67,11 @@ namespace YummyOnlineTcpClient {
 					exceptionOccured(e);
 				}
 			};
-			tcp.ErrorEvent += (s, e) => {
+			tcp.ErrorEvent += async (s, e) => {
 				client = null;
 				exceptionOccured(e);
 				// 重新连接
-				System.Threading.Thread.Sleep(ReconnectInterval * 1000);
+				await Task.Delay(ReconnectInterval * 1000);
 				Start();
 			};
 		}
@@ -96,13 +97,13 @@ namespace YummyOnlineTcpClient {
 		/// 发送tcp协议
 		/// </summary>
 		/// <param name="p">协议</param>
-		public void Send(BaseTcpProtocal p) {
+		public void Send(BaseTcpProtocal p, Action callBack = null) {
 			if(client == null) {
 				waitedQueue.Enqueue(p);
 				return;
 			}
-			var _ = tcp.Send(client, JsonConvert.SerializeObject(p), ()=>{
-				Console.WriteLine("!");
+			var _ = tcp.Send(client, JsonConvert.SerializeObject(p), () => {
+				callBack?.Invoke();
 			});
 		}
 	}

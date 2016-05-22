@@ -19,7 +19,7 @@
 					<td>{{customer.UserName}}</td>
 					<td>{{customer.DineCount}}</td>
 					<td class="text-right">
-						<button class="btn btn-primary" ng-click="showUserDines(customer)">
+						<button class="btn btn-sm btn-primary" ng-click="showUserDines(customer)">
 							<span ng-show="customer.IsLoading">正在查询...</span>
 							<span ng-hide="customer.IsLoading">查询历史订单</span>
 						</button>

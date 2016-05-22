@@ -10,10 +10,8 @@
 				</p>
 			</div>
 			<div class="col-xs-4 text-right">
-				<p>
-					<i class="fa fa-paper-plane" ng-show="dine.IsOnline"></i>
-					<i class="fa fa-money" ng-hide="dine.IsOnline"></i>
-				</p>
+				<p ng-if="dine.IsOnline">[线上]</p>
+				<p ng-if="!dine.IsOnline">[线下]</p>
 			</div>
 		</div>
 

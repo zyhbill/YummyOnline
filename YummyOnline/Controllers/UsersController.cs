@@ -50,7 +50,7 @@ namespace YummyOnline.Controllers {
 			return Json(new JsonSuccess());
 		}
 
-		public async Task<JsonResult> GetNemoes(int countPerPage = 50, int currPage = 1) {
+		public async Task<JsonResult> GetNemoes(int countPerPage, int currPage) {
 			return Json(new {
 				Users = await YummyOnlineManager.GetUsers(Role.Nemo, countPerPage, currPage, true),
 				Count = await YummyOnlineManager.GetUserCount(Role.Nemo)
@@ -62,7 +62,7 @@ namespace YummyOnline.Controllers {
 			return Json(new JsonSuccess());
 		}
 
-		public async Task<JsonResult> GetCustomers(int countPerPage = 50, int currPage = 1) {
+		public async Task<JsonResult> GetCustomers(int countPerPage, int currPage) {
 			return Json(new {
 				Users = await YummyOnlineManager.GetUsers(Role.Customer, countPerPage, currPage, true),
 				Count = await YummyOnlineManager.GetUserCount(Role.Customer)

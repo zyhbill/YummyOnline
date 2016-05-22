@@ -1,21 +1,15 @@
 ﻿using System;
-using System.Net;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Principal;
 using System.Web;
-using System.Web.Http;
-using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
+using Utility;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
-using OrderSystem.Utility;
-using System.Collections.Generic;
-using Utility;
-using System.IO;
-using System.Text;
-using System.Linq;
 
 namespace OrderSystem {
 	public class MvcApplication : HttpApplication {

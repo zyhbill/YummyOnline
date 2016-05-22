@@ -5,12 +5,13 @@
 	function ($scope, $http, $layout) {
 		$layout.Set('普通用户管理', '');
 
-		$scope.countPerPage = 50;
+		$scope.countPerPage = 30;
 		$scope.count = 0;
 		$scope.currPage = 1;
 
 		$scope.refresh = function () {
 			$http.post('/Users/GetCustomers', {
+				CountPerPage: $scope.countPerPage,
 				CurrPage: $scope.currPage
 			}).then(function (response) {
 				for (var i in response.data) {
@@ -49,12 +50,13 @@ app.controller('NemoCtrl', [
 	function ($scope, $http, $layout) {
 		$layout.Set('匿名用户管理', '');
 
-		$scope.countPerPage = 50;
+		$scope.countPerPage = 30;
 		$scope.count = 0;
 		$scope.currPage = 1;
 
 		$scope.refresh = function () {
 			$http.post('/Users/GetNemoes', {
+				CountPerPage: $scope.countPerPage,
 				CurrPage: $scope.currPage
 			}).then(function (response) {
 				for (var i in response.data) {

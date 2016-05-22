@@ -65,7 +65,7 @@ namespace YummyOnlineDAO.Identity {
 			return voidUser;
 		}
 		public async Task<bool> DeleteAsync(User user) {
-			ctx.Entry(user).State = EntityState.Deleted;
+			ctx.Users.Remove(user);
 			try {
 				await ctx.SaveChangesAsync();
 				return true;

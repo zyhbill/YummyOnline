@@ -5,17 +5,24 @@
 	function ($scope, $http, $layout) {
 		$layout.Set('普通用户管理', '');
 
-		function refresh() {
-			$http.post('/Users/GetCustomers').then(function (response) {
+		$scope.countPerPage = 50;
+		$scope.count = 0;
+		$scope.currPage = 1;
+
+		$scope.refresh = function () {
+			$http.post('/Users/GetCustomers', {
+				CurrPage: $scope.currPage
+			}).then(function (response) {
 				for (var i in response.data) {
 					response.data.IsShowUserDines = false;
 					response.data.IsLoading = false;
 					response.data.DineHotels = [];
 				}
-				$scope.customers = response.data;
+				$scope.customers = response.data.Users;
+				$scope.count = response.data.Count;
 			});
 		}
-		refresh();
+		$scope.refresh();
 
 		$scope.showUserDines = function (customer) {
 			if (!customer.IsShowUserDines) {
@@ -30,6 +37,57 @@
 			} else {
 				customer.DineHotels = [];
 				customer.IsShowUserDines = false;
+			}
+		}
+	}
+]);
+
+app.controller('NemoCtrl', [
+	'$scope',
+	'$http',
+	'layout',
+	function ($scope, $http, $layout) {
+		$layout.Set('匿名用户管理', '');
+
+		$scope.countPerPage = 50;
+		$scope.count = 0;
+		$scope.currPage = 1;
+
+		$scope.refresh = function () {
+			$http.post('/Users/GetNemoes', {
+				CurrPage: $scope.currPage
+			}).then(function (response) {
+				for (var i in response.data) {
+					response.data.IsShowUserDines = false;
+					response.data.IsLoading = false;
+					response.data.DineHotels = [];
+				}
+				$scope.nemoes = response.data.Users;
+				$scope.count = response.data.Count;
+			});
+		}
+		$scope.refresh();
+
+		$scope.deleteNemoesHavenotDine = function () {
+			$http.post('/Users/DeleteNemoesHavenotDine').then(function (response) {
+				if (response.data.Succeeded) {
+					refresh();
+				}
+			});
+		}
+		$scope.showUserDines = function (nemo) {
+			if (!nemo.IsShowUserDines) {
+				nemo.IsLoading = true;
+				$http.post('/Users/GetUserDines', {
+					UserId: nemo.Id
+				}).then(function (response) {
+					nemo.DineHotels = response.data;
+					nemo.IsShowUserDines = true;
+					nemo.IsLoading = false;
+				});
+			} else {
+				nemo.DineHotels = [];
+				nemo.IsShowUserDines = false;
 			}
 		}
 	}
@@ -75,54 +133,3 @@ app.controller('AdminCtrl', [
 	}
 ]);
 
-app.controller('NemoCtrl', [
-	'$scope',
-	'$http',
-	'layout',
-	function ($scope, $http, $layout) {
-		$layout.Set('匿名用户管理', '');
-
-		$scope.days = 7;
-		function refresh() {
-			$http.post('/Users/GetRecentNemoes', {
-				days: $scope.days
-			}).then(function (response) {
-				for (var i in response.data) {
-					response.data.IsShowUserDines = false;
-					response.data.IsLoading = false;
-					response.data.DineHotels = [];
-				}
-				$scope.nemoes = response.data;
-			});
-		}
-		refresh();
-
-		$scope.refresh = function (days) {
-			$scope.days = days;
-			refresh();
-		}
-
-		$scope.deleteNemoesHavenotDine = function () {
-			$http.post('/Users/DeleteNemoesHavenotDine').then(function (response) {
-				if (response.data.Succeeded) {
-					refresh();
-				}
-			});
-		}
-		$scope.showUserDines = function (nemo) {
-			if (!nemo.IsShowUserDines) {
-				nemo.IsLoading = true;
-				$http.post('/Users/GetUserDines', {
-					UserId: nemo.Id
-				}).then(function (response) {
-					nemo.DineHotels = response.data;
-					nemo.IsShowUserDines = true;
-					nemo.IsLoading = false;
-				});
-			} else {
-				nemo.DineHotels = [];
-				nemo.IsShowUserDines = false;
-			}
-		}
-	}
-]);

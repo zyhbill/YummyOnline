@@ -96,10 +96,12 @@ namespace YummyOnlineDAO {
 					p.Email
 				}).FirstOrDefaultAsync();
 		}
-		public async Task<dynamic> GetUsers(Role role, bool withDineCount = false, DateTime? from = null, DateTime? to = null) {
-			var linq = ctx.UserRoles.Where(p => p.Role == role);
-			if(from.HasValue && to.HasValue) {
-				linq = linq.Where(p => p.User.CreateDate >= from && p.User.CreateDate < to);
+		public async Task<dynamic> GetUsers(Role role, int countPerPage = 0, int currPage = 0, bool withDineCount = false) {
+
+			IQueryable<UserRole> linq = ctx.UserRoles.Where(p => p.Role == role).OrderByDescending(p => p.UserId);
+
+			if(countPerPage != 0) {
+				linq = linq.Skip(countPerPage * (currPage - 1)).Take(countPerPage);
 			}
 
 			var users = await linq.Select(p => new {

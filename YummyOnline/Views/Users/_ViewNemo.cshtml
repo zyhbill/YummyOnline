@@ -1,40 +1,5 @@
 ﻿
-
 <div class="box box-default">
-	<div class="box-body">
-		<div class="row">
-			<div class="col-md-6">
-				<p class="no-margin"><b>匿名用户总数：</b> {{nemoes.Count}}</p>
-			</div>
-			<div class="col-md-6 text-right">
-				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
-					<p class="no-margin">
-						<b>删除未点单的匿名用户：</b>
-						<button class="btn btn-xs btn-danger" confirm-click="deleteNemoesHavenotDine()">删除</button>
-					</p>
-				}
-			</div>
-		</div>
-	</div>
-</div>
-
-
-<div class="box box-default">
-	<div class="box-header">
-		<h3 class="box-title">近 {{days}} 日匿名用户</h3>
-		<div class="box-tools pull-right">
-			<div class="btn-group" uib-dropdown>
-				<button class="btn btn-box-tool" uib-dropdown-toggle>
-					<i class="fa fa-chevron-down"></i>
-				</button>
-				<ul uib-dropdown-menu>
-					<li><a href="javascript:;" ng-click="refresh(7)">近 7 日</a></li>
-					<li><a href="javascript:;" ng-click="refresh(14)">近 14 日</a></li>
-					<li><a href="javascript:;" ng-click="refresh(30)">近 1 月</a></li>
-				</ul>
-			</div>
-		</div>
-	</div>
 	<div class="table-responsive">
 		<table class="table no-margin">
 			<tr>
@@ -43,7 +8,7 @@
 				<th>历史点单数量</th>
 				<th></th>
 			</tr>
-			<tbody ng-repeat="nemo in nemoes.Users">
+			<tbody ng-repeat="nemo in nemoes">
 				<tr>
 					<td>{{nemo.Id}}</td>
 					<td>{{nemo.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
@@ -70,8 +35,25 @@
 					</td>
 				</tr>
 			</tbody>
-
-
 		</table>
+	</div>
+
+	<div class="box-body">
+		<div class="text-center">
+			<uib-pagination previous-text="&lsaquo;" next-text="&rsaquo;"
+							total-items="count"
+							items-per-page="countPerPage"
+							ng-model="currPage"
+							ng-change="refresh()"
+							max-size="5"></uib-pagination>
+		</div>
+		
+
+		<p><b>匿名用户总数：</b> {{count}}</p>
+
+		@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+			<button class="btn btn-danger" confirm-click="deleteNemoesHavenotDine()">删除未点单的匿名用户</button>
+		}
+
 	</div>
 </div>

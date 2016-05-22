@@ -40,8 +40,18 @@
 					</td>
 				</tr>
 			</tbody>
-
-
 		</table>
+	</div>
+
+	<div class="box-body">
+		<div class="text-center">
+			<uib-pagination previous-text="&lsaquo;" next-text="&rsaquo;"
+							total-items="count"
+							items-per-page="countPerPage"
+							ng-model="currPage"
+							ng-change="refresh()"
+							max-size="5"></uib-pagination>
+		</div>
+		<p class="no-margin"><b>用户总数：</b> {{count}}</p>
 	</div>
 </div>

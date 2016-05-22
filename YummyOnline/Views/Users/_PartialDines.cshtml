@@ -110,15 +110,15 @@
 	<li class="list-group-item" ng-show="dine.DinePaidDetails.length>0">
 		<div class="row no-padding" ng-repeat="dinePaidDetail in dine.DinePaidDetails">
 			<div class="col-xs-6">
-				支付名称：{{dinePaidDetail.PayKind.Name}}
+				{{dinePaidDetail.PayKind.Name}}
+				<span ng-if="dinePaidDetail.PayKind.Type==0">[线上]</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==1">[线下]</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==2">[积分抵扣]</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==3">[其他]</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==4">[现金]</span>
 			</div>
-			<div class="col-xs-6 text-right">
-				类型：
-				<span ng-if="dinePaidDetail.PayKind.Type==0">线上</span>
-				<span ng-if="dinePaidDetail.PayKind.Type==1">线下</span>
-				<span ng-if="dinePaidDetail.PayKind.Type==2">积分抵扣</span>
-				<span ng-if="dinePaidDetail.PayKind.Type==3">其他</span>
-				<span ng-if="dinePaidDetail.PayKind.Type==4">现金</span>
+			<div class="col-xs-6 text-right text-danger">
+				{{dinePaidDetail.Price | currency : "￥"}}
 			</div>
 		</div>
 	</li>

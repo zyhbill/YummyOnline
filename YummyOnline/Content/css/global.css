@@ -57,6 +57,10 @@ h6,
 	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
+.pagination {
+	margin-top: 0;
+}
+
 .waterfall-4 {
 	-moz-column-count: 4;
 	-webkit-column-count: 4;

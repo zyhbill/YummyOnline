@@ -50,9 +50,9 @@ namespace YummyOnline.Controllers {
 			return Json(new JsonSuccess());
 		}
 
-		public async Task<JsonResult> GetRecentNemoes(int days) {
+		public async Task<JsonResult> GetNemoes(int countPerPage = 50, int currPage = 1) {
 			return Json(new {
-				Users = await YummyOnlineManager.GetUsers(Role.Nemo, true, DateTime.Now.Date.AddDays(-days), DateTime.Now.Date.AddDays(1)),
+				Users = await YummyOnlineManager.GetUsers(Role.Nemo, countPerPage, currPage, true),
 				Count = await YummyOnlineManager.GetUserCount(Role.Nemo)
 			});
 		}
@@ -62,8 +62,11 @@ namespace YummyOnline.Controllers {
 			return Json(new JsonSuccess());
 		}
 
-		public async Task<JsonResult> GetCustomers() {
-			return Json(await YummyOnlineManager.GetUsers(Role.Customer, true));
+		public async Task<JsonResult> GetCustomers(int countPerPage = 50, int currPage = 1) {
+			return Json(new {
+				Users = await YummyOnlineManager.GetUsers(Role.Customer, countPerPage, currPage, true),
+				Count = await YummyOnlineManager.GetUserCount(Role.Customer)
+			});
 		}
 
 		public async Task<JsonResult> GetUserDines(string userId) {

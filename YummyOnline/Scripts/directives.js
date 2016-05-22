@@ -24,13 +24,15 @@ app.directive('confirmClick', [
 				confirmText: '@',
 			},
 			transclude: true,
-			template: '<span ng-show="confirming">{{confirmText}}</span><span ng-transclude ng-show="!confirming"></span>',
+			template: '<span ng-show="confirming">{{confirmText}}</span> <span ng-transclude ng-show="!confirming"></span>',
 			priority: -1,
 			link: function (scope, elem, attrs) {
 				if (attrs.confirmText == null) {
 					attrs.confirmText = '确认';
 				}
+
 				elem.click(function (e) {
+					elem.width(elem.width());
 					e.stopImmediatePropagation();
 					if (scope.confirming) {
 						scope.confirmClick();

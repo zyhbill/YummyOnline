@@ -17,13 +17,13 @@ using YummyOnlineDAO;
 using YummyOnlineDAO.Identity;
 
 namespace OrderSystem.Waiter {
-	public class MvcApplication : OrderSystem.MvcApplication {
-		protected override void Application_Start() {
+	public class MvcApplication : HttpApplication {
+		protected void Application_Start() {
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 		}
 
-		protected override void Application_AuthenticateRequest(object sender, EventArgs e) {
+		protected void Application_AuthenticateRequest(object sender, EventArgs e) {
 			var authCookie = Context.Request.Cookies[FormsAuthentication.FormsCookieName];
 			if(null == authCookie) {
 				return;
@@ -47,5 +47,32 @@ namespace OrderSystem.Waiter {
 			var id = new FormsIdentity(authTicket);
 			Context.User = new GenericPrincipal(id, roleStrs);
 		}
+
+#if !DEBUG
+		protected void Application_Error(object sender, EventArgs e) {
+			Exception exception = Server.GetLastError();
+
+			Request.InputStream.Seek(0, SeekOrigin.Begin);
+			string postData = new StreamReader(Request.InputStream).ReadToEnd();
+
+			string action = "HttpError500";
+
+			HttpException httpException = exception as HttpException;
+			if(httpException != null) {
+				switch(httpException.GetHttpCode()) {
+					case 404:
+						action = "HttpError404";
+						break;
+				}
+			}
+
+			AsyncInline.Run(() => new YummyOnlineManager().RecordLog(YummyOnlineDAO.Models.Log.LogProgram.OrderSystem_Waiter, YummyOnlineDAO.Models.Log.LogLevel.Error,
+				$"{action}: Host: {Request.UserHostAddress}, RequestUrl: {Request.RawUrl}, PostData: {postData}, Exception: {exception.Message}"));
+
+			Response.Clear();
+			Server.ClearError();
+			Response.Redirect($"~/Error/{action}", true);
+		}
+#endif
 	}
 }

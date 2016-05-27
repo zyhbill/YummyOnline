@@ -166,6 +166,13 @@
 			"Name": <string>,
 			"Price": <float>
 		}, ...
+	],
+	"Staffs": [
+		{
+			"Id": <string>,
+			"Name": <string>,
+			"Schemas": [<int>, ...]
+		}, ...
 	]
 }
 

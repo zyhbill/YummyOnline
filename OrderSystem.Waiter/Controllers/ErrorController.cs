@@ -12,15 +12,13 @@ namespace OrderSystem.Waiter.Controllers {
 			return View();
 		}
 
-		public async Task<ActionResult> HttpError404(string requestUrl, string postData) {
-			await YummyOnlineManager.RecordLog(Log.LogProgram.OrderSystem_Waiter, Log.LogLevel.Error, $"Error 400: RequestUrl {requestUrl}, PostData {postData}");
+		public ActionResult HttpError404() {
 			if(Request.IsAjaxRequest()) {
 				return Json(new JsonError("页面未找到"), JsonRequestBehavior.AllowGet);
 			}
 			return View();
 		}
-		public async Task<ActionResult> HttpError500(string requestUrl, string postData, string exception) {
-			await YummyOnlineManager.RecordLog(Log.LogProgram.OrderSystem_Waiter, Log.LogLevel.Error, $"Error 500: RequestUrl {requestUrl}, PostData {postData}, Exception {exception}");
+		public ActionResult HttpError500() {
 			if(Request.IsAjaxRequest()) {
 				return Json(new JsonError("服务器内部错误"), JsonRequestBehavior.AllowGet);
 			}

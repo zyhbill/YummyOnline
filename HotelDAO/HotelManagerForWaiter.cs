@@ -115,7 +115,13 @@ namespace HotelDAO {
 			await ctx.SaveChangesAsync();
 			return true;
 		}
-
+		public async Task<dynamic> GetStaffs() {
+			return await ctx.Staffs.Select(p => new {
+				p.Id,
+				p.Name,
+				Schemas = p.StaffRoles.SelectMany(pp => pp.Schemas.Select(s => s.Schema))
+			}).ToListAsync();
+		}
 
 		public async Task<List<dynamic>> GetCurrentDines(string waiterId, string deskId) {
 			List<dynamic> dines = await HotelManager.FormatDines(ctx.Dines

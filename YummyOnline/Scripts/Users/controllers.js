@@ -73,7 +73,7 @@ app.controller('NemoCtrl', [
 		$scope.deleteNemoesHavenotDine = function () {
 			$http.post('/Users/DeleteNemoesHavenotDine').then(function (response) {
 				if (response.data.Succeeded) {
-					refresh();
+					$scope.refresh();
 				}
 			});
 		}

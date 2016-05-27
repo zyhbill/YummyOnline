@@ -10,6 +10,7 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 using Utility;
+using YummyOnlineDAO;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
 
@@ -42,15 +43,10 @@ namespace YummyOnline {
 
 #if !DEBUG
 		protected void Application_Error(object sender, EventArgs e) {
-
 			Exception exception = Server.GetLastError();
-			Response.Clear();
-			Server.ClearError();
 
-			Stream s = Request.InputStream;
-			byte[] b = new byte[s.Length];
-			s.Read(b, 0, (int)s.Length);
-			string postData = Encoding.UTF8.GetString(b);
+			Request.InputStream.Seek(0, SeekOrigin.Begin);
+			string postData = new StreamReader(Request.InputStream).ReadToEnd();
 
 			string action = "HttpError500";
 
@@ -63,7 +59,12 @@ namespace YummyOnline {
 				}
 			}
 
-			Response.Redirect($"~/Error/{action}?RequestUrl={HttpUtility.UrlEncode(Request.RawUrl)}&PostData={HttpUtility.UrlEncode(postData)}&Exception={exception.Message}", true);
+			AsyncInline.Run(() => new YummyOnlineManager().RecordLog(Log.LogProgram.System, Log.LogLevel.Error,
+				$"{action}: Host: {Request.UserHostAddress}, RequestUrl: {Request.RawUrl}, PostData: {postData}, Exception: {exception.Message}"));
+
+			Response.Clear();
+			Server.ClearError();
+			Response.Redirect($"~/Error/{action}", true);
 		}
 #endif
 	}

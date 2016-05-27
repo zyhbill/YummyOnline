@@ -1,48 +1,40 @@
 ﻿
 <ul class="list-group">
 	<li class="list-group-item">
-		<div class="row  no-padding">
+		<div class="row no-padding">
 			<div class="col-xs-8">
-				<p>
-					点单号：{{dine.Id}}
-					<span class="text-danger" ng-if="!dine.IsPaid">[未支付]</span>
-					<span class="text-success" ng-if="dine.IsPaid">[已支付]</span>
-				</p>
+				{{dine.Id}}
+				<span class="text-danger" ng-if="!dine.IsPaid">[未支付]</span>
+				<span class="text-success" ng-if="dine.IsPaid">[已支付]</span>
 			</div>
 			<div class="col-xs-4 text-right">
-				<p ng-if="dine.IsOnline">[线上]</p>
-				<p ng-if="!dine.IsOnline">[线下]</p>
+				<span ng-if="dine.IsOnline">[线上]</span>
+				<span ng-if="!dine.IsOnline">[线下]</span>
 			</div>
 		</div>
 
-		<p>下单时间：{{dine.BeginTime | date:'yyyy/M/d HH:mm:ss'}}</p>
+		<div>{{dine.BeginTime | date:'yyyy/M/d HH:mm:ss'}}</div>
 
 		<div class="row no-padding">
 			<div class="col-xs-6">
-				<p>桌号：{{dine.Desk.Name}}</p>
+				{{dine.Desk.Name}}
 			</div>
 			<div class="col-xs-6 text-right">
-				<p>人数：{{dine.HeadCount}}</p>
+				{{dine.HeadCount}} 人
 			</div>
 		</div>
-		<div class="row no-padding">
-			<div class="col-xs-6">
-				<p class="no-margin">服务员号：{{dine.WaiterId}}</p>
-			</div>
-			<div class="col-xs-6 text-right">
-				<p class="no-margin">收银员号：{{dine.ClerkId}}</p>
-			</div>
-		</div>
+
+		<div>服务员号：{{dine.WaiterId}}</div>
+
+		<div>收银员号：{{dine.ClerkId}}</div>
 	</li>
 	<li class="list-group-item">
 		<div class="row">
 			<div class="col-xs-6">
-				类型：
 				<span ng-if="dine.Type==0">堂吃</span>
 				<span ng-if="dine.Type==1">堂吃</span>
 			</div>
 			<div class="col-xs-6 text-right">
-				状态：
 				<span ng-if="dine.Status==0">未处理</span>
 				<span ng-if="dine.Status==1">已打印</span>
 				<span ng-if="dine.Status==2">上菜完毕</span>
@@ -88,7 +80,6 @@
 				</span>
 			</div>
 			<div class="col-xs-12">
-				折扣类型：
 				<span ng-if="dine.DiscountType==0">无折扣</span>
 				<span ng-if="dine.DiscountType==1">支付打折</span>
 				<span ng-if="dine.DiscountType==2">分时段打折</span>

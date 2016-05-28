@@ -3,12 +3,11 @@ using Newtonsoft.Json;
 using Protocal;
 using System;
 using System.Configuration;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using YummyOnlineTcpClient;
-using System.Text;
 using System.Diagnostics;
+using System.Net;
+using System.Threading.Tasks;
+using Utility;
+using YummyOnlineTcpClient;
 
 namespace AutoPrinter {
 	class Program {
@@ -77,7 +76,7 @@ namespace AutoPrinter {
 				HotelId = hotelId,
 				DineId = dineId
 			};
-			string response = await postHttp(ConfigurationManager.AppSettings["RemoteGetDineForPrintingUrl"].ToString(), postData);
+			string response = await HttpPost.PostAsync(ConfigurationManager.AppSettings["RemoteGetDineForPrintingUrl"].ToString(), postData);
 			if(response == null) {
 				return null;
 			}
@@ -89,7 +88,7 @@ namespace AutoPrinter {
 				HotelId = hotelId,
 				DineId = dineId
 			};
-			var _ = postHttp(ConfigurationManager.AppSettings["RemotePrintCompletedUrl"].ToString(), postData);
+			var _ = HttpPost.PostAsync(ConfigurationManager.AppSettings["RemotePrintCompletedUrl"].ToString(), postData);
 		}
 
 		static void log(Log.LogLevel level, string message) {
@@ -98,23 +97,7 @@ namespace AutoPrinter {
 				Level = level,
 				Message = message
 			};
-			var _ = postHttp(ConfigurationManager.AppSettings["RemoteLogUrl"].ToString(), postData);
-		}
-
-		static async Task<string> postHttp(string url, object postData, string contentType = "application/json") {
-			try {
-				HttpClient client = new HttpClient();
-				StringContent content = new StringContent(JsonConvert.SerializeObject(postData));
-				content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
-				HttpResponseMessage response = await client.PostAsync(url, content);
-				if(response != null) {
-					if(response.StatusCode == HttpStatusCode.OK) {
-						return await response.Content.ReadAsStringAsync();
-					}
-				}
-			}
-			catch { }
-			return null;
+			var _ = HttpPost.PostAsync(ConfigurationManager.AppSettings["RemoteLogUrl"].ToString(), postData);
 		}
 	}
 }

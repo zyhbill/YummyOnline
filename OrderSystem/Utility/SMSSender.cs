@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-namespace SMS {
+namespace OrderSystem.Utility {
 	public class SMSSender {
 		public static bool Send(string mobile,string code) {
 			string data = "apikey=2763feb79430838ffecf355f9454e624&";

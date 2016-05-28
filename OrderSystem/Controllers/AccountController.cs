@@ -46,7 +46,7 @@ namespace OrderSystem.Controllers {
 #if DEBUG
 			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Debug, PhoneNumber + " ： " + code);
 #else
-			if(!SMS.SMSSender.Send(PhoneNumber, code)) {
+			if(!Utility.SMSSender.Send(PhoneNumber, code)) {
 				return Json(new JsonError());
 			}
 #endif
@@ -145,7 +145,7 @@ namespace OrderSystem.Controllers {
 #if DEBUG
 			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Debug, PhoneNumber + " ： " + code);
 #else
-			if(!SMS.SMSSender.Send(PhoneNumber, code)) {
+			if(!Utility.SMSSender.Send(PhoneNumber, code)) {
 				return Json(new JsonError());
 			}
 #endif

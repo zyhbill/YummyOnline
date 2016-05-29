@@ -120,6 +120,7 @@ Tcp连接成功回调函数，默认NULL
 - v0.6.0 2016-2-16: 新增连接成功时的回调函数
 - v0.9.6 2016-4-3: 修复可能导致远程连接断开后, Client的cpu使用率上升的bug, 修改底层TCP传输时的头字节
 - v0.9.7 2016-4-19: NewDineInformConnect协议增加Guid
+- v0.1.0 2016-5-22: 修复在服务器断开的极端情况下, 客户端主线程阻塞的bug
 
 # YummyOnlineTcpClient (Cross Platform)
 
@@ -138,7 +139,7 @@ Tcp连接成功回调函数，默认NULL
 	"Guid": <string>
 }
 ```
-==*特别注意！ Guid请向管理员申请，同一时刻，只能有一个GUID对应的Socket连入*==
+==*特别注意！ Guid请向管理员申请，同一时刻，只能有一个Guid对应的Socket连入*==
 #### ReceivingProtocal
 新订单通知
 ```json
@@ -146,7 +147,7 @@ Tcp连接成功回调函数，默认NULL
 	"Type": "{6309155D-B9D9-4417-B1BF-C985F2EA6630}",
 	"HotelId": <int>,
 	"DineId": <string>,
-	"IsPaid": <bool
+	"IsPaid": <bool>
 }
 
 ```
@@ -166,7 +167,7 @@ Tcp连接成功回调函数，默认NULL
 	"Type": "{6309155D-B9D9-4417-B1BF-C985F2EA6630}",
 	"HotelId": <int>,
 	"DineId": <string>,
-	"IsPaid": <bool
+	"IsPaid": <bool>
 }
 ```
 
@@ -175,10 +176,10 @@ Tcp连接成功回调函数，默认NULL
 * 原始字符串转换为UTF8编码的字节数组
 * 构造传输字节数组，传输字节数组分为三部分:
 
-| 字节    | 说明           |
-| ------- | ------------- |
-| 1 - 4    | 0x00, 0xFF, 0x11, 0xEE |
+| 字节      | 说明                                                                                               |
+| -------  | -------------                                                                                      |
+| 1 - 4    | 0x00, 0xFF, 0x11, 0xEE                                                                             |
 | 5 - 10   | 需要传输的字符串转换为字节数组之后的长度，即从第11个字节开始直到最后的数量，以little-endian形式存储6个字节 |
-| 11 - ... | 需要传输的字节数组 |
+| 11 - ... | 需要传输的字节数组                                                                                   |
 
 * 发送传输字节数组

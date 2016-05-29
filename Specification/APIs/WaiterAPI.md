@@ -1,3 +1,7 @@
+### 服务员API域名
+waiter.yummyonline.net
+
+
 ### 服务员登录
 #### POST
 #### URL
@@ -5,19 +9,20 @@
 #### Parameters
 ```json
 {
-	"SigninName": <string>,
-	"Password": <string>
+	"SigninName": <string 用户名>,
+	"Password": <string 密码>
 }
 ```
 #### Results
 ```json
 {
-	"Succeeded": <bool>,
-	"ErrorMessage": <string>
+	"Succeeded": <bool 是否成功(下同)>,
+	"ErrorMessage": <string 错误信息(下同)>
 }
 ```
+成功登录后，服务器会发送Cookie信息，以下所有带 ***AUTHORIZED*** 的API都需要验证该Cookie信息
 
----
+* * *
 
 ### 服务员登出
 #### POST ***AUTHORIZED***
@@ -31,7 +36,7 @@
 }
 ```
 
----
+* * *
 
 ### 获取所有数据
 #### POST ***AUTHORIZED***
@@ -39,6 +44,7 @@
 	/Order/GetMenuInfos
 #### Parameters
 #### Results
+*所有参数说明详见[数据库结构文档](http://system.yummyonline.net/Log/GetFile?dir=Database&name=YummyOnlineDataBase.html)*
 ```json
 {
 	"MenuClasses": [{
@@ -132,7 +138,7 @@
 }
 ```
 
----
+* * *
 
 ### 获取饭店基本信息
 #### POST ***AUTHORIZED***
@@ -140,6 +146,7 @@
 	/Order/GetHotelInfos
 #### Parameters
 #### Results
+*所有参数说明详见[数据库结构文档](http://system.yummyonline.net/Log/GetFile?dir=Database&name=YummyOnlineDataBase.html)*
 ```json
 {
 	"Areas": [
@@ -178,7 +185,7 @@
 
 ```
 
----
+* * *
 
 ### 获取会员信息
 #### POST ***AUTHORIZED***
@@ -187,8 +194,8 @@
 #### Parameters
 ```json
 {
-	"PhoneNumber": <string>,
-	"Password": <string>
+	"PhoneNumber": <string 会员手机号>,
+	"Password": <string 密码>
 }
 ```
 #### Results
@@ -196,14 +203,14 @@
 {
 	"Succeeded": <bool>,
 	"Data": {
-		"Id": <string>,
-	    "Points": <int>,
-	    "VipLevelId": <int>,
+		"Id": <string 会员编号>,
+	    "Points": <int 积分>,
+	    "VipLevelId": <int 等级>,
 	}
 }
 ```
 
----
+* * *
 
 ### 验证是否为会员
 #### POST ***AUTHORIZED***
@@ -227,7 +234,7 @@
 }
 ```
 
----
+* * *
 
 ### 提交点单
 #### POST ***AUTHORIZED***
@@ -237,21 +244,21 @@
 ```json
 {
 	"Cart": {
-		"HeadCount": <int>,
-		"Price": <float>,
-		"PriceInPoints": <float>,
-		"Invoice": <string>,
-		"DeskId": <string>,
+		"HeadCount": <int 人数>,
+		"Price": <float 需要支付价格>,
+		"PriceInPoints": <float 积分支付价格>,
+		"Invoice": <string 发票抬头>,
+		"DeskId": <string 桌号>,
 		"OrderedMenus":[{
-			"Id": <string>,
-			"Ordered": <int>,
-			"Remarks": [<int>, ...]
+			"Id": <string 菜品编号>,
+			"Ordered": <int 数量>,
+			"Remarks": [<int 备注编号>, ...]
 		}, ...]
 	},
 	"CartAddition": {
-		"UserId": <string>,
-		"Discount": <float>,
-		"DiscountName": <string>
+		"UserId": <string 会员编号>,
+		"Discount": <float 自定义折扣率>,
+		"DiscountName": <string 自定义折扣名称>
 	}
 }
 ```
@@ -260,11 +267,11 @@
 {
 	"Succeeded": <bool>,
 	"ErrorMessage": <string>,
-	"Data": <string: DineId>
+	"Data": <string 新产生的订单编号>
 }
 ```
 
----
+* * *
 
 ### 服务员支付完成，记录支付详情
 #### POST ***AUTHORIZED***
@@ -274,12 +281,12 @@
 ```json
 {
 	"PaidDetails": {
-		"DineId": <string>,
+		"DineId": <string 订单编号>,
 		"PaidDetails": [
 			{
-				"PayKindId": <int>,
-				"Price": <double>,
-				"RecordId": <string>
+				"PayKindId": <int 支付种类编号>,
+				"Price": <double 支付价格>,
+				"RecordId": <string 额外信息如银行卡号>
 			}, ...
 		]
 	}
@@ -290,11 +297,11 @@
 {
 	"Succeeded": <bool>,
 	"ErrorMessage": <string>,
-	"Data": <string: DineId>
+	"Data": <string 新产生的订单号>
 }
 ```
 
----
+* * *
 
 ### 服务员支付并且带所有支付详情
 #### POST ***AUTHORIZED***
@@ -312,9 +319,9 @@
 	"PaidDetails": {
 		"PaidDetails": [
 			{
-				"PayKindId": <int>,
-				"Price": <double>,
-				"RecordId": <string>
+				"PayKindId": <int 支付种类编号>,
+				"Price": <double 支付价格>,
+				"RecordId": <string 额外信息如银行卡号>
 			}, ...
 		]
 	}
@@ -325,11 +332,11 @@
 {
 	"Succeeded": <bool>,
 	"ErrorMessage": <string>,
-	"Data": <string: DineId>
+	"Data": <string 新产生的订单号>
 }
 ```
 
----
+* * *
 
 ### 打印完成通知
 #### POST ***AUTHORIZED***
@@ -338,13 +345,13 @@
 #### Parameters
 ```json
 {
-	"HotelId": <int>,
-	"DineId": <string>
+	"HotelId": <int 饭店号>,
+	"DineId": <string 订单号>
 }
 ```
 #### Results
 
----
+* * *
 
 ### 获取当前的点单
 #### POST ***AUTHORIZED***
@@ -353,7 +360,7 @@
 #### Parameters
 ```json
 {
-	"DeskId": <string>
+	"DeskId": <string 桌号>
 }
 ```
 #### Results
@@ -363,7 +370,7 @@
 }, ...]
 ```
 
----
+* * *
 
 ### 根据订单号获取点单
 #### POST ***AUTHORIZED***
@@ -372,10 +379,11 @@
 #### Parameters
 ```json
 {
-	"DineId": <string>
+	"DineId": <string 订单号>
 }
 ```
 #### Results
+*所有参数说明详见[数据库结构文档](http://system.yummyonline.net/Log/GetFile?dir=Database&name=YummyOnlineDataBase.html)*
 ```json
 {
 	"Id": <string>,
@@ -429,4 +437,4 @@
 }
 ```
 
----
+* * *

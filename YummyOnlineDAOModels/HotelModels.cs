@@ -8,9 +8,7 @@ namespace YummyOnlineDAO.Models {
 		[Key]
 		public int Id { get; set; }
 
-		[Required]
 		public string ConnectionString { get; set; }
-		[Required]
 		public string AdminConnectionString { get; set; }
 		[Required]
 		public string CssThemePath { get; set; }

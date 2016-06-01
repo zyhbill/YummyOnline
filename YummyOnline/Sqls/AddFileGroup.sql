@@ -1,1 +1,1 @@
-ALTER DATABASE [@@dataBaseName] ADD FILEGROUP @@fileGroupName
+ALTER DATABASE [@@databaseName] ADD FILEGROUP @@fileGroupName

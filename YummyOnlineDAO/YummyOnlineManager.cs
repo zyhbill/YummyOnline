@@ -7,12 +7,13 @@ using System.Threading.Tasks;
 using YummyOnlineDAO.Models;
 
 namespace YummyOnlineDAO {
-	public class YummyOnlineManager {
+	public partial class YummyOnlineManager {
 		public YummyOnlineManager() {
 			ctx = new YummyOnlineContext();
 		}
 		private YummyOnlineContext ctx;
 
+		#region 系统相关
 		public async Task<SystemConfig> GetSystemConfig() {
 			return await ctx.SystemConfigs.FirstOrDefaultAsync();
 		}
@@ -38,28 +39,9 @@ namespace YummyOnlineDAO {
 			await ctx.SaveChangesAsync();
 			return true;
 		}
+		#endregion
 
-		public async Task<Hotel> GetFirstHotel() {
-			return await ctx.Hotels.FirstOrDefaultAsync();
-		}
-		public async Task<Hotel> GetHotelById(int id) {
-			return await ctx.Hotels.FirstOrDefaultAsync(p => p.Id == id);
-		}
-		public async Task<string> GetHotelConnectionStringById(int id) {
-			return await ctx.Hotels.Where(p => p.Id == id).Select(p => p.ConnectionString).FirstOrDefaultAsync();
-		}
-		public async Task<List<Hotel>> GetHotels() {
-			return await ctx.Hotels.ToListAsync();
-		}
-		public async Task<int> GetHotelCount() {
-			return await ctx.Hotels.CountAsync();
-		}
-		public async Task UpdateHotel(Hotel hotel) {
-			Hotel currHotel = await GetHotelById(hotel.Id);
-			currHotel.Usable = hotel.Usable;
-			await ctx.SaveChangesAsync();
-		}
-
+		#region 日志相关
 		public async Task RecordLog(Log.LogProgram program, Log.LogLevel level, string message) {
 			Log log = new Log {
 				Program = program,
@@ -69,8 +51,6 @@ namespace YummyOnlineDAO {
 			ctx.Logs.Add(log);
 			await ctx.SaveChangesAsync();
 		}
-
-
 		public async Task<dynamic> GetLogs(Log.LogProgram program, DateTime date, int? count) {
 			IQueryable<Log> linq = ctx.Logs.Where(p => p.Program == program && SqlFunctions.DateDiff("day", p.DateTime, date) == 0)
 				.OrderByDescending(p => p.Id);
@@ -84,7 +64,97 @@ namespace YummyOnlineDAO {
 				p.DateTime
 			}).ToListAsync();
 		}
+		#endregion
 
+		#region 订单相关
+		public async Task<List<dynamic>> GetDinesByUserId(string userId) {
+			List<dynamic> allDines = new List<dynamic>();
+
+			List<Hotel> hotels = await GetHotels();
+			foreach(Hotel h in hotels) {
+				List<dynamic> dines = await new HotelDAO.HotelManager(h.ConnectionString).GetHistoryDines(userId);
+				if(dines.Count > 0) {
+					allDines.Add(new {
+						Hotel = new {
+							h.Id,
+							h.Name
+						},
+						Dines = dines
+					});
+				}
+			}
+
+			return allDines;
+		}
+		public async Task<int> GetDineCount() {
+			int dineCount = 0;
+			List<Hotel> hotels = await GetHotels();
+			foreach(Hotel h in hotels) {
+				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+				dineCount += await hotelManager.GetDineCount(DateTime.Now);
+			}
+			return dineCount;
+		}
+		public async Task<List<dynamic>> GetDinePerHourCount(DateTime dateTime) {
+			List<dynamic> list = new List<dynamic>();
+			List<Hotel> hotels = await GetHotels();
+			foreach(Hotel h in hotels) {
+				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+
+				list.Add(new {
+					HotelName = h.Name,
+					Counts = await hotelManager.GetDinePerHourCount(dateTime)
+				});
+			}
+			return list;
+		}
+		#endregion
+
+		#region 饭店相关
+		public async Task<Hotel> GetFirstHotel() {
+			return await ctx.Hotels.FirstOrDefaultAsync();
+		}
+		public async Task<Hotel> GetHotelById(int id) {
+			return await ctx.Hotels.FirstOrDefaultAsync(p => p.Id == id);
+		}
+		public async Task<string> GetHotelConnectionStringById(int id) {
+			return await ctx.Hotels.Where(p => p.Id == id).Select(p => p.ConnectionString).FirstOrDefaultAsync();
+		}
+		public async Task<List<Hotel>> GetHotels() {
+			return await ctx.Hotels.Where(p => p.ConnectionString != null).ToListAsync();
+		}
+		public async Task<List<Hotel>> GetHotelReadyForConfirms() {
+			return await ctx.Hotels.Where(p => p.ConnectionString == null).ToListAsync();
+		}
+		public async Task<int> GetHotelCount() {
+			return await ctx.Hotels.CountAsync();
+		}
+		public async Task UpdateHotel(Hotel hotel) {
+			Hotel currHotel = await ctx.Hotels.FirstOrDefaultAsync(p => p.Id == hotel.Id);
+			currHotel.CssThemePath = hotel.CssThemePath;
+			currHotel.ConnectionString = hotel.ConnectionString;
+			currHotel.AdminConnectionString = hotel.AdminConnectionString;
+			currHotel.Usable = hotel.Usable;
+			await ctx.SaveChangesAsync();
+		}
+
+		public async Task CreateHotel(int hotelId, string databaseName) {
+			// 总数据库中增加连接字符串
+#if DEBUG
+			string connectionString = $"Server=FISHER-PC; Database={databaseName}; Integrated Security=True";
+			string adminConnectionString = $"Server=FISHER-PC; Database={databaseName}; Integrated Security=True";
+#else
+			string connectionString = $"Data Source=www.yummyonline.net;Network Library=DBMSSOCN;Initial Catalog={databaseName};User ID=RemoteUser;Password=*Rbr%K!p";
+			string adminConnectionString = $"Data Source=www.yummyonline.net;Network Library=DBMSSOCN;Initial Catalog={databaseName};User ID=sa;Password=Ll&5N&^kVFxvbyol";
+#endif
+			Hotel hotel = await ctx.Hotels.FirstOrDefaultAsync(p => p.Id == hotelId);
+			hotel.ConnectionString = connectionString;
+			hotel.AdminConnectionString = adminConnectionString;
+			await ctx.SaveChangesAsync();
+		}
+		#endregion
+
+		#region 用户相关
 		public async Task<dynamic> GetUserById(string userId) {
 			return await ctx.Users
 				.Where(p => p.Id == userId)
@@ -156,11 +226,6 @@ namespace YummyOnlineDAO {
 			}
 			return list;
 		}
-		public async Task DeleteNemoes(DateTime before) {
-			List<User> nemoes = await ctx.UserRoles.Where(p => p.Role == Role.Nemo && p.User.CreateDate < before).Select(p => p.User).ToListAsync();
-			ctx.Users.RemoveRange(nemoes);
-			await ctx.SaveChangesAsync();
-		}
 		/// <summary>
 		/// 删除不是当天的未点单的匿名用户
 		/// </summary>
@@ -194,47 +259,9 @@ namespace YummyOnlineDAO {
 			await ctx.SaveChangesAsync();
 		}
 
-
-		public async Task<List<dynamic>> GetDinesByUserId(string userId) {
-			List<dynamic> allDines = new List<dynamic>();
-
-			List<Hotel> hotels = await GetHotels();
-			foreach(Hotel h in hotels) {
-				List<dynamic> dines = await new HotelDAO.HotelManager(h.ConnectionString).GetHistoryDines(userId);
-				if(dines.Count > 0) {
-					allDines.Add(new {
-						Hotel = new {
-							h.Id,
-							h.Name
-						},
-						Dines = dines
-					});
-				}
-			}
-
-			return allDines;
+		public async Task<string> GetFirstStaffId(int hotelId) {
+			return await ctx.Staffs.Where(p => p.HotelId == hotelId).Select(p => p.Id).FirstOrDefaultAsync();
 		}
-		public async Task<int> GetDineCount() {
-			int dineCount = 0;
-			List<Hotel> hotels = await GetHotels();
-			foreach(Hotel h in hotels) {
-				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
-				dineCount += await hotelManager.GetDineCount(DateTime.Now);
-			}
-			return dineCount;
-		}
-		public async Task<List<dynamic>> GetDinePerHourCount(DateTime dateTime) {
-			List<dynamic> list = new List<dynamic>();
-			List<Hotel> hotels = await GetHotels();
-			foreach(Hotel h in hotels) {
-				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
-
-				list.Add(new {
-					HotelName = h.Name,
-					Counts = await hotelManager.GetDinePerHourCount(dateTime)
-				});
-			}
-			return list;
-		}
+		#endregion
 	}
 }

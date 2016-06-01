@@ -8,9 +8,12 @@
 				<th>邮箱</th>
 				<th>用户名</th>
 				<th>历史点单数量</th>
-				<th></th>
+				<th class="text-right">历史订单</th>
 			</tr>
-			<tbody ng-repeat="customer in customers">
+			<tr ng-show="isLoading">
+				<td colspan="7"><b><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</b></td>
+			</tr>
+			<tbody ng-hide="isLoading" ng-repeat="customer in customers">
 				<tr>
 					<td>{{customer.Id}}</td>
 					<td>{{customer.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
@@ -20,8 +23,12 @@
 					<td>{{customer.DineCount}}</td>
 					<td class="text-right">
 						<button class="btn btn-sm btn-primary" ng-click="showUserDines(customer)">
-							<span ng-show="customer.IsLoading">正在查询...</span>
-							<span ng-hide="customer.IsLoading">查询历史订单</span>
+							<span ng-show="customer.IsLoading"><i class="fa fa-spinner fa-pulse fa-fw"></i> 正在查询...</span>
+							<span ng-hide="customer.IsLoading">
+								<i class="fa fa-toggle-off" ng-show="!customer.IsShowUserDines"></i>
+								<i class="fa fa-toggle-on" ng-show="customer.IsShowUserDines"></i>
+								查询
+							</span>
 						</button>
 					</td>
 				</tr>

@@ -14,9 +14,9 @@ namespace HotelDAO.Models {
 		/// <summary>
 		/// YummyOnline数据库Hotel外键
 		/// </summary>
-		[Key]
+		[Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
 		public int Id { get; set; }
-		
+
 		public bool NeedCodeImg { get; set; }
 		/// <summary>
 		/// 积分比率（1元 = PointsRatio积分）

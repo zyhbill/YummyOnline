@@ -1,10 +1,9 @@
 ﻿using Protocal;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
+using YummyOnline.Utility;
 using YummyOnlineDAO.Models;
 
 namespace YummyOnline.Controllers {
@@ -24,6 +23,7 @@ namespace YummyOnline.Controllers {
 		}
 		public async Task<JsonResult> GetHotels() {
 			List<Hotel> hotels = await YummyOnlineManager.GetHotels();
+			hotels.AddRange(await YummyOnlineManager.GetHotelReadyForConfirms());
 
 			if(User.IsInRole(nameof(Role.SuperAdmin))) {
 				return Json(hotels.Select(p => new {
@@ -53,10 +53,35 @@ namespace YummyOnline.Controllers {
 				p.Usable
 			}));
 		}
-		public async Task<JsonResult> UpdateHotelUsable(Hotel hotel) {
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
+		public async Task<JsonResult> UpdateHotel(Hotel hotel) {
 			await YummyOnlineManager.UpdateHotel(hotel);
-			Log.LogLevel level = hotel.Usable ? Log.LogLevel.Success : Log.LogLevel.Warning;
-			await YummyOnlineManager.RecordLog(Log.LogProgram.System, level, $"Set Hotel {hotel.Id} Usable {hotel.Usable}");
+			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Warning, $"Hotel {hotel.Id} Updated");
+			return Json(new JsonSuccess());
+		}
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
+		public async Task<JsonResult> CreateHotel(int hotelId, string databaseName) {
+			// 创建空数据库
+			OriginSql originSql = new OriginSql(new YummyOnlineContext().Database.Connection.ConnectionString);
+			var result = await originSql.CreateHotel(databaseName);
+			if(!result.Succeeded) {
+				return Json(new JsonError(result.Message));
+			}
+			// 总数据库记录连接字符串等信息
+			await YummyOnlineManager.CreateHotel(hotelId, databaseName);
+
+			// 新数据库写入所有表格等架构
+			Hotel newHotel = await YummyOnlineManager.GetHotelById(hotelId);
+			originSql = new OriginSql(newHotel.AdminConnectionString);
+			result = await originSql.InitializeHotel();
+			if(!result.Succeeded) {
+				return Json(new JsonError(result.Message));
+			}
+
+			// 新数据库初始化
+			string staffId = await YummyOnlineManager.GetFirstStaffId(hotelId);
+			HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(newHotel.AdminConnectionString);
+			await hotelManager.InitializeHotel(hotelId, staffId);
 			return Json(new JsonSuccess());
 		}
 	}

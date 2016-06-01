@@ -6,9 +6,12 @@
 				<th>Id</th>
 				<th>生成日期</th>
 				<th>历史点单数量</th>
-				<th></th>
+				<th class="text-right">历史订单</th>
 			</tr>
-			<tbody ng-repeat="nemo in nemoes">
+			<tr ng-show="isLoading">
+				<td colspan="4"><b><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</b></td>
+			</tr>
+			<tbody ng-hide="isLoading" ng-repeat="nemo in nemoes">
 				<tr>
 					<td>{{nemo.Id}}</td>
 					<td>{{nemo.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
@@ -16,7 +19,11 @@
 					<td class="text-right">
 						<button class="btn btn-sm btn-primary" ng-click="showUserDines(nemo)">
 							<span ng-show="nemo.IsLoading">正在查询...</span>
-							<span ng-hide="nemo.IsLoading">查询历史订单</span>
+							<span ng-hide="nemo.IsLoading">
+								<i class="fa fa-toggle-off" ng-show="!nemo.IsShowUserDines"></i>
+								<i class="fa fa-toggle-on" ng-show="nemo.IsShowUserDines"></i>
+								查询
+							</span>
 						</button>
 					</td>
 				</tr>

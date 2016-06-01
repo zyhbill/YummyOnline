@@ -10,6 +10,7 @@
 		$scope.currPage = 1;
 
 		$scope.refresh = function () {
+			$scope.isLoading = true;
 			$http.post('/Users/GetCustomers', {
 				CountPerPage: $scope.countPerPage,
 				CurrPage: $scope.currPage
@@ -21,6 +22,7 @@
 				}
 				$scope.customers = response.data.Users;
 				$scope.count = response.data.Count;
+				$scope.isLoading = false;
 			});
 		}
 		$scope.refresh();
@@ -55,6 +57,7 @@ app.controller('NemoCtrl', [
 		$scope.currPage = 1;
 
 		$scope.refresh = function () {
+			$scope.isLoading = true;
 			$http.post('/Users/GetNemoes', {
 				CountPerPage: $scope.countPerPage,
 				CurrPage: $scope.currPage
@@ -66,6 +69,7 @@ app.controller('NemoCtrl', [
 				}
 				$scope.nemoes = response.data.Users;
 				$scope.count = response.data.Count;
+				$scope.isLoading = false;
 			});
 		}
 		$scope.refresh();
@@ -103,8 +107,10 @@ app.controller('AdminCtrl', [
 		$layout.Set('管理员管理', '');
 
 		function refresh() {
+			$scope.isLoading = true;
 			$http.post('/Users/GetAdmins').then(function (response) {
 				$scope.admins = response.data;
+				$scope.isLoading = false;
 			});
 		}
 		refresh();

@@ -46,8 +46,10 @@
 				<th>内容</th>
 				<th>时间</th>
 			</tr>
-
-			<tr ng-class="log.Class" ng-repeat="log in logDetail.Logs">
+			<tr ng-show="isLoading">
+				<td colspan="3"><b><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</b></td>
+			</tr>
+			<tr ng-hide="isLoading" ng-class="log.Class" ng-repeat="log in logDetail.Logs">
 				<td>{{log.Level}}</td>
 				<td>{{log.Message}}</td>
 				<td>{{log.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>

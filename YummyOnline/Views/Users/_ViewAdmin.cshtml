@@ -15,9 +15,16 @@
 				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
 					<th></th>
 				}
-				
 			</tr>
-			<tr ng-repeat="admin in admins">
+			<tr ng-show="isLoading">
+				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+					<td colspan="6"><b><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</b></td>
+				}
+				else {
+					<td colspan="5"><b><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</b></td>
+				}
+			</tr>
+			<tr ng-hide="isLoading" ng-repeat="admin in admins">
 				<td>{{admin.Id}}</td>
 				<td>{{admin.PhoneNumber}}</td>
 				<td>{{admin.Email}}</td>

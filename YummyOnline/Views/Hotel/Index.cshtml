@@ -10,55 +10,156 @@
 	<script src="//cdn.bootcss.com/bootstrap-switch/3.3.2/js/bootstrap-switch.min.js"></script>
 	<script src="~/Scripts/Hotel/controllers.js"></script>
 }
-
-<div class="box" ng-controller="HotelCtrl">
-	<div class="table-responsive">
-		<table class="table no-margin">
-			<tr>
-				<th>Id</th>
-				<th>名称</th>
-				<th>连接字符串</th>
-				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
-					<th>高权限连接字符串</th>
-				}
-				<th>CSS文件名</th>
-				<th>创建日期</th>
-				<th>电话</th>
-				<th>地址</th>
-				<th>开门时间</th>
-				<th>关门时间</th>
-				<th>是否可用</th>
-			</tr>
-
-			<tr ng-repeat="hotel in hotels">
-				<td>{{hotel.Id}}</td>
-				<td>{{hotel.Name}}</td>
-				<td>
-					<button class="btn btn-sm btn-default" uib-popover="{{hotel.ConnectionString}}">查看</button>
-				</td>
-				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
-					<td>
-						<button class="btn btn-sm btn-default" uib-popover="{{hotel.AdminConnectionString}}">查看</button>
-					</td>
-				}
-				<td>{{hotel.CssThemePath}}</td>
-				<td>{{hotel.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
-				<td>{{hotel.Tel}}</td>
-				<td>{{hotel.Address}}</td>
-				<td>{{hotel.OpenTime | date:'HH:mm:ss'}}</td>
-				<td>{{hotel.CloseTime | date:'HH:mm:ss'}}</td>
-				<td>
+<div ng-controller="HotelCtrl">
+	<div class="box">
+		<div class="box-header">
+			<h3 class="box-title">已注册饭店</h3>
+		</div>
+		<div class="table-responsive">
+			<table class="table no-margin">
+				<tr>
+					<th>Id</th>
+					<th>名称</th>
+					<th>连接字符串</th>
+					<th>CSS文件名</th>
+					<th>创建日期</th>
+					<th>电话</th>
+					<th>地址</th>
+					<th>开门时间</th>
+					<th>关门时间</th>
+					<th>是否可用</th>
 					@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
-						<input switch data-on-text="可用" data-off-text="禁用" data-size="small" type="checkbox"
-							   ng-model="hotel.Usable" ng-click="update(hotel)">
+						<th></th>
 					}
-					else {
-						<input switch data-on-text="可用" data-off-text="禁用" data-size="small" disabled type="checkbox"
-							   ng-model="hotel.Usable" ng-click="update(hotel)">
-					}
+				</tr>
 
-				</td>
-			</tr>
-		</table>
+				<tbody ng-repeat="hotel in hotels | filter: {IsReadyForConfirm:false}">
+					<tr>
+						<td>{{hotel.Id}}</td>
+						<td>{{hotel.Name}}</td>
+						<td>
+							<button class="btn btn-sm btn-default" ng-click="hotel.IsShowConnectionString = !hotel.IsShowConnectionString">
+								<i class="fa fa-toggle-off" ng-show="!hotel.IsShowConnectionString"></i>
+								<i class="fa fa-toggle-on" ng-show="hotel.IsShowConnectionString"></i>
+								查看
+							</button>
+						</td>
+						<td>{{hotel.CssThemePath}}</td>
+						<td>{{hotel.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
+						<td>{{hotel.Tel}}</td>
+						<td>{{hotel.Address}}</td>
+						<td>{{hotel.OpenTime | date:'HH:mm:ss'}}</td>
+						<td>{{hotel.CloseTime | date:'HH:mm:ss'}}</td>
+						<td>
+							<i ng-show="hotel.Usable" class="fa fa-lg fa-check-circle text-success"></i>
+							<i ng-show="!hotel.Usable" class="fa fa-lg fa-times-circle text-danger"></i>
+						</td>
+						@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+							<td class="text-right">
+								<button class="btn btn-sm btn-default" ng-click="hotel.IsShowUpdate = !hotel.IsShowUpdate">
+									<i class="fa fa-toggle-off" ng-show="!hotel.IsShowUpdate"></i>
+									<i class="fa fa-toggle-on" ng-show="hotel.IsShowUpdate"></i>
+									修改
+								</button>
+							</td>
+						}
+					</tr>
+					<tr ng-show="hotel.IsShowConnectionString">
+						<td colspan="11" class="bg-gray-light">
+							<p>
+								<b>ConnectionString: </b>{{hotel.ConnectionString}}
+							</p>
+							@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+								<p class="no-margin">
+									<b>AdminConnectionString: </b>{{hotel.AdminConnectionString}}
+								</p>
+							}
+						</td>
+					</tr>
+					<tr ng-show="hotel.IsShowUpdate">
+						<td colspan="11" class="bg-gray-light">
+							<div class="form-group">
+								<label>CSS文件名</label>
+								<input class="form-control" type="text" ng-model="hotel.CssThemePath" />
+							</div>
+							<div class="form-group">
+								<label>连接字符串</label>
+								<input class="form-control" type="text" ng-model="hotel.ConnectionString" />
+							</div>
+							<div class="form-group">
+								<label>最高权限连接字符串</label>
+								<input class="form-control" type="text" ng-model="hotel.AdminConnectionString" />
+							</div>
+							<div class="form-group">
+								<label>是否可用</label>
+								<input switch data-on-text="可用" data-off-text="禁用" data-size="small" type="checkbox"
+									   ng-model="hotel.Usable">
+							</div>
+							<div class="text-right">
+								<button class="btn btn-danger" confirm-click="update(hotel)">修改</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+
+			</table>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box-header">
+			<h3 class="box-title">待确认饭店</h3>
+		</div>
+		<div class="table-responsive">
+			<table class="table no-margin">
+				<tr>
+					<th>Id</th>
+					<th>名称</th>
+					<th>CSS文件名</th>
+					<th>创建日期</th>
+					<th>电话</th>
+					<th>地址</th>
+					<th>开门时间</th>
+					<th>关门时间</th>
+					@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+						<th></th>
+					}
+				</tr>
+
+				<tbody ng-repeat="hotel in hotels | filter: {IsReadyForConfirm:true}">
+					<tr>
+						<td>{{hotel.Id}}</td>
+						<td>{{hotel.Name}}</td>
+						<td>{{hotel.CssThemePath}}</td>
+						<td>{{hotel.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
+						<td>{{hotel.Tel}}</td>
+						<td>{{hotel.Address}}</td>
+						<td>{{hotel.OpenTime | date:'HH:mm:ss'}}</td>
+						<td>{{hotel.CloseTime | date:'HH:mm:ss'}}</td>
+						@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
+							<td class="text-right">
+								<button class="btn btn-sm btn-default" ng-click="hotel.IsShowCreation = !hotel.IsShowCreation">
+									<i class="fa fa-toggle-off" ng-show="!hotel.IsShowCreation"></i>
+									<i class="fa fa-toggle-on" ng-show="hotel.IsShowCreation"></i>
+									创建
+								</button>
+							</td>
+						}
+					</tr>
+					<tr ng-show="hotel.IsShowCreation">
+						<td colspan="9" class="bg-gray-light">
+							<div class="form-group">
+								<label>数据库名</label>
+								<input class="form-control" type="text" ng-model="hotel.DatabaseName" />
+							</div>
+							<div class="text-right">
+								<button class="btn btn-danger" confirm-click="create(hotel)">创建</button>
+							</div>
+						</td>
+					</tr>
+				</tbody>
+
+			</table>
+		</div>
 	</div>
 </div>

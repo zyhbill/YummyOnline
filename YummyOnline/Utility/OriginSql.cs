@@ -28,11 +28,11 @@ namespace YummyOnline.Utility {
 		public int Growth { get; set; }
 	}
 
-	public class DbPartition {
+	public class OriginSql {
 		private DbContext ctx;
 		public string sqlsPath;
 
-		public DbPartition(string connStr) {
+		public OriginSql(string connStr) {
 			ctx = new DbContext(connStr);
 			DirectoryInfo bin = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
 			sqlsPath = $"{bin.FullName}\\Sqls";
@@ -101,7 +101,7 @@ namespace YummyOnline.Utility {
 			}
 
 			string sql = File.ReadAllText($"{sqlsPath}\\AddFileGroup.sql");
-			sql = sql.Replace("@@dataBaseName", dataBaseName);
+			sql = sql.Replace("@@databaseName", dataBaseName);
 			sql = sql.Replace("@@fileGroupName", fileGroupName);
 
 			return await executeSql(sql);
@@ -117,7 +117,7 @@ namespace YummyOnline.Utility {
 			}
 
 			string sql = File.ReadAllText($"{sqlsPath}\\AddFile.sql");
-			sql = sql.Replace("@@dataBaseName", dataBaseName);
+			sql = sql.Replace("@@databaseName", dataBaseName);
 			sql = sql.Replace("@@fileGroupName", fileGroupName);
 			sql = sql.Replace("@@path", path);
 
@@ -146,6 +146,14 @@ namespace YummyOnline.Utility {
 			string sql = File.ReadAllText($"{sqlsPath}\\Merge.sql");
 			sql = sql.Replace("@@mergeCondition", dateTime.ToString("yyyy-MM-dd"));
 
+			return await executeSql(sql);
+		}
+
+		public async Task<FunctionResult> CreateHotel(string databaseName) {
+			return await executeSql($"CREATE DATABASE [{databaseName}]");
+		}
+		public async Task<FunctionResult> InitializeHotel() {
+			string sql = File.ReadAllText($"{sqlsPath}\\InitializeDatabase.sql");
 			return await executeSql(sql);
 		}
 

@@ -131,7 +131,7 @@
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
-    <Compile Include="Utility\DbPartition.cs" />
+    <Compile Include="Utility\OriginSql.cs" />
     <Compile Include="Utility\DriveSpace.cs" />
     <Compile Include="Utility\TcpServerProcess.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
@@ -208,6 +208,7 @@
     <Content Include="Sqls\AddFile.sql" />
     <Content Include="Sqls\AddFileGroup.sql" />
     <Content Include="Sqls\AlterScheme.sql" />
+    <Content Include="Sqls\InitializeDatabase.sql" />
     <Content Include="Sqls\CreateYummyOnlinePartition.sql" />
     <Content Include="Sqls\CreateHotelPartition.sql" />
     <Content Include="Sqls\GetDbPartitionInfos.sql" />

@@ -32,6 +32,7 @@ app.controller('YummyOnlineCtrl', [
 		});
 
 		$scope.refresh = function () {
+			$scope.isLoading = true;
 			$http.post('/Log/GetYummyOnlineLogs', {
 				Program: $routeParams.program,
 				DateTime: $rootScope.currDateTime,
@@ -42,6 +43,7 @@ app.controller('YummyOnlineCtrl', [
 					data.Logs[i].Class = _getCssClass(data.Logs[i].Level);
 				}
 				$scope.logDetail = data;
+				$scope.isLoading = false;
 			});
 		}
 
@@ -74,6 +76,7 @@ app.controller('YummyOnlineCtrl', [
 		});
 
 		$scope.refresh = function () {
+			$scope.isLoading = true;
 			$http.post('/Log/GetHotelLogs', {
 				HotelId: $routeParams.hotelId,
 				DateTime: $rootScope.currDateTime,
@@ -84,6 +87,7 @@ app.controller('YummyOnlineCtrl', [
 					data.Logs[i].Class = _getCssClass(data.Logs[i].Level);
 				}
 				$scope.logDetail = data;
+				$scope.isLoading = false;
 			});
 		}
 

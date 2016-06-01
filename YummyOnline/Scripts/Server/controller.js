@@ -48,6 +48,7 @@ app.controller('TcpServerStatusCtrl', [
 		$layout.Set('Tcp服务器使用情况', '');
 
 		$scope.refreshTcpServerInfo = function () {
+			$scope.isLoading = true;
 			$http.post('/Server/GetTcpServerInfo').then(function (response) {
 				var data = response.data;
 				if (data == '') {
@@ -55,6 +56,7 @@ app.controller('TcpServerStatusCtrl', [
 				} else {
 					$scope.tcpServerInfo = data;
 				}
+				$scope.isLoading = false;
 			});
 		}
 

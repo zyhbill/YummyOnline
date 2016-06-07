@@ -1,6 +1,7 @@
 ﻿using Protocal;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Utility;
@@ -19,6 +20,9 @@ namespace YummyOnline.Controllers {
 			return View();
 		}
 		public ActionResult _ViewPartitionHandle() {
+			return View();
+		}
+		public ActionResult _ViewExecution() {
 			return View();
 		}
 
@@ -67,6 +71,7 @@ namespace YummyOnline.Controllers {
 			});
 		}
 
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> CreateDbPartition(int? hotelId) {
 			FunctionResult result;
 			if(hotelId.HasValue) {
@@ -84,7 +89,7 @@ namespace YummyOnline.Controllers {
 			await logPartition(hotelId, nameof(CreateDbPartition));
 			return Json(new JsonSuccess());
 		}
-
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> SplitPartition(int? hotelId, DateTime dateTime) {
 			FunctionResult result;
 			if(hotelId.HasValue) {
@@ -102,6 +107,7 @@ namespace YummyOnline.Controllers {
 			await logPartition(hotelId, nameof(SplitPartition));
 			return Json(new JsonSuccess());
 		}
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> MergePartition(int? hotelId, DateTime dateTime) {
 			FunctionResult result;
 			if(hotelId.HasValue) {
@@ -142,6 +148,22 @@ namespace YummyOnline.Controllers {
 			else {
 				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Error, $"{method} On YummyOnlineDB Failed, {errorMessage}");
 			}
+		}
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
+		public async Task<JsonResult> ExecuteSql(List<int> hotelIds, string sql) {
+			StringBuilder sb = new StringBuilder();
+			foreach(int id in hotelIds) {
+				Hotel hotel = await YummyOnlineManager.GetHotelById(id);
+				OriginSql originSql = new OriginSql(hotel.AdminConnectionString);
+				FunctionResult result = await originSql.ExecuteSql(sql);
+				if(!result.Succeeded) {
+					sb.Append($"{hotel.Name}({hotel.Id}) Error, {result.Message}</br>");
+				}
+			}
+			if(sb.Length != 0) {
+				return Json(new JsonError(sb.ToString()));
+			}
+			return Json(new JsonSuccess());
 		}
 	}
 }

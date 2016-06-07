@@ -80,20 +80,20 @@
 						<td colspan="11" class="bg-gray-light">
 							<div class="form-group">
 								<label>CSS文件名</label>
-								<input class="form-control" type="text" ng-model="hotel.CssThemePath" />
+								<input class="form-control" type="text" ng-model="hotel.NewData.CssThemePath" />
 							</div>
 							<div class="form-group">
 								<label>连接字符串</label>
-								<input class="form-control" type="text" ng-model="hotel.ConnectionString" />
+								<input class="form-control" type="text" ng-model="hotel.NewData.ConnectionString" />
 							</div>
 							<div class="form-group">
 								<label>最高权限连接字符串</label>
-								<input class="form-control" type="text" ng-model="hotel.AdminConnectionString" />
+								<input class="form-control" type="text" ng-model="hotel.NewData.AdminConnectionString" />
 							</div>
 							<div class="form-group">
 								<label>是否可用</label>
 								<input switch data-on-text="可用" data-off-text="禁用" data-size="small" type="checkbox"
-									   ng-model="hotel.Usable">
+									   ng-model="hotel.NewData.Usable">
 							</div>
 							<div class="text-right">
 								<button class="btn btn-danger" confirm-click="update(hotel)">修改</button>

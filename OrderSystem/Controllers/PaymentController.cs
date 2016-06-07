@@ -355,12 +355,10 @@ namespace OrderSystem.Controllers {
 
 			// 创建新订单
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
-			if(result.Succeeded) {
-				await hotelManager.AddStaffDine(waiterId, ((Dine)result.Data).Price);
-			}
-			else {
+			if(!result.Succeeded) {
 				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, result.Detail);
 			}
+
 			return result;
 		}
 

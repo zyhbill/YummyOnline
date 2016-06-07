@@ -35,7 +35,7 @@ namespace YummyOnline.Controllers {
 				return Json(new JsonError("没有权限"));
 			}
 			SigninManager.Signin(user, rememberMe);
-			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"Admin Signin: {user.Id} ({user.PhoneNumber})");
+			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"Admin Signin: {user.Id} ({user.UserName })");
 			return Json(new JsonSuccess());
 		}
 

@@ -13,4 +13,9 @@
 		templateUrl: '/Database/_ViewPartitionHandle',
 		controller: 'PartitionHandleCtrl'
 	})
+
+	.when('/Execution', {
+		templateUrl: '/Database/_ViewExecution',
+		controller: 'ExecutionCtrl'
+	})
 });

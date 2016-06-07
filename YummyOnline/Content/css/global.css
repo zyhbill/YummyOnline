@@ -72,6 +72,11 @@ h6,
 	width: 100%;
 }
 
+.checkbox.checkbox-inline {
+	margin-left: 0;
+	margin-right: 10px;
+}
+
 @media (max-width: 1200px) {
 	.waterfall-4 {
 		-moz-column-count: 2;

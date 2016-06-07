@@ -295,6 +295,7 @@
     <Content Include="Views\Users\_ViewNemo.cshtml" />
     <Content Include="Views\Hotel\Index.cshtml" />
     <Content Include="Views\Users\_PartialDines.cshtml" />
+    <Content Include="Views\Database\_ViewExecution.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -74,4 +74,39 @@
 
 		refresh();
 	}
+]);
+
+app.controller('ExecutionCtrl', [
+	'$scope',
+	'$http',
+	'layout',
+	function ($scope, $http, $layout) {
+		$layout.Set('SQL批量执行', '');
+
+		$http.post('/Hotel/GetHotelNames').then(function (response) {
+			for (var i in response.data) {
+				response.data[i].Checked = true;
+			}
+			$scope.hotels = response.data;
+		});
+
+		$scope.execute = function () {
+			var hotelIds = [];
+			for (var i in $scope.hotels) {
+				if ($scope.hotels[i].Checked) {
+					hotelIds.push($scope.hotels[i].Id);
+				}
+			}
+			$http.post('/Database/ExecuteSql', {
+				HotelIds: hotelIds,
+				Sql: $scope.sql
+			}).then(function (response) {
+				if (response.data.Succeeded) {
+					toastr.success('执行成功');
+				} else {
+					toastr.error(response.data.ErrorMessage);
+				}
+			});
+		}
+	}
 ])

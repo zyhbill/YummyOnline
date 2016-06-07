@@ -156,6 +156,9 @@ namespace YummyOnline.Utility {
 			string sql = File.ReadAllText($"{sqlsPath}\\InitializeDatabase.sql");
 			return await executeSql(sql);
 		}
+		public async Task<FunctionResult> ExecuteSql(string sql) {
+			return await executeSql(sql);
+		}
 
 		private async Task<FunctionResult> executeSql(string sql) {
 			string[] sqls = sql.Split(new string[] { "GO", "Go", "go" }, StringSplitOptions.RemoveEmptyEntries);

@@ -1,0 +1,27 @@
+﻿
+<div class="box">
+	<div class="box-body">
+		<div class="form-group">
+			<label>选择批处理的饭店数据库名:</label>
+			<div>
+				<div class="checkbox checkbox-inline" ng-repeat="hotel in hotels">
+					<input type="checkbox" id="database{{$index}}" ng-model="hotel.Checked">
+					<label for="database{{$index}}">
+						{{hotel.Name}}
+					</label>
+				</div>
+			</div>
+		</div>
+		<div class="form-group">
+			<label>SQL:</label>
+			<textarea class="form-control" rows="30" ng-model="sql" placeholder="请不要使用 USE"></textarea>
+		</div>
+		<div class="text-right">
+			<button class="btn btn-default"
+					confirm-click="execute()"
+					confirm-class="btn-danger">
+				提交
+			</button>
+		</div>
+	</div>
+</div>

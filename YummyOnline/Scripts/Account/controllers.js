@@ -24,8 +24,6 @@
 				toastr.error(response.status + ' ' + response.statusText);
 				$scope.isSigning = false;
 			});
-
-			return false;
 		}
 	}
 ]);

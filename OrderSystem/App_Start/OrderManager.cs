@@ -161,8 +161,6 @@ namespace OrderSystem {
 				dine.OriPrice += dineMenu.OriPrice * dineMenu.Count + dineMenu.RemarkPrice;
 
 				dine.DineMenus.Add(dineMenu);
-
-				menu.Ordered += dineMenu.Count;
 			}
 			mainPaidDetail.Price = dine.Price;
 

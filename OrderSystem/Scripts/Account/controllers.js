@@ -1,9 +1,12 @@
 ﻿app.controller('UserCtrl', [
+	'$rootScope',
 	'$scope',
 	'$http',
 	'$location',
-	function ($scope, $http, $location) {
+	function ($rootScope, $scope, $http, $location) {
+		$rootScope.isLoading = true;
 		$http.post('/Account/IsAuthenticated').then(function (response) {
+			$rootScope.isLoading = false;
 			var data = response.data;
 			if (data.Succeeded) {
 				$scope.user = data.Data;
@@ -84,7 +87,7 @@ app.controller('SignupCtrl', [
 		$scope.signin = function () {
 			$http.post('/Account/Signin', $scope.signinFormData).then(function (response) {
 				if (response.data.Succeeded) {
-					
+
 					$localStorage.phoneNumber = $scope.signinFormData.PhoneNumber;
 					$window.location.href = '/Order';
 				} else {

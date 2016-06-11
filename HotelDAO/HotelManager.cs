@@ -23,10 +23,6 @@ namespace HotelDAO {
 			return customer;
 		}
 
-		public bool IsNeedCodeImgSync() {
-			return ctx.HotelConfigs.FirstOrDefault().NeedCodeImg;
-		}
-
 		public async Task<HotelConfig> GetHotelConfig() {
 			return await ctx.HotelConfigs.FirstOrDefaultAsync();
 		}

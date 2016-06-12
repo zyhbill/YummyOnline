@@ -30,7 +30,7 @@ namespace GetPassword {
 				}
 				else if(i == "2") {
 					string info = Console.ReadLine();
-					Console.WriteLine(Cryptography.DesCryptography.DesEncrypt(info));
+					Console.WriteLine(Utility.DesCryptography.DesEncrypt(info));
 				}
 			}
 		}

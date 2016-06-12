@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsyncInline.cs" />
+    <Compile Include="DesCryptography.cs" />
     <Compile Include="DynamicsCombination.cs" />
     <Compile Include="HttpPost.cs" />
     <Compile Include="IISManager.cs" />

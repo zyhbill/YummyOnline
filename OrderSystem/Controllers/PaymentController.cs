@@ -11,6 +11,7 @@ using System.Web.Mvc;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
+using Utility;
 
 namespace OrderSystem.Controllers {
 	public class PaymentController : BaseOrderSystemController {
@@ -257,7 +258,7 @@ namespace OrderSystem.Controllers {
 		/// 支付完成异步通知
 		/// </summary>
 		public async Task<JsonResult> OnlineNotify(string encryptedInfo) {
-			string decryptedInfo = Cryptography.DesCryptography.DesDecrypt(encryptedInfo);
+			string decryptedInfo = DesCryptography.DesDecrypt(encryptedInfo);
 			NetworkNotifyViewModels model = null;
 
 			try {
@@ -313,7 +314,7 @@ namespace OrderSystem.Controllers {
 
 			StringBuilder redirectUrl = new StringBuilder();
 			redirectUrl.Append($"{dinePaidDetail.PayKind.RedirectUrl}?");
-			string priceCrypted = Cryptography.DesCryptography.DesEncrypt(dinePaidDetail.Price.ToString());
+			string priceCrypted = DesCryptography.DesEncrypt(dinePaidDetail.Price.ToString());
 			redirectUrl.Append($"HotelId={hotelConfig.Id}&DineId={dineId}&Price={Server.UrlEncode(priceCrypted)}&");
 			redirectUrl.Append($"NotifyUrl={Server.UrlEncode(dinePaidDetail.PayKind.NotifyUrl)}&");
 			redirectUrl.Append($"CompleteUrl={Server.UrlEncode(dinePaidDetail.PayKind.CompleteUrl)}");

@@ -212,10 +212,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\Cryptography\Cryptography.csproj">
-      <Project>{25d7f42c-c12f-4077-b53a-40115c0977a2}</Project>
-      <Name>Cryptography</Name>
-    </ProjectReference>
     <ProjectReference Include="..\HotelDAOModels\HotelDAOModels.csproj">
       <Project>{c9f71545-1363-4ad1-b50b-dc903fd66770}</Project>
       <Name>HotelDAOModels</Name>

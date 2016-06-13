@@ -345,11 +345,15 @@ waiter.yummyonline.net
 #### Parameters
 ```json
 {
-	"HotelId": <int 饭店号>,
 	"DineId": <string 订单号>
 }
 ```
 #### Results
+```json
+{
+	"Succeeded": <bool>
+}
+```
 
 * * *
 
@@ -434,6 +438,40 @@ waiter.yummyonline.net
           "Type": <int>
         }
 	}, ...]
+}
+```
+
+* * *
+
+### 交接班
+#### POST ***AUTHORIZED***
+#### URL
+	/Order/ShiftDines
+#### Parameters
+#### Results
+```json
+{
+	"Succeeded": <bool>
+}
+```
+
+* * *
+
+### 切换菜品状态
+#### POST ***AUTHORIZED***
+#### URL
+	/Order/ToggleMenuStatus
+#### Parameters
+```json
+{
+	"MenuId": <string 菜品号>,
+	"Status": <int 0:正常, 1:已售完>
+}
+```
+#### Results
+```json
+{
+	"Succeeded": <bool>
 }
 ```
 

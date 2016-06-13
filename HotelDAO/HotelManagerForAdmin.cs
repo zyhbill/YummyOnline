@@ -11,6 +11,20 @@ namespace HotelDAO {
 		public HotelManagerForAdmin(string connStr)
 			: base(connStr) { }
 
+		public async Task<dynamic> GetLogs(DateTime date, int? count) {
+			IQueryable<Log> linq = ctx.Logs.Where(p => SqlFunctions.DateDiff("day", p.DateTime, date) == 0)
+				.OrderByDescending(p => p.Id);
+			if(count != null) {
+				linq = linq.Take((int)count);
+			}
+
+			return await linq.Select(p => new {
+				Level = p.Level.ToString(),
+				p.Message,
+				p.DateTime
+			}).ToListAsync();
+		}
+
 		public async Task<int> GetDineCount(DateTime dateTime) {
 			return await ctx.Dines.CountAsync(p => SqlFunctions.DateDiff("day", p.BeginTime, dateTime) == 0);
 		}

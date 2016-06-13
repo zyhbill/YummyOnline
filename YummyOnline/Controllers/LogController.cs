@@ -88,7 +88,7 @@ namespace YummyOnline.Controllers {
 				hotel = await YummyOnlineManager.GetFirstHotel();
 			}
 
-			HotelDAO.HotelManager manager = new HotelDAO.HotelManager(hotel.ConnectionString);
+			HotelDAO.HotelManagerForAdmin manager = new HotelDAO.HotelManagerForAdmin(hotel.ConnectionString);
 			return Json(new {
 				Hotel = new {
 					Id = hotel.Id,

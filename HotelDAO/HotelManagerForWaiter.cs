@@ -132,5 +132,26 @@ namespace HotelDAO {
 			bool isPaid = await ctx.Dines.Where(p => p.Id == dineId).Select(p => p.IsPaid).FirstOrDefaultAsync();
 			return isPaid;
 		}
+
+		public async Task ShiftDines() {
+			var dines = ctx.Dines.Where(d => d.IsPaid == true && d.Status != DineStatus.Shifted);
+			foreach(var dine in dines) {
+				dine.Status = DineStatus.Shifted;
+			}
+			await ctx.SaveChangesAsync();
+		}
+
+		public async Task<bool> ToggleMenuStatus(string menuId, MenuStatus status) {
+			var menu = await ctx.Menus.Where(m => m.Id == menuId).FirstOrDefaultAsync();
+			if(menu == null) {
+				return false;
+			}
+			if(!Enum.IsDefined(status.GetType(), status)) {
+				return false;
+			}
+			menu.Status = status;
+			ctx.SaveChanges();
+			return true;
+		}
 	}
 }

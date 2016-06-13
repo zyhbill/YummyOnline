@@ -472,14 +472,18 @@
 </code></pre><hr class="page"><h3 id="打印完成通知"><a name="打印完成通知" href="#打印完成通知"></a>打印完成通知</h3><h4 id="post-***authorized***"><a name="post-***authorized***" href="#post-***authorized***"></a>POST <strong><em>AUTHORIZED</em></strong></h4><h4 id="url"><a name="url" href="#url"></a>URL</h4><pre><code data-origin="<pre><code>/Payment/PrintCompleted
 </code></pre>">/Payment/PrintCompleted
 </code></pre><h4 id="parameters"><a name="parameters" href="#parameters"></a>Parameters</h4><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
-    &quot;HotelId&quot;: &amp;lt;int 饭店号&amp;gt;,
     &quot;DineId&quot;: &amp;lt;string 订单号&amp;gt;
 }
 </code></pre>">{
-    "<span class="hljs-attribute">HotelId</span>": <span class="hljs-value">&lt;int 饭店号&gt;</span>,
     "<span class="hljs-attribute">DineId</span>": <span class="hljs-value">&lt;string 订单号&gt;
 </span>}
-</code></pre><h4 id="results"><a name="results" href="#results"></a>Results</h4><hr class="page"><h3 id="获取当前的点单"><a name="获取当前的点单" href="#获取当前的点单"></a>获取当前的点单</h3><h4 id="post-***authorized***"><a name="post-***authorized***" href="#post-***authorized***"></a>POST <strong><em>AUTHORIZED</em></strong></h4><h4 id="url"><a name="url" href="#url"></a>URL</h4><pre><code data-origin="<pre><code>/Order/GetCurrentDines
+</code></pre><h4 id="results"><a name="results" href="#results"></a>Results</h4><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
+    &quot;Succeeded&quot;: &amp;lt;bool&amp;gt;
+}
+</code></pre>">{
+    "<span class="hljs-attribute">Succeeded</span>": <span class="hljs-value">&lt;bool&gt;
+</span>}
+</code></pre><hr class="page"><h3 id="获取当前的点单"><a name="获取当前的点单" href="#获取当前的点单"></a>获取当前的点单</h3><h4 id="post-***authorized***"><a name="post-***authorized***" href="#post-***authorized***"></a>POST <strong><em>AUTHORIZED</em></strong></h4><h4 id="url"><a name="url" href="#url"></a>URL</h4><pre><code data-origin="<pre><code>/Order/GetCurrentDines
 </code></pre>">/Order/GetCurrentDines
 </code></pre><h4 id="parameters"><a name="parameters" href="#parameters"></a>Parameters</h4><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
     &quot;DeskId&quot;: &amp;lt;string 桌号&amp;gt;
@@ -600,6 +604,30 @@
           "<span class="hljs-attribute">Type</span>": <span class="hljs-value">&lt;int&gt;
         </span>}
     </span>}, ...]
+</span>}
+</code></pre><hr class="page"><h3 id="交接班"><a name="交接班" href="#交接班"></a>交接班</h3><h4 id="post-***authorized***"><a name="post-***authorized***" href="#post-***authorized***"></a>POST <strong><em>AUTHORIZED</em></strong></h4><h4 id="url"><a name="url" href="#url"></a>URL</h4><pre><code data-origin="<pre><code>/Order/ShiftDines
+</code></pre>">/Order/ShiftDines
+</code></pre><h4 id="parameters"><a name="parameters" href="#parameters"></a>Parameters</h4><h4 id="results"><a name="results" href="#results"></a>Results</h4><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
+    &quot;Succeeded&quot;: &amp;lt;bool&amp;gt;
+}
+</code></pre>">{
+    "<span class="hljs-attribute">Succeeded</span>": <span class="hljs-value">&lt;bool&gt;
+</span>}
+</code></pre><hr class="page"><h3 id="切换菜品状态"><a name="切换菜品状态" href="#切换菜品状态"></a>切换菜品状态</h3><h4 id="post-***authorized***"><a name="post-***authorized***" href="#post-***authorized***"></a>POST <strong><em>AUTHORIZED</em></strong></h4><h4 id="url"><a name="url" href="#url"></a>URL</h4><pre><code data-origin="<pre><code>/Order/ToggleMenuStatus
+</code></pre>">/Order/ToggleMenuStatus
+</code></pre><h4 id="parameters"><a name="parameters" href="#parameters"></a>Parameters</h4><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
+    &quot;MenuId&quot;: &amp;lt;string 菜品号&amp;gt;,
+    &quot;Status&quot;: &amp;lt;int 0:正常, 1:已售完&amp;gt;
+}
+</code></pre>">{
+    "MenuId": &lt;string 菜品号&gt;,
+    "Status": &lt;int 0:正常, 1:已售完&gt;
+}
+</code></pre><h4 id="results"><a name="results" href="#results"></a>Results</h4><pre class="json hljs"><code class="json" data-origin="<pre><code class=&quot;json&quot;>{
+    &quot;Succeeded&quot;: &amp;lt;bool&amp;gt;
+}
+</code></pre>">{
+    "<span class="hljs-attribute">Succeeded</span>": <span class="hljs-value">&lt;bool&gt;
 </span>}
 </code></pre><hr class="page">
 

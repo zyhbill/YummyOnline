@@ -66,7 +66,6 @@ namespace YummyOnlineTcpServer {
 		}
 		public async Task Initialize() {
 			YummyOnlineManager manager = new YummyOnlineManager();
-			//SystemConfig config = await manager.GetSystemConfig();
 
 			List<Hotel> hotels = await manager.GetHotels();
 			hotels.ForEach(h => {

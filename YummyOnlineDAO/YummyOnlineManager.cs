@@ -23,7 +23,7 @@ namespace YummyOnlineDAO {
 			return clientGuid != null;
 		}
 		public async Task<List<NewDineInformClientGuid>> GetGuids() {
-			return await ctx.NewDineInformClientGuids.ToListAsync();
+			return await ctx.NewDineInformClientGuids.OrderBy(p => p.Description).ToListAsync();
 		}
 		public async Task<bool> AddGuid(NewDineInformClientGuid clientGuid) {
 			ctx.NewDineInformClientGuids.Add(clientGuid);

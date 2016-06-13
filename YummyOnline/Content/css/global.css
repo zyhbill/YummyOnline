@@ -30,6 +30,15 @@ h6,
 	vertical-align: middle;
 }
 
+	.table > tbody > tr > td.no-wrap,
+	.table > tbody > tr > th.no-wrap,
+	.table > tfoot > tr > td.no-wrap,
+	.table > tfoot > tr > th.no-wrap,
+	.table > thead > tr > td.no-wrap,
+	.table > thead > tr > th.no-wrap {
+		white-space: nowrap;
+	}
+
 .row.no-padding {
 	margin: 0 -1px;
 }

@@ -166,28 +166,6 @@ namespace HotelDAO {
 			}
 		}
 
-		public async Task RecordLog(Log.LogLevel level, string message) {
-			Log log = new Log {
-				Level = level,
-				Message = message
-			};
-			ctx.Logs.Add(log);
-			await ctx.SaveChangesAsync();
-		}
-		public async Task<dynamic> GetLogs(DateTime date, int? count) {
-			IQueryable<Log> linq = ctx.Logs.Where(p => SqlFunctions.DateDiff("day", p.DateTime, date) == 0)
-				.OrderByDescending(p => p.Id);
-			if(count != null) {
-				linq = linq.Take((int)count);
-			}
-
-			return await linq.Select(p => new {
-				Level = p.Level.ToString(),
-				p.Message,
-				p.DateTime
-			}).ToListAsync();
-		}
-
 		public static IQueryable<dynamic> FormatDines(IQueryable<Dine> dine) {
 			return dine.Select(p => new {
 				p.Id,

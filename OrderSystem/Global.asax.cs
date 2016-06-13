@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
-using System.Text;
 using System.Web;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -16,8 +15,13 @@ using YummyOnlineDAO.Models;
 namespace OrderSystem {
 	public class MvcApplication : HttpApplication {
 		protected void Application_Start() {
-			var _ = new YummyOnlineManager().RecordLog(Log.LogProgram.OrderSystem, Log.LogLevel.Info, "OrderSystem Initializing");
-			_ = NewDineInformTcpClient.Initialize();
+			YummyOnlineManager manager = new YummyOnlineManager();
+			var _ = manager.RecordLog(Log.LogProgram.OrderSystem, Log.LogLevel.Info, "OrderSystem Initializing");
+			_ = NewDineInformTcpClient.Initialize(async () => {
+				await manager.RecordLog(Log.LogProgram.OrderSystem, Log.LogLevel.Success, "TcpServer Connected");
+			}, async e => {
+				await manager.RecordLog(Log.LogProgram.OrderSystem, Log.LogLevel.Error, e.Message);
+			});
 
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);

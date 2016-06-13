@@ -1,14 +1,11 @@
 ﻿using HotelDAO;
 using HotelDAO.Models;
-using OrderSystem.Utility;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Principal;
-using System.Text;
 using System.Web;
-using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
@@ -19,6 +16,14 @@ using YummyOnlineDAO.Identity;
 namespace OrderSystem.Waiter {
 	public class MvcApplication : HttpApplication {
 		protected void Application_Start() {
+			YummyOnlineManager manager = new YummyOnlineManager();
+			var _ = manager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.OrderSystem_Waiter, YummyOnlineDAO.Models.Log.LogLevel.Info, "OrderSystem.Waiter Initializing");
+			_ = NewDineInformTcpClient.Initialize(async () => {
+				await manager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.OrderSystem_Waiter, YummyOnlineDAO.Models.Log.LogLevel.Success, "TcpServer Connected");
+			}, async e => {
+				await manager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.OrderSystem_Waiter, YummyOnlineDAO.Models.Log.LogLevel.Error, e.Message);
+			});
+
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 		}

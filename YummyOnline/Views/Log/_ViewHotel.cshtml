@@ -51,7 +51,7 @@
 			<tr ng-hide="isLoading" ng-class="log.Class" ng-repeat="log in logDetail.Logs">
 				<td>{{log.Level}}</td>
 				<td>{{log.Message}}</td>
-				<td>{{log.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+				<td class="no-wrap">{{log.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
 			</tr>
 		</table>
 	</div>

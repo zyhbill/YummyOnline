@@ -72,12 +72,14 @@ namespace OrderSystem.Waiter.Controllers {
 			var tPayKinds = new HotelManagerForWaiter(connStr).GetPayKinds();
 			var tRemarks = new HotelManagerForWaiter(connStr).GetRemarks();
 			var tStaffs = new HotelManagerForWaiter(connStr).GetStaffs();
+			var tSellOutMenus = new HotelManager(connStr).GetMenus(MenuStatus.SellOut);
 
 			var result = new {
 				Areas = await tAreas,
 				PayKinds = await tPayKinds,
 				Remarks = await tRemarks,
-				Staffs = await tStaffs
+				Staffs = await tStaffs,
+				SellOutMenus = await tSellOutMenus
 			};
 			return Json(result);
 		}

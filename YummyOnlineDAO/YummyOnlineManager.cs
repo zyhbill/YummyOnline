@@ -42,11 +42,12 @@ namespace YummyOnlineDAO {
 		#endregion
 
 		#region 日志相关
-		public async Task RecordLog(Log.LogProgram program, Log.LogLevel level, string message) {
+		public async Task RecordLog(Log.LogProgram program, Log.LogLevel level, string message, string detail = null) {
 			Log log = new Log {
 				Program = program,
 				Level = level,
-				Message = message
+				Message = message,
+				Detail = detail
 			};
 			ctx.Logs.Add(log);
 			await ctx.SaveChangesAsync();
@@ -61,6 +62,7 @@ namespace YummyOnlineDAO {
 			return await linq.Select(p => new {
 				Level = p.Level.ToString(),
 				p.Message,
+				p.Detail,
 				p.DateTime
 			}).ToListAsync();
 		}

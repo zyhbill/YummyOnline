@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Utility {
 	public static class HttpPost {
@@ -20,6 +22,14 @@ namespace Utility {
 			}
 			catch { }
 			return null;
+		}
+		public static string GetPostData(HttpRequestBase request) {
+			request.InputStream.Seek(0, SeekOrigin.Begin);
+			return new StreamReader(request.InputStream).ReadToEnd();
+		}
+		public static string GetPostData(HttpRequest request) {
+			request.InputStream.Seek(0, SeekOrigin.Begin);
+			return new StreamReader(request.InputStream).ReadToEnd();
 		}
 	}
 }

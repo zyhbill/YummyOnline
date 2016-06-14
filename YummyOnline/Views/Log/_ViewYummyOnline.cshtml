@@ -40,7 +40,7 @@
 	</div>
 
 	<div class="table-responsive">
-		<table class="table table-bordered no-margin">
+		<table class="table no-margin">
 			<tr>
 				<th>等级</th>
 				<th>内容</th>
@@ -49,11 +49,21 @@
 			<tr ng-show="isLoading">
 				<td colspan="3"><b><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</b></td>
 			</tr>
-			<tr ng-hide="isLoading" ng-class="log.Class" ng-repeat="log in logDetail.Logs">
-				<td>{{log.Level}}</td>
-				<td>{{log.Message}}</td>
-				<td class="no-wrap">{{log.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
-			</tr>
+			<tbody ng-hide="isLoading" ng-repeat="log in logDetail.Logs">
+				<tr ng-class="log.Class">
+					<td>{{log.Level}}</td>
+					<td>
+						{{log.Message}}
+						<a href="javascript:;" ng-show="log.Detail != null" ng-click="log.IsShowDetail = !log.IsShowDetail">
+							详情...
+						</a>
+					</td>
+					<td class="no-wrap">{{log.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+				</tr>
+				<tr class="bg-gray-light" ng-show="log.IsShowDetail">
+					<td colspan="4">{{log.Detail}}</td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
 </div>

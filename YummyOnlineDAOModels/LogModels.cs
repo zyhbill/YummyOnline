@@ -40,8 +40,9 @@ namespace YummyOnlineDAO.Models {
 		public int Id { get; set; }
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public DateTime DateTime { get; set; }
+		public LogProgram Program { get; set; }
 		public LogLevel Level { get; set; }
 		public string Message { get; set; }
-		public LogProgram Program { get; set; }
+		public string Detail { get; set; }
 	}
 }

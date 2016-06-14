@@ -149,7 +149,7 @@ namespace YummyOnline.Utility {
 			return await executeSql(sql);
 		}
 
-		public async Task<FunctionResult> CreateHotel(string databaseName) {
+		public async Task<FunctionResult> CreateDatabase(string databaseName) {
 			return await executeSql($"CREATE DATABASE [{databaseName}]");
 		}
 		public async Task<FunctionResult> InitializeHotel() {

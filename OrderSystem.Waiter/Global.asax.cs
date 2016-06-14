@@ -57,9 +57,6 @@ namespace OrderSystem.Waiter {
 		protected void Application_Error(object sender, EventArgs e) {
 			Exception exception = Server.GetLastError();
 
-			Request.InputStream.Seek(0, SeekOrigin.Begin);
-			string postData = new StreamReader(Request.InputStream).ReadToEnd();
-
 			string action = "HttpError500";
 
 			HttpException httpException = exception as HttpException;
@@ -72,7 +69,8 @@ namespace OrderSystem.Waiter {
 			}
 
 			AsyncInline.Run(() => new YummyOnlineManager().RecordLog(YummyOnlineDAO.Models.Log.LogProgram.OrderSystem_Waiter, YummyOnlineDAO.Models.Log.LogLevel.Error,
-				$"{action}: Host: {Request.UserHostAddress}, RequestUrl: {Request.RawUrl}, PostData: {postData}, Exception: {exception.Message}"));
+				$"{action}: Host: {Request.UserHostAddress}, RequestUrl: {Request.RawUrl}",
+				$"PostData: {HttpPost.GetPostData(Request)}, Exception: {exception}"));
 
 			Response.Clear();
 			Server.ClearError();

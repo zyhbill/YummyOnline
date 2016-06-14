@@ -7,7 +7,7 @@ using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
 
 namespace OrderSystem.Waiter.Controllers {
-	public class BaseWaiterController : OrderSystem.Controllers.BaseController {
+	public abstract class BaseWaiterController : OrderSystem.Controllers.BaseController {
 		private StaffManager _staffManager;
 		public StaffManager StaffManager {
 			get {
@@ -41,7 +41,7 @@ namespace OrderSystem.Waiter.Controllers {
 		public new Hotel CurrHotel {
 			get {
 				if(Session["Hotel"] == null) {
-					Staff staff = AsyncInline.Run(() => new StaffManager().FindStaffById(User.Identity.Name));
+					Staff staff = AsyncInline.Run(() => new StaffManager().FindStaffById(User.Identity.GetUserId()));
 
 					Session["Hotel"] = AsyncInline.Run(() => new YummyOnlineManager().GetHotelById(staff.HotelId));
 				}

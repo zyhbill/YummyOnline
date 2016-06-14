@@ -63,7 +63,7 @@ namespace YummyOnline.Controllers {
 		public async Task<JsonResult> CreateHotel(int hotelId, string databaseName) {
 			// 创建空数据库
 			OriginSql originSql = new OriginSql(new YummyOnlineContext().Database.Connection.ConnectionString);
-			var result = await originSql.CreateHotel(databaseName);
+			var result = await originSql.CreateDatabase(databaseName);
 			if(!result.Succeeded) {
 				return Json(new JsonError(result.Message));
 			}

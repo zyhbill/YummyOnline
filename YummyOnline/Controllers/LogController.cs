@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
 
 namespace YummyOnline.Controllers {
@@ -45,7 +46,7 @@ namespace YummyOnline.Controllers {
 		}
 
 		public async Task<ActionResult> GetFile(string dir, string name) {
-			User user = await UserManager.FindByIdAsync(User.Identity.Name);
+			User user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
 
 			string path = $"{bin.Parent.FullName}\\Specification\\{dir}\\{name}";
 			if(name.EndsWith(".html") || name.EndsWith(".htm")) {

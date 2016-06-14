@@ -45,9 +45,9 @@ namespace HotelDAO {
 				});
 			return await linq.ToListAsync();
 		}
-		public async Task<dynamic> GetMenus() {
+		public async Task<dynamic> GetMenus(MenuStatus status = MenuStatus.Normal) {
 			var linq = ctx.Menus
-				.Where(p => p.Usable && p.Status == MenuStatus.Normal)
+				.Where(p => p.Usable && p.Status == status)
 				.Select(p => new {
 					p.Id,
 					p.Code,

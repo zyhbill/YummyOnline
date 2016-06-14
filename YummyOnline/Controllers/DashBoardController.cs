@@ -6,6 +6,7 @@ using System.Web;
 using System.Web.Mvc;
 using YummyOnlineDAO.Models;
 using YummyOnline.Utility;
+using Utility;
 
 namespace YummyOnline.Controllers {
 	[Authorize(Roles = nameof(Role.Admin))]

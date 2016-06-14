@@ -8,23 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Utility;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
-using Utility;
 
 namespace OrderSystem.Controllers {
-	public class PaymentController : BaseOrderSystemController {
-		private StaffManager _staffManager;
-		public StaffManager StaffManager {
-			get {
-				if(_staffManager == null) {
-					_staffManager = new StaffManager();
-				}
-				return _staffManager;
-			}
-		}
-
+	public partial class PaymentController : BaseOrderSystemController {
+		
 		private OrderManager _orderManager;
 		public OrderManager OrderManager {
 			get {
@@ -53,7 +44,7 @@ namespace OrderSystem.Controllers {
 			CartAddition addition = new CartAddition();
 
 			// 新建或获取用户Id
-			User user = await createOrGetUser(User.Identity.GetUserId());
+			User user = await createOrGetUser(User.Identity.GetUserId(), "OrderSystem");
 			if(user == null) {
 				return Json(new JsonError("创建匿名用户失败"));
 			}
@@ -63,7 +54,11 @@ namespace OrderSystem.Controllers {
 			// 创建新订单
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
 			if(!result.Succeeded) {
-				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, result.Detail);
+				if(await UserManager.IsInRoleAsync(user.Id, Role.Nemo)) {
+					await UserManager.DeleteAsync(user);
+					await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Warning, $"Anonymous User Deleted {user.Id}, Via OrderSystem");
+				}
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}", HttpPost.GetPostData(Request));
 				return Json(new JsonError(result.Message));
 			}
 
@@ -113,7 +108,7 @@ namespace OrderSystem.Controllers {
 				GiftMenus = cartAddition.GiftMenus
 			};
 
-			User user = await createOrGetUser(cartAddition.UserId);
+			User user = await createOrGetUser(cartAddition.UserId, "Manager");
 			if(user == null) {
 				return Json(new JsonError("创建匿名用户失败"));
 			}
@@ -122,7 +117,11 @@ namespace OrderSystem.Controllers {
 			// 创建新订单
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
 			if(!result.Succeeded) {
-				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, result.Detail);
+				if(await UserManager.IsInRoleAsync(user.Id, Role.Nemo)) {
+					await UserManager.DeleteAsync(user);
+					await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Warning, $"Anonymous User Deleted {user.Id}, Via Manager");
+				}
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}", HttpPost.GetPostData(Request));
 				return Json(new JsonError(result.Message));
 			}
 
@@ -172,28 +171,44 @@ namespace OrderSystem.Controllers {
 			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"PrintCompleted DineId: {dineId}");
 			return Json(new JsonSuccess());
 		}
+	}
 
+
+	// PaymentController辅助函数
+	public partial class PaymentController {
 		/// <summary>
 		/// 创建或获取用户
 		/// </summary>
 		/// <param name="userId">用户id</param>
 		/// <returns>当前或新建的用户</returns>
-		private async Task<User> createOrGetUser(string userId) {
+		private async Task<User> createOrGetUser(string userId, string via) {
 			User user = await UserManager.FindByIdAsync(userId);
 			if(user == null) {
 				user = await UserManager.CreateVoidUserAsync();
 				if(user == null) {
 					return null;
 				}
-				await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Success, $"Anonymous User Created {user.Id}");
+				await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Success, $"Anonymous User Created {user.Id}, Via {via}");
 				await UserManager.AddToRoleAsync(user.Id, Role.Nemo);
 			}
 			return user;
 		}
 		private async Task newDineInform(Dine dine, string via) {
-			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Dine recorded DineId: {dine.Id}, OriPrice: {dine.OriPrice}, Price: {dine.Price}, IsOnline: {dine.IsOnline}, Via {via}");
+			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Dine recorded DineId: {dine.Id}, Price: {dine.Price}, IsOnline: {dine.IsOnline}, Via {via}",
+				HttpPost.GetPostData(Request));
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dine.Id, false);
 		}
+		/// <summary>
+		/// 请求打印订单
+		/// </summary>
+		/// <param name="dineId">订单号</param>
+		private async Task requestPrintDine(string dineId) {
+			HotelConfig config = await HotelManager.GetHotelConfig();
+			if(config.HasAutoPrinter) {
+				NewDineInformTcpClient.SendRequestPrintDine(CurrHotel.Id, dineId);
+			}
+		}
+		
 		/// <summary>
 		/// 获取在线支付的跳转地址
 		/// </summary>
@@ -228,18 +243,6 @@ namespace OrderSystem.Controllers {
 			await OrderManager.OnlinePayCompleted(dineId, recordId);
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dineId, true);
 			await requestPrintDine(dineId);
-		}
-
-		/// <summary>
-		/// 请求打印订单
-		/// </summary>
-		/// <param name="dineId">订单号</param>
-		/// <returns></returns>
-		private async Task requestPrintDine(string dineId) {
-			HotelConfig config = await HotelManager.GetHotelConfig();
-			if(config.HasAutoPrinter) {
-				NewDineInformTcpClient.SendRequestPrintDine(CurrHotel.Id, dineId);
-			}
 		}
 	}
 }

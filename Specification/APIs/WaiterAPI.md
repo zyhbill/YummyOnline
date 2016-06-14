@@ -180,7 +180,8 @@ waiter.yummyonline.net
 			"Name": <string>,
 			"Schemas": [<int>, ...]
 		}, ...
-	]
+	],
+	"SellOutMenus": [<已沽清菜品, 详见/Order/GetMenuInfos中的Menus>, ...]
 }
 
 ```

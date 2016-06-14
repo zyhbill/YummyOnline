@@ -180,7 +180,7 @@ app.controller('MonitorCtrl', [
 
 		$scope.$watch('websocketLocation', function (location) {
 			$websocket.Initialize(location);
-		})
+		});
 
 		var $systemLine = $('#system-line').highcharts({
 			title: null,

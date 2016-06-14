@@ -21,6 +21,7 @@ namespace HotelDAO {
 			return await linq.Select(p => new {
 				Level = p.Level.ToString(),
 				p.Message,
+				p.Detail,
 				p.DateTime
 			}).ToListAsync();
 		}

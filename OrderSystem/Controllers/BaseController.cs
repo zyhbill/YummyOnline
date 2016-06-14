@@ -49,7 +49,7 @@ namespace OrderSystem.Controllers {
 		}
 	}
 
-	public class BaseOrderSystemController : BaseController {
+	public abstract class BaseOrderSystemController : BaseController {
 		private UserManager _userManager;
 		public UserManager UserManager {
 			get {

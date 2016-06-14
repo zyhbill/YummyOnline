@@ -182,10 +182,6 @@ namespace OrderSystem.Controllers {
 			return Json(new JsonSuccess(await getCustomerInfo()));
 		}
 
-		public async Task<JsonResult> GetCustomer() {
-			return Json(await getCustomerInfo());
-		}
-
 		private async Task<dynamic> getCustomerInfo() {
 			string userId = User.Identity.GetUserId();
 			User user = await UserManager.FindByIdAsync(userId);
@@ -204,6 +200,5 @@ namespace OrderSystem.Controllers {
 				DinesCount = await HotelManager.GetHistoryDinesCount(userId)
 			};
 		}
-
 	}
 }

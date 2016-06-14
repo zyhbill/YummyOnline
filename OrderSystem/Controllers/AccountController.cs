@@ -31,30 +31,20 @@ namespace OrderSystem.Controllers {
 		}
 
 		#region 用户注册
-		public async Task<JsonResult> SendSMS(string PhoneNumber) {
-			if(await UserManager.IsPhoneNumberDuplicated(PhoneNumber)) {
+		public async Task<JsonResult> SendSMS(string phoneNumber) {
+			if(await UserManager.IsPhoneNumberDuplicated(phoneNumber)) {
 				return Json(new JsonError("此号码已注册"));
 			}
-
-			Random rand = new Random(unchecked((int)DateTime.Now.Ticks));
-			string code = "";
-			for(int i = 0; i < 6; i++) {
-				code += rand.Next(10);
+			FunctionResult result = await generateSmsCodeAndSend(phoneNumber);
+			if(!result.Succeeded) {
+				return Json(new JsonError(result.Message));
 			}
-			Session["SmsCode"] = code;
-
-#if DEBUG
-			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Debug, PhoneNumber + " ： " + code);
-#else
-			if(!Utility.SMSSender.Send(PhoneNumber, code)) {
-				return Json(new JsonError());
-			}
-#endif
+			Session["SmsCode"] = result.Data;
 
 			return Json(new JsonSuccess());
 		}
 		public async Task<JsonResult> Signup(SignupViewModel model) {
-			if(Session["SmsCode"] == null || Session["SmsCode"].ToString() != model.Code) {
+			if((string)Session["SmsCode"] != model.Code) {
 				return Json(new JsonError("验证码不正确", "code"));
 			}
 			User user;
@@ -130,25 +120,15 @@ namespace OrderSystem.Controllers {
 		#endregion
 
 		#region 忘记密码
-		public async Task<ActionResult> SendForgetSMS(string PhoneNumber) {
-			if(!await UserManager.IsPhoneNumberDuplicated(PhoneNumber)) {
+		public async Task<ActionResult> SendForgetSMS(string phoneNumber) {
+			if(!await UserManager.IsPhoneNumberDuplicated(phoneNumber)) {
 				return Json(new JsonError("此号码未注册"));
 			}
-
-			Random rand = new Random(unchecked((int)DateTime.Now.Ticks));
-			string code = "";
-			for(int i = 0; i < 6; i++) {
-				code += rand.Next(10);
+			FunctionResult result = await generateSmsCodeAndSend(phoneNumber);
+			if(!result.Succeeded) {
+				return Json(new JsonError(result.Message));
 			}
-			Session["SMSForgetCode"] = code;
-
-#if DEBUG
-			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Debug, PhoneNumber + " ： " + code);
-#else
-			if(!Utility.SMSSender.Send(PhoneNumber, code)) {
-				return Json(new JsonError());
-			}
-#endif
+			Session["SMSForgetCode"] = result.Data;
 
 			return Json(new JsonSuccess());
 		}
@@ -163,6 +143,37 @@ namespace OrderSystem.Controllers {
 			return Json(new JsonSuccess());
 		}
 		#endregion
+
+		/// <summary>
+		/// 生成短信验证码并且发送
+		/// </summary>
+		/// <param name="phoneNumber">手机号</param>
+		/// <returns>短信验证码</returns>
+		private async Task<FunctionResult> generateSmsCodeAndSend(string phoneNumber) {
+			DateTime? LastSmsDateTime = Session["LastSmsDateTime"] as DateTime?;
+			if(LastSmsDateTime.HasValue && (DateTime.Now - LastSmsDateTime.Value).TotalSeconds < 50) {
+				return new FunctionResult(false, "您还不能发送短信验证码");
+			}
+
+			Random rand = new Random(unchecked((int)DateTime.Now.Ticks));
+			string code = "";
+			for(int i = 0; i < 6; i++) {
+				code += rand.Next(10);
+			}
+			Session["LastSmsDateTime"] = DateTime.Now;
+
+#if DEBUG
+			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Debug, phoneNumber + " ： " + code);
+#else
+			if(!Utility.SMSSender.Send(phoneNumber, code)) {
+				return new FunctionResult(false, "发送失败");
+			}
+#endif
+			return new FunctionResult {
+				Succeeded = true,
+				Data = code
+			};
+		}
 
 		public async Task<JsonResult> IsAuthenticated() {
 			if(!await SigninManager.IsAuthenticated()) {

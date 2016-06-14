@@ -17,7 +17,7 @@
 				<th>主机名</th>
 				<th>状态</th>
 				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
-					<th></th>
+					<th class="shrink"></th>
 				}
 			</tr>
 			<tr ng-repeat="site in sites">

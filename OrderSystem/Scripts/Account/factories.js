@@ -9,7 +9,8 @@
 
 			$http.post(url, {
 				PhoneNumber: phoneNumber
-			}).success(function (data) {
+			}).then(function (response) {
+				var data = response.data;
 				if (data.Succeeded) {
 					$scope.canTypeSMS = true;
 
@@ -25,9 +26,11 @@
 						}
 					}, 1000);
 				} else {
+					$scope.sendSMSBtnText = '重发';
+					$scope.canSendSMS = true;
 					toastr.error(data.ErrorMessage);
 				}
-			});
+			})
 		}
 		return SendSms;
 	}

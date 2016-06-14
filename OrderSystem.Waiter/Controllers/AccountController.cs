@@ -33,7 +33,7 @@ namespace OrderSystem.Waiter.Controllers {
 				return Json(new JsonError("没有权限"));
 			}
 			SigninManager.Signin(staff, true);
-			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"Staff Signin: {staff.Id} ({staff.PhoneNumber})");
+			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"Staff Signin: {staff.Id} (HotelId {staff.HotelId})");
 			return Json(new JsonSuccess());
 		}
 

@@ -108,11 +108,8 @@ namespace OrderSystem.Controllers {
 				GiftMenus = cartAddition.GiftMenus
 			};
 
-			User user = await createOrGetUser(cartAddition.UserId, "Manager");
-			if(user == null) {
-				return Json(new JsonError("创建匿名用户失败"));
-			}
-			addition.UserId = user.Id;
+			User user = await UserManager.FindByIdAsync(cartAddition.UserId);
+			addition.UserId = user?.Id;
 
 			// 创建新订单
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);

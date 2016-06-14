@@ -5,7 +5,7 @@
 				<th>Guid</th>
 				<th>说明</th>
 				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
-					<th></th>
+					<th class="shrink"></th>
 				}
 			</tr>
 			<tr ng-repeat="guid in guids">

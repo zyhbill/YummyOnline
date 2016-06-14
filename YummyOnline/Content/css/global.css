@@ -39,6 +39,16 @@ h6,
 		white-space: nowrap;
 	}
 
+	.table > tbody > tr > td.shrink,
+	.table > tbody > tr > th.shrink,
+	.table > tfoot > tr > td.shrink,
+	.table > tfoot > tr > th.shrink,
+	.table > thead > tr > td.shrink,
+	.table > thead > tr > th.shrink {
+		width: 1px;
+		white-space: nowrap;
+	}
+
 .row.no-padding {
 	margin: 0 -1px;
 }

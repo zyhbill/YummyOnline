@@ -13,7 +13,7 @@
 				<th>用户名</th>
 				<th>注册日期</th>
 				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
-					<th></th>
+					<th class="shrink"></th>
 				}
 			</tr>
 			<tr ng-show="isLoading">

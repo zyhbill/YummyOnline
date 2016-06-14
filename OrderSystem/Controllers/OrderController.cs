@@ -1,15 +1,12 @@
 ﻿using HotelDAO;
 using HotelDAO.Models;
+using Protocal;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
-using YummyOnlineDAO.Identity;
-using YummyOnlineDAO.Models;
-using Protocal;
-using YummyOnlineDAO;
-using System.Collections.Generic;
-using OrderSystem.Models;
-using OrderSystem.Utility;
 using Utility;
+using YummyOnlineDAO;
+using YummyOnlineDAO.Identity;
 
 namespace OrderSystem.Controllers {
 	[RequireHotel]

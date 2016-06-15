@@ -319,17 +319,20 @@ namespace OrderSystem {
 			DinePaidDetail pointsPaidDetail = await ctx.DinePaidDetails.FirstOrDefaultAsync(p => p.Dine.Id == dine.Id && p.PayKind.Type == PayKindType.Points);
 
 			Customer customer = await ctx.Customers.FirstOrDefaultAsync(p => p.Id == dine.UserId);
-
+			// 如果用户不存在或者是匿名用户
+			if(customer == null || await new UserManager().IsInRoleAsync(dine.UserId, Role.Nemo)) {
+				return;
+			}
+			// 如果使用的积分支付
 			if(pointsPaidDetail != null) {
 				HotelConfig config = await ctx.HotelConfigs.FirstOrDefaultAsync();
 				customer.Points -= Convert.ToInt32((double)pointsPaidDetail.Price / config.PointsRatio);
 			}
-			if(!await new UserManager().IsInRoleAsync(dine.UserId, Role.Nemo)) {
-				List<DineMenu> dineMenus = await ctx.DineMenus.Include(p => p.Menu.MenuPrice).Where(p => p.Dine.Id == dine.Id).ToListAsync();
-				dineMenus?.ForEach(m => {
-					customer.Points += m.Menu.MenuPrice.Points * m.Count;
-				});
-			}
+			// 用户点过的菜品增加积分
+			List<DineMenu> dineMenus = await ctx.DineMenus.Include(p => p.Menu.MenuPrice).Where(p => p.Dine.Id == dine.Id).ToListAsync();
+			dineMenus?.ForEach(m => {
+				customer.Points += m.Menu.MenuPrice.Points * m.Count;
+			});
 		}
 
 		public async Task PrintCompleted(string dineId) {

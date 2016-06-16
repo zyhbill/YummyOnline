@@ -15,10 +15,12 @@ namespace OrderSystem.Waiter.Controllers {
 		public async Task<JsonResult> Signin(string signinName, string password) {
 			Staff staff = await StaffManager.FindStaffBySigninName(signinName);
 			if(staff == null) {
+				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"Staff Signin: {signinName} No SigninName, Host: {Request.UserHostAddress}");
 				return Json(new JsonError("没有此登录名"));
 			}
 			if(!await StaffManager.CheckPasswordAsync(staff, password)) {
-				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"Staff Signin: {signinName} {password} Signin Failed");
+				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"Staff Signin: {signinName} Password Error, Host: {Request.UserHostAddress}",
+					$"Password: {password}");
 				return Json(new JsonError("密码不正确"));
 			}
 
@@ -29,11 +31,11 @@ namespace OrderSystem.Waiter.Controllers {
 			CurrHotel = hotel;
 
 			if(!await HotelManager.IsStaffHasSchema(staff.Id, HotelDAO.Models.Schema.ReadWaiterData)) {
-				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"Staff Signin: {signinName} {password} No Authority");
+				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"Staff Signin: {staff.Id} (HotelId {staff.HotelId}) No Authority, Host: {Request.UserHostAddress}");
 				return Json(new JsonError("没有权限"));
 			}
 			SigninManager.Signin(staff, true);
-			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"Staff Signin: {staff.Id} (HotelId {staff.HotelId})");
+			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"Staff Signin: {staff.Id} (HotelId {staff.HotelId}), Host: {Request.UserHostAddress}");
 			return Json(new JsonSuccess());
 		}
 

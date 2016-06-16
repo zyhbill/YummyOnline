@@ -62,11 +62,12 @@ namespace OrderSystem.Controllers {
 		public virtual async Task<JsonResult> Signin(SigninViewModel model) {
 			User user = await UserManager.FindByPhoneNumberAsync(model.PhoneNumber);
 			if(user == null) {
-				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Signin: {model.PhoneNumber} {model.Password} No PhoneNumber");
+				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Signin: {model.PhoneNumber} No PhoneNumber, Host: {Request.UserHostAddress}");
 				return Json(new JsonError("手机未注册"));
 			}
 			if(!await UserManager.CheckPasswordAsync(user, model.Password)) {
-				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Signin: {model.PhoneNumber} {model.Password} Password Error");
+				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Signin: {model.PhoneNumber} Password Error, Host: {Request.UserHostAddress}",
+					$"Password: {model.Password}");
 				return Json(new JsonError("密码不正确"));
 			}
 			if(User.Identity.IsAuthenticated) {
@@ -84,7 +85,7 @@ namespace OrderSystem.Controllers {
 				}
 			}
 			SigninManager.Signin(user, true);
-			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"User Signin: {user.Id} ({user.PhoneNumber})");
+			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"User Signin: {user.Id} ({user.PhoneNumber}), Host: {Request.UserHostAddress}");
 			return Json(new JsonSuccess());
 		}
 		#endregion

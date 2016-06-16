@@ -159,7 +159,7 @@
     <Content Include="Views\Order\_ViewPayment.cshtml" />
     <Content Include="Views\Shared\_LayoutGlobal.cshtml" />
     <Content Include="Views\Shared\_PartialLoading.cshtml" />
-    <None Include="Properties\PublishProfiles\OrderSystem.Waiter.pubxml" />
+    <None Include="Properties\PublishProfiles\LocalConfig.pubxml" />
     <Content Include="Views\Error\HttpError404.cshtml" />
     <Content Include="Views\Error\HttpError500.cshtml" />
     <Content Include="Views\Error\HotelUnavailable.cshtml" />

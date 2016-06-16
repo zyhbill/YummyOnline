@@ -274,7 +274,7 @@
     <Content Include="Views\Log\_ViewHotel.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\PublishProfiles\Config.pubxml" />
+    <None Include="Properties\PublishProfiles\LocalConfig.pubxml" />
     <Content Include="Views\Log\_ViewYummyOnline.cshtml" />
     <Content Include="Views\Server\Index.cshtml" />
     <Content Include="Views\Log\_ViewSpecification.cshtml" />

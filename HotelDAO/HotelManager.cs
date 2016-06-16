@@ -10,6 +10,10 @@ namespace HotelDAO {
 	public partial class HotelManager : BaseHotelManager {
 		public HotelManager(string connString) : base(connString) { }
 
+
+		public async Task<Customer> GetCustomer(string userId) {
+			return await ctx.Customers.Include(p => p.VipLevel).FirstOrDefaultAsync(p => p.Id == userId);
+		}
 		public async Task<Customer> GetOrCreateCustomer(string userId) {
 			Customer customer = await ctx.Customers.FirstOrDefaultAsync(p => p.Id == userId);
 			if(customer == null) {

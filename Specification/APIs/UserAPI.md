@@ -1,11 +1,14 @@
 ### 用户通用API域名
 ordersystem.yummyonline.net
 
+### Updates
+- v0.1.0 用户通用API脱离原有OrderSystem API, 全新API, Controller为GlobalAccount
+
 
 ### 发送用户注册短信
 #### POST
 #### URL
-	/Account/SendSMS
+	/GlobalAccount/SendSMS
 #### Parameters
 ```json
 {
@@ -26,7 +29,7 @@ ordersystem.yummyonline.net
 ### 用户注册
 #### POST
 #### URL
-	/Account/Signup
+	/GlobalAccount/Signup
 #### Parameters
 ```json
 {
@@ -46,26 +49,15 @@ ordersystem.yummyonline.net
 
 * * *
 
-### 获取用户登录图片验证码
-#### POST
-#### URL
-	/Account/CodeImage
-#### Parameters
-#### Results
-`image/jpeg`图片文件
-有些饭店可能不需要图片验证码
-* * *
-
 ### 用户登录
 #### POST
 #### URL
-	/Account/Signin
+	/GlobalAccount/Signin
 #### Parameters
 ```json
 {
 	"PhoneNumber": <string 手机号>,
 	"Password": <string 密码>,
-	"CodeImg": <string 图片验证码>,
 	"RememberMe": <bool 是否记住>
 }
 ```
@@ -76,13 +68,12 @@ ordersystem.yummyonline.net
 	"ErrorMessage": <string>
 }
 ```
-不需要图片验证码的饭店不需要传递`CodeImg`参数
 * * *
 
 ### 用户登出
 #### POST
 #### URL
-	/Account/Signout
+	/GlobalAccount/Signout
 #### Parameters
 #### Results
 ```json
@@ -96,7 +87,7 @@ ordersystem.yummyonline.net
 ### 发送忘记密码短信
 #### POST
 #### URL
-	/Account/SendForgetSMS
+	/GlobalAccount/SendForgetSMS
 #### Parameters
 ```json
 {
@@ -116,7 +107,7 @@ ordersystem.yummyonline.net
 ### 发送忘记密码短信
 #### POST
 #### URL
-	/Account/Forget
+	/GlobalAccount/Forget
 #### Parameters
 ```json
 {
@@ -139,7 +130,7 @@ ordersystem.yummyonline.net
 ### 验证用户登录并获取用户所有信息
 #### POST
 #### URL
-	/Account/IsAuthenticated
+	/GlobalAccount/IsAuthenticated
 #### Parameters
 #### Results
 ```json
@@ -150,11 +141,22 @@ ordersystem.yummyonline.net
 		"Email": <string>,
 		"PhoneNumber": <string 手机号>,
 		"UserName": <string 用户名>,
-		"Points": <string 该饭店的积分>,
-		"VipLevelId": <string 该饭店的会员等级>,
-		"DinesCountId": <int 该饭店点过的点单数量>,
+		"CustomerInfos": [{
+			"Hotel": {
+				"Id": <int 饭店编号>,
+				"Name": <string 饭店名>
+			},
+			"Points": <string 该饭店的积分>,
+			"VipLevel": {
+				"Id": <int 会员等级编号>,
+				"Name": <string 会员等级名>
+			},
+			"DinesCountId": <int 该饭店点过的点单数量>,
+		}, ...]
 	}
 }
 ```
 如`Succeeded`为false, `Data`为`null`
+如会员没有去过某饭店, 则`CustomerInfos`中没有该饭店信息
+如会员不是该饭店会员, 则`CustomerInfos`中该饭店的`VipLevel`为`null`
 * * *

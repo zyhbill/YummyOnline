@@ -1,6 +1,8 @@
 ### 服务员API域名
 waiter.yummyonline.net
 
+### Updates
+- v0.1.0 增加`交接班`与`切换菜品状态`两个Api
 
 ### 服务员登录
 #### POST

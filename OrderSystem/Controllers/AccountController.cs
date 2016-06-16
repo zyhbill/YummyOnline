@@ -7,29 +7,10 @@ using System.Web.Mvc;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
 using Protocal;
+using System.Collections.Generic;
 
 namespace OrderSystem.Controllers {
-	[RequireHotel]
-	[HotelAvailable]
-	public class AccountController : BaseOrderSystemController {
-		// GET: Account
-		public ActionResult Index() {
-			return View();
-		}
-		public ActionResult _ViewUser() {
-			return View();
-		}
-		public ActionResult _ViewSignup() {
-			return View();
-		}
-		public async Task<ActionResult> _ViewSignin() {
-			ViewBag.NeedCodeImg = (await HotelManager.GetHotelConfig()).NeedCodeImg;
-			return View();
-		}
-		public ActionResult _ViewForget() {
-			return View();
-		}
-
+	public class GlobalAccountController : BaseOrderSystemController {
 		#region 用户注册
 		public async Task<JsonResult> SendSMS(string phoneNumber) {
 			if(await UserManager.IsPhoneNumberDuplicated(phoneNumber)) {
@@ -78,16 +59,7 @@ namespace OrderSystem.Controllers {
 		#endregion
 
 		#region 用户登录
-		public FileContentResult CodeImage() {
-			string code = CodeImg.CreateRandomCode();
-			Session["CodeImg"] = code.ToLower();
-			return File(CodeImg.CreateCheckCodeImage(code), "image/jpeg");
-		}
-		public async Task<JsonResult> Signin(SigninViewModel model) {
-			bool needCodeImg = (await HotelManager.GetHotelConfig()).NeedCodeImg;
-			if(needCodeImg && (Session["CodeImg"] == null || model.CodeImg.ToLower() != Session["CodeImg"].ToString())) {
-				return Json(new JsonError("验证码不正确"));
-			}
+		public virtual async Task<JsonResult> Signin(SigninViewModel model) {
 			User user = await UserManager.FindByPhoneNumberAsync(model.PhoneNumber);
 			if(user == null) {
 				await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Signin: {model.PhoneNumber} {model.Password} No PhoneNumber");
@@ -100,7 +72,12 @@ namespace OrderSystem.Controllers {
 			if(User.Identity.IsAuthenticated) {
 				User oldUser = await UserManager.FindByIdAsync(User.Identity.GetUserId());
 				if(oldUser != null && await UserManager.IsInRoleAsync(oldUser.Id, Role.Nemo)) {
-					await HotelManager.TransferOrders(oldUser.Id, user.Id);
+					// 原来为匿名用户, 每个饭店该匿名用户点过的订单转移到登录的用户帐号下
+					List<Hotel> hotels = await YummyOnlineManager.GetHotels();
+					foreach(Hotel h in hotels) {
+						HotelManager hotelManager = new HotelManager(h.ConnectionString);
+						await hotelManager.TransferOrders(oldUser.Id, user.Id);
+					}
 					await UserManager.DeleteAsync(oldUser);
 
 					await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Transfer: {oldUser.Id} -> {user.Id}");
@@ -182,7 +159,86 @@ namespace OrderSystem.Controllers {
 			return Json(new JsonSuccess(await getCustomerInfo()));
 		}
 
-		private async Task<dynamic> getCustomerInfo() {
+		class CustomerInfo {
+			public dynamic Hotel { get; set; }
+			public int Points { get; set; }
+			public dynamic VipLevel { get; set; }
+			public int DinesCount { get; set; }
+		}
+		protected virtual async Task<dynamic> getCustomerInfo() {
+			string userId = User.Identity.GetUserId();
+			User user = await UserManager.FindByIdAsync(userId);
+			if(user == null) {
+				return null;
+			}
+
+			List<CustomerInfo> customerInfos = new List<CustomerInfo>();
+			List<Hotel> hotels = await YummyOnlineManager.GetHotels();
+			foreach(Hotel h in hotels) {
+				HotelManager hotelManager = new HotelManager(h.ConnectionString);
+				HotelDAO.Models.Customer customer = await hotelManager.GetCustomer(userId);
+				if(customer == null)
+					continue;
+
+				customerInfos.Add(new CustomerInfo {
+					Hotel = new {
+						h.Id,
+						h.Name
+					},
+					Points = customer.Points,
+					VipLevel = customer.VipLevel == null ? null : new {
+						customer.VipLevel.Id,
+						customer.VipLevel.Name
+					},
+					DinesCount = await hotelManager.GetHistoryDinesCount(userId)
+				});
+			}
+
+			return new {
+				user.Id,
+				user.Email,
+				user.PhoneNumber,
+				user.UserName,
+				CustomerInfos = customerInfos
+			};
+		}
+	}
+
+	[RequireHotel]
+	[HotelAvailable]
+	public class AccountController : GlobalAccountController {
+		// GET: Account
+		public ActionResult Index() {
+			return View();
+		}
+		public ActionResult _ViewUser() {
+			return View();
+		}
+		public ActionResult _ViewSignup() {
+			return View();
+		}
+		public async Task<ActionResult> _ViewSignin() {
+			ViewBag.NeedCodeImg = (await HotelManager.GetHotelConfig()).NeedCodeImg;
+			return View();
+		}
+		public ActionResult _ViewForget() {
+			return View();
+		}
+
+		public FileContentResult CodeImage() {
+			string code = CodeImg.CreateRandomCode();
+			Session["CodeImg"] = code.ToLower();
+			return File(CodeImg.CreateCheckCodeImage(code), "image/jpeg");
+		}
+		public override async Task<JsonResult> Signin(SigninViewModel model) {
+			bool needCodeImg = (await HotelManager.GetHotelConfig()).NeedCodeImg;
+			if(needCodeImg && (Session["CodeImg"] == null || model.CodeImg.ToLower() != Session["CodeImg"].ToString())) {
+				return Json(new JsonError("验证码不正确"));
+			}
+			return await base.Signin(model);
+		}
+
+		protected override async Task<dynamic> getCustomerInfo() {
 			string userId = User.Identity.GetUserId();
 			User user = await UserManager.FindByIdAsync(userId);
 			if(user == null) {

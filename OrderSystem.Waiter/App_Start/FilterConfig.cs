@@ -5,7 +5,7 @@ using Utility;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
 
-namespace YummyOnline {
+namespace OrderSystem.Waiter {
 	public class AppHandleErrorAttribute : HandleErrorAttribute {
 		public override void OnException(ExceptionContext filterContext) {
 			Exception exception = filterContext.Exception;

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
+using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
@@ -23,6 +24,7 @@ namespace OrderSystem {
 				await manager.RecordLog(Log.LogProgram.OrderSystem, Log.LogLevel.Error, e.Message);
 			});
 
+			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 		}
@@ -48,30 +50,5 @@ namespace OrderSystem {
 			var id = new FormsIdentity(authTicket);
 			Context.User = new GenericPrincipal(id, roleStrs);
 		}
-
-#if !DEBUG
-		protected void Application_Error(object sender, EventArgs e) {
-			Exception exception = Server.GetLastError();
-
-			string action = "HttpError500";
-
-			HttpException httpException = exception as HttpException;
-			if(httpException != null) {
-				switch(httpException.GetHttpCode()) {
-					case 404:
-						action = "HttpError404";
-						break;
-				}
-			}
-
-			AsyncInline.Run(() => new YummyOnlineManager().RecordLog(Log.LogProgram.OrderSystem, Log.LogLevel.Error,
-				$"{action}: Host: {Request.UserHostAddress}, RequestUrl: {Request.RawUrl}",
-				$"PostData: {HttpPost.GetPostData(Request)}, Exception: {exception}"));
-
-			Response.Clear();
-			Server.ClearError();
-			Response.Redirect($"~/Error/{action}", true);
-		}
-#endif
 	}
 }

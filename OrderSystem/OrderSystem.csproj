@@ -173,6 +173,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="Utility\SMSSender.cs" />
     <Compile Include="Utility\CodeImg.cs" />
     <Compile Include="App_Start\OrderManager.cs" />

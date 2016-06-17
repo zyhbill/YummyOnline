@@ -13,6 +13,12 @@ namespace YummyOnline.Controllers {
 		public ActionResult Index() {
 			return View();
 		}
+		public ActionResult _ViewHotel() {
+			return View();
+		}
+		public ActionResult _ViewDine() {
+			return View();
+		}
 
 		public async Task<JsonResult> GetHotelNames() {
 			List<Hotel> hotels = await YummyOnlineManager.GetHotels();
@@ -83,6 +89,19 @@ namespace YummyOnline.Controllers {
 			HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(newHotel.AdminConnectionString);
 			await hotelManager.InitializeHotel(hotelId, staffId);
 			return Json(new JsonSuccess());
+		}
+
+		public async Task<JsonResult> GetDines(int hotelId, List<string> dineIds) {
+			Hotel hotel = await YummyOnlineManager.GetHotelById(hotelId);
+
+			List<dynamic> dines = new List<dynamic>();
+			foreach(string dineId in dineIds) {
+				var dine = await new HotelDAO.HotelManagerForWaiter(hotel.ConnectionString).GetDineById(dineId);
+				if(dine != null)
+					dines.Add(dine);
+			}
+
+			return Json(dines);
 		}
 	}
 }

@@ -58,4 +58,31 @@
 			})
 		}
 	}
-]);
+]).controller('DineCtrl', [
+	'$scope',
+	'$http',
+	'layout',
+	function ($scope, $http, $layout) {
+		$layout.Set('订单查询', '');
+
+		$scope.dines = [];
+		$http.post('/Hotel/GetHotelNames').then(function (response) {
+			$scope.hotels = response.data;
+			$scope.hotelId = $scope.hotels[0].Id;
+		});
+
+		$scope.search = function () {
+			$scope.isLoading = true;
+			var dineIds = $scope.dineIds.split(/\s+/);
+			$http.post('/Hotel/GetDines', {
+				HotelId: $scope.hotelId,
+				DineIds: dineIds
+			}).then(function (response) {
+				$scope.dines = response.data;
+				$scope.isLoading = false;
+			}, function (response) {
+				$scope.isLoading = false;
+			});
+		}
+	}
+])

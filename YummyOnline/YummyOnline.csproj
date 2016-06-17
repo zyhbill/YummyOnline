@@ -192,6 +192,7 @@
     <Content Include="Scripts\DashBoard\controller.js" />
     <Content Include="Scripts\DashBoard\directives.js" />
     <Content Include="Scripts\DashBoard\route.js" />
+    <Content Include="Scripts\Hotel\route.js" />
     <Content Include="Scripts\lib\angular-animate.min.js" />
     <Content Include="Scripts\directives.js" />
     <Content Include="Scripts\Layout\factories.js" />
@@ -297,6 +298,8 @@
     <Content Include="Views\Hotel\Index.cshtml" />
     <Content Include="Views\Users\_PartialDines.cshtml" />
     <Content Include="Views\Database\_ViewExecution.cshtml" />
+    <Content Include="Views\Hotel\_ViewHotel.cshtml" />
+    <Content Include="Views\Hotel\_ViewDine.cshtml" />
     <None Include="Web.CompanyServer.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

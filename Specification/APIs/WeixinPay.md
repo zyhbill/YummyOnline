@@ -1,24 +1,3 @@
-# DesCryptography
-Des加密解密包
-
-## Install
-- 进入 `工具` - `NuGet 包管理器` - `程序包管理器设置` - `程序包源`
-- 新增程序包源 `http://nuget.yummyonline.net/nuget` 名称 `YummyOnline`
-- 进入程序包管理界面, 程序包源选择 `YummyOnline`, 即可搜索到 `DesCryptography`
-- 选择要安装的项目安装即可
-
-## Specification
-
-### `class Cryptography.DesCryptography`
-Des加密解密类
-#### `static string DesEncrypt(string strText)`
-加密
-参数(明文)
-
-#### `static string DesDecrypt(string strText)`
-解密
-参数(密文)
-
 # WeixinPay
 微信支付流程
 

@@ -1,10 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace YummyOnline.Utility {
+namespace TestApplication {
+	class Program {
+		static void Main(string[] args) {
+			Console.WriteLine(DriveSpace.GetHardDiskFreeSpace());
+			Console.WriteLine(DriveSpace.GetHardDiskSpace());
+			Console.Read();
+		}
+	}
+
 	public class DriveSpace {
 		/// <summary>
 		/// 获取驱动器空间大小

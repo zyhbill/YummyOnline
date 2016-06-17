@@ -30,6 +30,11 @@ namespace YummyOnlineDAO.Models {
 		public int ManagementWebSocketPort { get; set; }
 		[Required]
 		public string Token { get; set; }
+
+		[Required]
+		public string DefaultConnectionString { get; set; }
+		[Required]
+		public string DefaultAdminConnectionString { get; set; }
 	}
 
 	public class NewDineInformClientGuid {

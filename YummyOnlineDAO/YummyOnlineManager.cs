@@ -142,13 +142,10 @@ namespace YummyOnlineDAO {
 
 		public async Task CreateHotel(int hotelId, string databaseName) {
 			// 总数据库中增加连接字符串
-#if DEBUG
-			string connectionString = $"Server=FISHER-PC; Database={databaseName}; Integrated Security=True";
-			string adminConnectionString = $"Server=FISHER-PC; Database={databaseName}; Integrated Security=True";
-#else
-			string connectionString = $"Data Source=www.yummyonline.net;Network Library=DBMSSOCN;Initial Catalog={databaseName};User ID=RemoteUser;Password=*Rbr%K!p";
-			string adminConnectionString = $"Data Source=www.yummyonline.net;Network Library=DBMSSOCN;Initial Catalog={databaseName};User ID=sa;Password=Ll&5N&^kVFxvbyol";
-#endif
+
+			SystemConfig config = await GetSystemConfig();
+			string connectionString = config.DefaultConnectionString.Replace("@@databaseName", databaseName);
+			string adminConnectionString = config.DefaultAdminConnectionString.Replace("@@databaseName", databaseName);
 			Hotel hotel = await ctx.Hotels.FirstOrDefaultAsync(p => p.Id == hotelId);
 			hotel.ConnectionString = connectionString;
 			hotel.AdminConnectionString = adminConnectionString;

@@ -274,7 +274,8 @@
     <Content Include="Views\Log\_ViewHotel.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\PublishProfiles\LocalConfig.pubxml" />
+    <None Include="Properties\PublishProfiles\CompanyServer.pubxml" />
+    <None Include="Properties\PublishProfiles\LocalRelease.pubxml" />
     <Content Include="Views\Log\_ViewYummyOnline.cshtml" />
     <Content Include="Views\Server\Index.cshtml" />
     <Content Include="Views\Log\_ViewSpecification.cshtml" />
@@ -296,10 +297,22 @@
     <Content Include="Views\Hotel\Index.cshtml" />
     <Content Include="Views\Users\_PartialDines.cshtml" />
     <Content Include="Views\Database\_ViewExecution.cshtml" />
+    <None Include="Web.CompanyServer.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CompanyServer|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />

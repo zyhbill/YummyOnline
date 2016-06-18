@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
 using Protocal;
+using System;
 
 namespace AutoPrinter {
 	class DinePrinter {
@@ -26,16 +27,16 @@ namespace AutoPrinter {
 		public void Print() {
 			PrintDocument printer = new PrintDocument();
 
-			printer.DefaultPageSettings.PaperSize = new PaperSize("Custom", PrinterGraphics.PaperWidth, 500);
+			printer.DefaultPageSettings.PaperSize = new PaperSize("Custom", PrinterGraphics.PaperWidth, 1000);
 			PrintPageEventHandler printHandler = null;
 
 			foreach(PrintType type in printTypes) {
 				switch(type) {
 					case PrintType.Recipt:
-						if(protocal.Dine.Desk.Area.DepartmentRecipt?.Printer == null) {
+						if(protocal.Dine.Desk.ReciptPrinter == null) {
 							break;
 						}
-						printer.PrinterSettings.PrinterName = protocal.Dine.Desk.Area.DepartmentRecipt.Printer.Name;
+						printer.PrinterSettings.PrinterName = protocal.Dine.Desk.ReciptPrinter.Name;
 						printHandler = (sender, e) => {
 							printRecipt(e.Graphics);
 						};
@@ -44,10 +45,10 @@ namespace AutoPrinter {
 						printer.PrintPage -= printHandler;
 						break;
 					case PrintType.ServeOrder:
-						if(protocal.Dine.Desk.Area.DepartmentServe?.Printer == null) {
+						if(protocal.Dine.Desk.ServePrinter == null) {
 							break;
 						}
-						printer.PrinterSettings.PrinterName = protocal.Dine.Desk.Area.DepartmentServe.Printer.Name;
+						printer.PrinterSettings.PrinterName = protocal.Dine.Desk.ServePrinter.Name;
 						printHandler = (sender, e) => {
 							printServeOrder(e.Graphics);
 						};
@@ -56,24 +57,24 @@ namespace AutoPrinter {
 						printer.PrintPage -= printHandler;
 						break;
 					case PrintType.KitchenOrder:
-						DineMenu currDineMenu = null;
+						DineForPrintingProtocal.DineMenu currDineMenu = null;
 						DineForPrintingProtocal.SetMealMenu currSetMealMenu = null;
 
 						printHandler = (sender, e) => {
 							printKitchenOrder(e.Graphics, currDineMenu, currSetMealMenu);
 						};
 						printer.PrintPage += printHandler;
-						foreach(DineMenu dineMenu in protocal.Dine.DineMenus) {
-							if(dineMenu.Menu.Department?.Printer == null) {
+						foreach(DineForPrintingProtocal.DineMenu dineMenu in protocal.Dine.DineMenus) {
+							if(dineMenu.Menu.Printer == null) {
 								continue;
 							}
-							printer.PrinterSettings.PrinterName = dineMenu.Menu.Department.Printer.Name;
+							printer.PrinterSettings.PrinterName = dineMenu.Menu.Printer.Name;
 							currDineMenu = dineMenu;
 							if(!dineMenu.Menu.IsSetMeal) {
 								printer.Print();
 							}
 							else {
-								foreach(DineForPrintingProtocal.SetMealMenu setMealMenu in protocal.SetMeals[dineMenu.Menu.Id]) {
+								foreach(DineForPrintingProtocal.SetMealMenu setMealMenu in protocal.SetMeals.First(p => p.MenuSetId == dineMenu.Menu.Id).Menus) {
 									currSetMealMenu = setMealMenu;
 									printer.Print();
 									currSetMealMenu = null;
@@ -97,8 +98,8 @@ namespace AutoPrinter {
 			printer.DrawStringLine($"收据", fontSizeReciptSmall, align: StringAlignment.Center);
 			printer.DrawSpacing(5);
 
-			printGrid55(printer, new string[] { $"单号: {protocal.Dine.Id}", $"时间: {protocal.Dine.BeginTime.ToString("M-d hh:mm")}" }, fontSizeRecipt);
-			printGrid55(printer, new string[] { $"顾客: {protocal.User.Id}", $"服务员: {protocal.Dine.WaiterId}" }, fontSizeRecipt);
+			printGrid55(printer, new string[] { $"单号: {protocal.Dine.Id}", $"时间: {protocal.Dine.BeginTime.ToString("M-d HH:mm")}" }, fontSizeRecipt);
+			printGrid55(printer, new string[] { $"顾客: {protocal.User.Id}", $"服务员: {protocal.Dine.Waiter.Name}" }, fontSizeRecipt);
 			printer.DrawStringLine($"餐桌: {protocal.Dine.Desk.Name}", fontSizeRecipt);
 
 			printHr(printer);
@@ -107,13 +108,13 @@ namespace AutoPrinter {
 
 			printHr(printer);
 
-			foreach(DineMenu dineMenu in protocal.Dine.DineMenus) {
+			foreach(DineForPrintingProtocal.DineMenu dineMenu in protocal.Dine.DineMenus) {
 				// 打印具体菜品信息
 				printGrid5122(printer, new string[] { dineMenu.Menu.Name, dineMenu.Count.ToString(), dineMenu.OriPrice.ToString(), dineMenu.Price.ToString() }, fontSizeRecipt);
 
 				// 如果菜品为套餐，则打印套餐包含的具体菜品信息
 				if(dineMenu.Menu.IsSetMeal) {
-					List<DineForPrintingProtocal.SetMealMenu> setMealMenus = protocal.SetMeals[dineMenu.Menu.Id];
+					List<DineForPrintingProtocal.SetMealMenu> setMealMenus = protocal.SetMeals.First(p => p.MenuSetId == dineMenu.Menu.Id).Menus;
 					for(int i = 0; i < setMealMenus.Count; i++) {
 						char tab = '├';
 						if(i == setMealMenus.Count - 1) {
@@ -149,7 +150,7 @@ namespace AutoPrinter {
 
 			string paidWay = protocal.Dine.IsOnline ? "线上支付" : "线下支付";
 			printer.DrawStringLine($"支付方式: {paidWay}", fontSizeRecipt);
-			foreach(DinePaidDetail dinePaidDetail in protocal.Dine.DinePaidDetails) {
+			foreach(DineForPrintingProtocal.DinePaidDetail dinePaidDetail in protocal.Dine.DinePaidDetails) {
 				printer.DrawStringLine($"{dinePaidDetail.PayKind.Name}: ￥{dinePaidDetail.Price}", fontSizeRecipt);
 			}
 		}
@@ -159,8 +160,8 @@ namespace AutoPrinter {
 		private void printServeOrder(Graphics g) {
 			PrinterGraphics printer = new PrinterGraphics(g);
 
-			printGrid55(printer, new string[] { $"单号: {protocal.Dine.Id}", $"时间: {protocal.Dine.BeginTime.ToString("M-d hh:mm")}" }, fontSizeServeOrder);
-			printGrid55(printer, new string[] { $"顾客: {protocal.User.Id}", $"服务员: {protocal.Dine.WaiterId}" }, fontSizeServeOrder);
+			printGrid55(printer, new string[] { $"单号: {protocal.Dine.Id}", $"时间: {protocal.Dine.BeginTime.ToString("M-d HH:mm")}" }, fontSizeServeOrder);
+			printGrid55(printer, new string[] { $"顾客: {protocal.User.Id}", $"服务员: {protocal.Dine.Waiter.Name}" }, fontSizeServeOrder);
 			printer.DrawStringLine($"餐桌: {protocal.Dine.Desk.Name}", fontSizeServeOrder);
 
 			printHr(printer);
@@ -169,13 +170,13 @@ namespace AutoPrinter {
 
 			printHr(printer);
 
-			foreach(DineMenu dineMenu in protocal.Dine.DineMenus) {
+			foreach(DineForPrintingProtocal.DineMenu dineMenu in protocal.Dine.DineMenus) {
 				// 打印具体菜品信息
 				printGrid82(printer, new string[] { dineMenu.Menu.Name, dineMenu.Count.ToString() }, fontSizeServeOrder);
 
 				// 如果菜品为套餐，则打印套餐包含的具体菜品信息
 				if(dineMenu.Menu.IsSetMeal) {
-					List<DineForPrintingProtocal.SetMealMenu> setMealMenus = protocal.SetMeals[dineMenu.Menu.Id];
+					List<DineForPrintingProtocal.SetMealMenu> setMealMenus = protocal.SetMeals.First(p => p.MenuSetId == dineMenu.Menu.Id).Menus;
 					for(int i = 0; i < setMealMenus.Count; i++) {
 						char tab = '├';
 						if(i == setMealMenus.Count - 1) {
@@ -200,9 +201,9 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 打印厨房单
 		/// </summary>
-		private void printKitchenOrder(Graphics g, DineMenu dineMenu, DineForPrintingProtocal.SetMealMenu setMealMenu) {
+		private void printKitchenOrder(Graphics g, DineForPrintingProtocal.DineMenu dineMenu, DineForPrintingProtocal.SetMealMenu setMealMenu) {
 			PrinterGraphics printer = new PrinterGraphics(g);
-			printGrid55(printer, new string[] { $"单号: {protocal.Dine.Id}", $"时间: {protocal.Dine.BeginTime.ToString("M-d hh:mm")}" }, fontSizeKitchenOrder);
+			printGrid55(printer, new string[] { $"单号: {protocal.Dine.Id}", $"时间: {((DateTime)protocal.Dine.BeginTime).ToString("M-d HH:mm")}" }, fontSizeKitchenOrder);
 			printer.DrawStringLine($"餐桌: {protocal.Dine.Desk.Name}", fontSizeKitchenOrder);
 
 			printGrid82(printer, new string[] { dineMenu.Menu.Name, dineMenu.Count.ToString() }, fontSizeKitchenOrder);
@@ -218,7 +219,7 @@ namespace AutoPrinter {
 				if(i == dineMenu.Remarks.Count - 1) {
 					tab = '└';
 				}
-				printGrid82(printer, new string[] { $"{tab} {remarks[i].Name}", null, }, fontSizeServeOrder);
+				printGrid82(printer, new string[] { $"  {tab} {remarks[i].Name}", null, }, fontSizeServeOrder);
 			}
 		}
 

@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
+using System.Reflection;
 
 namespace Utility {
-	public class DynamicsCombination {
+	public static  class DynamicsCombination {
 		public static dynamic CombineDynamics(object item1, object item2) {
 			IDictionary<string, object> result = new ExpandoObject();
 

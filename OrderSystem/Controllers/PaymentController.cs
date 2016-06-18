@@ -15,7 +15,7 @@ using YummyOnlineDAO.Models;
 
 namespace OrderSystem.Controllers {
 	public partial class PaymentController : BaseOrderSystemController {
-		
+
 		private OrderManager _orderManager;
 		public OrderManager OrderManager {
 			get {
@@ -126,7 +126,7 @@ namespace OrderSystem.Controllers {
 
 			await newDineInform(dine, "Manager");
 
-			return Json(new JsonSuccess());
+			return Json(new JsonSuccess(dine.Id));
 		}
 
 
@@ -205,7 +205,7 @@ namespace OrderSystem.Controllers {
 				NewDineInformTcpClient.SendRequestPrintDine(CurrHotel.Id, dineId);
 			}
 		}
-		
+
 		/// <summary>
 		/// 获取在线支付的跳转地址
 		/// </summary>

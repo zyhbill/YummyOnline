@@ -23,6 +23,8 @@ namespace HotelDAO.Models {
 		public TimeSpan WorkTimeTo { get; set; }
 
 		public ICollection<StaffRole> StaffRoles { get; set; }
+
+		public ICollection<Dine> Dines { get; set; }
 	}
 	/// <summary>
 	/// 职员角色

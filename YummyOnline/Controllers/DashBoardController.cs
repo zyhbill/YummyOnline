@@ -53,7 +53,7 @@ namespace YummyOnline.Controllers {
 				if(h.ConnectionString == null)
 					continue;
 				List<dynamic> dailyCount = new List<dynamic>();
-				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+				HotelDAO.HotelManager hotelManager = new HotelDAO.HotelManager(h.ConnectionString);
 				for(int i = -30; i <= 0; i++) {
 					DateTime t = DateTime.Now.AddDays(i);
 					int count = await hotelManager.GetDineCount(t);
@@ -78,7 +78,7 @@ namespace YummyOnline.Controllers {
 			List<dynamic> list = new List<dynamic>();
 			List<Hotel> hotels = await YummyOnlineManager.GetHotels();
 			foreach(Hotel h in hotels) {
-				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+				HotelDAO.HotelManager hotelManager = new HotelDAO.HotelManager(h.ConnectionString);
 
 				list.Add(new {
 					HotelName = h.Name,

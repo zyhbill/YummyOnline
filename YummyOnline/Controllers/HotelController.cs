@@ -86,7 +86,7 @@ namespace YummyOnline.Controllers {
 
 			// 新数据库初始化
 			string staffId = await YummyOnlineManager.GetFirstStaffId(hotelId);
-			HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(newHotel.AdminConnectionString);
+			HotelDAO.HotelManager hotelManager = new HotelDAO.HotelManager(newHotel.AdminConnectionString);
 			await hotelManager.InitializeHotel(hotelId, staffId);
 			return Json(new JsonSuccess());
 		}
@@ -96,7 +96,7 @@ namespace YummyOnline.Controllers {
 
 			List<dynamic> dines = new List<dynamic>();
 			foreach(string dineId in dineIds) {
-				var dine = await new HotelDAO.HotelManagerForWaiter(hotel.ConnectionString).GetDineById(dineId);
+				var dine = await new HotelDAO.HotelManager(hotel.ConnectionString).GetDineById(dineId);
 				if(dine != null)
 					dines.Add(dine);
 			}

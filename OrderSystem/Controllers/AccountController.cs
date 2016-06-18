@@ -77,7 +77,7 @@ namespace OrderSystem.Controllers {
 					List<Hotel> hotels = await YummyOnlineManager.GetHotels();
 					foreach(Hotel h in hotels) {
 						HotelManager hotelManager = new HotelManager(h.ConnectionString);
-						await hotelManager.TransferOrders(oldUser.Id, user.Id);
+						await hotelManager.TransferDines(oldUser.Id, user.Id);
 					}
 					await UserManager.DeleteAsync(oldUser);
 

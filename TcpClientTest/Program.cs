@@ -10,9 +10,7 @@ using Protocal;
 
 namespace TcpClientTest {
 	class Program {
-		static string ip = "127.0.0.1";
-		static TcpManager tcp = null;
-		static System.Net.Sockets.TcpClient client = null;
+		static string ip = "122.114.96.157";
 		static void Main(string[] args) {
 			TcpClient client = new TcpClient(IPAddress.Parse(ip), 18000, new NewDineInformClientConnectProtocal("{ec3ad9d8-1c48-420d-a33e-c2f83b761738}"));
 
@@ -31,7 +29,9 @@ namespace TcpClientTest {
 			client.Start();
 
 			Console.Read();
-			client.Send(new NewDineInformProtocal(1, "testid", true));
+			client.Send(new NewDineInformProtocal(1, "testid", true),()=> {
+				Console.WriteLine("@");
+			});
 			Console.WriteLine("1");
 			while(true) {
 				Console.Read();

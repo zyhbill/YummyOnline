@@ -82,7 +82,7 @@ namespace OrderSystem.Waiter.Controllers {
 	// PaymentController辅助函数
 	public partial class PaymentController {
 		private async Task<FunctionResult> waiterPay(Cart cart, WaiterCartAddition cartAddition, string via) {
-			HotelManagerForWaiter hotelManager = new HotelManagerForWaiter(CurrHotel.ConnectionString);
+			HotelManager hotelManager = new HotelManager(CurrHotel.ConnectionString);
 			cart.PayKindId = await hotelManager.GetOtherPayKindId();
 			CartAddition addition = new CartAddition {
 				WaiterId = User.Identity.GetUserId(),

@@ -23,6 +23,8 @@ namespace YummyOnlineDAO.Models {
 		[Required]
 		public string TcpServerDir { get; set; }
 		[Required]
+		public string SpecificationDir { get; set; }
+		[Required]
 		public string OrderSystemUrl { get; set; }
 		[Required]
 		public string ManagementUrl { get; set; }

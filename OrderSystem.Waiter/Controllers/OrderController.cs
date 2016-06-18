@@ -40,8 +40,8 @@ namespace OrderSystem.Waiter.Controllers {
 			var tTimeDiscounts = new HotelManager(connStr).GetTimeDiscounts();
 			var tVipDiscounts = new HotelManager(connStr).GetVipDiscounts();
 
-			var tPayKind = new HotelManagerForWaiter(connStr).GetPayKind();
-			var tDesks = new HotelManagerForWaiter(connStr).GetDesks();
+			var tPayKind = new HotelManager(connStr).GetOtherPayKind();
+			var tDesks = new HotelManager(connStr).GetDesks();
 
 			var result = new {
 				MenuClasses = await tMenuClasses,
@@ -68,10 +68,10 @@ namespace OrderSystem.Waiter.Controllers {
 		public async Task<JsonResult> GetHotelInfos() {
 			string connStr = CurrHotel.ConnectionString;
 
-			var tAreas = new HotelManagerForWaiter(connStr).GetAreas();
-			var tPayKinds = new HotelManagerForWaiter(connStr).GetPayKinds();
-			var tRemarks = new HotelManagerForWaiter(connStr).GetRemarks();
-			var tStaffs = new HotelManagerForWaiter(connStr).GetStaffs();
+			var tAreas = new HotelManager(connStr).GetAreas();
+			var tPayKinds = new HotelManager(connStr).GetPayKinds(new List<PayKindType> { PayKindType.Points, PayKindType.Offline, PayKindType.Online, PayKindType.Cash });
+			var tRemarks = new HotelManager(connStr).GetRemarks();
+			var tStaffs = new HotelManager(connStr).GetStaffs();
 			var tSellOutMenus = new HotelManager(connStr).GetMenus(MenuStatus.SellOut);
 
 			var result = new {
@@ -85,7 +85,7 @@ namespace OrderSystem.Waiter.Controllers {
 		}
 
 		public async Task<JsonResult> GetCurrentDines(string deskId) {
-			return Json(await HotelManager.GetCurrentDines(User.Identity.GetUserId(), deskId));
+			return Json(await HotelManager.GetWaiterCurrentDines(User.Identity.GetUserId(), deskId));
 		}
 
 		public async Task<JsonResult> GetDineById(string dineId) {

@@ -107,11 +107,13 @@ namespace HotelDAO.Models {
 		/// </summary>
 		[MaxLength(8)]
 		public string ClerkId { get; set; }
+		public Staff Clerk { get; set; }
 		/// <summary>
 		/// 服务员编号
 		/// </summary>
 		[MaxLength(8)]
 		public string WaiterId { get; set; }
+		public Staff Waiter { get; set; }
 		/// <summary>
 		/// 用户编号
 		/// </summary>

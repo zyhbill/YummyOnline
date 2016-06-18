@@ -47,8 +47,8 @@ namespace YummyOnline.Controllers {
 
 		public async Task<ActionResult> GetFile(string dir, string name) {
 			User user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-
-			string path = $"{bin.Parent.FullName}\\Specification\\{dir}\\{name}";
+			SystemConfig config = await YummyOnlineManager.GetSystemConfig();
+			string path = $"{config.SpecificationDir}\\{dir}\\{name}";
 			if(name.EndsWith(".html") || name.EndsWith(".htm")) {
 				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Info, $"{user.Id}({user.UserName}) Reads {dir}\\{name}");
 				return File(path, "text/html");
@@ -89,7 +89,7 @@ namespace YummyOnline.Controllers {
 				hotel = await YummyOnlineManager.GetFirstHotel();
 			}
 
-			HotelDAO.HotelManagerForAdmin manager = new HotelDAO.HotelManagerForAdmin(hotel.ConnectionString);
+			HotelDAO.HotelManager manager = new HotelDAO.HotelManager(hotel.ConnectionString);
 			return Json(new {
 				Hotel = new {
 					Id = hotel.Id,

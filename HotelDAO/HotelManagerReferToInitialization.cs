@@ -1,48 +1,10 @@
 ﻿using HotelDAO.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.SqlServer;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace HotelDAO {
-	public partial class HotelManagerForAdmin : BaseHotelManager {
-		public HotelManagerForAdmin(string connStr)
-			: base(connStr) { }
-
-		public async Task<dynamic> GetLogs(DateTime date, int? count) {
-			IQueryable<Log> linq = ctx.Logs.Where(p => SqlFunctions.DateDiff("day", p.DateTime, date) == 0)
-				.OrderByDescending(p => p.Id);
-			if(count != null) {
-				linq = linq.Take((int)count);
-			}
-
-			return await linq.Select(p => new {
-				Level = p.Level.ToString(),
-				p.Message,
-				p.Detail,
-				p.DateTime
-			}).ToListAsync();
-		}
-
-		public async Task<int> GetDineCount(DateTime dateTime) {
-			return await ctx.Dines.CountAsync(p => SqlFunctions.DateDiff("day", p.BeginTime, dateTime) == 0);
-		}
-		public async Task<int[]> GetDinePerHourCount(DateTime dateTime) {
-			int[] counts = new int[24];
-			for(int i = 0; i < 24; i++) {
-				DateTime from = dateTime.Date.AddHours(i);
-				DateTime to = dateTime.Date.AddHours(i + 1);
-				counts[i] = await ctx.Dines.CountAsync(p => p.BeginTime >= from && p.BeginTime < to);
-			}
-
-			return counts;
-		}
-		public async Task<int> GetDineCount(string userId) {
-			return await ctx.Dines.Where(p => p.UserId == userId).CountAsync();
-		}
-
+	public partial class HotelManager {
 		public async Task InitializeHotel(int hotelId, string adminId) {
 			ctx.HotelConfigs.Add(new HotelConfig {
 				Id = hotelId

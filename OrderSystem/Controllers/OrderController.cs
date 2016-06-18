@@ -39,7 +39,7 @@ namespace OrderSystem.Controllers {
 			var t2 = new HotelManager(CurrHotel.ConnectionString).GetMenus();
 			var t3 = new HotelManager(CurrHotel.ConnectionString).GetMenuOnSales();
 			var t4 = new HotelManager(CurrHotel.ConnectionString).GetMenuSetMeals();
-			var t5 = new HotelManager(CurrHotel.ConnectionString).GetPayKinds();
+			var t5 = new HotelManager(CurrHotel.ConnectionString).GetPayKinds(new List<PayKindType> { PayKindType.Online, PayKindType.Other });
 			var t6 = new HotelManager(CurrHotel.ConnectionString).GetHotelConfig();
 			var t7 = new HotelManager(CurrHotel.ConnectionString).GetTimeDiscounts();
 			var t8 = new HotelManager(CurrHotel.ConnectionString).GetVipDiscounts();
@@ -64,7 +64,7 @@ namespace OrderSystem.Controllers {
 			};
 			return Json(result);
 		}
-		
+
 		public async Task<JsonResult> GetHistoryDines() {
 			return Json(await HotelManager.GetHistoryDines(User.Identity.GetUserId()));
 		}
@@ -73,7 +73,7 @@ namespace OrderSystem.Controllers {
 			DineForPrintingProtocal dpProtocal = new DineForPrintingProtocal();
 
 			dpProtocal.Hotel = await YummyOnlineManager.GetHotelById(hotelId);
-			HotelManagerForTcpServer hotelManager4Tcp = new HotelManagerForTcpServer(dpProtocal.Hotel.ConnectionString);
+			HotelManager hotelManager4Tcp = new HotelManager(dpProtocal.Hotel.ConnectionString);
 
 			dpProtocal.Dine = await hotelManager4Tcp.GetDineById(dineId);
 			dpProtocal.User = await new UserManager().FindByIdAsync(dpProtocal.Dine.UserId);

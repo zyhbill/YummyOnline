@@ -10,31 +10,64 @@ namespace HotelDAO {
 	public partial class HotelManager : BaseHotelManager {
 		public HotelManager(string connString) : base(connString) { }
 
-
-		public async Task<Customer> GetCustomer(string userId) {
-			return await ctx.Customers.Include(p => p.VipLevel).FirstOrDefaultAsync(p => p.Id == userId);
+		public async Task RecordLog(Log.LogLevel level, string message, string detail = null) {
+			Log log = new Log {
+				Level = level,
+				Message = message,
+				Detail = detail
+			};
+			ctx.Logs.Add(log);
+			await ctx.SaveChangesAsync();
 		}
-		public async Task<Customer> GetOrCreateCustomer(string userId) {
-			Customer customer = await ctx.Customers.FirstOrDefaultAsync(p => p.Id == userId);
-			if(customer == null) {
-				customer = new Customer {
-					Id = userId,
-					Points = 0,
-				};
-				ctx.Customers.Add(customer);
-				await ctx.SaveChangesAsync();
+		public async Task<dynamic> GetLogs(DateTime date, int? count) {
+			IQueryable<Log> linq = ctx.Logs.Where(p => SqlFunctions.DateDiff("day", p.DateTime, date) == 0)
+				.OrderByDescending(p => p.Id);
+			if(count != null) {
+				linq = linq.Take((int)count);
 			}
-			return customer;
-		}
 
+			return await linq.Select(p => new {
+				Level = p.Level.ToString(),
+				p.Message,
+				p.Detail,
+				p.DateTime
+			}).ToListAsync();
+		}
+	}
+
+	public partial class HotelManager {
 		public async Task<HotelConfig> GetHotelConfig() {
 			return await ctx.HotelConfigs.FirstOrDefaultAsync();
 		}
 
-		public async Task<PayKind> GetPayKind(int payKindId) {
-			return await ctx.PayKinds.FirstOrDefaultAsync(p => p.Id == payKindId);
+		public async Task<dynamic> GetAreas() {
+			return await ctx.Areas.Where(p => p.Usable == true).Select(p => new {
+				p.Id,
+				p.Name,
+				p.Description,
+				p.DepartmentReciptId,
+				p.DepartmentServeId,
+			}).ToListAsync();
 		}
 
+		public async Task<dynamic> GetDesks() {
+			return await ctx.Desks.Where(p => p.Usable)
+				.Select(p => new {
+					Area = new {
+						p.Area.Id,
+						p.Area.Name
+					},
+					p.Id,
+					p.QrCode,
+					p.Name,
+					p.Description,
+					p.Status,
+					p.Order,
+					p.HeadCount,
+					p.MinPrice,
+				})
+				.ToListAsync();
+		}
 		public async Task<Desk> GetDeskByQrCode(string qrCode) {
 			return await ctx.Desks.FirstOrDefaultAsync(p => p.QrCode == qrCode);
 		}
@@ -78,7 +111,6 @@ namespace HotelDAO {
 			});
 			return menuList;
 		}
-
 		public async Task<dynamic> GetMenuOnSales() {
 			DayOfWeek week = DateTime.Now.DayOfWeek;
 			var linq = ctx.MenuOnSales
@@ -105,19 +137,56 @@ namespace HotelDAO {
 
 			return await linq.ToListAsync();
 		}
+		public async Task<bool> ToggleMenuStatus(string menuId, MenuStatus status) {
+			var menu = await ctx.Menus.Where(m => m.Id == menuId).FirstOrDefaultAsync();
+			if(menu == null) {
+				return false;
+			}
+			if(!Enum.IsDefined(status.GetType(), status)) {
+				return false;
+			}
+			menu.Status = status;
+			ctx.SaveChanges();
+			return true;
+		}
 
-		public async Task<dynamic> GetPayKinds() {
-			var linq = ctx.PayKinds
-				.Where(p => p.Usable && p.Type == PayKindType.Online || p.Type == PayKindType.Other)
+		public async Task<dynamic> GetRemarks() {
+			return await ctx.Remarks
 				.Select(p => new {
 					p.Id,
 					p.Name,
-					p.Description,
-					p.Discount,
-					p.Type,
-					p.RedirectUrl
-				});
+					p.Price
+				})
+				.ToListAsync();
+		}
+
+		public async Task<PayKind> GetPayKindById(int payKindId) {
+			return await ctx.PayKinds.FirstOrDefaultAsync(p => p.Id == payKindId);
+		}
+		public async Task<dynamic> GetPayKinds(List<PayKindType> payKindTypes) {
+			var linq = formatPayKind(ctx.PayKinds
+				.Where(p => p.Usable && payKindTypes.Contains(p.Type)));
 			return await linq.ToListAsync();
+		}
+		public async Task<int> GetOtherPayKindId() {
+			return await ctx.PayKinds
+				.Where(p => p.Type == PayKindType.Other)
+				.Select(p => p.Id)
+				.FirstOrDefaultAsync();
+		}
+		public async Task<dynamic> GetOtherPayKind() {
+			return await formatPayKind(ctx.PayKinds
+				.Where(p => p.Type == PayKindType.Other))
+				.FirstOrDefaultAsync();
+		}
+		private IQueryable<dynamic> formatPayKind(IQueryable<PayKind> query) {
+			return query.Select(p => new {
+				p.Id,
+				p.Name,
+				p.Type,
+				p.Description,
+				p.Discount
+			});
 		}
 
 		public async Task<List<TimeDiscount>> GetTimeDiscounts() {
@@ -128,104 +197,6 @@ namespace HotelDAO {
 		public async Task<List<VipDiscount>> GetVipDiscounts() {
 			var linq = ctx.VipDiscounts;
 			return await linq.ToListAsync();
-		}
-
-		public async Task<DinePaidDetail> GetDineOnlinePaidDetail(string dineId) {
-			Dine dine = await ctx.Dines
-				.Include(p => p.DinePaidDetails.Select(pp => pp.PayKind))
-				.FirstOrDefaultAsync(p => p.Id == dineId);
-			if(dine != null && dine.IsOnline) {
-				foreach(DinePaidDetail paidDetail in dine.DinePaidDetails) {
-					if(paidDetail.PayKind.Type == PayKindType.Online) {
-						return paidDetail;
-					}
-				}
-			}
-			return null;
-		}
-
-		public async Task<List<dynamic>> GetHistoryDines(string userId) {
-			return await FormatDines(ctx.Dines
-				.Where(p => p.UserId == userId)
-				.OrderByDescending(p => p.Id))
-				.ToListAsync();
-		}
-		public async Task<int> GetHistoryDinesCount(string userId) {
-			return await ctx.Dines.CountAsync(p => p.UserId == userId);
-		}
-
-
-		public async Task<bool> TransferOrders(string oldUserId, string newUserId) {
-			try {
-				List<Dine> dines = await ctx.Dines.Where(p => p.UserId == oldUserId).ToListAsync();
-				foreach(Dine d in dines) {
-					d.UserId = newUserId;
-				}
-				await ctx.SaveChangesAsync();
-				return true;
-			}
-			catch(Exception e) {
-				await RecordLog(Log.LogLevel.Error, e.Message);
-				return false;
-			}
-		}
-
-		public static IQueryable<dynamic> FormatDines(IQueryable<Dine> dine) {
-			return dine.Select(p => new {
-				p.Id,
-				p.Status,
-				p.Type,
-				p.HeadCount,
-				p.Price,
-				p.OriPrice,
-				p.Discount,
-				p.DiscountName,
-				p.DiscountType,
-				p.BeginTime,
-				p.IsPaid,
-				p.IsOnline,
-				p.ClerkId,
-				p.WaiterId,
-				p.UserId,
-				Remarks = p.Remarks.Select(pp => new {
-					pp.Id,
-					pp.Name
-				}),
-				Desk = new {
-					p.Desk.Id,
-					p.Desk.QrCode,
-					p.Desk.Name,
-					p.Desk.Description
-				},
-				DineMenus = p.DineMenus.Select(d => new {
-					d.Status,
-					d.Count,
-					d.OriPrice,
-					d.Price,
-					d.RemarkPrice,
-					Remarks = d.Remarks.Select(r => new {
-						r.Id,
-						r.Name
-					}),
-					Menu = new {
-						d.Menu.Id,
-						d.Menu.Code,
-						d.Menu.Name,
-						d.Menu.NameAbbr,
-						d.Menu.PicturePath,
-						d.Menu.Unit
-					}
-				}),
-				DinePaidDetails = p.DinePaidDetails.Select(d => new {
-					d.Price,
-					d.RecordId,
-					PayKind = new {
-						d.PayKind.Id,
-						d.PayKind.Name,
-						d.PayKind.Type
-					}
-				})
-			});
 		}
 	}
 }

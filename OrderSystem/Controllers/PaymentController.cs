@@ -66,7 +66,7 @@ namespace OrderSystem.Controllers {
 
 			await newDineInform(dine, "OrderSystem");
 
-			PayKind payKind = await HotelManager.GetPayKind(cart.PayKindId);
+			PayKind payKind = await HotelManager.GetPayKindById(cart.PayKindId);
 			string redirectUrl = null;
 
 			if(payKind.Type == PayKindType.Online) {
@@ -100,7 +100,7 @@ namespace OrderSystem.Controllers {
 			if(!CurrHotel.Usable)
 				return RedirectToAction("HotelUnavailable", "Error");
 
-			cart.PayKindId = await new HotelManagerForWaiter(CurrHotel.ConnectionString).GetOtherPayKindId();
+			cart.PayKindId = await new HotelManager(CurrHotel.ConnectionString).GetOtherPayKindId();
 			CartAddition addition = new CartAddition {
 				WaiterId = cartAddition.WaiterId,
 				Discount = cartAddition.Discount,
@@ -232,7 +232,7 @@ namespace OrderSystem.Controllers {
 		/// <param name="recordId">附加信息</param>
 		/// <returns></returns>
 		private async Task onlinePayCompleted(string dineId, string recordId) {
-			bool isPaid = await new HotelManagerForWaiter(CurrHotel.ConnectionString).IsDinePaid(dineId);
+			bool isPaid = await new HotelManager(CurrHotel.ConnectionString).IsDinePaid(dineId);
 			if(isPaid) {
 				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Warning, $"DineId: {dineId} Has Been Paid");
 				return;

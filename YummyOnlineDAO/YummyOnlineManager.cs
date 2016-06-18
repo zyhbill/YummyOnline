@@ -92,7 +92,7 @@ namespace YummyOnlineDAO {
 			int dineCount = 0;
 			List<Hotel> hotels = await GetHotels();
 			foreach(Hotel h in hotels) {
-				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+				HotelDAO.HotelManager hotelManager = new HotelDAO.HotelManager(h.ConnectionString);
 				dineCount += await hotelManager.GetDineCount(DateTime.Now);
 			}
 			return dineCount;
@@ -101,7 +101,7 @@ namespace YummyOnlineDAO {
 			List<dynamic> list = new List<dynamic>();
 			List<Hotel> hotels = await GetHotels();
 			foreach(Hotel h in hotels) {
-				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+				HotelDAO.HotelManager hotelManager = new HotelDAO.HotelManager(h.ConnectionString);
 
 				list.Add(new {
 					HotelName = h.Name,
@@ -189,7 +189,7 @@ namespace YummyOnlineDAO {
 
 			List<Hotel> hotels = await GetHotels();
 			foreach(var h in hotels) {
-				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+				HotelDAO.HotelManager hotelManager = new HotelDAO.HotelManager(h.ConnectionString);
 				foreach(var user in users) {
 					if(!userDineCounts.ContainsKey(user.Id)) {
 						userDineCounts[user.Id] = await hotelManager.GetDineCount(user.Id);
@@ -239,7 +239,7 @@ namespace YummyOnlineDAO {
 
 			List<Hotel> hotels = await GetHotels();
 			foreach(var h in hotels) {
-				HotelDAO.HotelManagerForAdmin hotelManager = new HotelDAO.HotelManagerForAdmin(h.ConnectionString);
+				HotelDAO.HotelManager hotelManager = new HotelDAO.HotelManager(h.ConnectionString);
 				foreach(User nemo in nemoes) {
 					if(!userDineCounts.ContainsKey(nemo.Id)) {
 						userDineCounts[nemo.Id] = await hotelManager.GetDineCount(nemo.Id);

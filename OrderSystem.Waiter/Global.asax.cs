@@ -46,7 +46,7 @@ namespace OrderSystem.Waiter {
 				return;
 			}
 			string connStr = AsyncInline.Run(() => new YummyOnlineManager().GetHotelConnectionStringById(staff.HotelId));
-			HotelManagerForWaiter hotelManager4Waiter = new HotelManagerForWaiter(connStr);
+			HotelManager hotelManager4Waiter = new HotelManager(connStr);
 			List<StaffRoleSchema> schemas = AsyncInline.Run(() => hotelManager4Waiter.GetStaffRoles(staff.Id));
 
 			string[] roleStrs = schemas.Select(p => p.Schema.ToString()).ToArray();

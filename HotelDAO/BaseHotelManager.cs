@@ -7,15 +7,5 @@ namespace HotelDAO {
 			ctx = new HotelContext(connString);
 		}
 		protected HotelContext ctx;
-
-		public async Task RecordLog(Log.LogLevel level, string message, string detail = null) {
-			Log log = new Log {
-				Level = level,
-				Message = message,
-				Detail = detail
-			};
-			ctx.Logs.Add(log);
-			await ctx.SaveChangesAsync();
-		}
 	}
 }

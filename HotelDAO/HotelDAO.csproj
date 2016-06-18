@@ -66,12 +66,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EntityContext.cs" />
     <Compile Include="BaseHotelManager.cs" />
+    <Compile Include="EntityContext.cs" />
+    <Compile Include="HotelManagerReferToStaffs.cs" />
+    <Compile Include="HotelManagerReferToCustomers.cs" />
+    <Compile Include="HotelManagerReferToInitialization.cs" />
+    <Compile Include="HotelManagerReferToDines.cs" />
     <Compile Include="HotelManager.cs" />
-    <Compile Include="HotelManagerForAdmin.cs" />
-    <Compile Include="HotelManagerForTcpServer.cs" />
-    <Compile Include="HotelManagerForWaiter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

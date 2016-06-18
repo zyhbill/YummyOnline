@@ -28,11 +28,11 @@ namespace OrderSystem.Waiter.Controllers {
 			}
 		}
 
-		private HotelManagerForWaiter _hotelManager;
-		public HotelManagerForWaiter HotelManager {
+		private HotelManager _hotelManager;
+		public HotelManager HotelManager {
 			get {
 				if(_hotelManager == null) {
-					_hotelManager = new HotelManagerForWaiter(CurrHotel.ConnectionString);
+					_hotelManager = new HotelManager(CurrHotel.ConnectionString);
 				}
 				return _hotelManager;
 			}

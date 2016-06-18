@@ -18,8 +18,6 @@ namespace HotelDAO.Models {
 		
 		public int? PrinterId { get; set; }
 		public Printer Printer { get; set; }
-
-		ICollection<Area> Areas { get; set; }
 	}
 	/// <summary>
 	/// 打印机
@@ -36,7 +34,7 @@ namespace HotelDAO.Models {
 
 		public string Name { get; set; }
 
-		ICollection<Department> Departments { get; set; }
+		public ICollection<Department> Departments { get; set; }
 	}
 
 	public class PrinterFormat {

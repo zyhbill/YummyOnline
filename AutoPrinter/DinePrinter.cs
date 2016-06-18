@@ -7,7 +7,7 @@ using Protocal;
 using System;
 
 namespace AutoPrinter {
-	class DinePrinter {
+	public class DinePrinter {
 		private DineForPrintingProtocal protocal;
 		private List<PrintType> printTypes;
 
@@ -19,6 +19,13 @@ namespace AutoPrinter {
 
 			fontSizeServeOrder = 9;
 
+		public static List<string> ListPrinters() {
+			List<string> printers = new List<string>();
+			foreach(string printer in PrinterSettings.InstalledPrinters) {
+				printers.Add(printer);
+			}
+			return printers;
+		}
 		public DinePrinter(DineForPrintingProtocal protocal, List<PrintType> printTypes) {
 			this.protocal = protocal;
 			this.printTypes = printTypes;

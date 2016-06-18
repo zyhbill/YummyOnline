@@ -164,6 +164,12 @@ namespace OrderSystem.Controllers {
 		/// </summary>
 		public async Task<JsonResult> PrintCompleted(int hotelId, string dineId) {
 			CurrHotel = await YummyOnlineManager.GetHotelById(hotelId);
+
+			if(dineId == "00000000000000") {
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Print Test Dine Completed");
+				return Json(new JsonSuccess());
+			}
+			
 			await OrderManager.PrintCompleted(dineId);
 			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"PrintCompleted DineId: {dineId}");
 			return Json(new JsonSuccess());

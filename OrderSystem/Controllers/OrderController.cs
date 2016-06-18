@@ -70,8 +70,6 @@ namespace OrderSystem.Controllers {
 		public async Task<JsonResult> GetHistoryDines() {
 			return Json(await HotelManager.GetHistoryDines(User.Identity.GetUserId()));
 		}
-
-
 	}
 
 	public class OrderForPrintingController : BaseOrderSystemController {

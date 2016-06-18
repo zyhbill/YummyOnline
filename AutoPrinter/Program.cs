@@ -17,7 +17,6 @@ namespace AutoPrinter {
 		private static int tcpServerPort = Convert.ToInt32(ConfigurationManager.AppSettings["TcpServerPort"]);
 
 		static void Main(string[] args) {
-
 			Console.Title = "YummyOnline自助打印";
 			Console.WriteLine($"版本: {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
 			Process[] tProcess = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
@@ -53,8 +52,16 @@ namespace AutoPrinter {
 
 			while(true) {
 				string cmd = Console.ReadLine();
-				if(cmd.ToLower() == "test") {
-					print("00000000000000", new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }).Wait();
+				switch(cmd.ToLower()) {
+					case "test":
+						print("00000000000000", new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }).Wait();
+						break;
+					case "list printers":
+						List<string> printers = DinePrinter.ListPrinters();
+						for(int i = 0; i < printers.Count; i++) {
+							Console.WriteLine($"{i + 1} {printers[i]}");
+						}
+						break;
 				}
 			}
 		}

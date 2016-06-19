@@ -81,7 +81,7 @@ namespace AutoPrinter {
 								printer.Print();
 							}
 							else {
-								foreach(DineForPrintingProtocal.SetMealMenu setMealMenu in protocal.SetMeals.First(p => p.MenuSetId == dineMenu.Menu.Id).Menus) {
+								foreach(DineForPrintingProtocal.SetMealMenu setMealMenu in dineMenu.Menu.SetMealMenus) {
 									currSetMealMenu = setMealMenu;
 									printer.Print();
 									currSetMealMenu = null;
@@ -121,7 +121,7 @@ namespace AutoPrinter {
 
 				// 如果菜品为套餐，则打印套餐包含的具体菜品信息
 				if(dineMenu.Menu.IsSetMeal) {
-					List<DineForPrintingProtocal.SetMealMenu> setMealMenus = protocal.SetMeals.First(p => p.MenuSetId == dineMenu.Menu.Id).Menus;
+					List<DineForPrintingProtocal.SetMealMenu> setMealMenus = dineMenu.Menu.SetMealMenus;
 					for(int i = 0; i < setMealMenus.Count; i++) {
 						char tab = '├';
 						if(i == setMealMenus.Count - 1) {
@@ -183,7 +183,7 @@ namespace AutoPrinter {
 
 				// 如果菜品为套餐，则打印套餐包含的具体菜品信息
 				if(dineMenu.Menu.IsSetMeal) {
-					List<DineForPrintingProtocal.SetMealMenu> setMealMenus = protocal.SetMeals.First(p => p.MenuSetId == dineMenu.Menu.Id).Menus;
+					List<DineForPrintingProtocal.SetMealMenu> setMealMenus = dineMenu.Menu.SetMealMenus;
 					for(int i = 0; i < setMealMenus.Count; i++) {
 						char tab = '├';
 						if(i == setMealMenus.Count - 1) {

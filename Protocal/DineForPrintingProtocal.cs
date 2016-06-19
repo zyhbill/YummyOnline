@@ -66,6 +66,7 @@ namespace Protocal {
 			public string NameAbbr { get; set; }
 			public string Unit { get; set; }
 			public bool IsSetMeal { get; set; }
+			public List<SetMealMenu> SetMealMenus { get; set; } = new List<SetMealMenu>();
 			public Printer Printer;
 		}
 		public class DinePaidDetail {
@@ -107,6 +108,5 @@ namespace Protocal {
 		public HotelForPrinting Hotel { get; set; }
 		public DineForPrinting Dine { get; set; }
 		public UserForPrinting User { get; set; }
-		public List<SetMeal> SetMeals { get; set; } = new List<SetMeal>();
 	}
 }

@@ -80,42 +80,31 @@ namespace OrderSystem.Controllers {
 			}
 
 			Hotel hotel = await YummyOnlineManager.GetHotelById(hotelId);
-			var hotelP = new {
-				hotel.Id,
-				hotel.Name,
-				hotel.Address,
-				hotel.OpenTime,
-				hotel.CloseTime,
-				hotel.Tel,
-				hotel.Usable
+			var hotelP = new DineForPrintingProtocal.HotelForPrinting {
+				Id = hotel.Id,
+				Name = hotel.Name,
+				Address = hotel.Address,
+				OpenTime = hotel.OpenTime,
+				CloseTime = hotel.CloseTime,
+				Tel = hotel.Tel,
+				Usable = hotel.Usable
 			};
 			HotelManager hotelManager = new HotelManager(hotel.ConnectionString);
 
-			var dine = await hotelManager.GetDineForPrintingById(dineId);
+			var dineP = await hotelManager.GetDineForPrintingById(dineId);
 
-			User user = await new UserManager().FindByIdAsync(dine.UserId);
-			var userP = user == null ? null : new {
-				user.Id,
-				user.Email,
-				user.UserName,
-				user.PhoneNumber
+			User user = await new UserManager().FindByIdAsync(dineP.UserId);
+			var userP = user == null ? null : new DineForPrintingProtocal.UserForPrinting {
+				Id = user.Id,
+				Email = user.Email,
+				UserName = user.UserName,
+				PhoneNumber = user.PhoneNumber
 			};
 
-			List<dynamic> setMeals = new List<dynamic>();
-
-			foreach(dynamic dineMenu in dine.DineMenus) {
-				if(dineMenu.Menu.IsSetMeal) {
-					setMeals.Add(new {
-						MenuSetId = dineMenu.Menu.Id,
-						Menus = await hotelManager.GetMenuSetMealByMenuSetId(dineMenu.Menu.Id)
-					});
-				}
-			}
 			return Json(new {
 				Hotel = hotelP,
-				Dine = dine,
+				Dine = dineP,
 				User = userP,
-				SetMeals = setMeals
 			});
 		}
 
@@ -196,6 +185,23 @@ namespace OrderSystem.Controllers {
 									NameAbbr = $"测试0",
 									Unit = "份",
 									IsSetMeal = true,
+									SetMealMenus = new List<DineForPrintingProtocal.SetMealMenu> {
+										new DineForPrintingProtocal.SetMealMenu {
+											Id = "10000",
+											Name = "测试套餐菜品1",
+											Count = 10
+										},
+										new DineForPrintingProtocal.SetMealMenu {
+											Id = "10001",
+											Name = "测试套餐菜品2",
+											Count = 10
+										},
+										new DineForPrintingProtocal.SetMealMenu {
+											Id = "10002",
+											Name = "测试套餐菜品3",
+											Count = 10
+										}
+									},
 									Printer = new DineForPrintingProtocal.Printer {
 										Id = 2,
 										Name = "Microsoft XPS Document Writer",
@@ -241,28 +247,6 @@ namespace OrderSystem.Controllers {
 					UserName = "测试用户名",
 					PhoneNumber = "12345678900"
 				},
-				SetMeals = new List<DineForPrintingProtocal.SetMeal> {
-						new DineForPrintingProtocal.SetMeal {
-							MenuSetId = "00000",
-							Menus = new List<DineForPrintingProtocal.SetMealMenu> {
-								new DineForPrintingProtocal.SetMealMenu {
-									Id = "10000",
-									Name = "测试套餐菜品1",
-									Count = 10
-								},
-								new DineForPrintingProtocal.SetMealMenu {
-									Id = "10001",
-									Name = "测试套餐菜品2",
-									Count = 10
-								},
-								new DineForPrintingProtocal.SetMealMenu {
-									Id = "10002",
-									Name = "测试套餐菜品3",
-									Count = 10
-								}
-							}
-						}
-					}
 			};
 
 			for(int i = 1; i <= 5; i++) {

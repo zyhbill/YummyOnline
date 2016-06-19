@@ -404,9 +404,15 @@ waiter.yummyonline.net
 	"BeginTime": <string>,
 	"IsOnline": <bool>,
 	"IsPaid": <bool>,
-	"ClerkId": <string>,
-	"WaiterId": <string>,
 	"UserId": <string>,
+	"Clerk": {
+		"Id": <string>,
+		"Name": <string>
+	},
+	"Waiter": {
+		"Id": <string>,
+		"Name": <string>
+	},
 	"Desk": {
 		"Id": <string>,
 		"QrCode": <string>,

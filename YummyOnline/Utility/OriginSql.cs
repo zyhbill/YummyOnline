@@ -61,7 +61,8 @@ namespace YummyOnline.Utility {
 				return new FunctionResult(false, "数据库未分区，无法分割");
 			}
 
-			string sql = File.ReadAllText($"{sqlsPath}\\GetDefaultDataPath.sql");
+			// 获得默认数据库路径
+			string sql = "SELECT serverproperty('InstanceDefaultDataPath') AS DefaultDataPath";
 			string defaultPath = await ctx.Database.SqlQuery<string>(sql).FirstOrDefaultAsync();
 
 			string dataBaseName = ctx.Database.Connection.Database;
@@ -94,18 +95,22 @@ namespace YummyOnline.Utility {
 			return new FunctionResult();
 		}
 
+		/// <summary>
+		/// 增加文件组
+		/// </summary>
 		public async Task<FunctionResult> AddFileGroup(string dataBaseName, string fileGroupName) {
 			var fileGroups = await GetFileGroupInfos();
 			if(fileGroups.Exists(p => p.FileGroupName == fileGroupName)) {
 				return new FunctionResult();
 			}
 
-			string sql = File.ReadAllText($"{sqlsPath}\\AddFileGroup.sql");
-			sql = sql.Replace("@@databaseName", dataBaseName);
-			sql = sql.Replace("@@fileGroupName", fileGroupName);
+			string sql = $"ALTER DATABASE [{dataBaseName}] ADD FILEGROUP [{fileGroupName}]";
 
 			return await executeSql(sql);
 		}
+		/// <summary>
+		/// 增加文件
+		/// </summary>
 		public async Task<FunctionResult> AddFile(string dataBaseName, string path, string fileGroupName) {
 			if(!Directory.Exists(path)) {
 				Directory.CreateDirectory(path);
@@ -116,23 +121,20 @@ namespace YummyOnline.Utility {
 				return new FunctionResult();
 			}
 
-			string sql = File.ReadAllText($"{sqlsPath}\\AddFile.sql");
-			sql = sql.Replace("@@databaseName", dataBaseName);
-			sql = sql.Replace("@@fileGroupName", fileGroupName);
-			sql = sql.Replace("@@path", path);
+			string sql = $@"ALTER DATABASE [{dataBaseName}] ADD FILE(
+							 name = '{fileGroupName}',
+							 filename = '{path}\{fileGroupName}.ndf' 
+						 ) TO FILEGROUP {fileGroupName}";
 
 			return await executeSql(sql);
 		}
 		public async Task<FunctionResult> AlterScheme(string fileGroupName) {
-			string sql = File.ReadAllText($"{sqlsPath}\\AlterScheme.sql");
-			sql = sql.Replace("@@fileGroupName", fileGroupName);
+			string sql = $"ALTER PARTITION SCHEME DateTimePartitionScheme NEXT USED [{fileGroupName}]";
 
 			return await executeSql(sql);
 		}
 		public async Task<FunctionResult> SplitFunction(DateTime splitCondition) {
-			splitCondition = new DateTime(splitCondition.Year, splitCondition.Month, splitCondition.Day);
-			string sql = File.ReadAllText($"{sqlsPath}\\SplitFunction.sql");
-			sql = sql.Replace("@@splitCondition", splitCondition.ToString("yyyy-MM-dd"));
+			string sql = $"ALTER PARTITION FUNCTION DateTimePartitionFun() split range('{splitCondition.ToString("yyyy-MM-dd")}')";
 
 			return await executeSql(sql);
 		}
@@ -143,8 +145,7 @@ namespace YummyOnline.Utility {
 				return new FunctionResult(false, "数据库未分区，无法合并");
 			}
 
-			string sql = File.ReadAllText($"{sqlsPath}\\Merge.sql");
-			sql = sql.Replace("@@mergeCondition", dateTime.ToString("yyyy-MM-dd"));
+			string sql = $"ALTER PARTITION FUNCTION DateTimePartitionFun() merge range('{dateTime.ToString("yyyy-MM-dd")}')";
 
 			return await executeSql(sql);
 		}
@@ -156,6 +157,13 @@ namespace YummyOnline.Utility {
 			string sql = File.ReadAllText($"{sqlsPath}\\InitializeDatabase.sql");
 			return await executeSql(sql);
 		}
+
+		public async Task<FunctionResult> Backup(string path) {
+			string databaseName = ctx.Database.Connection.Database;
+			string sql = $"BACKUP DATABASE [{databaseName}] TO DISK = N'{path}\\{databaseName}.bak'";
+			return await executeSql(sql);
+		}
+
 		public async Task<FunctionResult> ExecuteSql(string sql) {
 			return await executeSql(sql);
 		}

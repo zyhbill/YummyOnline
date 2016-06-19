@@ -1,4 +1,51 @@
-﻿app.controller('PartitionDetailCtrl', [
+﻿app.controller('BackupCtrl', [
+	'$scope',
+	'$http',
+	'layout',
+	function ($scope, $http, $layout) {
+		$layout.Set('备份', '');
+
+		function refresh() {
+			$http.post('/Database/GetBackups').then(function (response) {
+				$scope.backups = response.data;
+			})
+		}
+
+		$http.post('/Hotel/GetHotelNames').then(function (response) {
+			for (var i in response.data) {
+				response.data[i].Checked = true;
+			}
+			$scope.yummyonline = true;
+			$scope.hotels = response.data;
+		});
+		refresh();
+
+
+		$scope.execute = function () {
+			$scope.isLoading = true;
+			var hotelIds = [];
+			for (var i in $scope.hotels) {
+				if ($scope.hotels[i].Checked) {
+					hotelIds.push($scope.hotels[i].Id);
+				}
+			}
+			$http.post('/Database/Backup', {
+				HotelIds: hotelIds,
+				IsYummyOnline: $scope.yummyonline
+			}).then(function (response) {
+				if (response.data.Succeeded) {
+					toastr.success('备份成功');
+				} else {
+					toastr.error(response.data.ErrorMessage);
+				}
+				$scope.isLoading = false;
+				refresh();
+			});
+		}
+	}
+]);
+
+app.controller('PartitionDetailCtrl', [
 	'$scope',
 	'$http',
 	'layout',

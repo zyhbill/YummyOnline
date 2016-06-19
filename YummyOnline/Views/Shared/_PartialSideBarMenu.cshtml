@@ -4,7 +4,7 @@
 	<li side-bar-menu fa="fa-dashboard" title="实时监控" href="/#/Monitor"></li>
 
 	<li class="header">饭店管理</li>
-	<li side-bar-menu fa="fa-cutlery" title="饭店管理" href="/Hotel"></li>
+	<li side-bar-menu fa="fa-cutlery" title="饭店管理" href="/Hotel#/"></li>
 	<li side-bar-menu fa="fa-shopping-cart" title="订单查询" href="/Hotel#/Dine"></li>
 
 	<li class="header">人员管理</li>
@@ -13,14 +13,15 @@
 	<li side-bar-menu fa="fa-user-md" title="管理员管理" href="/Users#/Admin"></li>
 
 	<li class="header">数据库</li>
-	<li side-bar-menu fa="fa-database" title="分区表概览" href="/Database#/PartitionDetail"></li>
+	<li side-bar-menu fa="fa-database" title="备份" href="/Database#/Backup"></li>
+	<li side-bar-menu fa="fa-pie-chart" title="分区表概览" href="/Database#/PartitionDetail"></li>
 	<li side-bar-menu fa="fa-wrench" title="分区" href="/Database#/PartitionHandle"></li>
 	@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
 		<li side-bar-menu fa="fa-rocket" title="SQL批量执行" href="/Database#/Execution"></li>
 	}
 
 	<li class="header">服务器</li>
-	<li side-bar-menu fa="fa-windows" title="IIS使用情况" href="/Server#/IISStatus"></li>
+	<li side-bar-menu fa="fa-windows" title="IIS使用情况" href="/Server#/IISStatus"><a href="/Server#/IISStatus"><i class="fa fa-windows"></i><span>IIS使</span></a></li>
 	<li side-bar-menu fa="fa-server" title="Tcp服务器使用情况" href="/Server#/TcpServerStatus"></li>
 	<li side-bar-menu fa="fa-globe" title="Tcp Guid授权" href="/Server#/Guids"></li>
 

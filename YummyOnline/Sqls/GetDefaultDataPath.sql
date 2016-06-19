@@ -1,1 +1,0 @@
-SELECT serverproperty('InstanceDefaultDataPath') AS DefaultDataPath

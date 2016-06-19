@@ -1,5 +1,10 @@
 ﻿app.config(function ($routeProvider) {
 	$routeProvider
+	.when('/Backup', {
+		templateUrl: '/Database/_ViewBackup',
+		controller: 'BackupCtrl'
+	})
+
 	.when('/PartitionDetail', {
 		templateUrl: '/Database/_ViewPartitionDetail',
 		controller: 'PartitionDetailCtrl'

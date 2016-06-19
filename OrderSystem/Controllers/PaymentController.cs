@@ -126,7 +126,7 @@ namespace OrderSystem.Controllers {
 
 			await newDineInform(dine, "Manager");
 
-			return Json(new JsonSuccess(dine.Id));
+			return Json(new JsonSuccess { Data = dine.Id });
 		}
 
 
@@ -169,7 +169,7 @@ namespace OrderSystem.Controllers {
 				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Print Test Dine Completed");
 				return Json(new JsonSuccess());
 			}
-			
+
 			await OrderManager.PrintCompleted(dineId);
 			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"PrintCompleted DineId: {dineId}");
 			return Json(new JsonSuccess());

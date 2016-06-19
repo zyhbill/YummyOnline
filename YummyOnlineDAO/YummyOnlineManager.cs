@@ -13,6 +13,12 @@ namespace YummyOnlineDAO {
 		}
 		private YummyOnlineContext ctx;
 
+		public string ConnectionString {
+			get {
+				return ctx.Database.Connection.ConnectionString;
+			}
+		}
+
 		#region 系统相关
 		public async Task<SystemConfig> GetSystemConfig() {
 			return await ctx.SystemConfigs.FirstOrDefaultAsync();

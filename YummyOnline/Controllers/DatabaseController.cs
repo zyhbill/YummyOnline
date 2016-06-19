@@ -1,6 +1,7 @@
 ﻿using Protocal;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -16,6 +17,9 @@ namespace YummyOnline.Controllers {
 			return View();
 		}
 
+		public ActionResult _ViewBackup() {
+			return View();
+		}
 		public ActionResult _ViewPartitionDetail() {
 			return View();
 		}
@@ -26,12 +30,68 @@ namespace YummyOnline.Controllers {
 			return View();
 		}
 
+		#region 备份
+		public async Task<JsonResult> GetBackups() {
+			SystemConfig config = await YummyOnlineManager.GetSystemConfig();
+			string path = $"{config.SpecificationDir}\\Database";
+			string[] files = Directory.GetFiles(path, "*.bak");
+
+			List<dynamic> fileInfos = new List<dynamic>();
+			foreach(string file in files) {
+				FileInfo fileInfo = new FileInfo(file);
+				fileInfos.Add(new {
+					fileInfo.Name,
+					fileInfo.LastWriteTime,
+					fileInfo.Length
+				});
+			}
+
+			return Json(fileInfos);
+		}
+		public async Task<JsonResult> Backup(bool isYummyOnline, List<int> hotelIds) {
+			SystemConfig config = await YummyOnlineManager.GetSystemConfig();
+			string path = $"{config.SpecificationDir}\\Database";
+
+			StringBuilder sb = new StringBuilder();
+
+			if(isYummyOnline) {
+				OriginSql originSql = new OriginSql(YummyOnlineManager.ConnectionString);
+				FunctionResult result = await originSql.Backup(path);
+				if(!result.Succeeded) {
+					sb.Append($"YummyOnlineDB Error, {result.Message}</br>");
+					await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Error, "Backup YummyOnlineDB Failed", result.Message);
+				}
+				else {
+					await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, "Backup YummyOnlineDB Successfully");
+				}
+			}
+
+			foreach(int id in hotelIds) {
+				Hotel hotel = await YummyOnlineManager.GetHotelById(id);
+				OriginSql originSql = new OriginSql(hotel.AdminConnectionString);
+				FunctionResult result = await originSql.Backup(path);
+				if(!result.Succeeded) {
+					sb.Append($"{hotel.Name}({hotel.Id}) Error, {result.Message}</br>");
+					await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Error, $"Backup {hotel.Name}({hotel.Id}) Failed", result.Message);
+				}
+				else {
+					await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"Backup {hotel.Name}({hotel.Id}) Successfully");
+				}
+			}
+			if(sb.Length != 0) {
+				return Json(new JsonError(sb.ToString()));
+			}
+			return Json(new JsonSuccess());
+		}
+		#endregion
+
+		#region 分区
 		public async Task<JsonResult> GetDbPartitionDetails() {
 			var hotels = await YummyOnlineManager.GetHotels();
 			List<dynamic> partitionDetails = new List<dynamic>();
 
 			partitionDetails.Add(new {
-				DbPartitionInfos = await new OriginSql(getYummyOnlineConntionString()).GetDbPartitionInfos()
+				DbPartitionInfos = await new OriginSql(YummyOnlineManager.ConnectionString).GetDbPartitionInfos()
 			});
 
 			foreach(Hotel h in hotels) {
@@ -58,7 +118,7 @@ namespace YummyOnline.Controllers {
 			}
 			else {
 				hotel = null;
-				dbPartition = new OriginSql(getYummyOnlineConntionString());
+				dbPartition = new OriginSql(YummyOnlineManager.ConnectionString);
 			}
 
 			return Json(new {
@@ -79,7 +139,7 @@ namespace YummyOnline.Controllers {
 				result = await new OriginSql(hotel.AdminConnectionString).CreateHotelPartition();
 			}
 			else {
-				result = await new OriginSql(getYummyOnlineConntionString()).CreateYummyOnlinePartition();
+				result = await new OriginSql(YummyOnlineManager.ConnectionString).CreateYummyOnlinePartition();
 			}
 
 			if(!result.Succeeded) {
@@ -97,7 +157,7 @@ namespace YummyOnline.Controllers {
 				result = await new OriginSql(hotel.AdminConnectionString).Split(dateTime);
 			}
 			else {
-				result = await new OriginSql(getYummyOnlineConntionString()).Split(dateTime);
+				result = await new OriginSql(YummyOnlineManager.ConnectionString).Split(dateTime);
 			}
 
 			if(!result.Succeeded) {
@@ -115,7 +175,7 @@ namespace YummyOnline.Controllers {
 				result = await new OriginSql(hotel.AdminConnectionString).Merge(dateTime);
 			}
 			else {
-				result = await new OriginSql(getYummyOnlineConntionString()).Merge(dateTime);
+				result = await new OriginSql(YummyOnlineManager.ConnectionString).Merge(dateTime);
 			}
 
 			if(!result.Succeeded) {
@@ -126,17 +186,13 @@ namespace YummyOnline.Controllers {
 			return Json(new JsonSuccess());
 		}
 
-		private string getYummyOnlineConntionString() {
-			return new YummyOnlineContext().Database.Connection.ConnectionString;
-		}
-
 		private async Task logPartition(int? hotelId, string method) {
 			if(hotelId.HasValue) {
 				Hotel hotel = await YummyOnlineManager.GetHotelById(hotelId.Value);
-				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"{method} On {hotel.Name} ({hotel.Id}) Succeeded");
+				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"{method} On {hotel.Name} ({hotel.Id}) Successfully");
 			}
 			else {
-				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"{method} On YummyOnlineDB Succeeded");
+				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"{method} On YummyOnlineDB Successfully");
 			}
 		}
 
@@ -149,6 +205,8 @@ namespace YummyOnline.Controllers {
 				await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Error, $"{method} On YummyOnlineDB Failed, {errorMessage}");
 			}
 		}
+		#endregion
+
 		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> ExecuteSql(List<int> hotelIds, string sql) {
 			StringBuilder sb = new StringBuilder();
@@ -158,6 +216,11 @@ namespace YummyOnline.Controllers {
 				FunctionResult result = await originSql.ExecuteSql(sql);
 				if(!result.Succeeded) {
 					sb.Append($"{hotel.Name}({hotel.Id}) Error, {result.Message}</br>");
+					await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Error, $"Execute SQL {hotel.Name}({hotel.Id}) Failed",
+						$"Error: {result.Message}, SQL: {sql}");
+				}
+				else {
+					await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"Execute SQL {hotel.Name}({hotel.Id}) Successfully", sql);
 				}
 			}
 			if(sb.Length != 0) {

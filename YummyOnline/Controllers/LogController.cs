@@ -17,11 +17,11 @@ namespace YummyOnline.Controllers {
 		public ActionResult Index() {
 			return View();
 		}
-		public ActionResult _ViewSpecification() {
+		public async Task<ActionResult> _ViewSpecification() {
+			SystemConfig config = await YummyOnlineManager.GetSystemConfig();
 			Dictionary<string, List<FileInfo>> dirFiles = new Dictionary<string, List<FileInfo>>();
 
-
-			string[] dirs = Directory.GetDirectories($"{bin.Parent.FullName}\\Specification");
+			string[] dirs = Directory.GetDirectories(config.SpecificationDir);
 
 			foreach(string dir in dirs) {
 				string[] files = Directory.GetFiles(dir);

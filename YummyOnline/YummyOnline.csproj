@@ -206,17 +206,11 @@
     <Content Include="Scripts\Users\controllers.js" />
     <Content Include="Scripts\Users\route.js" />
     <Content Include="Scripts\DashBoard\websocket.js" />
-    <Content Include="Sqls\AddFile.sql" />
-    <Content Include="Sqls\AddFileGroup.sql" />
-    <Content Include="Sqls\AlterScheme.sql" />
     <Content Include="Sqls\InitializeDatabase.sql" />
     <Content Include="Sqls\CreateYummyOnlinePartition.sql" />
     <Content Include="Sqls\CreateHotelPartition.sql" />
     <Content Include="Sqls\GetDbPartitionInfos.sql" />
-    <Content Include="Sqls\GetDefaultDataPath.sql" />
     <Content Include="Sqls\GetFileGroupInfos.sql" />
-    <Content Include="Sqls\Merge.sql" />
-    <Content Include="Sqls\SplitFunction.sql" />
     <Content Include="Views\Shared\_LayoutGlobal.cshtml" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -300,6 +294,7 @@
     <Content Include="Views\Database\_ViewExecution.cshtml" />
     <Content Include="Views\Hotel\_ViewHotel.cshtml" />
     <Content Include="Views\Hotel\_ViewDine.cshtml" />
+    <Content Include="Views\Database\_ViewBackup.cshtml" />
     <None Include="Web.CompanyServer.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

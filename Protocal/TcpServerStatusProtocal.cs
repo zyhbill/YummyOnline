@@ -17,7 +17,7 @@ namespace Protocal {
 		public Guid Guid { get; set; }
 		public string Description { get; set; }
 	}
-	public class PrintDineClientStatus {
+	public class PrinterClientStatus {
 		public ClientStatus Status { get; set; }
 		public int HotelId { get; set; }
 		public int WaitedCount { get; set; }
@@ -25,6 +25,6 @@ namespace Protocal {
 	public class TcpServerStatusProtocal {
 		public List<ClientStatus> WaitingForVerificationClients { get; set; } = new List<ClientStatus>();
 		public List<NewDineInformClientStatus> NewDineInformClients { get; set; } = new List<NewDineInformClientStatus>();
-		public List<PrintDineClientStatus> PrintDineClients { get; set; } = new List<PrintDineClientStatus>();
+		public List<PrinterClientStatus> PrinterDineClients { get; set; } = new List<PrinterClientStatus>();
 	}
 }

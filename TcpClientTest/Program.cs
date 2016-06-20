@@ -30,7 +30,7 @@ namespace TcpClientTest {
 			client.Start();
 
 			Console.Read();
-			client.Send(new RequestPrintMenuProtocal(2, "16050300000005", new List<int> { 373, 374 }, new List<PrintType> { PrintType.ServeOrder, PrintType.KitchenOrder }), () => {
+			client.Send(new RequestPrintDineProtocal(2, "16050300000005", null, new List<PrintType> { PrintType.ServeOrder, PrintType.KitchenOrder }), () => {
 				Console.WriteLine("@");
 			});
 			Console.WriteLine("1");

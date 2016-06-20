@@ -25,14 +25,6 @@ namespace Protocal {
 		/// 饭店打印
 		/// </summary>
 		public const string PrintDine = "{8A39D55F-CC16-4798-990E-062A9260496C}";
-		/// <summary>
-		/// 请求饭店打印具体菜品
-		/// </summary>
-		public const string RequestPrintMenu = "{B7D6DF6F-416A-442A-9DCA-28B1F599096F}";
-		/// <summary>
-		/// 饭店打印具体菜品
-		/// </summary>
-		public const string PrintMenu = "{CEABCF16-F967-423D-AF67-60433891AA6B}";
 	}
 	public class BaseTcpProtocal {
 		public BaseTcpProtocal(string type) {
@@ -84,47 +76,27 @@ namespace Protocal {
 	}
 
 	public class RequestPrintDineProtocal : BaseTcpProtocal {
-		public RequestPrintDineProtocal(int hotelId, string dineId, List<PrintType> printTypes)
+		public RequestPrintDineProtocal(int hotelId, string dineId, List<int> dineMenuIds, List<PrintType> printTypes)
 			: base(TcpProtocalType.RequestPrintDine) {
 			HotelId = hotelId;
 			DineId = dineId;
+			DineMenuIds = dineMenuIds;
 			PrintTypes = printTypes;
 		}
 		public int HotelId { get; set; }
 		public string DineId { get; set; }
-		public List<PrintType> PrintTypes { get; set; }
+		public List<int> DineMenuIds { get; set; } = new List<int>();
+		public List<PrintType> PrintTypes { get; set; } = new List<PrintType>();
 	}
 	public class PrintDineProtocal : BaseTcpProtocal {
-		public PrintDineProtocal(string dineId, List<PrintType> printTypes)
+		public PrintDineProtocal(string dineId, List<int> dineMenuIds, List<PrintType> printTypes)
 			: base(TcpProtocalType.PrintDine) {
 			DineId = dineId;
-			PrintTypes = printTypes;
-		}
-		public string DineId { get; set; }
-		public List<PrintType> PrintTypes { get; set; }
-	}
-	public class RequestPrintMenuProtocal : BaseTcpProtocal {
-		public RequestPrintMenuProtocal(int hotelId, string dineId, List<int> dineMenuIds, List<PrintType> printTypes)
-			: base(TcpProtocalType.RequestPrintMenu) {
-			HotelId = hotelId;
-			DineId = dineId;
-			DineMenuIds = dineMenuIds;
-			PrintTypes = printTypes;
-		}
-		public int HotelId { get; set; }
-		public string DineId { get; set; }
-		public List<int> DineMenuIds { get; set; }
-		public List<PrintType> PrintTypes { get; set; }
-	}
-	public class PrintMenuProtocal : BaseTcpProtocal {
-		public PrintMenuProtocal(string dineId, List<int> dineMenuIds, List<PrintType> printTypes)
-			: base(TcpProtocalType.PrintMenu) {
-			DineId = dineId;
 			DineMenuIds = dineMenuIds;
 			PrintTypes = printTypes;
 		}
 		public string DineId { get; set; }
-		public List<int> DineMenuIds { get; set; }
-		public List<PrintType> PrintTypes { get; set; }
+		public List<int> DineMenuIds { get; set; } = new List<int>();
+		public List<PrintType> PrintTypes { get; set; } = new List<PrintType>();
 	}
 }

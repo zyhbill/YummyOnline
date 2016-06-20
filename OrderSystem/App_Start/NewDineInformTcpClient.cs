@@ -30,7 +30,7 @@ namespace OrderSystem {
 			client.Send(new NewDineInformProtocal(hotelId, dineId, isPaid));
 		}
 		public static void SendRequestPrintDine(int hotelId, string dineId, List<PrintType> printTypes) {
-			client.Send(new RequestPrintDineProtocal(hotelId, dineId, printTypes));
+			client.Send(new RequestPrintDineProtocal(hotelId, dineId, null, printTypes));
 		}
 	}
 }

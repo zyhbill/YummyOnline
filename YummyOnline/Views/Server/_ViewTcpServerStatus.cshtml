@@ -98,7 +98,7 @@
 							<th class="col-md-3">连接时间</th>
 							<th class="col-md-2">等待发送队列数量</th>
 						</tr>
-						<tr ng-repeat="c in tcpServerInfo.Status.PrintDineClients">
+						<tr ng-repeat="c in tcpServerInfo.Status.PrinterClients">
 							<td>{{c.HotelId}}</td>
 							<td colspan="3" class="danger" ng-hide="c.Status.IsConnected">Disconnected</td>
 							<td ng-show="c.Status.IsConnected">{{c.Status.IpAddress}}</td>

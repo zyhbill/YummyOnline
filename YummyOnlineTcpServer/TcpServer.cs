@@ -118,13 +118,10 @@ namespace YummyOnlineTcpServer {
 					case TcpProtocalType.RequestPrintDine:
 						requestPrintDine(clientInfo, JsonConvert.DeserializeObject<RequestPrintDineProtocal>(content));
 						break;
-					case TcpProtocalType.RequestPrintMenu:
-						requestPrintMenu(clientInfo, JsonConvert.DeserializeObject<RequestPrintMenuProtocal>(content));
-						break;
 				}
 			}
 			catch(Exception e) {
-				log($"{client.Client.RemoteEndPoint} Receive Error: {e.Message} {content}", Log.LogLevel.Error);
+				log($"{client.Client.RemoteEndPoint} Receive Error: {e.Message}, Data: {content}", Log.LogLevel.Error);
 				client.Close();
 			}
 		}
@@ -218,13 +215,11 @@ namespace YummyOnlineTcpServer {
 
 			_clientVerified(PrinterClients[pair.Key]);
 
+			// 打印存储在打印等待队列中的所有请求
 			while(printerWaitedQueue[pair.Key].Count > 0) {
 				BaseTcpProtocal printProtocal = printerWaitedQueue[pair.Key].Dequeue();
 				if(printProtocal.Type == TcpProtocalType.PrintDine) {
 					sendPrintDineProtocal(pair.Key, (PrintDineProtocal)printProtocal);
-				}
-				else if(printProtocal.Type == TcpProtocalType.PrintMenu) {
-					sendPrintMenuProtocal(pair.Key, (PrintMenuProtocal)printProtocal);
 				}
 
 				log($"Send Waited Dine of Hotel {pair.Key}", Log.LogLevel.Success);
@@ -271,13 +266,25 @@ namespace YummyOnlineTcpServer {
 		/// 请求打印
 		/// </summary>
 		private void requestPrintDine(TcpClientInfo clientInfo, RequestPrintDineProtocal protocal) {
-			StringBuilder str = new StringBuilder();
-			foreach(var type in protocal.PrintTypes) {
-				str.Append($"{type.ToString()} ");
-			}
-			log($"{clientInfo.OriginalRemotePoint} (RequestPrintDine): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, PrintTypes: {str.ToString()}", Log.LogLevel.Success);
+			protocal.DineMenuIds = protocal.DineMenuIds ?? new List<int>();
+			protocal.PrintTypes = protocal.PrintTypes ?? new List<PrintType>();
 
-			PrintDineProtocal p = new PrintDineProtocal(protocal.DineId, protocal.PrintTypes);
+			StringBuilder dineMenuStr = new StringBuilder();
+			for(int i = 0; i < protocal.DineMenuIds.Count; i++) {
+				dineMenuStr.Append(protocal.DineMenuIds[i]);
+				if(i != protocal.DineMenuIds.Count - 1)
+					dineMenuStr.Append(' ');
+			}
+
+			StringBuilder typeStr = new StringBuilder();
+			foreach(var type in protocal.PrintTypes) {
+				typeStr.Append($"{type.ToString()} ");
+			}
+
+			log($"{clientInfo.OriginalRemotePoint} (RequestPrintDine): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, DineMenuIds: {dineMenuStr}, PrintTypes: {typeStr}",
+				Log.LogLevel.Success);
+
+			PrintDineProtocal p = new PrintDineProtocal(protocal.DineId, null, protocal.PrintTypes);
 			if(PrinterClients[protocal.HotelId] == null) {
 				printerWaitedQueue[protocal.HotelId].Enqueue(p);
 				log($"Printer of Hotel {protocal.HotelId} is not connected", Log.LogLevel.Error);
@@ -290,36 +297,6 @@ namespace YummyOnlineTcpServer {
 		/// 向饭店打印机发送打印协议
 		/// </summary>
 		private void sendPrintDineProtocal(int hotelId, PrintDineProtocal protocal) {
-			var _ = tcp.Send(PrinterClients[hotelId].Client, JsonConvert.SerializeObject(protocal, new JsonSerializerSettings {
-				ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-			}), null);
-		}
-
-		/// <summary>
-		/// 请求打印具体菜品
-		/// </summary>
-		public void requestPrintMenu(TcpClientInfo clientInfo, RequestPrintMenuProtocal protocal) {
-			StringBuilder dineMenuStr = new StringBuilder();
-			for(int i = 0; i < protocal.DineMenuIds.Count; i++) {
-				dineMenuStr.Append(protocal.DineMenuIds[i]);
-				if(i != protocal.DineMenuIds.Count - 1)
-					dineMenuStr.Append(' ');
-			}
-			StringBuilder typeStr = new StringBuilder();
-			foreach(var type in protocal.PrintTypes) {
-				typeStr.Append($"{type.ToString()} ");
-			}
-			log($"{clientInfo.OriginalRemotePoint} (RequestPrintMenu): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, DineMenuIds: {dineMenuStr.ToString()}, PrintTypes: {typeStr.ToString()}", Log.LogLevel.Success);
-
-			PrintMenuProtocal p = new PrintMenuProtocal(protocal.DineId, protocal.DineMenuIds, protocal.PrintTypes);
-			if(PrinterClients[protocal.HotelId] == null) {
-				printerWaitedQueue[protocal.HotelId].Enqueue(p);
-				log($"Printer of Hotel {protocal.HotelId} is not connected", Log.LogLevel.Error);
-				return;
-			}
-			sendPrintMenuProtocal(protocal.HotelId, p);
-		}
-		private void sendPrintMenuProtocal(int hotelId, PrintMenuProtocal protocal) {
 			var _ = tcp.Send(PrinterClients[hotelId].Client, JsonConvert.SerializeObject(protocal, new JsonSerializerSettings {
 				ReferenceLoopHandling = ReferenceLoopHandling.Ignore
 			}), null);
@@ -343,7 +320,7 @@ namespace YummyOnlineTcpServer {
 				});
 			}
 			foreach(var pair in PrinterClients) {
-				protocal.PrintDineClients.Add(new PrintDineClientStatus {
+				protocal.PrinterDineClients.Add(new PrinterClientStatus {
 					HotelId = pair.Key,
 					WaitedCount = printerWaitedQueue[pair.Key].Count,
 					Status = getClientStatus(pair.Value)

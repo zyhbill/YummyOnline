@@ -87,6 +87,8 @@ namespace AsynchronousTcp {
 			try {
 				NetworkStream networkStream = client.GetStream();
 				await networkStream.WriteAsync(bytesWrite, 0, bytesWrite.Length);
+
+				callBack?.Invoke();
 			}
 			catch(Exception e) {
 				handleError(client, e);

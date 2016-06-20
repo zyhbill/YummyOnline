@@ -32,12 +32,15 @@ namespace AutoPrinter {
 				new PrintDineClientConnectProtocal(hotelId)
 			);
 			tcp.CallBackWhenMessageReceived = async (t, p) => {
-				if(t != TcpProtocalType.PrintDine) {
-					return;
+				if(t == TcpProtocalType.PrintDine) {
+					PrintDineProtocal protocal = (PrintDineProtocal)p;
+					await printDine(protocal.DineId, protocal.PrintTypes);
 				}
-				PrintDineProtocal protocal = (PrintDineProtocal)p;
+				else if(t == TcpProtocalType.PrintMenu) {
+					PrintMenuProtocal protocal = (PrintMenuProtocal)p;
+					await printMenus(protocal.DineId, protocal.DineMenuIds, protocal.PrintTypes);
+				}
 
-				await print(protocal.DineId, protocal.PrintTypes);
 			};
 			tcp.CallBackWhenConnected = () => {
 				Console.WriteLine("服务器连接成功");
@@ -71,7 +74,7 @@ namespace AutoPrinter {
 			}
 		}
 
-		static async Task print(string dineId, List<PrintType> printTypes) {
+		static async Task printDine(string dineId, List<PrintType> printTypes) {
 			DineForPrintingProtocal dp = null;
 			try {
 				dp = await getDineForPrinting(dineId);
@@ -79,19 +82,40 @@ namespace AutoPrinter {
 					Console.WriteLine("获取订单信息失败，请检查网络设置");
 					return;
 				}
-				DinePrinter dinePrinter = new DinePrinter(dp, printTypes);
-				Console.WriteLine($"正在打印 单号: {dp.Dine.Id}");
-				dinePrinter.Print();
+				DinePrinter dinePrinter = new DinePrinter();
+				Console.WriteLine($"正在打印 单号: {dineId}");
+				dinePrinter.PrintDine(dp, printTypes);
 				Console.WriteLine($"打印成功 单号: {dineId}");
 				printCompleted(dineId);
 			}
 			catch(Exception e) {
 				Console.WriteLine("无法打印, 请检查打印机设置");
-				Console.WriteLine($"订单号: {dineId}, 错误信息: {e}");
+				Console.WriteLine($"单号: {dineId}, 错误信息: {e}");
 				log(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 				return;
 			}
 		}
+		static async Task printMenus(string dineId, List<int> dineMenuIds, List<PrintType> printTypes) {
+			DineForPrintingProtocal dp = null;
+			try {
+				dp = await getDineForPrinting(dineId, dineMenuIds);
+				if(dp == null) {
+					Console.WriteLine("获取菜品信息失败，请检查网络设置");
+					return;
+				}
+				DinePrinter dinePrinter = new DinePrinter();
+				Console.WriteLine($"正在打印 单号: {dineId}");
+				dinePrinter.PrintMenu(dp, printTypes);
+				Console.WriteLine($"打印成功 单号: {dineId}");
+			}
+			catch(Exception e) {
+				Console.WriteLine("无法打印, 请检查打印机设置");
+				Console.WriteLine($"单号: {dineId}, 错误信息: {e}");
+				log(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
+				return;
+			}
+		}
+
 		static async Task printTest(string dineId, List<PrintType> printTypes, string printerName) {
 			DineForPrintingProtocal dp = null;
 			try {
@@ -106,9 +130,9 @@ namespace AutoPrinter {
 				foreach(var dineMenu in dp.Dine.DineMenus) {
 					dineMenu.Menu.Printer.Name = printerName;
 				}
-				DinePrinter dinePrinter = new DinePrinter(dp, printTypes);
+				DinePrinter dinePrinter = new DinePrinter();
 				Console.WriteLine($"正在打印测试单");
-				dinePrinter.Print();
+				dinePrinter.PrintDine(dp, printTypes);
 				Console.WriteLine($"测试单打印成功");
 				printCompleted(dineId);
 			}
@@ -119,10 +143,11 @@ namespace AutoPrinter {
 				return;
 			}
 		}
-		static async Task<DineForPrintingProtocal> getDineForPrinting(string dineId) {
+		static async Task<DineForPrintingProtocal> getDineForPrinting(string dineId, List<int> dineMenuIds = null) {
 			object postData = new {
 				HotelId = hotelId,
-				DineId = dineId
+				DineId = dineId,
+				DineMenuIds = dineMenuIds
 			};
 			string response = await HttpPost.PostAsync(ConfigurationManager.AppSettings["RemoteGetDineForPrintingUrl"].ToString(), postData);
 			if(response == null) {

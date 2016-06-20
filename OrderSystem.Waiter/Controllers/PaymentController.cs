@@ -2,6 +2,7 @@
 using HotelDAO.Models;
 using OrderSystem.Models;
 using Protocal;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Utility;
@@ -117,7 +118,7 @@ namespace OrderSystem.Waiter.Controllers {
 		private async Task requestPrintDine(string dineId) {
 			HotelConfig config = await new HotelManager(CurrHotel.ConnectionString).GetHotelConfig();
 			if(config.HasAutoPrinter) {
-				NewDineInformTcpClient.SendRequestPrintDine(CurrHotel.Id, dineId);
+				NewDineInformTcpClient.SendRequestPrintDine(CurrHotel.Id, dineId, new List<PrintType> { PrintType.Recipt, PrintType.ServeOrder, PrintType.KitchenOrder });
 			}
 		}
 	}

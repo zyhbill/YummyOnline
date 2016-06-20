@@ -52,6 +52,7 @@ namespace Protocal {
 			public bool Usable { get; set; }
 		}
 		public class DineMenu {
+			public int Id { get; set; }
 			public DineMenuStatus Status { get; set; }
 			public int Count { get; set; }
 			public decimal OriPrice { get; set; }
@@ -59,6 +60,7 @@ namespace Protocal {
 			public decimal RemarkPrice { get; set; }
 			public List<Remark> Remarks { get; set; } = new List<Remark>();
 			public Menu Menu { get; set; }
+			public string ReturnedReason { get; set; }
 		}
 		public class Menu {
 			public string Id { get; set; }

@@ -49,6 +49,7 @@ namespace HotelDAO.Models {
 		public DbSet<Dine> Dines { get; set; }
 		public DbSet<DineMenu> DineMenus { get; set; }
 		public DbSet<DinePaidDetail> DinePaidDetails { get; set; }
+		public DbSet<ReturnedReason> ReturnedReasons { get; set; }
 		public DbSet<TakeOut> TakeOuts { get; set; }
 
 		public DbSet<PayKind> PayKinds { get; set; }

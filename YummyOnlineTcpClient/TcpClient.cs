@@ -59,6 +59,9 @@ namespace YummyOnlineTcpClient {
 						case TcpProtocalType.PrintDine:
 							obj = JsonConvert.DeserializeObject<PrintDineProtocal>(content);
 							break;
+						case TcpProtocalType.PrintMenu:
+							obj = JsonConvert.DeserializeObject<PrintMenuProtocal>(content);
+							break;
 					}
 
 					CallBackWhenMessageReceived?.Invoke(p.Type, obj);

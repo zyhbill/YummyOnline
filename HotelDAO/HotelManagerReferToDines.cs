@@ -29,10 +29,14 @@ namespace HotelDAO {
 				.FirstOrDefaultAsync();
 			return dine;
 		}
-		public async Task<DineForPrintingProtocal.DineForPrinting> GetDineForPrintingById(string dineId) {
+		public async Task<DineForPrintingProtocal.DineForPrinting> GetDineForPrintingById(string dineId, List<int> dineMenuIds = null) {
 			var dine = await formatDineForPrinting(ctx.Dines
 					.Where(p => p.Id == dineId))
 					.FirstOrDefaultAsync();
+
+			if(dineMenuIds != null && dineMenuIds.Count > 0) {
+				dine.DineMenus.RemoveAll(p => !dineMenuIds.Contains(p.Id));
+			}
 
 			foreach(var dineMenu in dine.DineMenus) {
 				if(dineMenu.Menu.IsSetMeal) {
@@ -221,6 +225,7 @@ namespace HotelDAO {
 					}
 				},
 				DineMenus = p.DineMenus.Select(d => new DineForPrintingProtocal.DineMenu {
+					Id = d.Id,
 					Status = d.Status,
 					Count = d.Count,
 					OriPrice = d.OriPrice,
@@ -244,92 +249,10 @@ namespace HotelDAO {
 							IpAddress = d.Menu.Department.Printer.IpAddress,
 							Usable = d.Menu.Department.Printer.Usable
 						}
-					}
+					},
+					ReturnedReason = d.ReturnedReason
 				}).ToList()
 			});
-
-
-			//return dine.Select(p => new {
-			//	p.Id,
-			//	p.Status,
-			//	p.Type,
-			//	p.HeadCount,
-			//	p.Price,
-			//	p.OriPrice,
-			//	p.Discount,
-			//	p.DiscountName,
-			//	p.DiscountType,
-			//	p.BeginTime,
-			//	p.IsPaid,
-			//	p.IsOnline,
-			//	p.UserId,
-			//	Waiter = new {
-			//		p.Waiter.Id,
-			//		p.Waiter.Name
-			//	},
-			//	Clerk = new {
-			//		p.Clerk.Id,
-			//		p.Clerk.Name
-			//	},
-			//	Remarks = p.Remarks.Select(pp => new {
-			//		pp.Id,
-			//		pp.Name,
-			//		pp.Price
-			//	}),
-			//	Desk = new {
-			//		p.Desk.Id,
-			//		p.Desk.QrCode,
-			//		p.Desk.Name,
-			//		p.Desk.Description,
-			//		ReciptPrinter = new {
-			//			p.Desk.Area.DepartmentRecipt.Printer.Id,
-			//			p.Desk.Area.DepartmentRecipt.Printer.Name,
-			//			p.Desk.Area.DepartmentRecipt.Printer.IpAddress,
-			//			p.Desk.Area.DepartmentRecipt.Printer.Usable
-			//		},
-			//		ServePrinter = new {
-			//			p.Desk.Area.DepartmentServe.Printer.Id,
-			//			p.Desk.Area.DepartmentServe.Printer.Name,
-			//			p.Desk.Area.DepartmentServe.Printer.IpAddress,
-			//			p.Desk.Area.DepartmentServe.Printer.Usable
-			//		}
-			//	},
-			//	DineMenus = p.DineMenus.Select(d => new {
-			//		d.Status,
-			//		d.Count,
-			//		d.OriPrice,
-			//		d.Price,
-			//		d.RemarkPrice,
-			//		Remarks = d.Remarks.Select(r => new {
-			//			r.Id,
-			//			r.Name,
-			//			r.Price
-			//		}),
-			//		Menu = new {
-			//			d.Menu.Id,
-			//			d.Menu.Code,
-			//			d.Menu.Name,
-			//			d.Menu.NameAbbr,
-			//			d.Menu.Unit,
-			//			d.Menu.IsSetMeal,
-			//			Printer = new {
-			//				d.Menu.Department.Printer.Id,
-			//				d.Menu.Department.Printer.Name,
-			//				d.Menu.Department.Printer.IpAddress,
-			//				d.Menu.Department.Printer.Usable
-			//			}
-			//		}
-			//	}),
-			//	DinePaidDetails = p.DinePaidDetails.Select(d => new {
-			//		d.Price,
-			//		d.RecordId,
-			//		PayKind = new {
-			//			d.PayKind.Id,
-			//			d.PayKind.Name,
-			//			d.PayKind.Type
-			//		}
-			//	})
-			//});
 		}
 	}
 }

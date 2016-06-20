@@ -162,8 +162,11 @@ namespace HotelDAO.Models {
 		public decimal OriPrice { get; set; }
 		public decimal Price { get; set; }
 		public decimal RemarkPrice { get; set; }
-		[MaxLength(8)]
+
+		[ForeignKey(nameof(ReturnedWaiter))]
 		public string ReturnedWaiterId { get; set; }
+		public Staff ReturnedWaiter { get; set; }
+		public string ReturnedReason { get; set; }
 
 		public ICollection<Remark> Remarks { get; set; }
 	}
@@ -198,5 +201,11 @@ namespace HotelDAO.Models {
 		public string Address { get; set; }
 		[MaxLength(11)]
 		public string PhoneNumber { get; set; }
+	}
+
+	public class ReturnedReason {
+		[Key]
+		public int Id { get; set; }
+		public string Description { get; set; }
 	}
 }

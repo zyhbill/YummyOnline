@@ -12,49 +12,32 @@ using HotelDAO.Models;
 
 namespace TcpClientTest {
 	class Program {
-		//static string ip = "122.114.96.157";
+		static string ip = "127.0.0.1";
 		static void Main(string[] args) {
+			TcpClient client = new TcpClient(IPAddress.Parse(ip), 18000, new NewDineInformClientConnectProtocal("0465E2FB-67B9-43EB-AC4A-3621BF83ECB9"));
 
-			//TcpClient client = new TcpClient(IPAddress.Parse(ip), 18000, new NewDineInformClientConnectProtocal("{ec3ad9d8-1c48-420d-a33e-c2f83b761738}"));
+			client.CallBackWhenMessageReceived = (s, o) => {
+				var a = (NewDineInformProtocal)o;
+				Console.WriteLine(a.HotelId);
+				Console.WriteLine(a.DineId);
+			};
+			client.CallBackWhenExceptionOccured = e => {
+				Console.WriteLine(e);
+			};
+			client.CallBackWhenConnected = () => {
+				Console.WriteLine("Connected");
+			};
+			client.Start();
 
-			HotelContext ctx = new HotelContext("Server=FISHER-PC; Database=YummyOnlineHotel1; Integrated Security=True");
-			//ctx.Dines.Add(new Dine {
-			//	DeskId = "101",
-			//	Discount = 1,
-			//	DiscountType = DiscountType.None,
-			//	Price = 0,
-			//	OriPrice = 0,
-			//	WaiterId = "16020201"
-			//});
-			ctx.Areas.Add(new Area {
-				Id = "222",
-				Name = "ee",
-
-			});
-			ctx.SaveChanges();
 			Console.Read();
-			//client.CallBackWhenMessageReceived = (s, o) => {
-			//	var a = (NewDineInformProtocal)o;
-			//	Console.WriteLine(a.HotelId);
-			//	Console.WriteLine(a.DineId);
-			//};
-			//client.CallBackWhenExceptionOccured = e => {
-			//	Console.WriteLine(e);
-			//};
-			//client.CallBackWhenConnected = () => {
-			//	Console.WriteLine("Connected");
-			//};
-			//client.Start();
+			client.Send(new RequestPrintMenuProtocal(2, "16050300000005", new List<int> { 373, 374 }, new List<PrintType> { PrintType.ServeOrder, PrintType.KitchenOrder }), () => {
+				Console.WriteLine("@");
+			});
+			Console.WriteLine("1");
+			while(true) {
+				Console.Read();
+			}
 
-			//Console.Read();
-			//client.Send(new NewDineInformProtocal(1, "testid", true),()=> {
-			//	Console.WriteLine("@");
-			//});
-			//Console.WriteLine("1");
-			//while(true) {
-			//	Console.Read();
-			//}
-			
 		}
 	}
 }

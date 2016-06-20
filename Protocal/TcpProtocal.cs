@@ -25,6 +25,8 @@ namespace Protocal {
 		/// 饭店打印
 		/// </summary>
 		public const string PrintDine = "{8A39D55F-CC16-4798-990E-062A9260496C}";
+		public const string RequestPrintMenu = "{B7D6DF6F-416A-442A-9DCA-28B1F599096F}";
+		public const string PrintMenu = "{CEABCF16-F967-423D-AF67-60433891AA6B}";
 	}
 	public class BaseTcpProtocal {
 		public BaseTcpProtocal(string type) {
@@ -74,6 +76,7 @@ namespace Protocal {
 		/// </summary>
 		ServeOrder = 2
 	}
+
 	public class RequestPrintDineProtocal : BaseTcpProtocal {
 		public RequestPrintDineProtocal(int hotelId, string dineId, List<PrintType> printTypes)
 			: base(TcpProtocalType.RequestPrintDine) {
@@ -92,6 +95,30 @@ namespace Protocal {
 			PrintTypes = printTypes;
 		}
 		public string DineId { get; set; }
+		public List<PrintType> PrintTypes { get; set; }
+	}
+	public class RequestPrintMenuProtocal : BaseTcpProtocal {
+		public RequestPrintMenuProtocal(int hotelId, string dineId, List<int> dineMenuIds, List<PrintType> printTypes)
+			: base(TcpProtocalType.RequestPrintMenu) {
+			HotelId = hotelId;
+			DineId = dineId;
+			DineMenuIds = dineMenuIds;
+			PrintTypes = printTypes;
+		}
+		public int HotelId { get; set; }
+		public string DineId { get; set; }
+		public List<int> DineMenuIds { get; set; }
+		public List<PrintType> PrintTypes { get; set; }
+	}
+	public class PrintMenuProtocal : BaseTcpProtocal {
+		public PrintMenuProtocal(string dineId, List<int> dineMenuIds, List<PrintType> printTypes)
+			: base(TcpProtocalType.PrintMenu) {
+			DineId = dineId;
+			DineMenuIds = dineMenuIds;
+			PrintTypes = printTypes;
+		}
+		public string DineId { get; set; }
+		public List<int> DineMenuIds { get; set; }
 		public List<PrintType> PrintTypes { get; set; }
 	}
 }

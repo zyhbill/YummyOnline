@@ -73,7 +73,7 @@ namespace OrderSystem.Controllers {
 	}
 
 	public class OrderForPrintingController : BaseOrderSystemController {
-		public async Task<JsonResult> GetDineForPrinting(int hotelId, string dineId) {
+		public async Task<JsonResult> GetDineForPrinting(int hotelId, string dineId, List<int> dineMenuIds) {
 			if(dineId == "00000000000000") {
 				DineForPrintingProtocal testProtocal = generateTestProtocal();
 				return Json(testProtocal);
@@ -91,7 +91,7 @@ namespace OrderSystem.Controllers {
 			};
 			HotelManager hotelManager = new HotelManager(hotel.ConnectionString);
 
-			var dineP = await hotelManager.GetDineForPrintingById(dineId);
+			var dineP = await hotelManager.GetDineForPrintingById(dineId, dineMenuIds);
 
 			User user = await new UserManager().FindByIdAsync(dineP.UserId);
 			var userP = user == null ? null : new DineForPrintingProtocal.UserForPrinting {

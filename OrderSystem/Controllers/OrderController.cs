@@ -126,6 +126,7 @@ namespace OrderSystem.Controllers {
 					HeadCount = 10,
 					Price = 123.56m,
 					OriPrice = 987.65m,
+					Change = 123.456m,
 					Discount = 0.5,
 					DiscountName = "测试折扣名",
 					DiscountType = DiscountType.PayKind,

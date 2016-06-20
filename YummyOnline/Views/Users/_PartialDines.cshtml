@@ -79,6 +79,14 @@
 					{{dine.Price | currency : "￥"}}
 				</span>
 			</div>
+			<div class="col-xs-6">
+				找零：
+			</div>
+			<div class="col-xs-6 text-right">
+				<span class="text-danger">
+					{{dine.Change | currency : "￥"}}
+				</span>
+			</div>
 			<div class="col-xs-12">
 				<span ng-if="dine.DiscountType==0">无折扣</span>
 				<span ng-if="dine.DiscountType==1">支付打折</span>

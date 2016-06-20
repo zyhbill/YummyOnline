@@ -29,8 +29,8 @@ namespace OrderSystem {
 		public static void SendNewDineInfrom(int hotelId, string dineId, bool isPaid) {
 			client.Send(new NewDineInformProtocal(hotelId, dineId, isPaid));
 		}
-		public static void SendRequestPrintDine(int hotelId, string dineId) {
-			client.Send(new RequestPrintDineProtocal(hotelId, dineId, new List<PrintType>() { PrintType.Recipt, PrintType.KitchenOrder, PrintType.ServeOrder }));
+		public static void SendRequestPrintDine(int hotelId, string dineId, List<PrintType> printTypes) {
+			client.Send(new RequestPrintDineProtocal(hotelId, dineId, printTypes));
 		}
 	}
 }

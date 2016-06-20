@@ -52,11 +52,16 @@ namespace AutoPrinter {
 
 			while(true) {
 				string cmd = Console.ReadLine();
-				switch(cmd.ToLower()) {
+				string[] cmds = cmd.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+				switch(cmds[0].ToLower()) {
 					case "test":
-						print("00000000000000", new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }).Wait();
+						string printerName = "Microsoft XPS Document Writer";
+						if(cmds.Length > 1) {
+							printerName = cmds[1];
+						}
+						printTest("00000000000000", new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }, printerName).Wait();
 						break;
-					case "list printers":
+					case "list":
 						List<string> printers = DinePrinter.ListPrinters();
 						for(int i = 0; i < printers.Count; i++) {
 							Console.WriteLine($"{i + 1} {printers[i]}");
@@ -64,18 +69,6 @@ namespace AutoPrinter {
 						break;
 				}
 			}
-		}
-
-		static async Task<DineForPrintingProtocal> getDineForPrinting(string dineId) {
-			object postData = new {
-				HotelId = hotelId,
-				DineId = dineId
-			};
-			string response = await HttpPost.PostAsync(ConfigurationManager.AppSettings["RemoteGetDineForPrintingUrl"].ToString(), postData);
-			if(response == null) {
-				return null;
-			}
-			return JsonConvert.DeserializeObject<DineForPrintingProtocal>(response);
 		}
 
 		static async Task print(string dineId, List<PrintType> printTypes) {
@@ -87,8 +80,10 @@ namespace AutoPrinter {
 					return;
 				}
 				DinePrinter dinePrinter = new DinePrinter(dp, printTypes);
-				dinePrinter.Print();
 				Console.WriteLine($"正在打印 单号: {dp.Dine.Id}");
+				dinePrinter.Print();
+				Console.WriteLine($"打印成功 单号: {dineId}");
+				printCompleted(dineId);
 			}
 			catch(Exception e) {
 				Console.WriteLine("无法打印, 请检查打印机设置");
@@ -96,8 +91,44 @@ namespace AutoPrinter {
 				log(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 				return;
 			}
-			Console.WriteLine($"打印成功 单号: {dineId}");
-			printCompleted(dineId);
+		}
+		static async Task printTest(string dineId, List<PrintType> printTypes, string printerName) {
+			DineForPrintingProtocal dp = null;
+			try {
+				Console.WriteLine($"开始测试, 打印机: {printerName}");
+				dp = await getDineForPrinting(dineId);
+				if(dp == null) {
+					Console.WriteLine("获取订单信息失败，请检查网络设置");
+					return;
+				}
+				dp.Dine.Desk.ReciptPrinter.Name = printerName;
+				dp.Dine.Desk.ServePrinter.Name = printerName;
+				foreach(var dineMenu in dp.Dine.DineMenus) {
+					dineMenu.Menu.Printer.Name = printerName;
+				}
+				DinePrinter dinePrinter = new DinePrinter(dp, printTypes);
+				Console.WriteLine($"正在打印测试单");
+				dinePrinter.Print();
+				Console.WriteLine($"测试单打印成功");
+				printCompleted(dineId);
+			}
+			catch(Exception e) {
+				Console.WriteLine("无法打印测试单, 请检查打印机设置");
+				Console.WriteLine($"错误信息: {e}");
+				log(Log.LogLevel.Error, $"DineId: (test){dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
+				return;
+			}
+		}
+		static async Task<DineForPrintingProtocal> getDineForPrinting(string dineId) {
+			object postData = new {
+				HotelId = hotelId,
+				DineId = dineId
+			};
+			string response = await HttpPost.PostAsync(ConfigurationManager.AppSettings["RemoteGetDineForPrintingUrl"].ToString(), postData);
+			if(response == null) {
+				return null;
+			}
+			return JsonConvert.DeserializeObject<DineForPrintingProtocal>(response);
 		}
 
 		static void printCompleted(string dineId) {

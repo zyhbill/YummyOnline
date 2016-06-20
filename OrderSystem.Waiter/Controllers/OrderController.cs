@@ -103,5 +103,8 @@ namespace OrderSystem.Waiter.Controllers {
 			return Json(new JsonSuccess());
 		}
 
+		//public async Task<JsonResult> PrintShiftInfo(int hotelId) {
+
+		//}
 	}
 }

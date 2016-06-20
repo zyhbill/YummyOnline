@@ -40,6 +40,7 @@ namespace OrderSystem.Waiter.Controllers {
 
 			Dine dine = ((Dine)result.Data);
 			await newDineInform(dine, "Waiter");
+			await requestPrintDine(dine.Id);
 			return Json(new JsonSuccess { Data = dine.Id });
 		}
 
@@ -61,6 +62,7 @@ namespace OrderSystem.Waiter.Controllers {
 
 			Dine dine = ((Dine)result.Data);
 			await newDineInform(dine, "WaiterWithPaidDetail");
+			await requestPrintDine(dine.Id);
 			paidDetails.DineId = dine.Id;
 
 			bool succeeded = await OrderManager.OfflinePayCompleted(paidDetails);
@@ -112,11 +114,11 @@ namespace OrderSystem.Waiter.Controllers {
 		/// </summary>
 		/// <param name="dineId">订单号</param>
 		/// <returns></returns>
-		//private async Task requestPrintDine(string dineId) {
-		//	HotelConfig config = await new HotelManager(CurrHotel.ConnectionString).GetHotelConfig();
-		//	if(config.HasAutoPrinter) {
-		//		NewDineInformTcpClient.SendRequestPrintDine(CurrHotel.Id, dineId);
-		//	}
-		//}
+		private async Task requestPrintDine(string dineId) {
+			HotelConfig config = await new HotelManager(CurrHotel.ConnectionString).GetHotelConfig();
+			if(config.HasAutoPrinter) {
+				NewDineInformTcpClient.SendRequestPrintDine(CurrHotel.Id, dineId);
+			}
+		}
 	}
 }

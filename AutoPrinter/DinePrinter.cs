@@ -111,13 +111,18 @@ namespace AutoPrinter {
 
 			printHr(printer);
 
-			printGrid5122(printer, new string[] { "名称", "数量", "原价", "折后价格" }, fontSizeRecipt);
+			printGrid5122(printer, new string[] { "名称", "数量", "单价", "折后小计" }, fontSizeRecipt);
 
 			printHr(printer);
 
 			foreach(DineForPrintingProtocal.DineMenu dineMenu in protocal.Dine.DineMenus) {
 				// 打印具体菜品信息
-				printGrid5122(printer, new string[] { dineMenu.Menu.Name, dineMenu.Count.ToString(), dineMenu.OriPrice.ToString(), dineMenu.Price.ToString() }, fontSizeRecipt);
+				printGrid5122(printer, new string[] {
+					dineMenu.Menu.Name,
+					dineMenu.Count.ToString(),
+					dineMenu.OriPrice.ToString(),
+					(dineMenu.Price * dineMenu.Count).ToString()
+				}, fontSizeRecipt);
 
 				// 如果菜品为套餐，则打印套餐包含的具体菜品信息
 				if(dineMenu.Menu.IsSetMeal) {
@@ -160,6 +165,13 @@ namespace AutoPrinter {
 			foreach(DineForPrintingProtocal.DinePaidDetail dinePaidDetail in protocal.Dine.DinePaidDetails) {
 				printer.DrawStringLine($"{dinePaidDetail.PayKind.Name}: ￥{dinePaidDetail.Price}", fontSizeRecipt);
 			}
+			if(protocal.Dine.IsPaid) {
+				printer.DrawStringLine($"找零: ￥{protocal.Dine.Change}", fontSizeRecipt);
+			}
+			else {
+				printer.DrawStringLine("未支付", fontSizeRecipt);
+			}
+			printer.DrawStringLine("", fontSizeRecipt);
 		}
 		/// <summary>
 		/// 打印传菜单
@@ -203,6 +215,8 @@ namespace AutoPrinter {
 					printGrid82(printer, new string[] { $"{tab} {remarks[i].Name}", null, }, fontSizeServeOrder);
 				}
 			};
+
+			printer.DrawStringLine("", fontSizeServeOrder);
 		}
 
 		/// <summary>
@@ -228,6 +242,8 @@ namespace AutoPrinter {
 				}
 				printGrid82(printer, new string[] { $"  {tab} {remarks[i].Name}", null, }, fontSizeServeOrder);
 			}
+
+			printer.DrawStringLine("", fontSizeServeOrder);
 		}
 
 

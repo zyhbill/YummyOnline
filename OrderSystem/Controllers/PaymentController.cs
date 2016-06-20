@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using OrderSystem.Models;
 using Protocal;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -80,7 +81,7 @@ namespace OrderSystem.Controllers {
 				}
 			}
 			else {
-				await requestPrintDine(dine.Id);
+				await requestPrintDine(dine.Id, new List<PrintType> { PrintType.Recipt });
 				redirectUrl = $"{payKind.CompleteUrl}?Succeeded={true}&DineId={dine.Id}";
 			}
 
@@ -205,10 +206,10 @@ namespace OrderSystem.Controllers {
 		/// 请求打印订单
 		/// </summary>
 		/// <param name="dineId">订单号</param>
-		private async Task requestPrintDine(string dineId) {
+		private async Task requestPrintDine(string dineId, List<PrintType> printTypes) {
 			HotelConfig config = await HotelManager.GetHotelConfig();
 			if(config.HasAutoPrinter) {
-				NewDineInformTcpClient.SendRequestPrintDine(CurrHotel.Id, dineId);
+				NewDineInformTcpClient.SendRequestPrintDine(CurrHotel.Id, dineId, printTypes);
 			}
 		}
 
@@ -245,7 +246,7 @@ namespace OrderSystem.Controllers {
 			}
 			await OrderManager.OnlinePayCompleted(dineId, recordId);
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dineId, true);
-			await requestPrintDine(dineId);
+			await requestPrintDine(dineId, new List<PrintType> { PrintType.Recipt, PrintType.ServeOrder, PrintType.KitchenOrder });
 		}
 	}
 }

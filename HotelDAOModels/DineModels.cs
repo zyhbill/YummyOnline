@@ -80,6 +80,7 @@ namespace HotelDAO.Models {
 		/// </summary>
 		public decimal Price { get; set; }
 		public decimal OriPrice { get; set; }
+		public decimal Change { get; set; }
 		public double Discount { get; set; }
 		[MaxLength(25)]
 		public string DiscountName { get; set; }

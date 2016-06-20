@@ -12,6 +12,7 @@ namespace Protocal {
 			public int HeadCount { get; set; }
 			public decimal Price { get; set; }
 			public decimal OriPrice { get; set; }
+			public decimal Change { get; set; }
 			public double Discount { get; set; }
 			public string DiscountName { get; set; }
 			public DiscountType DiscountType { get; set; }
@@ -57,7 +58,7 @@ namespace Protocal {
 			public decimal Price { get; set; }
 			public decimal RemarkPrice { get; set; }
 			public List<Remark> Remarks { get; set; } = new List<Remark>();
-			public Menu Menu;
+			public Menu Menu { get; set; }
 		}
 		public class Menu {
 			public string Id { get; set; }
@@ -67,7 +68,7 @@ namespace Protocal {
 			public string Unit { get; set; }
 			public bool IsSetMeal { get; set; }
 			public List<SetMealMenu> SetMealMenus { get; set; } = new List<SetMealMenu>();
-			public Printer Printer;
+			public Printer Printer { get; set; }
 		}
 		public class DinePaidDetail {
 			public decimal Price { get; set; }

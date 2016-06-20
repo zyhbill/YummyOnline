@@ -106,7 +106,7 @@ namespace AutoPrinter {
 			printer.DrawSpacing(5);
 
 			printGrid55(printer, new string[] { $"单号: {protocal.Dine.Id}", $"时间: {protocal.Dine.BeginTime.ToString("M-d HH:mm")}" }, fontSizeRecipt);
-			printGrid55(printer, new string[] { $"顾客: {protocal.User.Id}", $"服务员: {protocal.Dine.Waiter.Name}" }, fontSizeRecipt);
+			printGrid55(printer, new string[] { $"顾客: {protocal.User?.Id}", $"服务员: {protocal.Dine.Waiter.Name}" }, fontSizeRecipt);
 			printer.DrawStringLine($"餐桌: {protocal.Dine.Desk.Name}", fontSizeRecipt);
 
 			printHr(printer);
@@ -168,7 +168,7 @@ namespace AutoPrinter {
 			PrinterGraphics printer = new PrinterGraphics(g);
 
 			printGrid55(printer, new string[] { $"单号: {protocal.Dine.Id}", $"时间: {protocal.Dine.BeginTime.ToString("M-d HH:mm")}" }, fontSizeServeOrder);
-			printGrid55(printer, new string[] { $"顾客: {protocal.User.Id}", $"服务员: {protocal.Dine.Waiter.Name}" }, fontSizeServeOrder);
+			printGrid55(printer, new string[] { $"顾客: {protocal.User?.Id}", $"服务员: {protocal.Dine.Waiter.Name}" }, fontSizeServeOrder);
 			printer.DrawStringLine($"餐桌: {protocal.Dine.Desk.Name}", fontSizeServeOrder);
 
 			printHr(printer);

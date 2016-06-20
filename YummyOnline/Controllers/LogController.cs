@@ -100,14 +100,14 @@ namespace YummyOnline.Controllers {
 		}
 
 		[AllowAnonymous]
-		public async Task<JsonResult> RemoteRecord(int? hotelId, int level, string message) {
+		public async Task<JsonResult> RemoteRecord(int? hotelId, int level, string message, string detail) {
 			if(hotelId == null) {
-				await YummyOnlineManager.RecordLog(Log.LogProgram.Remote, (Log.LogLevel)level, message);
+				await YummyOnlineManager.RecordLog(Log.LogProgram.Remote, (Log.LogLevel)level, message, detail);
 			}
 			else {
 				string connStr = await YummyOnlineManager.GetHotelConnectionStringById((int)hotelId);
 				HotelDAO.HotelManager hotelManager = new HotelDAO.HotelManager(connStr);
-				await hotelManager.RecordLog((HotelDAO.Models.Log.LogLevel)level, message);
+				await hotelManager.RecordLog((HotelDAO.Models.Log.LogLevel)level, message, detail);
 			}
 
 			Response.Headers.Add("Access-Control-Allow-Origin", "*");

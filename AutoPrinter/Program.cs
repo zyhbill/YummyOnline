@@ -45,7 +45,7 @@ namespace AutoPrinter {
 			};
 			tcp.CallBackWhenExceptionOccured = e => {
 				Console.WriteLine(e.Message);
-				log(Log.LogLevel.Error, e.Message);
+				log(Log.LogLevel.Error, e.Message, e.ToString());
 			};
 
 			tcp.Start();
@@ -79,8 +79,9 @@ namespace AutoPrinter {
 		}
 
 		static async Task print(string dineId, List<PrintType> printTypes) {
+			DineForPrintingProtocal dp = null;
 			try {
-				DineForPrintingProtocal dp = await getDineForPrinting(dineId);
+				dp = await getDineForPrinting(dineId);
 				if(dp == null) {
 					Console.WriteLine("获取订单信息失败，请检查网络设置");
 					return;
@@ -92,7 +93,7 @@ namespace AutoPrinter {
 			catch(Exception e) {
 				Console.WriteLine("无法打印, 请检查打印机设置");
 				Console.WriteLine($"订单号: {dineId}, 错误信息: {e}");
-				log(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}");
+				log(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 				return;
 			}
 			Console.WriteLine($"打印成功 单号: {dineId}");
@@ -107,11 +108,12 @@ namespace AutoPrinter {
 			var _ = HttpPost.PostAsync(ConfigurationManager.AppSettings["RemotePrintCompletedUrl"].ToString(), postData);
 		}
 
-		static void log(Log.LogLevel level, string message) {
+		static void log(Log.LogLevel level, string message, string detail = null) {
 			object postData = new {
 				HotelId = hotelId,
 				Level = level,
-				Message = message
+				Message = message,
+				Detail = detail
 			};
 			var _ = HttpPost.PostAsync(ConfigurationManager.AppSettings["RemoteLogUrl"].ToString(), postData);
 		}

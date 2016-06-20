@@ -38,7 +38,7 @@ namespace AutoPrinter {
 				}
 				else if(t == TcpProtocalType.PrintMenu) {
 					PrintMenuProtocal protocal = (PrintMenuProtocal)p;
-					await printMenus(protocal.DineId, protocal.DineMenuIds, protocal.PrintTypes);
+					await printSpecificMenusDine(protocal.DineId, protocal.DineMenuIds, protocal.PrintTypes);
 				}
 
 			};
@@ -95,7 +95,7 @@ namespace AutoPrinter {
 				return;
 			}
 		}
-		static async Task printMenus(string dineId, List<int> dineMenuIds, List<PrintType> printTypes) {
+		static async Task printSpecificMenusDine(string dineId, List<int> dineMenuIds, List<PrintType> printTypes) {
 			DineForPrintingProtocal dp = null;
 			try {
 				dp = await getDineForPrinting(dineId, dineMenuIds);
@@ -105,7 +105,7 @@ namespace AutoPrinter {
 				}
 				DinePrinter dinePrinter = new DinePrinter();
 				Console.WriteLine($"正在打印 单号: {dineId}");
-				dinePrinter.PrintMenu(dp, printTypes);
+				dinePrinter.PrintDine(dp, printTypes);
 				Console.WriteLine($"打印成功 单号: {dineId}");
 			}
 			catch(Exception e) {

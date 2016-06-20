@@ -37,7 +37,6 @@ namespace TcpClientTest {
 			while(true) {
 				Console.Read();
 			}
-
 		}
 	}
 }

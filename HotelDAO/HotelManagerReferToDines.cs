@@ -148,6 +148,7 @@ namespace HotelDAO {
 					p.Desk.Description
 				},
 				DineMenus = p.DineMenus.Select(d => new {
+					d.Id,
 					d.Status,
 					d.Count,
 					d.OriPrice,
@@ -155,7 +156,8 @@ namespace HotelDAO {
 					d.RemarkPrice,
 					Remarks = d.Remarks.Select(r => new {
 						r.Id,
-						r.Name
+						r.Name,
+						r.Price
 					}),
 					Menu = new {
 						d.Menu.Id,
@@ -164,7 +166,12 @@ namespace HotelDAO {
 						d.Menu.NameAbbr,
 						d.Menu.PicturePath,
 						d.Menu.Unit
-					}
+					},
+					ReturnedWaiter = new {
+						d.ReturnedWaiter.Id,
+						d.ReturnedWaiter.Name
+					},
+					d.ReturnedReason
 				}),
 				DinePaidDetails = p.DinePaidDetails.Select(d => new {
 					d.Price,
@@ -189,6 +196,7 @@ namespace HotelDAO {
 				Change = p.Change,
 				Discount = p.Discount,
 				DiscountName = p.DiscountName,
+				DiscountType = p.DiscountType,
 				BeginTime = p.BeginTime,
 				IsPaid = p.IsPaid,
 				IsOnline = p.IsOnline,
@@ -250,7 +258,20 @@ namespace HotelDAO {
 							Usable = d.Menu.Department.Printer.Usable
 						}
 					},
+					ReturnedWaiter = new DineForPrintingProtocal.Staff {
+						Id = d.ReturnedWaiter.Id,
+						Name = d.ReturnedWaiter.Name
+					},
 					ReturnedReason = d.ReturnedReason
+				}).ToList(),
+				DinePaidDetails = p.DinePaidDetails.Select(d => new DineForPrintingProtocal.DinePaidDetail {
+					Price = d.Price,
+					RecordId = d.RecordId,
+					PayKind = new DineForPrintingProtocal.PayKind {
+						Id = d.PayKind.Id,
+						Name = d.PayKind.Name,
+						Type = d.PayKind.Type
+					}
 				}).ToList()
 			});
 		}

@@ -60,6 +60,7 @@ namespace Protocal {
 			public decimal RemarkPrice { get; set; }
 			public List<Remark> Remarks { get; set; } = new List<Remark>();
 			public Menu Menu { get; set; }
+			public Staff ReturnedWaiter { get; set; }
 			public string ReturnedReason { get; set; }
 		}
 		public class Menu {

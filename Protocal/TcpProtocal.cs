@@ -25,7 +25,13 @@ namespace Protocal {
 		/// 饭店打印
 		/// </summary>
 		public const string PrintDine = "{8A39D55F-CC16-4798-990E-062A9260496C}";
+		/// <summary>
+		/// 请求饭店打印具体菜品
+		/// </summary>
 		public const string RequestPrintMenu = "{B7D6DF6F-416A-442A-9DCA-28B1F599096F}";
+		/// <summary>
+		/// 饭店打印具体菜品
+		/// </summary>
 		public const string PrintMenu = "{CEABCF16-F967-423D-AF67-60433891AA6B}";
 	}
 	public class BaseTcpProtocal {

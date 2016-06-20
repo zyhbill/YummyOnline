@@ -6,12 +6,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
-using System.IO;
-using System.Text;
 
 namespace YummyOnlineTcpServer {
 	public class TcpServer {
@@ -272,11 +271,11 @@ namespace YummyOnlineTcpServer {
 		/// 请求打印
 		/// </summary>
 		private void requestPrintDine(TcpClientInfo clientInfo, RequestPrintDineProtocal protocal) {
-			StringBuilder sb = new StringBuilder();
+			StringBuilder str = new StringBuilder();
 			foreach(var type in protocal.PrintTypes) {
-				sb.Append($"{type.ToString()} ");
+				str.Append($"{type.ToString()} ");
 			}
-			log($"{clientInfo.OriginalRemotePoint} (RequestPrintDine): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, PrintTypes: {sb.ToString()}", Log.LogLevel.Success);
+			log($"{clientInfo.OriginalRemotePoint} (RequestPrintDine): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, PrintTypes: {str.ToString()}", Log.LogLevel.Success);
 
 			PrintDineProtocal p = new PrintDineProtocal(protocal.DineId, protocal.PrintTypes);
 			if(PrinterClients[protocal.HotelId] == null) {
@@ -296,16 +295,21 @@ namespace YummyOnlineTcpServer {
 			}), null);
 		}
 
+		/// <summary>
+		/// 请求打印具体菜品
+		/// </summary>
 		public void requestPrintMenu(TcpClientInfo clientInfo, RequestPrintMenuProtocal protocal) {
-			StringBuilder dineMenuSb = new StringBuilder();
-			foreach(var id in protocal.DineMenuIds) {
-				dineMenuSb.Append($"{id} ");
+			StringBuilder dineMenuStr = new StringBuilder();
+			for(int i = 0; i < protocal.DineMenuIds.Count; i++) {
+				dineMenuStr.Append(protocal.DineMenuIds[i]);
+				if(i != protocal.DineMenuIds.Count - 1)
+					dineMenuStr.Append(' ');
 			}
-			StringBuilder typeSb = new StringBuilder();
+			StringBuilder typeStr = new StringBuilder();
 			foreach(var type in protocal.PrintTypes) {
-				typeSb.Append($"{type.ToString()} ");
+				typeStr.Append($"{type.ToString()} ");
 			}
-			log($"{clientInfo.OriginalRemotePoint} (RequestPrintMenu): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, DineMenuIds: {dineMenuSb.ToString()}, PrintTypes: {typeSb.ToString()}", Log.LogLevel.Success);
+			log($"{clientInfo.OriginalRemotePoint} (RequestPrintMenu): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, DineMenuIds: {dineMenuStr.ToString()}, PrintTypes: {typeStr.ToString()}", Log.LogLevel.Success);
 
 			PrintMenuProtocal p = new PrintMenuProtocal(protocal.DineId, protocal.DineMenuIds, protocal.PrintTypes);
 			if(PrinterClients[protocal.HotelId] == null) {

@@ -54,7 +54,7 @@ namespace AutoPrinter {
 				string cmd = Console.ReadLine();
 				switch(cmd.ToLower()) {
 					case "test":
-						print("16061400000004", new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }).Wait();
+						print("00000000000000", new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }).Wait();
 						break;
 					case "list printers":
 						List<string> printers = DinePrinter.ListPrinters();

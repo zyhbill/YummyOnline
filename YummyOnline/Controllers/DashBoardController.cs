@@ -32,10 +32,10 @@ namespace YummyOnline.Controllers {
 		}
 
 		public async Task<JsonResult> GetUserDailyCount() {
-			var customerDailyCountTask = new YummyOnlineDAO.YummyOnlineManager().GetUserDailyCount(Role.Customer);
-			var customerCountTask = new YummyOnlineDAO.YummyOnlineManager().GetUserCount(Role.Customer);
-			var nemoDailyCountTask = new YummyOnlineDAO.YummyOnlineManager().GetUserDailyCount(Role.Nemo);
-			var nemoCountTask = new YummyOnlineDAO.YummyOnlineManager().GetUserCount(Role.Nemo);
+			var customerDailyCountTask = new YummyOnlineManager().GetUserDailyCount(Role.Customer);
+			var customerCountTask = new YummyOnlineManager().GetUserCount(Role.Customer);
+			var nemoDailyCountTask = new YummyOnlineManager().GetUserDailyCount(Role.Nemo);
+			var nemoCountTask = new YummyOnlineManager().GetUserCount(Role.Nemo);
 
 			var result = new {
 				CustomerDailyCount = await customerDailyCountTask,
@@ -53,7 +53,7 @@ namespace YummyOnline.Controllers {
 				if(h.ConnectionString == null)
 					continue;
 				List<dynamic> dailyCount = new List<dynamic>();
-				HotelDAO.HotelManager hotelManager = new HotelDAO.HotelManager(h.ConnectionString);
+				HotelManager hotelManager = new HotelManager(h.ConnectionString);
 				for(int i = -30; i <= 0; i++) {
 					DateTime t = DateTime.Now.AddDays(i);
 					int count = await hotelManager.GetDineCount(t);
@@ -78,7 +78,7 @@ namespace YummyOnline.Controllers {
 			List<dynamic> list = new List<dynamic>();
 			List<Hotel> hotels = await YummyOnlineManager.GetHotels();
 			foreach(Hotel h in hotels) {
-				HotelDAO.HotelManager hotelManager = new HotelDAO.HotelManager(h.ConnectionString);
+				HotelManager hotelManager = new HotelManager(h.ConnectionString);
 
 				list.Add(new {
 					HotelName = h.Name,

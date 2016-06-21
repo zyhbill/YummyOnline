@@ -135,10 +135,6 @@
       <Project>{8b2af470-27a1-4dc9-b228-0942dc9e85a1}</Project>
       <Name>Utility</Name>
     </ProjectReference>
-    <ProjectReference Include="..\YummyOnlineDAOModels\YummyOnlineDAOModels.csproj">
-      <Project>{3625134D-BF70-4481-A2E8-4150256DEF32}</Project>
-      <Name>YummyOnlineDAOModels</Name>
-    </ProjectReference>
     <ProjectReference Include="..\YummyOnlineTcpClient\YummyOnlineTcpClient.csproj">
       <Project>{ec57dd19-5fae-4217-ad83-6914e2718c71}</Project>
       <Name>YummyOnlineTcpClient</Name>

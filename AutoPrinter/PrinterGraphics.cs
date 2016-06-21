@@ -7,9 +7,9 @@ namespace AutoPrinter {
 		private float currY = 0;
 		private Graphics g;
 
-		public static int PaperWidth { get; set; } = 278;
+		public static int PaperWidth { get; set; }
+		public static string FontName { get; set; }
 		public static float Spacing { get; set; } = 0;
-		public static string FontName { get; set; } = "宋体";
 
 		public PrinterGraphics(Graphics graphics) {
 			g = graphics;

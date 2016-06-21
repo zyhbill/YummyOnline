@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PrinterModels.cs" />
     <Compile Include="DepartmentModels.cs" />
     <Compile Include="AreaModels.cs" />
     <Compile Include="DineModels.cs" />

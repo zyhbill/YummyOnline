@@ -1,5 +1,4 @@
-﻿using HotelDAO;
-using HotelDAO.Models;
+﻿using HotelDAO.Models;
 using OrderSystem.Models;
 using Protocal;
 using System.Collections.Generic;

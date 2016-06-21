@@ -25,6 +25,6 @@ namespace Protocal {
 	public class TcpServerStatusProtocal {
 		public List<ClientStatus> WaitingForVerificationClients { get; set; } = new List<ClientStatus>();
 		public List<NewDineInformClientStatus> NewDineInformClients { get; set; } = new List<NewDineInformClientStatus>();
-		public List<PrinterClientStatus> PrinterDineClients { get; set; } = new List<PrinterClientStatus>();
+		public List<PrinterClientStatus> PrinterClients { get; set; } = new List<PrinterClientStatus>();
 	}
 }

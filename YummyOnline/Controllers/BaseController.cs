@@ -35,11 +35,11 @@ namespace YummyOnline.Controllers {
 				_userManager = value;
 			}
 		}
-		private SigninManager _signinManager;
-		public SigninManager SigninManager {
+		private UserSigninManager _signinManager;
+		public UserSigninManager SigninManager {
 			get {
 				if(_signinManager == null) {
-					_signinManager = new SigninManager(HttpContext);
+					_signinManager = new UserSigninManager(HttpContext);
 				}
 				return _signinManager;
 			}

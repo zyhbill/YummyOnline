@@ -320,7 +320,7 @@ namespace YummyOnlineTcpServer {
 				});
 			}
 			foreach(var pair in PrinterClients) {
-				protocal.PrinterDineClients.Add(new PrinterClientStatus {
+				protocal.PrinterClients.Add(new PrinterClientStatus {
 					HotelId = pair.Key,
 					WaitedCount = printerWaitedQueue[pair.Key].Count,
 					Status = getClientStatus(pair.Value)

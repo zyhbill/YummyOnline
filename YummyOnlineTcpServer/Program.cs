@@ -66,7 +66,7 @@ namespace YummyOnlineTcpServer {
 					}
 				}
 				Console.WriteLine("========================");
-				foreach(var p in status.PrinterDineClients) {
+				foreach(var p in status.PrinterClients) {
 					Console.Write($"Hotel {p.HotelId}: ");
 					if(p.Status.IsConnected) {
 						displayClientStatus(p.Status);

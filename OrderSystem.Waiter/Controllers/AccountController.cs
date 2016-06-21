@@ -1,5 +1,4 @@
-﻿using HotelDAO;
-using OrderSystem.Models;
+﻿using OrderSystem.Models;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using YummyOnlineDAO.Identity;

@@ -1,6 +1,7 @@
 ﻿using HotelDAO.Models;
 using Newtonsoft.Json;
 using Protocal;
+using Protocal.DineForPrintingProtocal;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -72,7 +73,7 @@ namespace AutoPrinter {
 		}
 
 		static async Task printDine(string dineId, List<int> dineMenuIds, List<PrintType> printTypes) {
-			DineForPrintingProtocal dp = null;
+			DineForPrinting dp = null;
 			try {
 				dp = await getDineForPrinting(dineId, dineMenuIds);
 				if(dp == null) {
@@ -94,29 +95,9 @@ namespace AutoPrinter {
 				return;
 			}
 		}
-		//static async Task printSpecificMenusDine(string dineId, List<int> dineMenuIds, List<PrintType> printTypes) {
-		//	DineForPrintingProtocal dp = null;
-		//	try {
-		//		dp = await getDineForPrinting(dineId, dineMenuIds);
-		//		if(dp == null) {
-		//			Console.WriteLine("获取菜品信息失败，请检查网络设置");
-		//			return;
-		//		}
-		//		DinePrinter dinePrinter = new DinePrinter();
-		//		Console.WriteLine($"正在打印 单号: {dineId}");
-		//		dinePrinter.PrintDine(dp, printTypes);
-		//		Console.WriteLine($"打印成功 单号: {dineId}");
-		//	}
-		//	catch(Exception e) {
-		//		Console.WriteLine("无法打印, 请检查打印机设置");
-		//		Console.WriteLine($"单号: {dineId}, 错误信息: {e}");
-		//		log(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
-		//		return;
-		//	}
-		//}
 
 		static async Task printTest(string dineId, List<PrintType> printTypes, string printerName) {
-			DineForPrintingProtocal dp = null;
+			DineForPrinting dp = null;
 			try {
 				Console.WriteLine($"开始测试, 打印机: {printerName}");
 				dp = await getDineForPrinting(dineId);
@@ -142,7 +123,7 @@ namespace AutoPrinter {
 				return;
 			}
 		}
-		static async Task<DineForPrintingProtocal> getDineForPrinting(string dineId, List<int> dineMenuIds = null) {
+		static async Task<DineForPrinting> getDineForPrinting(string dineId, List<int> dineMenuIds = null) {
 			object postData = new {
 				HotelId = hotelId,
 				DineId = dineId,
@@ -152,7 +133,7 @@ namespace AutoPrinter {
 			if(response == null)
 				return null;
 
-			DineForPrintingProtocal protocal = JsonConvert.DeserializeObject<DineForPrintingProtocal>(response);
+			DineForPrinting protocal = JsonConvert.DeserializeObject<DineForPrinting>(response);
 			if(protocal.Hotel == null)
 				return null;
 			return protocal;

@@ -11,7 +11,7 @@ using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
 
 namespace OrderSystem {
-	public class OrderManager : BaseHotelManager {
+	public class OrderManager : HotelManager {
 		private class MenuExtensionWithGift {
 			public MenuExtension MenuExtension { get; set; }
 			public bool IsGift { get; set; }

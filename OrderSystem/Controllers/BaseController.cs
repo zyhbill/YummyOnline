@@ -1,17 +1,12 @@
-﻿using HotelDAO;
-using Newtonsoft.Json;
-using OrderSystem.Models;
+﻿using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
-using YummyOnlineDAO;
+using Utility;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
-using Protocal;
-using System.Web.Routing;
-using Utility;
 
 namespace OrderSystem.Controllers {
 	public class BaseController : Controller {
@@ -59,11 +54,11 @@ namespace OrderSystem.Controllers {
 				return _userManager;
 			}
 		}
-		private SigninManager _signinManager;
-		public SigninManager SigninManager {
+		private UserSigninManager _signinManager;
+		public UserSigninManager SigninManager {
 			get {
 				if(_signinManager == null) {
-					_signinManager = new SigninManager(HttpContext);
+					_signinManager = new UserSigninManager(HttpContext);
 				}
 				return _signinManager;
 			}

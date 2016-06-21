@@ -19,31 +19,4 @@ namespace HotelDAO.Models {
 		public int? PrinterId { get; set; }
 		public Printer Printer { get; set; }
 	}
-	/// <summary>
-	/// 打印机
-	/// </summary>
-	public class Printer {
-		[Key]
-		public int Id { get; set; }
-		public bool Usable { get; set; }
-		/// <summary>
-		/// 打印机的IP地址
-		/// </summary>
-		[MaxLength(15)]
-		public string IpAddress { get; set; }
-
-		public string Name { get; set; }
-
-		public ICollection<Department> Departments { get; set; }
-	}
-
-	public class PrinterFormat {
-		[Key]
-		public int Id { get; set; }
-
-		[MaxLength(10)]
-		public string Font { get; set; }
-		public bool IsCenter { get; set; }
-		public int PaperSize { get; set; }
-	}
 }

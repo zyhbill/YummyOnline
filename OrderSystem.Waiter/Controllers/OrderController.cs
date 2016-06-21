@@ -1,5 +1,4 @@
-﻿using HotelDAO;
-using HotelDAO.Models;
+﻿using HotelDAO.Models;
 using OrderSystem.Utility;
 using Protocal;
 using System;
@@ -32,10 +31,10 @@ namespace OrderSystem.Waiter.Controllers {
 
 		public async Task<JsonResult> GetMenuInfos() {
 			string connStr = CurrHotel.ConnectionString;
-			var tMenuClasses = new HotelManager(connStr).GetMenuClasses();
-			var tMenus = new HotelManager(connStr).GetMenus();
-			var tMenuOnSales = new HotelManager(connStr).GetMenuOnSales();
-			var tMenuSetMeals = new HotelManager(connStr).GetMenuSetMeals();
+			var tMenuClasses = new HotelManager(connStr).GetFormatedMenuClasses();
+			var tMenus = new HotelManager(connStr).GetFormatedMenus();
+			var tMenuOnSales = new HotelManager(connStr).GetFormatedMenuOnSales();
+			var tMenuSetMeals = new HotelManager(connStr).GetFormatedMenuSetMeals();
 			var tHotel = new HotelManager(connStr).GetHotelConfig();
 			var tTimeDiscounts = new HotelManager(connStr).GetTimeDiscounts();
 			var tVipDiscounts = new HotelManager(connStr).GetVipDiscounts();
@@ -69,10 +68,10 @@ namespace OrderSystem.Waiter.Controllers {
 			string connStr = CurrHotel.ConnectionString;
 
 			var tAreas = new HotelManager(connStr).GetAreas();
-			var tPayKinds = new HotelManager(connStr).GetPayKinds(new List<PayKindType> { PayKindType.Points, PayKindType.Offline, PayKindType.Online, PayKindType.Cash });
+			var tPayKinds = new HotelManager(connStr).GetFormatedPayKinds(new List<PayKindType> { PayKindType.Points, PayKindType.Offline, PayKindType.Online, PayKindType.Cash });
 			var tRemarks = new HotelManager(connStr).GetRemarks();
 			var tStaffs = new HotelManager(connStr).GetStaffs();
-			var tSellOutMenus = new HotelManager(connStr).GetMenus(MenuStatus.SellOut);
+			var tSellOutMenus = new HotelManager(connStr).GetFormatedMenus(MenuStatus.SellOut);
 
 			var result = new {
 				Areas = await tAreas,
@@ -85,11 +84,11 @@ namespace OrderSystem.Waiter.Controllers {
 		}
 
 		public async Task<JsonResult> GetCurrentDines(string deskId) {
-			return Json(await HotelManager.GetWaiterCurrentDines(User.Identity.GetUserId(), deskId));
+			return Json(await HotelManager.GetCurrentDines(User.Identity.GetUserId(), deskId));
 		}
 
 		public async Task<JsonResult> GetDineById(string dineId) {
-			return Json(await HotelManager.GetDineById(dineId));
+			return Json(await HotelManager.GetFormatedDineById(dineId));
 		}
 
 		public async Task<JsonResult> ShiftDines() {

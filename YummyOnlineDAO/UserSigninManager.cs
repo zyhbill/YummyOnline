@@ -19,8 +19,8 @@ namespace YummyOnlineDAO.Identity {
 	/// <summary>
 	/// 普通用户登录
 	/// </summary>
-	public class SigninManager : BaseSigninManager {
-		public SigninManager(HttpContextBase httpCtx) : base(httpCtx) { }
+	public class UserSigninManager : BaseSigninManager {
+		public UserSigninManager(HttpContextBase httpCtx) : base(httpCtx) { }
 
 		public void Signin(User user, bool isPersistent) {
 			FormsAuthentication.SetAuthCookie(user.Id.ToString(), isPersistent);

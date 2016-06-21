@@ -66,11 +66,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseHotelManager.cs" />
     <Compile Include="EntityContext.cs" />
-    <Compile Include="HotelManagerReferToStaffs.cs" />
+    <Compile Include="HotelManagerReferToMenuInfos.cs" />
     <Compile Include="HotelManagerReferToCustomers.cs" />
-    <Compile Include="HotelManagerReferToInitialization.cs" />
     <Compile Include="HotelManagerReferToDines.cs" />
     <Compile Include="HotelManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

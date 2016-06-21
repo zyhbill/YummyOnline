@@ -6,7 +6,7 @@
 	'$uibModal',
 	'cart',
 	'menuFilter',
-	function ($scope, $rootScope, $http,$window, $modal, $cart, $menuFilter) {
+	function ($scope, $rootScope, $http, $window, $modal, $cart, $menuFilter) {
 		$scope.openRemarkModal = function (menu) {
 			var modalInstance = $modal.open({
 				templateUrl: 'remarkModal.html',
@@ -151,5 +151,19 @@ app.controller('CurrentCtrl', [
 				getCurrentDines($cart.Desk);
 			}
 		}, true);
+	}
+]).controller('HistoryCtrl', [
+	'$scope',
+	'$http',
+	'$location',
+	'cart',
+	function ($scope, $http, $location, $cart) {
+		if (!$cart.IsInitialized) {
+			$location.path('/');
+		}
+
+		$http.post('/Order/GetHistoryDines').then(function (response) {
+			$scope.dines = response.data;
+		});
 	}
 ]);

@@ -149,7 +149,7 @@
 		bottom: 50px;
 		border: none;
 		border-radius: 0;
-		width: 400%;
+		width: 100%;
 		box-shadow: 0 0 20px rgba(0,0,0,.5);
 	}
 
@@ -172,7 +172,8 @@
 			}
 
 
-	.control .control-btn.control-btn-desk .dropdown-menu {
+	.control .control-btn.control-btn-desk.control-btn-3 .dropdown-menu {
+		width: 400%;
 		left: -100%;
 	}
 
@@ -180,10 +181,12 @@
 		width: 200%;
 		left: -50%;
 	}
-	.control .control-btn.control-btn-desk.control-btn-12 .dropdown-menu {
-		width: 100%;
+
+	.control .control-btn.control-btn-desk.control-btn-9 .dropdown-menu {
+		width: 135%;
 		left: 0;
 	}
+
 
 	.control .control-btn.control-btn-desk .dropdown-menu li {
 		width: 20%;
@@ -210,13 +213,21 @@
 			background: #a94442;
 		}
 
+	.control .control-btn.control-btn-class .dropdown-menu {
+		width: 400%;
+	}
 
 	.control .control-btn.control-btn-option .dropdown-menu {
+		width: 200%;
 		border-radius: 2px;
 	}
 
-		.control .control-btn.control-btn-option .dropdown-menu li {
-			float: none;
-			padding: 0 10px;
-			width: auto;
-		}
+	.control .control-btn.control-btn-option.index .dropdown-menu {
+		left: -100%;
+	}
+
+	.control .control-btn.control-btn-option .dropdown-menu li {
+		float: none;
+		padding: 0 10px;
+		width: auto;
+	}

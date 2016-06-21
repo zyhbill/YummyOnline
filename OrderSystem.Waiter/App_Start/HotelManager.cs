@@ -66,12 +66,12 @@ namespace OrderSystem.Waiter {
 			return true;
 		}
 
-		public async Task<List<dynamic>> GetCurrentDines(string waiterId, string deskId) {
-			List<dynamic> dines = await formatDine(ctx.Dines
-				.Where(p => p.WaiterId == waiterId && p.Desk.Id == deskId && p.Status != DineStatus.Shifted)
-				.OrderByDescending(p => p.Id))
-				.ToListAsync();
-			return dines;
+		public async Task<List<dynamic>> GetHistoryDines(string waiterId, string deskId = null) {
+			IQueryable<Dine> linq = ctx.Dines.Where(p => p.WaiterId == waiterId && p.Status != DineStatus.Shifted);
+			if(deskId != null) {
+				linq = linq.Where(p => p.DeskId == deskId);
+			}
+			return await formatDine(linq.OrderByDescending(p => p.Id)).ToListAsync();
 		}
 
 		public async Task ShiftDines() {
@@ -81,6 +81,8 @@ namespace OrderSystem.Waiter {
 			}
 			await ctx.SaveChangesAsync();
 		}
+
+
 	}
 
 	// 服务员相关

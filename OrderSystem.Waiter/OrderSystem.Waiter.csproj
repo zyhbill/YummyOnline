@@ -166,6 +166,7 @@
     <Content Include="Views\Error\HttpError404.cshtml" />
     <Content Include="Views\Error\HttpError500.cshtml" />
     <Content Include="Views\Error\HotelUnavailable.cshtml" />
+    <Content Include="Views\Order\_PartialDine.cshtml" />
     <None Include="Web.CompanyServer.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -177,7 +178,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>

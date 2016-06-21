@@ -80,7 +80,7 @@
 
 <section>
 	<ul class="control">
-		<li class="control-btn control-btn-3 no-border" 
+		<li class="control-btn control-btn-3 control-btn-class no-border"
 			ng-hide="cart.Desk==null || menuFilter.IsResultMode()">
 			<div uib-dropdown>
 				<div uib-dropdown-toggle>
@@ -113,8 +113,19 @@
 			返回
 		</li>
 
-		<li class="control-btn control-btn-3 control-btn-desk" ng-class="{'control-btn-12':cart.Desk==null}">
+		<li class="control-btn control-btn-3 control-btn-desk" ng-class="{'control-btn-9':cart.Desk==null}">
 			@Html.Partial("_PartialOpenDesk")
+		</li>
+		<li class="control-btn control-btn-3 control-btn-option index" ng-show="cart.Desk==null">
+			<div uib-dropdown>
+				<div uib-dropdown-toggle>
+					选项
+				</div>
+				<ul class="dropdown-menu">
+					<li route-href="/History">历史订单</li>
+					<li ng-click="signout()">退出</li>
+				</ul>
+			</div>
 		</li>
 
 		<li class="control-btn control-btn-3 control-btn-option" ng-hide="cart.Desk==null">

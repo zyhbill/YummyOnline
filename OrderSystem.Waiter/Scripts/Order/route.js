@@ -8,9 +8,17 @@
 	}).when('/Payment', {
 		templateUrl: '/Order/_ViewPayment',
 		controller: 'PaymentCtrl'
-	}).when('/Current', {
+	})
+
+	// 当前桌台点单
+	.when('/Current', {
 		templateUrl: '/Order/_ViewCurrent',
 		controller: 'CurrentCtrl'
+	})
+	// 历史点单 共用一个视图
+	.when('/History', {
+		templateUrl: '/Order/_ViewCurrent',
+		controller: 'HistoryCtrl'
 	})
 });
 

@@ -1,0 +1,122 @@
+﻿
+<ul class="list-group">
+	<li class="list-group-item">
+		<div class="row no-padding">
+			<div class="col-xs-8">
+				{{dine.Id}}
+				<span class="text-danger" ng-if="!dine.IsPaid">[未支付]</span>
+				<span class="text-success" ng-if="dine.IsPaid">[已支付]</span>
+			</div>
+			<div class="col-xs-4 text-right">
+				<span ng-if="dine.IsOnline">[线上]</span>
+				<span ng-if="!dine.IsOnline">[线下]</span>
+			</div>
+		</div>
+
+		<div>{{dine.BeginTime | date:'yyyy/M/d HH:mm:ss'}}</div>
+
+		<div class="row no-padding">
+			<div class="col-xs-6">
+				{{dine.Desk.Name}}
+			</div>
+			<div class="col-xs-6 text-right">
+				{{dine.HeadCount}} 人
+			</div>
+		</div>
+
+		<div>服务员：{{dine.Waiter.Name}} {{dine.Waiter.Id}}</div>
+
+		<div>收银员：{{dine.Clerk.Name}} {{dine.Clerk.Id}}</div>
+	</li>
+	<li class="list-group-item">
+		<div class="row">
+			<div class="col-xs-6">
+				<span ng-if="dine.Type==0">堂吃</span>
+				<span ng-if="dine.Type==1">堂吃</span>
+			</div>
+			<div class="col-xs-6 text-right">
+				<span ng-if="dine.Status==0">未处理</span>
+				<span ng-if="dine.Status==1">已打印</span>
+				<span ng-if="dine.Status==2">上菜完毕</span>
+				<span ng-if="dine.Status==3">已完成交接班</span>
+			</div>
+		</div>
+	</li>
+	<li class="list-group-item">
+		@* ngRepeat menu *@
+		<div class="row no-padding" ng-repeat="menu in dine.DineMenus">
+			<div class="col-xs-6">
+				{{menu.Menu.Name}}
+				<span class="label label-default"
+					  ng-repeat="remark in menu.Remarks">
+					{{remark.Name}}
+				</span>
+			</div>
+			<div class="col-xs-2 text-right">
+				&times;{{menu.Count}}
+			</div>
+			<div class="col-xs-4 text-right">
+				<s ng-show="menu.OriPrice!=menu.Price">
+					{{menu.OriPrice | currency : "￥"}}
+				</s>
+				<span class="text-danger">
+					{{menu.Price | currency : "￥"}}
+				</span>
+			</div>
+		</div>
+	</li>
+
+	<li class="list-group-item">
+		<div class="row no-padding">
+			<div class="col-xs-6">
+				共计：
+			</div>
+			<div class="col-xs-6 text-right">
+				<s ng-show="dine.OriPrice!=dine.Price">
+					{{dine.OriPrice | currency : "￥"}}
+				</s>
+				<span class="text-danger">
+					{{dine.Price | currency : "￥"}}
+				</span>
+			</div>
+			<div class="col-xs-6" ng-if="!dine.IsOnline">
+				找零：
+			</div>
+			<div class="col-xs-6 text-right" ng-if="!dine.IsOnline">
+				<span class="text-danger">
+					{{dine.Change | currency : "￥"}}
+				</span>
+			</div>
+			<div class="col-xs-12">
+				<span ng-if="dine.DiscountType==0">无折扣</span>
+				<span ng-if="dine.DiscountType==1">支付打折</span>
+				<span ng-if="dine.DiscountType==2">分时段打折</span>
+				<span ng-if="dine.DiscountType==3">会员打折</span>
+				<span ng-if="dine.DiscountType==4">自定义折扣</span>
+			</div>
+			<div ng-if="dine.Discount<1">
+				<div class="col-xs-6">
+					{{dine.DiscountName}}
+				</div>
+				<div class="col-xs-6 text-right">
+					{{dine.Discount * 10}} 折
+				</div>
+			</div>
+		</div>
+	</li>
+	<li class="list-group-item" ng-show="dine.DinePaidDetails.length>0">
+		<div class="row no-padding" ng-repeat="dinePaidDetail in dine.DinePaidDetails">
+			<div class="col-xs-6">
+				{{dinePaidDetail.PayKind.Name}}
+				<span ng-if="dinePaidDetail.PayKind.Type==0">[线上]</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==1">[线下]</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==2">[积分抵扣]</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==3">[其他]</span>
+				<span ng-if="dinePaidDetail.PayKind.Type==4">[现金]</span>
+			</div>
+			<div class="col-xs-6 text-right text-danger">
+				{{dinePaidDetail.Price | currency : "￥"}}
+			</div>
+		</div>
+	</li>
+</ul>

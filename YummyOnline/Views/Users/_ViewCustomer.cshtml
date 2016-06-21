@@ -39,7 +39,7 @@
 							<h4>{{dineHotel.Hotel.Name}} <small>{{dineHotel.Hotel.Id}}</small></h4>
 							<div class="waterfall-4">
 								<div class="waterfall-item" ng-repeat="dine in dineHotel.Dines">
-									@Html.Partial("~/Views/Users/_PartialDines.cshtml")
+									@Html.Partial("~/Views/Shared/_PartialDine.cshtml")
 								</div>
 							</div>
 							<hr ng-show="$index + 1 != customer.DineHotels.length" />

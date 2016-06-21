@@ -292,7 +292,7 @@
     <Content Include="Views\Error\HttpError500.cshtml" />
     <Content Include="Views\Users\_ViewNemo.cshtml" />
     <Content Include="Views\Hotel\Index.cshtml" />
-    <Content Include="Views\Users\_PartialDines.cshtml" />
+    <Content Include="Views\Shared\_PartialDine.cshtml" />
     <Content Include="Views\Database\_ViewExecution.cshtml" />
     <Content Include="Views\Hotel\_ViewHotel.cshtml" />
     <Content Include="Views\Hotel\_ViewDine.cshtml" />

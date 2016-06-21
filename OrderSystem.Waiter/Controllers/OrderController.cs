@@ -84,7 +84,10 @@ namespace OrderSystem.Waiter.Controllers {
 		}
 
 		public async Task<JsonResult> GetCurrentDines(string deskId) {
-			return Json(await HotelManager.GetCurrentDines(User.Identity.GetUserId(), deskId));
+			return Json(await HotelManager.GetHistoryDines(User.Identity.GetUserId(), deskId));
+		}
+		public async Task<JsonResult> GetHistoryDines() {
+			return Json(await HotelManager.GetHistoryDines(User.Identity.GetUserId()));
 		}
 
 		public async Task<JsonResult> GetDineById(string dineId) {

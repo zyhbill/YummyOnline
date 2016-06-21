@@ -1,7 +1,5 @@
-﻿using HotelDAO.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using YummyOnlineDAO.Models;
 
 namespace Protocal {
 	public static class TcpProtocalType {

@@ -1,0 +1,31 @@
+﻿
+/******************报表**************************/
+.showBox{
+    margin-top:10px;
+}
+.Class{
+    width:80%;
+    float:left;
+    list-style:none;
+}
+.half{
+    width:50%;
+    float:left;
+}
+.menu {
+    max-height:260px;
+    overflow:auto;
+}
+.menu li{
+    display:inline-block;
+    width:50%;
+}
+.Time {
+    width:100px;
+    display:inline-block;
+}
+
+.FloatLeft{
+    float:left;
+    display:block;
+}

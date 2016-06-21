@@ -1,0 +1,612 @@
+﻿@model Management.ObjectClasses.RStatus
+@{
+    ViewBag.Title = "店掌柜";
+    var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
+    var Url = ctx.SystemConfigs.Select(s => s.ManagementUrl).FirstOrDefault();
+    var Port = ctx.SystemConfigs.Select(s => s.ManagementWebSocketPort).FirstOrDefault();
+    Url = Url.Replace("http", "ws");
+    var WebSocketUrl = Url + ":" + Port.ToString();
+}
+
+<!DOCTYPE html>
+<html ng-app="Management" lang="zh_cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+    <!-- basic styles -->
+
+    <link href="../FrameWorks/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="http://cdn.bootcss.com/font-awesome/3.2.1/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="http://cdn.bootcss.com/font-awesome/3.2.1/font/fontawesome-webfont.svg" />
+
+    <!--[if IE 7]>
+      <link rel="stylesheet" href="http://cdn.bootcss.com/font-awesome/3.2.1/css/font-awesome-ie7.min.css" />
+    <![endif]-->
+
+
+    <!-- page specific plugin styles -->
+    <!-- fonts -->
+
+    <link rel="stylesheet" href="http://fonts.useso.com/css?family=Open+Sans:400,300" />
+
+    <!-- ace styles -->
+
+    <link rel="stylesheet" href="../FrameWorks/assets/css/ace.min.css"/>
+    <link rel="stylesheet" href="../FrameWorks/assets/css/ace-rtl.min.css" />
+    <link rel="stylesheet" href="../FrameWorks/assets/css/ace-skins.min.css" />
+
+    <!--[if lte IE 8]>
+      <link rel="stylesheet" href="../FrameWorks/assets/css/ace-ie.min.css" />
+    <![endif]-->
+    <!-- inline styles related to this page -->
+    <!-- ace settings handler -->
+
+    <script src="../FrameWorks/assets/js/ace-extra.min.js"></script>
+    <link href="../Content/css/fakeLoader.css" rel="stylesheet" />
+    <link href="../Content/css/sweet-alert.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../FrameWorks/assets/css/chosen.css" />
+    <link rel="stylesheet" href="../FrameWorks/assets/css/jquery.gritter.css" />
+    <link rel="stylesheet" href="../FrameWorks/assets/css/bootstrap-editable.css" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="../FrameWorks/assets/js/html5shiv.js"></script>
+    <script src="../FrameWorks/assets/js/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body ng-controller="BaseCtrl">
+    <div class="navbar navbar-default" id="navbar" ng-init="
+         initialize(
+         @(((Session["User"] as Management.ObjectClasses.RStatus)).HotelId)
+         ,@((int)Session["Rate"])
+         ,0
+         ,@((Session["User"] as Management.ObjectClasses.RStatus).IsStaffPay)
+         ,@((Session["User"] as Management.ObjectClasses.RStatus).IsStaffReturn)
+         ,@((Session["User"] as Management.ObjectClasses.RStatus).IsStaffEdit)
+         ,'@(WebSocketUrl)'
+         )
+         ">
+        <script type="text/javascript">
+            try { ace.settings.check('navbar', 'fixed') } catch (e) { }
+        </script>
+        <div class="navbar-container" id="navbar-container">
+            <div class="navbar-header pull-left">
+                <a href="javascript:;" class="navbar-brand">
+                    <small>
+                        <i class="icon-leaf"></i>
+                        店掌柜后台管理系统
+                    </small>
+                </a><!-- /.brand -->
+            </div><!-- /.navbar-header -->
+
+            <div class="navbar-header pull-right" role="navigation">
+                <ul class="nav ace-nav">
+                    <li class="light-blue">
+                        <a data-toggle="dropdown" href="javascript:;" class="dropdown-toggle">
+                            <img class="nav-user-photo" src="../FrameWorks/assets/avatars/user.jpg" alt="Jason's Photo" />
+                            <span class="user-info">
+                                <small>欢迎,</small>
+                                @((Session["User"] as Management.ObjectClasses.RStatus).Name)
+                            </span>
+
+                            <i class="icon-caret-down"></i>
+                        </a>
+
+                        <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+                            <li>
+                                <a href="javascript:;">
+                                    <i class="icon-cog"></i>
+                                    设置
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="javascript:;">
+                                    <i class="icon-user"></i>
+                                    个人资料
+                                </a>
+                            </li>
+
+                            <li class="divider"></li>
+
+                            <li>
+                                <a href="javascript:;" ng-click="Logout()">
+                                    <i class="icon-off"></i>
+                                    退出
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul><!-- /.ace-nav -->
+            </div><!-- /.navbar-header -->
+        </div><!-- /.container -->
+    </div>
+    <div class="main-container" id="main-container">
+        <script type="text/javascript">
+            try { ace.settings.check('main-container', 'fixed') } catch (e) { }
+        </script>
+
+        <div class="main-container-inner">
+            <a class="menu-toggler" id="menu-toggler" href="javascript:;">
+                <span class="menu-text"></span>
+            </a>
+            <div class="sidebar" id="sidebar">
+                <script type="text/javascript">
+                    try { ace.settings.check('sidebar', 'fixed') } catch (e) { }
+                </script>
+
+                <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+                    <div class="sidebar-shortcuts-large" id="sidebar-shortcuts-large">
+                        <a class="btn btn-success" href="#/Return">
+                                退菜
+                        </a>
+
+                        <a class="btn btn-info" href="#/Replace">
+                                换桌
+                        </a>
+
+                        <a class="btn btn-warning" href="#/Conbine">
+                                合单
+                        </a>
+
+                        <a class="btn btn-danger" href="#/AddMenu">
+                                加菜
+                        </a>
+                    </div>
+
+                    <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
+                        <span class="btn btn-success"></span>
+
+                        <span class="btn btn-info"></span>
+
+                        <span class="btn btn-warning"></span>
+
+                        <span class="btn btn-danger"></span>
+                    </div>
+                </div><!-- #sidebar-shortcuts -->
+
+                <ul class="nav nav-list">
+                    <li class="active">
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <i class="icon-dashboard"></i>
+                            <span class="menu-text">店小二营业</span>
+                        </a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="#/CheckOut">
+                                    <i class="icon-double-angle-right"></i>
+                                    点菜
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/TakeOut">
+                                    <i class="icon-double-angle-right"></i>
+                                    结账
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/soldout">
+                                    <i class="icon-double-angle-right"></i>
+                                    沽清
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/menusetmeals">
+                                    <i class="icon-double-angle-right"></i>
+                                    禁用商务套餐
+                                </a>
+                            </li>
+                            @*<li>
+                                <a href="#/">
+                                    <i class="icon-double-angle-right"></i>
+                                    取消沽清
+                                </a>
+                            </li>*@
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <i class="icon-food"></i>
+                            <span class="menu-text">菜品管理 </span>
+
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="#/MenuClass">
+                                    <i class="icon-double-angle-right"></i>
+                                    类别设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/Menus">
+                                    <i class="icon-double-angle-right"></i>
+                                    菜品设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/menuonsales">
+                                    <i class="icon-double-angle-right"></i>
+                                    特价菜设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/MenuRemarks">
+                                    <i class="icon-double-angle-right"></i>
+                                    菜品备注设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/SetMeals">
+                                    <i class="icon-double-angle-right"></i>
+                                    套餐设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/Reasons">
+                                    <i class="icon-double-angle-right"></i>
+                                    退菜理由设置
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li>
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <i class="icon-list"></i>
+                            <span class="menu-text">酒店基本管理</span>
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+                        <ul class="submenu">
+                            <li>
+                                <a href="#/hotels">
+                                    <i class="icon-double-angle-right"></i>
+                                    酒店基本信息
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#/vip">
+                                    <i class="icon-double-angle-right"></i>
+                                    会员类别设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/Staffs">
+                                    <i class="icon-double-angle-right"></i>
+                                    员工信息设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/StaffRoles">
+                                    <i class="icon-double-angle-right"></i>
+                                    员工角色设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/Department">
+                                    <i class="icon-double-angle-right"></i>
+                                    部门信息设置
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <i class=" icon-table"></i>
+                            <span class="menu-text">餐桌管理</span>
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+
+                        <ul class="submenu">
+                            <li>
+                                <a href="#/Areas">
+                                    <i class="icon-double-angle-right"></i>
+                                    区域设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/Desks">
+                                    <i class="icon-double-angle-right"></i>
+                                    餐桌设置
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <i class=" icon-table"></i>
+                            <span class="menu-text">报表管理</span>
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+
+                        <ul class="submenu">
+                            <li>
+                                <a href="#/DailyOrder">
+                                    <i class="icon-double-angle-right"></i>
+                                    订单查询
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/MenuSales">
+                                    <i class="icon-double-angle-right"></i>
+                                    菜品销售统计
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/MenuSaleClass">
+                                    <i class="icon-double-angle-right"></i>
+                                    菜品类别销售统计
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/PaykindType">
+                                    <i class="icon-double-angle-right"></i>
+                                    收银分类汇总表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/MenuSalesClass">
+                                    <i class="icon-double-angle-right"></i>
+                                    菜品每日销售
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/SaleRange">
+                                    <i class="icon-double-angle-right"></i>
+                                    菜品销售排行
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="#/SalesAll">
+                                    <i class="icon-double-angle-right"></i>
+                                    菜品汇总表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/monthSales">
+                                    <i class="icon-double-angle-right"></i>
+                                    月销售数量分析表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/YearSale">
+                                    <i class="icon-double-angle-right"></i>
+                                    年销售数量分析表
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/dailysales">
+                                    <i class="icon-double-angle-right"></i>
+                                    日营业数据统计
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/paydetails">
+                                    <i class="icon-double-angle-right"></i>
+                                    支付明细
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <i class="icon-credit-card"></i>
+                            <span class="menu-text">支付管理</span>
+
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+
+                        <ul class="submenu">
+                            <li>
+                                <a href="#/paykinds">
+                                    <i class="icon-double-angle-right"></i>
+                                    支付方式设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/printers">
+                                    <i class="icon-double-angle-right"></i>
+                                    打印机设置
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/timediscounts">
+                                    <i class="icon-double-angle-right"></i>
+                                    时段打折设置
+                                </a>
+                            </li>
+                            
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="javascript:;" class="dropdown-toggle">
+                            <i class="icon-desktop"></i>
+                            <span class="menu-text">结账系统管理</span>
+
+                            <b class="arrow icon-angle-down"></b>
+                        </a>
+
+                        <ul class="submenu">
+                            <li>
+                                <a href="#/HandOut">
+                                    <i class="icon-double-angle-right"></i>
+                                    交接班
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul><!-- /.nav-list -->
+
+                <div class="sidebar-collapse" id="sidebar-collapse">
+                    <i class="icon-double-angle-left" data-icon1="icon-double-angle-left" data-icon2="icon-double-angle-right"></i>
+                </div>
+
+                <script type="text/javascript">
+                    try { ace.settings.check('sidebar', 'collapsed') } catch (e) { }
+                </script>
+            </div>
+
+            <div class="main-content">
+                <div class="breadcrumbs" id="breadcrumbs">
+                    <script type="text/javascript">
+                        try { ace.settings.check('breadcrumbs', 'fixed') } catch (e) { }
+                    </script>
+
+                    <ul class="breadcrumb">
+                        <li>
+                            <i class="icon-home home-icon"></i>
+                            首页
+                        </li>
+
+                        <li>
+                            {{FatherPage}}
+                        </li>
+                        <li class="active">{{ChildPage}}</li>
+                    </ul><!-- .breadcrumb -->
+
+                    @*<div class="nav-search" id="nav-search">
+                        <form class="form-search">
+                            <span class="input-icon">
+                                <input type="text" placeholder="查找 ..." class="nav-search-input" id="nav-search-input" autocomplete="off"  ng-model="rootScope.text"/>
+                                <i class="icon-search nav-search-icon"></i>
+                            </span>
+                        </form>
+                    </div> #nav-search*@ 
+                </div>
+
+                <div class="page-content">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <!-- PAGE CONTENT BEGINS -->
+                            @RenderBody()
+                            <!-- PAGE CONTENT ENDS -->
+                        </div><!-- /.col -->
+                    </div><!-- /.row -->
+                </div><!-- /.page-content -->
+            </div><!-- /.main-content -->
+
+            <div class="ace-settings-container" id="ace-settings-container">
+                <div class="btn btn-app btn-xs btn-warning ace-settings-btn" id="ace-settings-btn">
+                    <i class="icon-cog bigger-150"></i>
+                </div>
+
+                <div class="ace-settings-box" id="ace-settings-box">
+                    <div>
+                        <div class="pull-left">
+                            <select id="skin-colorpicker" class="hide">
+                                <option data-skin="default" value="#438EB9">#438EB9</option>
+                                <option data-skin="skin-1" value="#222A2D">#222A2D</option>
+                                <option data-skin="skin-2" value="#C6487E">#C6487E</option>
+                                <option data-skin="skin-3" value="#D0D0D0">#D0D0D0</option>
+                            </select>
+                        </div>
+                        <span>&nbsp; 选择肤色</span>
+                    </div>
+
+                    <div>
+                        <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-navbar" />
+                        <label class="lbl" for="ace-settings-navbar"> 固定导航条</label>
+                    </div>
+
+                    <div>
+                        <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-sidebar" />
+                        <label class="lbl" for="ace-settings-sidebar"> 固定滑动条</label>
+                    </div>
+
+                    <div>
+                        <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-breadcrumbs" />
+                        <label class="lbl" for="ace-settings-breadcrumbs"> 固定面包屑</label>
+                    </div>
+
+                    <div>
+                        <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-rtl" />
+                        <label class="lbl" for="ace-settings-rtl"> 切换到左边</label>
+                    </div>
+
+                    <div>
+                        <input type="checkbox" class="ace ace-checkbox-2" id="ace-settings-add-container" />
+                        <label class="lbl" for="ace-settings-add-container">
+                            切换窄屏
+                            <b></b>
+                        </label>
+                    </div>
+                </div>
+            </div><!-- /#ace-settings-container -->
+        </div><!-- /.main-container-inner -->
+
+        <a href="javascript:;" id="btn-scroll-up" class="btn-scroll-up btn btn-sm btn-inverse">
+            <i class="icon-double-angle-up icon-only bigger-110"></i>
+        </a>
+    </div><!-- /.main-container -->
+    <!-- basic scripts -->
+    <!--[if !IE]> -->
+
+    <script src="http://apps.bdimg.com/libs/jquery/2.0.3/jquery.min.js"></script>
+
+    <!-- <![endif]-->
+    <!--[if IE]>
+    <script src="http://apps.bdimg.com/libs/jquery/1.10.2/jquery.min.js"></script>
+    <![endif]-->
+    <!--[if !IE]> -->
+
+    <script type="text/javascript">
+        window.jQuery || document.write("<script src='../FrameWorks/assets/js/jquery-2.0.3.min.js'>" + "<" + "/script>");
+    </script>
+
+    <!-- <![endif]-->
+    <!--[if IE]>
+    <script type="text/javascript">
+     window.jQuery || document.write("<script src='../FrameWorks/assets/js/jquery-1.10.2.min.js'>"+"<"+"/script>");
+    </script>
+    <![endif]-->
+
+    <script type="text/javascript">
+        if ("ontouchend" in document) document.write("<script src='../FrameWorks/assets/js/jquery.mobile.custom.min.js'>" + "<" + "/script>");
+    </script>
+    <script src="../FrameWorks/assets/js/bootstrap.min.js"></script>
+    <script src="../FrameWorks/assets/js/typeahead-bs2.min.js"></script>
+
+    <!-- page specific plugin scripts -->
+    <script src="../FrameWorks/assets/js/jquery.gritter.min.js"></script>
+    <script src="../FrameWorks/assets/js/x-editable/bootstrap-editable.min.js"></script>
+    <script src="../FrameWorks/assets/js/x-editable/ace-editable.min.js"></script>
+    <script src="../FrameWorks/assets/js/chosen.jquery.min.js"></script>
+    <script src="../FrameWorks/assets/js/jquery.knob.min.js"></script>
+    <!-- ace scripts -->
+
+    <script src="../FrameWorks/assets/js/ace-elements.min.js"></script>
+    <script src="../FrameWorks/assets/js/bootbox.min.js"></script>
+    <script src="../FrameWorks/assets/js/ace.min.js"></script>
+    <!--Reporter-->
+
+    <script src="../FrameWorks/highcharts.js"></script>
+    <script src="../FrameWorks/exporting.js"></script>
+
+    <!--angular scripts-->
+    <script src="../FrameWorks/angular.min.js"></script>
+    <script src="../FrameWorks/angular-animate.min.js"></script>
+    <script src="../FrameWorks/angular-cookies.min.js"></script>
+    <script src="../FrameWorks/angular-route.min.js"></script>
+    <script src="../FrameWorks/angular-touch.min.js"></script>
+    <script src="../FrameWorks/reconnecting-websocket.min.js"></script>
+    <script src="../FrameWorks/angular-chosen.min.js"></script>
+    <script src="../FrameWorks/ui-bootstrap-tpls-0.14.3.min.js"></script>
+    <script src="../FrameWorks/fakeLoader.min.js"></script>
+    <script src="../FrameWorks/sweet-alert.min.js" charset="gb2312"></script>
+    <script src="../Script/CeryController.js"></script>
+    <script src="../Script/Config.js"></script>
+    <script src="../Script/Services.js"></script>
+    <script src="../Script/CeryFactory.js"></script>
+    <script src="../Script/CeryDirective.js"></script>
+    <script src="../Script/BaseInfoController.js"></script>
+    <script src="../Script/BaseInfoFactorys.js"></script>
+    <script src="../Script/PayKindsController.js"></script>
+    <script src="../Script/ReportController.js"></script>
+    <script src="../Script/ReportFactory.js"></script>
+</body>
+</html>

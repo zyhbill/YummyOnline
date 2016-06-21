@@ -1,0 +1,60 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html ng-app="Management" lang="zh_cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" />
+    <title>登陆</title>
+    <link href="../Content/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../FrameWorks/assets/css/font-awesome.min.css" />
+    <link href="../Content/css/signin.css" rel="stylesheet">
+    <link href="../Content/css/fakeLoader.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../FrameWorks/assets/css/ace.min.css" />
+    <meta name="description" content="店小二" />
+</head>
+<body ng-controller="LoginCtrl">
+    <div>
+        <div class="signin">
+            <div class="signin-head"><img src="../Content/images/test/logo_menu.png" alt="" class="img-circle"></div>
+            <form class="form-signin" role="form">
+                <input type="text" class="form-control" placeholder="用户名" required autofocus ng-model="user.username" />
+                <input type="password" class="form-control" placeholder="请输入密码（4-16位字母、数字、下划线组合）" required ng-model="user.password" />
+                <label class="checkbox">
+                    <input type="checkbox" ng-model="user.isSave">记住我
+                </label>
+                <button class="btn btn-lg btn-warning btn-block" ng-click="login()" ng-disabled="">登录</button><br />
+            </form>
+            <a href="Login/SignUp" class="pink btn btn-success" style="display:inline-block;margin-top:20px;margin-left:20px;" >注册</a>
+        </div><!-- PAGE CONTENT ENDS -->
+    </div>
+    <div class="fakeloader"></div>
+    <script src="../FrameWorks/assets/js/jquery-2.0.3.min.js"></script>
+    <script src="../FrameWorks/assets/js/bootstrap.min.js"></script>
+    <script src="../FrameWorks/assets/js/ace-elements.min.js"></script>
+    <script src="../FrameWorks/assets/js/ace.min.js"></script>
+    <script src="../FrameWorks/fakeLoader.min.js"></script>
+    <script src="../FrameWorks/angular.min.js"></script>
+    <script src="../FrameWorks/angular-animate.min.js"></script>
+    <script src="../FrameWorks/angular-cookies.min.js"></script>
+    <script src="../FrameWorks/angular-route.min.js"></script>
+    <script src="../FrameWorks/angular-touch.min.js"></script>
+    <script src="../FrameWorks/reconnecting-websocket.min.js"></script>
+    <script src="../FrameWorks/ui-bootstrap-tpls-0.14.3.min.js"></script>
+    <script src="../FrameWorks/assets/js/chosen.jquery.min.js"></script>
+    <script src="../FrameWorks/angular-chosen.min.js"></script>
+    <script src="../Script/CeryController.js"></script>
+    <script src="../Script/Config.js"></script>
+    <script src="../Script/Services.js"></script>
+    <script src="../Script/CeryFactory.js"></script>
+    <script src="../Script/CeryDirective.js"></script>
+    <script src="../Script/BaseInfoController.js"></script>
+    <script src="../Script/BaseInfoFactorys.js"></script>
+    <script src="../Script/PayKindsController.js"></script>
+    <script src="../Script/ReportController.js"></script>
+    <script src="../Script/ReportFactory.js"></script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+﻿@{
+    Layout = null;
+}
+
+<link href="../FrameWorks/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<link href="../Content/css/Reporter.css" rel="stylesheet" />
+
+<div class="row clearfix" ng-init="Initialize()">
+    <div class="col-md-8 col-xs-12">
+        <form class="form-horizontal">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label">选择年份:</label>
+                    <div class="controls">
+                        <div class="input-prepend input-group">
+                            <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                            <input type="text" style="width:600px;" name="reservation" id="reservation" class="form-control" dateyear time="YearElements.Year" value="@DateTime.Now.ToString("yyyy")"/>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="col-md-4 col-xs-12">
+        <button type="button" class="btn btn-purple btn-sm" style="margin-top:28px;" ng-click="Search()">
+            查找
+            <i class="icon-search icon-on-right bigger-110"></i>
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="AllSelect()">
+            全选
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="NoneSelect()">
+            全不选
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="ReverseSelect()">
+            反选
+        </button>
+    </div>
+    <div class="clean"></div>
+    <div class="showBox clearfix" style="padding-left:10px;">
+        选择统计方式:
+        <select ng-options="option.Name for option in YearElements.Options" ng-model="YearElements.SelectOption" ng-change="TypeChange()"></select>
+        <br />
+        <div class="widget-box half" ng-if="YearElements.SelectOption.Id==2||YearElements.SelectOption.Id==1">
+            <div class="widget-header">
+                <h4 class="smaller">一级类别</h4>
+            </div>
+
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                    <li ng-repeat="fa in YearElements.FatherClasses">
+                        <label>
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="fa.IsChoose" />
+                            <span class="lbl">{{fa.Name}}</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="widget-box half" ng-if="YearElements.ChildClasses.length>0&&YearElements.SelectOption.Id==2">
+            <div class="widget-header">
+                <h4 class="smaller">二级类别</h4>
+            </div>
+
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                    <span ng-repeat="fa in YearElements.FatherClasses|filter:{IsChoose:true}">
+                        <li ng-repeat="cd in YearElements.ChildClasses|filter:{ParentMenuClassId:fa.Id}">
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="cd.IsChoose" />
+                                <span class="lbl">{{cd.Name}}</span>
+                            </label>
+                        </li>
+                    </span>
+                </ul>
+            </div>
+        </div>
+
+        <div class="widget-box menu" ng-if="YearElements.SelectOption.Id==0">
+            <div class="widget-header">
+                <h4 class="smaller">菜品</h4>
+            </div>
+
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                    <li ng-repeat="menu in YearElements.Menus">
+                        <label>
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="menu.IsChoose" />
+                            <span class="lbl">{{menu.Name}}</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="clean"></div>
+    </div>
+    <div class="clean"></div>
+</div>
+<div class="vspace-xs-6"></div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabbable tabs-below">
+            <div class="tab-content">
+                <div id="profile1" class="tab-pane in active">
+                    <p>
+                        <table class="table table-bordered table-hover table-striped table-responsive" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">名称</th>
+                                    <th class="text-center">汇总</th>
+                                    <th class="text-center">一月</th>
+                                    <th class="text-center">二月</th>
+                                    <th class="text-center">三月</th>
+                                    <th class="text-center">四月</th>
+                                    <th class="text-center">五月</th>
+                                    <th class="text-center">六月</th>
+                                    <th class="text-center">七月</th>
+                                    <th class="text-center">八月</th>
+                                    <th class="text-center">九月</th>
+                                    <th class="text-center">十月</th>
+                                    <th class="text-center">十一月</th>
+                                    <th class="text-center">十二月</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="year in YearElements.YearsData">
+                                    <td>{{year.name}}</td>
+                                    <td class="text-right">{{year.Count}}</td>
+                                    <td class="text-right" ng-repeat="count in year.data track by $index">{{count}}</td>
+                                </tr>
+                                <tr>
+                                    <td>总计</td>
+                                    <td class="text-right">{{YearElements.CountAll}}</td>
+                                    <td class="text-right" ng-repeat="price in YearElements.Sum track by $index">{{price}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </p>
+                </div>
+
+                <div id="profile2" class="tab-pane">
+                    <p>
+                        <div id="YearReport"></div>
+                    </p>
+                </div>
+
+                <ul class="nav nav-tabs" id="myTab2">
+                    <li class="active">
+                        <a data-toggle="tab" href="/#profile1">年报数据</a>
+                    </li>
+                    <li>
+                        <a data-toggle="tab" href="/#profile2">年报图表</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../FrameWorks/assets/js/date-time/bootstrap-datetimepicker.min.js"></script>
+<script src="../FrameWorks/assets/js/date-time/locales/bootstrap-datetimepicker.zh-CN.js" charset="utf-8"></script>

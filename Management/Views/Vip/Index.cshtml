@@ -1,0 +1,86 @@
+﻿
+@{
+
+    Layout = null;
+}
+
+<div ng-controller="VipCtrl">
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop = "static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        会员类别
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div><span class="col-md-2">等级名称:  </span><input type="text" ng-model="newVip.levelname" /></div>
+                    <br />
+                    <div>
+                        <span class="col-md-2">折扣率(%)    :</span><input type="number" ng-model="newVip.discount" /></div>
+                    <br />
+    <div>
+        <span class="col-md-2">折扣方案:  </span><input type="text" ng-model="newVip.discountname" /></div>
+
+
+</div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="addVip(vip)" data-dismiss="modal">添加</button>
+        <button class="btn btn-warning" type="button" data-dismiss="modal">取消</button>
+    </div>
+
+</div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+
+    <table class="table table-bordered table-hover table-striped table-responsive">
+        <tr><th>等级名称</th><th>折扣率(%)</th><th>折扣方案名称</th><th class="col-md-2">相关操作</th></tr>
+
+        <tr ng-repeat="vip in vips">
+            
+            <td>
+                <span ng-if="!vip.isAlt">{{vip.levelname}}</span>
+                <input ng-if="vip.isAlt" type="text" ng-model="vip.levelname" />
+            </td>
+            <td>
+                <span ng-if="!vip.isAlt">{{vip.discount}}</span>
+                <input ng-if="vip.isAlt" type="number" ng-model="vip.discount" />
+            </td>
+            <td>
+                <span ng-if="!vip.isAlt">{{vip.discountname}}</span>
+                <input ng-if="vip.isAlt" type="text" ng-model="vip.discountname" />
+            </td>
+            <td>
+                <button type="button" class="btn btn-minier btn-primary dropdown-toggle"  ng-click="altVip(vip)" ng-if="!vip.isAlt">
+                    @*修改*@
+                    <i class="icon-edit icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-success dropdown-toggle"  ng-if="vip.isAlt" ng-click="finishaltVip(vip)">
+                    @*完成*@
+                    <i class="icon-ok icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-danger dropdown-toggle"  ng-click="altVip(vip)" ng-if="vip.isAlt">
+                    @*取消*@
+                    <i class="icon-remove icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-danger dropdown-toggle"  ng-click="delete(vip)">
+                    @*删除*@
+                    <i class="icon-trash icon-on-right bigger-110"></i>
+                </button>
+            </td>
+        </tr>
+        
+          
+    </table>
+    <button class="btn btn-app btn-primary btn-xs" data-toggle="modal" data-target="#myModal" >
+        添加
+        <i class="icon-edit bigger-230"></i>
+    </button>
+</div>

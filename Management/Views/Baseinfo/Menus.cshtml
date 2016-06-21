@@ -1,0 +1,519 @@
+﻿@{
+    Layout = null;
+}
+
+<link href="../Content/css/style.css" rel="stylesheet" />
+<link rel="stylesheet" href="../FrameWorks/assets/css/bootstrap-editable.css" />
+<div class="row max-300" ng-init="intialize()">
+    <div class="col-xs-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover nomargin">
+                <thead>
+                    <tr>
+                        <th>编号<input type="text" ng-model="MenuElement.IdFilter.Id" class="IdFilter" /></th>
+                        <th>名称</th>
+                        <th>备注</th>
+                        <th>价格</th>
+                        <th>状态</th>
+                        <th>单位</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="menu in MenuElement.Menus|filter:{Id:MenuElement.IdFilter.Id}">
+                        <td>{{menu.Id}}</td>
+                        <td>{{menu.Name}}</td>
+                        <td><span class="label label-info arrowed-in-right arrowed" ng-repeat="remark  in menu.Remarks">{{remark.Name}}</span></td>
+                        <td class="text-right">{{menu.MenuPrice.Price.toFixed(2)}}</td>
+                        <td>
+                            <span class="label label-success arrowed" ng-if="menu.Status==0">可用</span>
+                            <span class="label label-warning" ng-if="menu.Status==1">
+                                <i class="icon-warning-sign bigger-120"></i>
+                                售罄
+                            </span>
+                        </td>
+                        <td>{{menu.Unit}}</td>
+
+                        <td>
+                            <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                <button class="btn btn-xs btn-info" ng-click="OpenEditModel(menu)">
+                                    <i class="icon-edit bigger-120"></i>
+                                </button>
+                                <button class="btn btn-xs btn-danger" ng-click="DeleteMenu(menu)">
+                                    <i class="icon-trash bigger-120"></i>
+                                </button>
+                            </div>
+                            <div class="visible-xs visible-sm hidden-md hidden-lg">
+                                <div class="inline position-relative">
+                                    <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
+                                        <i class="icon-cog icon-only bigger-110"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                        <li>
+                                            <a href="javascript:;" class="tooltip-success" data-rel="tooltip" title="编辑" ng-click="OpenEditModel(menu)">
+                                                <span class="green">
+                                                    <i class="icon-edit bigger-120"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" class="tooltip-error" data-rel="tooltip" title="删除" ng-click="DeleteMenu(menu)">
+                                                <span class="red">
+                                                    <i class="icon-trash bigger-120"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div><!--hidden over-->
+                        </td>
+                    </tr>
+                </tbody>
+            </table><!--table over-->
+        </div><!--table over-->
+        <p>
+            <a href="javascript:;" class="btn btn-app btn-primary btn-xs" ng-click="OpenAddModel()">
+                <i class="icon-edit bigger-230"></i>
+                添加单个
+            </a>
+            <button class="btn btn-app btn-purple btn-xs" ng-click="OpenMultipleModel()">
+                <i class="icon-cloud-upload bigger-200"></i>
+                批量上传
+            </button>
+        </p>
+    </div><!--col over-->
+</div><!--row over-->
+
+
+<script type="text/ng-template" id="ModalMenuEdit.html">
+    <form ng-submit="EditMenu()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                修改菜品信息
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid" ng-init="EditTabel()">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3">
+                        <p>
+                            <span class="profile-picture">
+                                <img id="avatar" class="editable img-responsive editable-click editable-empty" alt="菜品的图片" ng-src="{{GetPath()}}">
+                            </span>
+                        </p>
+                        <p>
+                            <label>
+                                是否为套餐:
+                                <input name="switch-field-1" class="ace ace-switch ace-switch-6" type="checkbox" ng-model="MenuElement.CurrentMenu.IsSetMeal">
+                                <span class="lbl"></span>
+                            </label>
+                        </p>
+                        <p style="margin-top:30px">
+                            <select chosen
+                                    multiple
+                                    allow-single-deselect="true"
+                                    max-selected-options="10"
+                                    no-results-text="'没有找到'"
+                                    placeholder-text-multiple="'选择备注'"
+                                    ng-model="MenuElement.SelectRemarks"
+                                    ng-options="remark.Name for remark in MenuElement.Remarks track by remark.Id"
+                                    style="width:100%;">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                        <p>
+                            <select chosen
+                                    multiple
+                                    allow-single-deselect="true"
+                                    max-selected-options="10"
+                                    no-results-text="'没有找到'"
+                                    placeholder-text-multiple="'选择类别'"
+                                    ng-model="MenuElement.SelectClasses"
+                                    ng-options="class.Name for class in MenuElement.Classes track by class.Id"
+                                    style="width:100%;">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                        <p>
+                            <select ng-model="MenuElement.SelectDepartment"
+                                    chosen
+                                    placeholder-text-single="'选择出品部门'"
+                                    no-results-text="'没有找到'"
+                                    ng-options="department.Name for department in MenuElement.Departments"
+                                    style="width:100%;" ng-change="SelectChange()">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <p>
+                            <span class="MenuLabel">菜品编号:</span>{{MenuElement.CurrentMenu.Id}}
+                        </p>
+                        <p>
+                            <span class="MenuLabel">手机显示名:</span><input type="text" ng-model="MenuElement.CurrentMenu.NameAbbr" maxlength="15"/>
+                        </p>
+                        <p>
+                            <label>
+                                是否固定在点菜中:
+                                <input name="switch-field-1" class="ace ace-switch ace-switch-6" type="checkbox" ng-model="MenuElement.CurrentMenu.IsFixed">
+                                <span class="lbl"></span>
+                            </label>
+                        </p>
+                        <p>
+                            <span class="MenuLabel">单位:</span><input type="text" ng-model="MenuElement.CurrentMenu.Unit" maxlength="3"/>
+                        </p>
+                        <p>
+                            <span class="MenuLabel">积分:</span><input type="number" ng-model="MenuElement.CurrentMenu.MenuPrice.Points" min="0"/>
+                        </p>
+                        <p>
+                            <span class="MenuLabel">折扣率:</span><input type="number" ng-model="MenuElement.CurrentMenu.MenuPrice.Discount"  min="0" max="100"/>%
+                        </p>
+                        <p>
+                            <span class="MenuLabel pull-left">
+                                最小点餐数:
+                            </span>
+                            <div class="input-group" style="padding-left:15px;">
+                                <div class="spinner-buttons input-group-btn">
+                                    <button type="button" class="btn spinner-down btn-xs btn-danger" ng-click="Minus()">
+                                        <i class="icon-minus smaller-75"></i>
+                                    </button>
+                                </div>
+                                <input type="number" class="input-mini spinner-input form-control" id="spinner3" min="0" ng-model="MenuElement.CurrentMenu.MinOrderCount">
+                                <div class="spinner-buttons input-group-btn pull-left">
+                                    <button type="button" class="btn spinner-up btn-xs btn-success" ng-click="Plus()">
+                                        <i class="icon-plus smaller-75"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </p>
+                        <p style="clear:both;">
+                            <div class="knob-container inline">
+                                <span class="MenuLabel">
+                                    酸度:
+                                </span>
+                                <input type="text" class="input-small knob" id="sour" ng-model="MenuElement.CurrentMenu.SourDegree" data-min="0" data-max="100" data-step="10" data-width="80" data-height="80" data-thickness=".2" />
+                            </div>
+                            <div class="knob-container inline">
+                                <span class="MenuLabel">
+                                    咸度:
+                                </span>
+                                <input type="text" class="input-small knob" id="salty" ng-model="MenuElement.CurrentMenu.SaltyDegree" data-min="0" data-max="100" data-step="10" data-width="80" data-height="80" data-thickness=".2" />
+                            </div>
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-5">
+                        <p>
+                            <span class="MenuLabel">菜品名:</span><input type="text" ng-model="MenuElement.CurrentMenu.Name" maxlength="30" />
+                        </p>
+                        <p>
+                            <span class="MenuLabel">拼音缩写:</span><input type="text" ng-model="MenuElement.CurrentMenu.Code" maxlength="10" />
+                        </p>
+                        <p>
+                            <span class="MenuLabel">价格:</span><input type="number" ng-model="MenuElement.CurrentMenu.MenuPrice.Price" min="0"/>
+                        </p>
+                        <p>
+                            <label>
+                                是否排除在整单打折之外:
+                                <input name="switch-field-1" class="ace ace-switch ace-switch-6" type="checkbox" ng-model="MenuElement.CurrentMenu.MenuPrice.ExcludePayDiscount">
+                                <span class="lbl"></span>
+                            </label>
+                        </p>
+                        <p>
+                            <span class="MenuLabel">
+                                状态:
+                            </span>
+                            <label>
+                                <input name="form-field-radio" type="radio" class="ace" ng-model="MenuElement.CurrentMenu.Status" value="0">
+                                <span class="lbl">在售</span>
+                            </label>
+                            <label>
+                                <input name="form-field-radio" type="radio" class="ace" ng-model="MenuElement.CurrentMenu.Status" value="1">
+                                <span class="lbl">售罄</span>
+                            </label>
+                        </p>
+                        <div class="checkbox">
+                            供应日期:<br />
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[0]" />
+                                <span class="lbl">星期一</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[1]" />
+                                <span class="lbl">星期二</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[2]" />
+                                <span class="lbl">星期三</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[3]" />
+                                <span class="lbl">星期四</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[4]" />
+                                <span class="lbl">星期五</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[5]" />
+                                <span class="lbl">星期六</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[6]" />
+                                <span class="lbl">星期日</span>
+                            </label>
+                        </div><!--checkbox end-->
+                        <p style="clear:both;">
+                            <div class="knob-container inline">
+                                <span class="MenuLabel">
+                                    甜度:
+                                </span>
+                                <input type="text" class="input-small knob" id="sweet" ng-model="MenuElement.CurrentMenu.SweetDegree" data-min="0" data-max="100" data-step="10" data-width="80" data-height="80" data-thickness=".2" />
+                            </div>
+                            <div class="knob-container inline">
+                                <span class="MenuLabel">
+                                    辣度:
+                                </span>
+                                <input type="text" class="input-small knob" id="spicy" ng-model="MenuElement.CurrentMenu.SpicyDegree" data-min="0" data-max="100" data-step="10" data-width="80" data-height="80" data-thickness=".2" set-value />
+                            </div>
+                        </p>
+                    </div>
+                </div><!--row end-->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit" ng-disabled="MenuElement.isAjax"><img src="../../Content/images/loading.gif" ng-if="MenuElement.isAjax" style="vertical-align:middle;" />保存</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>
+
+<script type="text/ng-template" id="ModalMenuAdd.html">
+    <form ng-submit="AddMenu()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                添加菜品信息
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid" ng-init="EditTabel()">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-3">
+                        <p>
+                            <span class="profile-picture">
+                                <img id="avatar" class="editable img-responsive editable-click editable-empty" alt="菜品的图片" ng-src="{{GetPath}}">
+                            </span>
+                        </p>
+                        <p>
+                            <label>
+                                是否为套餐:
+                                <input name="switch-field-1" class="ace ace-switch ace-switch-6" type="checkbox" ng-model="MenuElement.CurrentMenu.IsSetMeal">
+                                <span class="lbl"></span>
+                            </label>
+                        </p>
+                        <p style="margin-top:30px">
+                            <select chosen
+                                    multiple
+                                    allow-single-deselect="true"
+                                    max-selected-options="10"
+                                    no-results-text="'没有找到'"
+                                    placeholder-text-multiple="'选择备注'"
+                                    ng-model="MenuElement.SelectRemarks"
+                                    ng-options="remark.Name for remark in MenuElement.Remarks track by remark.Id"
+                                    style="width:100%;">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                        <p>
+                            <select chosen
+                                    multiple
+                                    allow-single-deselect="true"
+                                    max-selected-options="10"
+                                    no-results-text="'没有找到'"
+                                    placeholder-text-multiple="'选择类别'"
+                                    ng-model="MenuElement.SelectClasses"
+                                    ng-options="class.Name for class in MenuElement.Classes track by class.Id"
+                                    style="width:100%;">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                        <p>
+                            <select ng-model="MenuElement.SelectDepartment"
+                                    chosen
+                                    placeholder-text-single="'选择出品部门'"
+                                    no-results-text="'没有找到'"
+                                    ng-options="department.Name for department in MenuElement.Departments"
+                                    style="width:100%;" ng-change="SelectChange()">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-4">
+                        <p>
+                            <span class="MenuLabel">菜品编号:</span><input type="text" ng-model="MenuElement.CurrentMenu.Id" maxlength="6" required pattern="[0-9]{1,6}" placeholder="请输入1-6位数字"/>
+                        </p>
+                        <p>
+                            <span class="MenuLabel">手机显示名:</span><input type="text" ng-model="MenuElement.CurrentMenu.NameAbbr" maxlength="15"  required/>
+                        </p>
+                        <p>
+                            <label>
+                                是否固定在点菜中:
+                                <input name="switch-field-1" class="ace ace-switch ace-switch-6" type="checkbox" ng-model="MenuElement.CurrentMenu.IsFixed">
+                                <span class="lbl"></span>
+                            </label>
+                        </p>
+                        <p>
+                            <span class="MenuLabel">单位:</span><input type="text" ng-model="MenuElement.CurrentMenu.Unit" maxlength="3" required/>
+                        </p>
+                        <p>
+                            <span class="MenuLabel">积分:</span><input type="number" ng-model="MenuElement.CurrentMenu.MenuPrice.Points" min="0" required/>
+                        </p>
+                        <p>
+                            <span class="MenuLabel">折扣率:</span><input type="number" ng-model="MenuElement.CurrentMenu.MenuPrice.Discount" min="0" max="100" required/>%
+                        </p>
+                        <p>
+                            <span class="MenuLabel pull-left">
+                                最小点餐数:
+                            </span>
+                            <div class="input-group" style="padding-left:15px;">
+                                <div class="spinner-buttons input-group-btn">
+                                    <button type="button" class="btn spinner-down btn-xs btn-danger" ng-click="Minus()">
+                                        <i class="icon-minus smaller-75"></i>
+                                    </button>
+                                </div>
+                                <input type="text" class="input-mini spinner-input form-control" id="spinner3" maxlength="3" ng-model="MenuElement.CurrentMenu.MinOrderCount">
+                                <div class="spinner-buttons input-group-btn pull-left">
+                                    <button type="button" class="btn spinner-up btn-xs btn-success" ng-click="Plus()">
+                                        <i class="icon-plus smaller-75"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </p>
+                        <p style="clear:both;">
+                            <div class="knob-container inline">
+                                <span class="MenuLabel">
+                                    酸度:
+                                </span>
+                                <input type="text" class="input-small knob" id="sour" ng-model="MenuElement.CurrentMenu.SourDegree" data-min="0" data-max="100" data-step="10" data-width="80" data-height="80" data-thickness=".2" />
+                            </div>
+                            <div class="knob-container inline">
+                                <span class="MenuLabel">
+                                    咸度:
+                                </span>
+                                <input type="text" class="input-small knob" id="salty" ng-model="MenuElement.CurrentMenu.SaltyDegree" data-min="0" data-max="100" data-step="10" data-width="80" data-height="80" data-thickness=".2" />
+                            </div>
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-5">
+                        <p>
+                            <span class="MenuLabel">菜品名:</span><input type="text" ng-model="MenuElement.CurrentMenu.Name" maxlength="30" required/>
+                        </p>
+                        <p>
+                            <span class="MenuLabel">拼音缩写:</span><input type="text" ng-model="MenuElement.CurrentMenu.Code" maxlength="10" required/>
+                        </p>
+                        <p>
+                            <span class="MenuLabel">价格:</span><input type="number" ng-model="MenuElement.CurrentMenu.MenuPrice.Price" min="0" required/>
+                        </p>
+                        <p>
+                            <label>
+                                是否排除在整单打折之外:
+                                <input name="switch-field-1" class="ace ace-switch ace-switch-6" type="checkbox" ng-model="MenuElement.CurrentMenu.MenuPrice.ExcludePayDiscount">
+                                <span class="lbl"></span>
+                            </label>
+                        </p>
+                        <p>
+                            <span class="MenuLabel">
+                                状态:
+                            </span>
+                            <label>
+                                <input name="form-field-radio" type="radio" class="ace" ng-model="MenuElement.CurrentMenu.Status" value="0">
+                                <span class="lbl">在售</span>
+                            </label>
+                            <label>
+                                <input name="form-field-radio" type="radio" class="ace" ng-model="MenuElement.CurrentMenu.Status" value="1">
+                                <span class="lbl">售罄</span>
+                            </label>
+                        </p>
+                        <div class="checkbox">
+                            供应日期:<br />
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[0]" />
+                                <span class="lbl">星期一</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[1]" />
+                                <span class="lbl">星期二</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[2]" />
+                                <span class="lbl">星期三</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[3]" />
+                                <span class="lbl">星期四</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[4]" />
+                                <span class="lbl">星期五</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[5]" />
+                                <span class="lbl">星期六</span>
+                            </label>
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[6]" />
+                                <span class="lbl">星期日</span>
+                            </label>
+                        </div><!--checkbox end-->
+                        <p style="clear:both;">
+                            <div class="knob-container inline">
+                                <span class="MenuLabel">
+                                    甜度:
+                                </span>
+                                <input type="text" class="input-small knob" id="sweet" ng-model="MenuElement.CurrentMenu.SweetDegree" data-min="0" data-max="100" data-step="10" data-width="80" data-height="80" data-thickness=".2" />
+                            </div>
+                            <div class="knob-container inline">
+                                <span class="MenuLabel">
+                                    辣度:
+                                </span>
+                                <input type="text" class="input-small knob" id="spicy" ng-model="MenuElement.CurrentMenu.SpicyDegree" data-min="0" data-max="100" data-step="10" data-width="80" data-height="80" data-thickness=".2" />
+                            </div>
+                        </p>
+                    </div>
+                </div><!--row end-->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit"><img src="../../Content/images/loading.gif" ng-if="MenuElement.isAjax" style="vertical-align:middle;" />添加</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>
+
+<script type="text/ng-template" id="ModalMenuMultiple.html">
+    <form method="post" action="" enctype="multipart/form-data" file-update menus="MenuElement.Menus">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                批量导入菜品信息
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+
+                    <div class="col-xs-12 col-sm-6">
+                        选择execl <input type="file"  name="Execl"/>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        选择图片压缩包 <input type="file" name="Zip" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input class="btn btn-success" type="submit"  value="提交">
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>
+
+<script src="../FrameWorks/assets/js/fuelux/fuelux.spinner.min.js"></script>

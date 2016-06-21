@@ -1,0 +1,150 @@
+﻿@{
+    Layout = null;
+}
+
+<div class="row" ng-init="intialize()">
+    <div class="col-xs-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr> 
+                    <th>名称</th>
+                    <th>打印机</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="department in DepartElement.Departments">
+                    <td>{{department.Name}}</td>
+                    <td>{{department.Printer.Name}}</td>
+                    <td>
+                        <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                            <button class="btn btn-xs btn-info" ng-click="OpenEditModel(department)">
+                                <i class="icon-edit bigger-120"></i>
+                            </button>
+                            <button class="btn btn-xs btn-danger" ng-click="DeleteDepartment(department)">
+                                <i class="icon-trash bigger-120"></i>
+                            </button>
+                        </div>
+                        <div class="visible-xs visible-sm hidden-md hidden-lg">
+                            <div class="inline position-relative">
+                                <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
+                                    <i class="icon-cog icon-only bigger-110"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                    <li>
+                                        <a href="javascript:;" class="tooltip-success" data-rel="tooltip" title="编辑" ng-click="OpenEditModel(department)">
+                                            <span class="green">
+                                                <i class="icon-edit bigger-120"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;" class="tooltip-error" data-rel="tooltip" title="删除" ng-click="DeleteDepartment(department)">
+                                            <span class="red">
+                                                <i class="icon-trash bigger-120"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div><!--hidden over-->
+                    </td>
+                </tr>
+            </tbody>
+        </table><!--table over-->
+        <p>
+            <a href="javascript:;" class="btn btn-app btn-primary btn-xs" ng-click="OpenAddModel()">
+                <i class="icon-edit bigger-230"></i>
+                添加
+            </a>
+        </p>
+    </div><!--col over-->
+</div><!--row over-->
+
+
+<script type="text/ng-template" id="ModalDepartmentsEdit.html">
+    <form ng-submit="EditDepartment()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                修改部门信息
+            </h3>
+        </div>
+        <div class="modal-body" ng-init="InitSelect()">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12 col-md-6">
+                        <p>
+                            名称:
+                            <input type="text" ng-model="DepartElement.CurDepartent.Name" maxlength="20" required/>
+                        </p>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <p>
+                            打印机:
+                            <select ng-model="DepartElement.SelectPrinter"
+                                    chosen
+                                    placeholder-text-single="'选择对应打印机'"
+                                    no-results-text="'没有找到'"
+                                    ng-options="printer.Name for printer in DepartElement.Prints"
+                                    style="width:80%;">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                    </div>
+                    <div class="col-xs-12">
+                        描述:
+                        <textarea ng-model="DepartElement.CurDepartent.Discription" cols="10" rows="20" style="width:100%;height:100px;"></textarea>
+                    </div>
+                </div><!-- row end  -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit" ng-disabled="DepartElement.isAjax"><img src="../../Content/images/loading.gif" ng-if="DepartElement.isAjax" style="vertical-align:middle;" />保存</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>
+
+<script type="text/ng-template" id="ModalDepartmentsAdd.html">
+    <form ng-submit="AddDepartment()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                新增部门信息
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12 col-md-6">
+                        <p>
+                            名称:
+                            <input type="text" ng-model="DepartElement.CurDepartent.Name" maxlength="20" required/>
+                        </p>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <p>
+                            打印机:
+                            <select ng-model="DepartElement.SelectPrinter"
+                                    chosen
+                                    placeholder-text-single="'选择对应打印机'"
+                                    no-results-text="'没有找到'"
+                                    ng-options="printer.Name for printer in DepartElement.Prints"
+                                    style="width:80%;">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                    </div>
+                    <div class="col-xs-12">
+                        描述:
+                        <textarea ng-model="DepartElement.CurDepartent.Discription" cols="10" rows="20" style="width:100%;height:100px;"></textarea>
+                    </div>
+                </div><!-- row end  -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit" ng-disabled="RemarkElement.isAjax&&RemarkElement.CurRemark.Name"><img src="../../Content/images/loading.gif" ng-if="RemarkElement.isAjax" style="vertical-align:middle;" />添加</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>
+

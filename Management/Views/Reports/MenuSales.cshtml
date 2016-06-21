@@ -1,0 +1,190 @@
+﻿@{
+    Layout = null;
+}
+<link href="../Content/css/Reporter.css" rel="stylesheet" />
+<link href="../Content/css/daterangepicker.css" rel="stylesheet" />
+<link href="~/Content/css/style.css" rel="stylesheet" />
+<div class="row" ng-init="Initialize()">
+    <div class="col-md-7 col-xs-12">
+        <form class="form-horizontal">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label">选择开始和结束时间:</label>
+                    <div class="controls">
+                        <div class="input-prepend input-group">
+                            <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                            <input type="text" style="width:600px;" name="reservation" id="reservation" class="form-control" daterange  date-start="SaleElement.DateStart" date-end="SaleElement.DateEnd" value="@(DateTime.Now.ToString("yyyy-MM-dd") + "- " + DateTime.Now.ToString("yyyy-MM-dd"))"/>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div> 
+    <div class="col-md-1 col-xs-12" style="padding-top:14px;">
+        操作选项<select ng-options="option.Name for option in SaleElement.Options" ng-model="SaleElement.SelectOption"></select>
+    </div>
+    <div class="col-md-4 col-xs-12">
+        <button type="button" class="btn btn-purple btn-sm" style="margin-top:28px;" ng-click="Search()">
+            查找
+            <i class="icon-search icon-on-right bigger-110"></i>
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="AllSelect()">
+            全选
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="NoneSelect()">
+            全不选
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="ReverseSelect()">
+            反选
+        </button>
+    </div>
+    <div class="clean"></div>
+    <div class="showBox clearfix" style="padding-left:10px;">
+        <div class="widget-box half">
+            <div class="widget-header">
+                <h4 class="smaller">一级类别</h4>
+            </div>
+
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                    <li ng-repeat="fa in SaleElement.FatherClasses">
+                        <label>
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="fa.IsChoose" ng-change="SelectChange()"/>
+                            <span class="lbl">{{fa.Name}}</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="widget-box half" ng-if="SaleElement.ChildClasses.length>0">
+            <div class="widget-header">
+                <h4 class="smaller">二级类别</h4>
+            </div> 
+
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                    <span ng-repeat="fa in SaleElement.FatherClasses|filter:{IsChoose:true}">
+                        <li ng-repeat="cd in SaleElement.ChildClasses|filter:{ParentMenuClassId:fa.Id}">
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="cd.IsChoose" ng-change="SelectChange()" />
+                                <span class="lbl">{{cd.Name}}</span>
+                            </label>
+                        </li>
+                    </span>
+                </ul>
+            </div>
+        </div>
+        <div class="clean"></div>
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4 class="smaller">菜品</h4>
+            </div>
+
+            <div class="widget-body menu clearfix">
+                <ul class="Class checkbox">
+                    <li ng-repeat="menu in SaleElement.Menus">
+                        <label>
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="menu.IsChoose" />
+                            <span class="lbl">{{menu.Name}}</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="clean"></div>
+    </div>
+</div>
+<div class="vspace-xs-6"></div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabbable tabs-below">
+            <div class="tab-content">
+                <div id="home2" class="tab-pane in active">
+                    <p>
+                        <table class="table table-bordered table-hover table-striped table-responsive" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="text-center">序号</th>
+                                    <th rowspan="2" class="text-center">菜品编码</th>
+                                    <th rowspan="2" class="text-center">菜品名称</th>
+                                    <th rowspan="2" class="text-center">单位</th>
+                                    <th rowspan="2" class="text-center">单价</th>
+                                    <th colspan="4" class="text-center">销售数据</th>
+                                    <th colspan="4" class="text-center">销售百分比</th>
+                                </tr>
+                                <tr>
+                                    <th class="text-center">销售份数</th>
+                                    <th class="text-center">应售价格</th>
+                                    <th class="text-center">折后金额</th>
+                                    <th class="text-center">优惠金额</th>
+
+                                    <th class="text-center">数量</th>
+                                    <th class="text-center">应计</th>
+                                    <th class="text-center">优惠</th>
+                                    <th class="text-center">折后</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="menu in SaleElement.SalesData">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{menu.Menu.Id}}</td>
+                                    <td>{{menu.Menu.Name}}</td>
+                                    <td>{{menu.Menu.Unit}}</td>
+                                    <td class="text-right">{{menu.Menu.MenuPrice.Price|currency:'￥'}}</td>
+
+                                    <td class="text-right">{{menu.Count}}</td>
+                                    <td class="text-right">{{menu.TotalOriPrice|currency:'￥'}}</td>
+                                    <td class="text-right">{{menu.TotalPrice|currency:'￥'}}</td>
+                                    <td class="text-right">{{menu.TotalSaveMoney|currency:'￥'}}</td>
+
+                                    <td class="text-right">{{menu.CountPercent.toFixed(2)}}%</td>
+                                    <td class="text-right">{{menu.OriPricePercent.toFixed(2)}}%</td>
+                                    <td class="text-right">{{menu.SaveMoneyPercent.toFixed(2)}}%</td>
+                                    <td class="text-right">{{menu.PricePercent.toFixed(2)}}%</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>总计</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="text-right">{{SaleElement.Sum.Count}}</td>
+                                    <td class="text-right">{{SaleElement.Sum.TotalOriPrice|currency:'￥'}}</td>
+                                    <td class="text-right">{{SaleElement.Sum.TotalPrice|currency:'￥'}}</td>
+                                    <td class="text-right">{{SaleElement.Sum.TotalSaveMoney|currency:'￥'}}</td>
+                                    <td class="text-right">{{SaleElement.Sum.CountPercent.toFixed(2)}}%</td>
+                                    <td class="text-right">{{SaleElement.Sum.OriPricePercent.toFixed(2)}}%</td>
+                                    <td class="text-right">{{SaleElement.Sum.PricePercent.toFixed(2)}}%</td>
+                                    <td class="text-right">{{SaleElement.Sum.SaveMoneyPercent.toFixed(2)}}%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </p>
+                </div>
+
+                <div id="profile2" class="tab-pane">
+                    <p>
+                        <div menu-report sales="SaleElement.SalesData" id="SaleReport"></div>
+                    </p>
+                </div>
+            </div>
+
+            <ul class="nav nav-tabs" id="myTab2">
+
+                <li class="active">
+                    <a data-toggle="tab" href="/#home2">报表</a>
+                </li>
+
+                <li>
+                    <a data-toggle="tab" href="/#profile2">图表</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<script src="../FrameWorks/moment.js"></script>
+<script src="../FrameWorks/daterangepicker.js"></script>

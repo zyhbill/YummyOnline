@@ -1,0 +1,125 @@
+﻿
+@{
+    Layout = null; 
+}
+
+
+<script src="../FrameWorks/moment.js"></script>
+<script src="../FrameWorks/daterangepicker.js"></script>
+<link href="../Content/css/daterangepicker.css" rel="stylesheet" />
+<link href="../Content/css/style.css" rel="stylesheet" />
+<link href="../Content/css/Reporter.css" rel="stylesheet" />
+
+
+<div ng-controller="PayDetailsCtrl">
+    @*<form>
+        <label>选择支付方式(按住ctrl键可以多选)</label>
+        
+        <select multiple="multiple" ng-model="paykindname" style="height:200px">
+            <option value="">所有</option>
+            <option ng-repeat="paykindnamea in paykindnames" value="{{paykindnamea.Id}}">{{paykindnamea.Name}}</option>
+        </select>
+    </form>*@
+    
+    
+
+    <div class="widget-box half">
+        <div class="widget-header">
+            <h4 class="smaller">选择支付方式</h4>
+        </div>
+
+        <div class="widget-body menu clearfix">
+            <ul class="Class checkbox">
+                <li ng-repeat="paykindnamea in paykindnames">
+                    <label>
+                        <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="paykindnamea.IsChoose" />
+                        <span class="lbl">{{paykindnamea.Name}}</span>
+                    </label>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row" ng-init="Initialize()">
+            <div class="col-md-8 col-xs-12">
+                <form class="form-horizontal">
+                    <fieldset>
+                        <div class="control-group">
+                            <label class="control-label">选择开始和结束日期:</label>
+                            <div class="controls">
+                                <div class="input-prepend input-group">
+                                    <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                                    <input type="text" style="width:600px;" name="reservation" id="reservation" class="form-control" daterange date-start="begintime" date-end="endtime" value="@(DateTime.Now.ToString("yyyy-MM-dd") + "- " + DateTime.Now.ToString("yyyy-MM-dd"))"/>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="col-md-4 col-xs-12">
+                <button type="button" class="btn btn-purple btn-sm" style="margin-top:28px;" ng-click="search()">
+                    查找
+                    <i class="icon-search icon-on-right bigger-110"></i>
+                </button>
+            </div>
+        </div>
+    @*<div class="col-md-4 col-xs-12">
+
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="AllSelect()">
+            全选
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="NoneSelect()">
+            全不选
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="ReverseSelect()">
+            反选
+        </button>
+    </div>*@
+
+    <table class="table table-bordered table-hover table-striped table-responsive">
+        <thead><tr><th class = text-center>序号</th><th class = text-center>订单编号</th><th class = text-center>开始时间</th><th class = text-center>桌台号</th><th class = text-center>收银员</th><th class = text-center>消费金额</th><th class = text-center>支付方式</th><th class = text-center>付款金额</th></tr></thead>
+
+        <tr ng-repeat="paydetail in paydetails">
+            <td align="center">
+                <span>{{$index+1}}</span>
+            </td>
+            <td class = text-center>
+                <span>{{paydetail.DineId}}</span>
+            </td>
+            <td align="center">
+                <span>{{paydetail.Dine.BeginTime| date:'yyyy-MM-dd HH:mm:ss '}}</span>
+            </td>
+            <td class = text-center>
+                <span>{{paydetail.Dine.DeskId}}</span>
+            </td>
+            <td align="center">
+                <span>{{paydetail.Dine.ClerkName}}</span>
+            </td>
+            <td class=text-right>
+                <span >{{paydetail.Dine.OriPrice|currency : '￥'}}</span>
+            </td>
+            <td class = text-center>
+                <span>{{paydetail.PayKind.Name}}</span>
+            </td>
+            <td class=text-right>
+                <span>{{paydetail.Price|currency : '￥'}}</span>
+            </td>
+            
+        </tr>
+        <tr>
+            <td class = text-center>总计</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td class=text-right>
+                <span>{{oriprice|currency : '￥'}}</span>
+            </td>
+            <td></td>
+            <td class=text-right>
+                <span>{{price|currency : '￥'}}</span>
+            </td>
+        </tr>
+    </table>
+
+</div>

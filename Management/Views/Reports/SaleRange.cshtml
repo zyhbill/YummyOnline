@@ -1,0 +1,135 @@
+﻿@{
+    Layout = null;
+}
+<link href="../Content/css/daterangepicker.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-xs-4">区域</div>
+    <div class="col-xs-4">桌台</div>
+    <div class="col-xs-4">服务员</div>
+    <div class="col-md-12 col-xs-12" style="margin:10px 0;">
+        <select ng-model="RangeElement.SelectArea"
+                chosen
+                placeholder-text-single="'选择区域'"
+                no-results-text="'没有找到'"
+                ng-options="area.Name for area in RangeElement.Areas"
+                style="width:32%;">
+            <option value="">所有</option>
+        </select>
+        <select ng-model="RangeElement.SelectDesk"
+                chosen
+                placeholder-text-single="'选择区域'"
+                no-results-text="'没有找到'"
+                ng-options="desk.Id for desk in RangeElement.Desks|filter:{AreaId:RangeElement.SelectArea.Id}"
+                style="width:32%;">
+            <option value="">所有</option>
+        </select>
+        <select ng-model="RangeElement.SelectWaiter"
+                chosen
+                placeholder-text-single="'选择区域'"
+                no-results-text="'没有找到'"
+                ng-options="waiter.Name for waiter in RangeElement.Waiters"
+                style="width:32%;">
+            <option value="">所有</option>
+        </select>
+    </div>
+    <div class="col-xs-6">大类</div>
+    <div class="col-xs-6" ng-if="RangeElement.ChildClass.length>0">小类</div>
+    <div class="col-md-12 col-xs-12" ng-init="Initialize()" style="margin:10px 0;">
+        <form class="form-horizontal">
+            <select ng-model="RangeElement.SelectFather"
+                    chosen
+                    placeholder-text-single="'选择大类'"
+                    no-results-text="'没有找到'"
+                    ng-options="father.Name for father in RangeElement.FatherClass"
+                    style="width:48%;">
+                <option value="">所有</option>
+            </select>
+            <select ng-model="RangeElement.SelectChild"
+                    chosen
+                    placeholder-text-single="'选择小类'"
+                    no-results-text="'没有找到'"
+                    ng-options="child.Name for child in RangeElement.ChildClass|filter:{ParentMenuClassId:RangeElement.SelectFather.Id}"
+                    style="width:48%;" ng-if="RangeElement.ChildClass.length>0">
+                <option value="">所有</option>
+            </select>
+        </form>
+    </div>
+
+    <div class="col-md-8 col-xs-12">
+        <div class="control-group">
+            <label class="control-label">选择开始和结束时间:</label>
+            <div class="controls">
+                <div class="input-prepend input-group">
+                    <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                    <input type="text" style="width:400px;" name="reservation" id="reservation" class="form-control" daterange date-start="RangeElement.DateStart" date-end="RangeElement.DateEnd" value="@(DateTime.Now.ToString("yyyy-MM-dd") + "- " + DateTime.Now.ToString("yyyy-MM-dd"))"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-xs-12">
+        <button type="button" class="btn btn-purple btn-sm" style="margin-top:28px;" ng-click="Search()">
+            查找
+            <i class="icon-search icon-on-right bigger-110"></i>
+        </button>
+    </div>
+</div>
+<div class="vspace-xs-6"></div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabbable tabs-below">
+            <div class="tab-content">
+                <div id="home2" class="tab-pane in active">
+                    <p>
+                        <table class="table table-bordered table-hover table-striped table-responsive" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">排名</th>
+                                    <th class="text-center">编码</th>
+                                    <th class="text-center">菜名</th>
+                                    <th class="text-center">单价</th>
+                                    <th class="text-center">数量</th>
+                                    <th class="text-center">销售额</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data in RangeElement.SaleData">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{data.Id}}</td>
+                                    <td>{{data.Name}}</td>
+                                    <td class="text-right">{{data.Price|currency:'￥'}}</td>
+                                    <td class="text-right">{{data.Count}}</td>
+                                    <td class="text-right">{{data.PriceAll|currency:'￥'}}</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>总计</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="text-right">{{RangeElement.Count}}</td>
+                                    <td class="text-right">{{RangeElement.PriceAll|currency:'￥'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </p>
+                </div>
+
+            </div>
+
+            <ul class="nav nav-tabs" id="myTab2">
+                <li class="active">
+                    <a data-toggle="tab" href="/#home2">销售排行</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<script src="../FrameWorks/moment.js"></script>
+<script src="../FrameWorks/daterangepicker.js"></script>

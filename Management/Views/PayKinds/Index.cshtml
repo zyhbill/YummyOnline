@@ -1,0 +1,100 @@
+﻿
+@{
+
+    Layout = null;
+}
+
+<div ng-controller="PayKindsCtrl">
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop = "static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        支付方式
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div><span class="col-md-2">支付种类:</span><input type="text" ng-model="newPayKind.name" /></div>
+                    <br />
+                    <div>
+                        <span class="col-md-2">打折率(%)  :</span><input type="number" ng-model="newPayKind.discount" />
+                    </div>
+                    <br />
+                    <div>
+                        <span class="col-md-2">支付描述:</span><input type="text" ng-model="newPayKind.description" />
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" ng-click="addPayKind(payKind)" data-dismiss="modal">添加</button>
+                    <button class="btn btn-warning" type="button" data-dismiss="modal">取消</button>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <table class="table table-bordered table-hover table-striped table-responsive">
+        <thead><tr><th>支付种类名字</th><th>打折率(%)</th><th>可用状态</th><th>支付描述</th><th class="col-md-2">相关操作</th></tr></thead>
+
+        <tr ng-repeat="payKind in payKinds">
+
+            <td>
+                <span ng-if="!payKind.isAlt">{{payKind.Name}}</span>
+                <input ng-if="payKind.isAlt" type="text" ng-model="payKind.Name" />
+            </td>
+            <td>
+                <span ng-if="!payKind.isAlt">{{payKind.Discount}}</span>
+                <input  ng-if="payKind.isAlt" type="text" ng-model="payKind.Discount" />
+            </td>
+            <td>
+                <span class="label label-success arrowed" ng-if="payKind.Usable">可用</span>
+                <span class="label label-warning" ng-if="!payKind.Usable">
+                    <i class="icon-warning-sign bigger-120"></i>
+                    不可用
+                </span>
+            </td>
+            <td>
+                <span ng-if="!payKind.isAlt">{{payKind.Description}}</span>
+                <input ng-if="payKind.isAlt" type="text" ng-model="payKind.Description" />
+            </td>
+            <td>
+                <button type="button" class="btn btn-minier btn-primary dropdown-toggle"  ng-click="altPayKind(payKind)" ng-if="!payKind.isAlt">
+                    @*修改*@
+                    <i class="icon-edit icon-on-right bigger-110"></i>     
+                </button>
+                <button type="button" class="btn btn-minier btn-success dropdown-toggle"  ng-if="payKind.isAlt" ng-click="finishaltPayKind(payKind)">
+                    @*完成*@
+                    <i class="icon-ok icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-danger dropdown-toggle"  ng-click="altPayKind(payKind)" ng-if="payKind.isAlt">
+                    @*取消*@
+                    <i class="icon-remove icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-danger dropdown-toggle"  ng-click="switch(payKind)" ng-if="payKind.Usable">
+                    @*禁用*@
+                    <i class="icon-ban-circle icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-success dropdown-toggle"  ng-click="switch(payKind)" ng-if="!payKind.Usable">
+                    @*启用*@
+                    <i class="icon-ok-circle icon-on-right bigger-110"></i>
+                </button>
+            </td>
+        </tr>
+        
+
+
+        
+    </table>
+    <button class="btn btn-app btn-primary btn-xs" data-toggle="modal" data-target="#myModal">
+        添加
+        <i class="icon-edit bigger-230"></i>
+    </button>
+</div>

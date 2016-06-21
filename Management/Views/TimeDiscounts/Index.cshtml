@@ -1,0 +1,130 @@
+﻿
+@{
+
+    Layout = null;
+}
+<link rel="stylesheet" href="../FrameWorks/assets/css/bootstrap-timepicker.css" />
+<script src="../FrameWorks/assets/js/date-time/bootstrap-timepicker.min.js"></script>
+<div ng-controller="TimeDiscountsCtrl">
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop = "static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        折扣方案设置
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    @*<div><span class="col-md-2">时段开始:</span><input style="width:200px" type="text" ng-model="newTimeDiscount.from" /></div>*@
+                    <p>
+                        <div class="input-group bootstrap-timepicker">
+                            <nobr>
+                                时段开始:<input type="text" class="form-control" time-picker time="newTimeDiscount.from" />
+                            </nobr>
+                        </div>
+                    </p>
+                    <br />
+                    @*<div>
+                        <span class="col-md-2">时段结束:</span><input style="width:200px" type="text" ng-model="newTimeDiscount.to" />
+                    </div>*@
+                    <p>
+                        <div class="input-group bootstrap-timepicker" style="margin-top:9px;display:inline-block;">
+                            <nobr>时段结束:<input type="text" class="form-control" time-picker time="newTimeDiscount.to" /></nobr>
+                        </div>
+                    </p>
+                    <br />
+                    <div>
+                        <span class="col-md-2">星期:</span>@*<input type="text" ng-model="newTimeDiscount.week" />*@
+                        <form role="form">
+                            <div class="form-group">
+                                <select style="width:200px" class="form-control" ng-model="newTimeDiscount.week">
+                                    <option value="1">周一</option>
+                                    <option value="2">周二</option>
+                                    <option value="3">周三</option>
+                                    <option value="4">周四</option>
+                                    <option value="5">周五</option>
+                                    <option value="6">周六</option>
+                                    <option value="7">周日</option>
+
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div>
+                        <span class="col-md-2">折扣率(%):</span><input style="width:200px" type="number" ng-model="newTimeDiscount.discount" />
+                    </div>
+                    <br />
+                    <div>
+                        <span class="col-md-2">折扣方案名称:</span><input style="width:200px" type="text" ng-model="newTimeDiscount.name" />
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" ng-click="addTimeDiscount(timeDiscount)" data-dismiss="modal">添加</button>
+                    <button class="btn btn-warning" type="button" data-dismiss="modal">取消</button>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <table class="table table-bordered table-hover table-striped table-responsive">
+        <thead><tr><th>时段开始</th><th>时段结束</th><th>星期</th><th>折扣率(%)</th><th>折扣方案名称</th><th class="col-md-2">相关操作</th></tr></thead>
+
+        <tr ng-repeat="timeDiscount in timeDiscounts">
+
+            <td>
+                <span >{{timeDiscount.From | date:'hh:mm:ss' }}</span>
+                
+            </td>
+            <td>
+                <span>{{timeDiscount.To | date:'hh:mm:ss'}}</span>
+                
+            </td>
+            <td>
+                <span >{{timeDiscount.Week}}</span>
+                
+            </td>
+            <td>
+                <span ng-if="!timeDiscount.isAlt">{{timeDiscount.Discount}}</span>
+                <input ng-if="timeDiscount.isAlt" type="text" ng-model="timeDiscount.Discount" />
+            </td>
+            <td>
+                <span ng-if="!timeDiscount.isAlt">{{timeDiscount.Name}}</span>
+                <input ng-if="timeDiscount.isAlt" type="text" ng-model="timeDiscount.Name" />
+            </td>
+            <td>
+                <button type="button" class="btn btn-minier btn-primary dropdown-toggle"  ng-click="altTimeDiscount(timeDiscount)" ng-if="!timeDiscount.isAlt">
+                    @*修改*@
+                    <i class="icon-edit icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-success dropdown-toggle"  ng-if="timeDiscount.isAlt" ng-click="finishaltTimeDiscount(timeDiscount)">
+                    @*完成*@
+                    <i class="icon-ok icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-danger dropdown-toggle"  ng-click="altTimeDiscount(timeDiscount)" ng-if="timeDiscount.isAlt">
+                    @*取消*@
+                    <i class="icon-remove icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-danger dropdown-toggle"  ng-click="delete(timeDiscount)">
+                    @*删除*@
+                    <i class="icon-trash icon-on-right bigger-110"></i>
+                </button>
+            </td>
+        </tr>
+        
+
+
+    </table>
+    <button class="btn btn-app btn-primary btn-xs" data-toggle="modal" data-target="#myModal">
+        添加
+        <i class="icon-edit bigger-230"></i>
+    </button>
+</div>

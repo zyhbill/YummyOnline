@@ -1,0 +1,44 @@
+﻿@{
+    Layout = null;
+}
+<div ng-if="IsStaffEdit" ng-init="initialize()">
+    <div class="row">
+        <div class="col-xs-2">
+            桌台号: <select ng-model="RepalceElements.CurrentDesk"
+                         chosen
+                         placeholder-text-single="'选择初始桌台'"
+                         no-results-text="'没有找到'"
+                         ng-options="desk.Id for desk in RepalceElements.UnpaidDesk"
+                         ng-change="getFirstDine()"
+                         style="width:100%;">
+                <option value=""></option>
+            </select>
+        </div>
+        <div class="col-xs-6">
+            订单:<select ng-model="RepalceElements.CurrentDine"
+                        chosen
+                        placeholder-text-single="'选择订单'"
+                        no-results-text="'没有找到'"
+                        ng-options="dine.Id for dine in RepalceElements.UnpaidDines|filter:{DeskId:RepalceElements.CurrentDesk.Id}";
+                        style="width:100%;">
+                    <option value=""></option>
+                </select>
+        </div>
+        <div class="col-xs-2">
+            目标桌台:<select ng-model="RepalceElements.TagetDesk"
+                       chosen
+                       placeholder-text-single="'更换到目标桌台'"
+                       no-results-text="'没有找到'"
+                       ng-options="desk.Id for desk in RepalceElements.TotalDesks" ;
+                       style="width:100%;">
+                <option value=""></option>
+            </select>
+        </div>
+        <div class="col-xs-2">
+            <button class="btn btn-success" ng-click="changeDesk()" ng-disabled="AllowChange()">换桌</button>
+        </div>
+    </div>
+</div>
+<div ng-if="!IsStaffEdit">
+    对不起你没有相关权限，请联系管理员
+</div>

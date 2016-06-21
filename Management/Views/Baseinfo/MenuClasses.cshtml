@@ -1,0 +1,167 @@
+﻿@{
+    Layout = null;
+}
+<div class="col-md-6">
+    <div class="dd dd-draghandle" nestable>
+        <ol class="dd-list" ng-init="Initialize()">
+            <li class="dd-item dd2-item" ng-repeat="menu in ClassElement.FirstMenuClasses">
+                <div class="dd-handle dd2-handle">
+                    <i class="normal-icon icon-reorder blue bigger-130"></i>
+                    <i class="drag-icon icon-move bigger-125"></i>
+                </div>
+                <div class="dd2-content">
+                    <span ng-if="!menu.IsEdit">
+                        {{menu.Name}}
+                        <div class="pull-right action-buttons">
+                            <a class="purple" href="javascript:;" ng-click="Add(menu)">
+                                <i class=" icon-plus-sign bigger-130"></i>
+                            </a>
+
+                            <a class="blue" href="javascript:;" ng-click="Edit(menu)">
+                                <i class="icon-pencil bigger-130"></i>
+                            </a>
+
+                            <a class="red" href="javascript:;" ng-if="menu.IsLeaf" ng-click="DeleteMenuClass(menu)">
+                                <i class="icon-trash bigger-130"></i>
+                            </a>
+                        </div>
+                    </span>
+                    <span ng-if="menu.IsEdit">
+                        <form class="form-control">
+                            <input type="text" ng-model="menu.Name" />
+                            <div class="pull-right action-buttons">
+                                <a class="purple" href="javascript:;" ng-click="EditMenu(menu)">
+                                    <i class="icon-save bigger-130"></i>
+                                </a>
+                                <a class="red" href="javascript:;" ng-click="CancelEdit(menu)">
+                                    <i class="icon-remove bigger-130"></i>
+                                </a>
+                            </div>
+                        </form>
+                    </span>
+                </div>
+                <ol class="dd-list" ng-if="!menu.IsLeaf">
+                    <li class="dd-item dd2-item" ng-if="ClassElement.NewClass.IsAdd&&menu.IsAdd">
+                        <div class="dd-handle dd2-handle">
+                            <i class="normal-icon icon-leaf red bigger-130"></i>
+
+                            <i class="drag-icon icon-move bigger-125"></i>
+                        </div>
+                        <div class="dd2-content">
+                            <input type="text" ng-model="ClassElement.NewClass.Id" placeholder="编号" maxlength="6"/>
+                            <input type="text" ng-model="ClassElement.NewClass.Name" placeholder="名称"  maxlength="20"/>
+                            <div class="pull-right action-buttons">
+                                <a class="purple" href="javascript:;" ng-click="AddMenu(menu,1,menu.Id)" >
+                                    <i class="icon-save bigger-130"></i>
+                                </a>
+                                <a class="red" href="javascript:;" ng-click="CancelAdd(menu,1)">
+                                    <i class="icon-remove bigger-130"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="dd-item dd2-item" ng-repeat="submenu in ClassElement.SecondMenuClasses|filter:{ParentMenuClassId:menu.Id}">
+                        <div class="dd-handle dd2-handle">
+                            <i class="normal-icon icon-leaf red bigger-130"></i>
+
+                            <i class="drag-icon icon-move bigger-125"></i>
+                        </div>
+                        <div class="dd2-content">
+                            <span ng-if="!submenu.IsEdit">
+                                {{submenu.Name}}
+                                <div class="pull-right action-buttons">
+                                    <a class="purple" href="javascript:;" ng-click="Add(submenu)">
+                                        <i class=" icon-plus-sign bigger-130"></i>
+                                    </a>
+
+                                    <a class="blue" href="javascript:;" ng-click="Edit(submenu)">
+                                        <i class="icon-pencil bigger-130"></i>
+                                    </a>
+
+                                    <a class="red" href="javascript:;" ng-if="submenu.IsLeaf" ng-click="DeleteMenuClass(submenu)">
+                                        <i class="icon-trash bigger-130"></i>
+                                    </a>
+                                </div>
+                            </span>
+                            <span ng-if="submenu.IsEdit">
+                                <input type="text" ng-model="submenu.Name" />
+                                <div class="pull-right action-buttons">
+                                    <a class="purple" href="javascript:;" ng-click="EditMenu(submenu)" ng-disabled="!submenu.Name">
+                                        <i class="icon-save bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="javascript:;" ng-click="CancelEdit(submenu)">
+                                        <i class="icon-remove bigger-130"></i>
+                                    </a>
+                                </div>
+                            </span>
+                        </div>
+                        <ol class="dd-list" ng-if="!submenu.IsLeaf">
+                            <li class="dd-item dd2-item" ng-if="ClassElement.NewClass.IsAdd&&submenu.IsAdd">
+                                <div class="dd-handle dd2-handle">
+                                    <i class="normal-icon icon-leaf red bigger-130"></i>
+
+                                    <i class="drag-icon icon-move bigger-125"></i>
+                                </div>
+                                <div class="dd2-content">
+                                    <input type="text" ng-model="ClassElement.NewClass.Id" placeholder="编号" maxlength="6"/>
+                                    <input type="text" ng-model="ClassElement.NewClass.Name" placeholder="名称" maxlength="20"/>
+                                    <div class="pull-right action-buttons">
+                                        <a class="purple" ng-click="AddMenu(submenu,2,submenu.Id)">
+                                            <i class="icon-save bigger-130"></i>
+                                        </a>
+                                        <a class="red" href="javascript:;" ng-click="CancelAdd(submenu,2)">
+                                            <i class="icon-remove bigger-130"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="dd-item dd2-item" ng-repeat="subsubmenu in ClassElement.ThirdMenuClasses|filter:{ParentMenuClassId:submenu.Id}">
+                                <div class="dd-handle dd2-handle">
+                                    <i class="normal-icon icon-leaf red bigger-130"></i>
+
+                                    <i class="drag-icon icon-move bigger-125"></i>
+                                </div>
+                                <div class="dd2-content">
+                                    <span ng-if="!subsubmenu.IsEdit">
+                                        {{subsubmenu.Name}}
+                                        <div class="pull-right action-buttons">
+
+                                            <a class="blue" href="javascript:;" ng-click="Edit(subsubmenu)">
+                                                <i class="icon-pencil bigger-130"></i>
+                                            </a>
+
+                                            <a class="red" href="javascript:;" ng-if="subsubmenu.IsLeaf" ng-click="DeleteMenuClass(subsubmenu)">
+                                                <i class="icon-trash bigger-130"></i>
+                                            </a>
+                                        </div>
+                                    </span>
+                                    <span ng-if="subsubmenu.IsEdit">
+                                        <input type="text" ng-model="subsubmenu.Name" maxlength="20"/>
+                                        <div class="pull-right action-buttons">
+                                            <a class="purple" href="javascript:;" ng-click="EditMenu(subsubmenu)">
+                                                <i class="icon-save bigger-130"></i>
+                                            </a>
+                                            <a class="red" href="javascript:;" ng-click="CancelEdit(subsubmenu)">
+                                                <i class="icon-remove bigger-130"></i>
+                                            </a>
+                                        </div>
+                                    </span>
+                                </div>
+                            </li>
+                        </ol><!--subsubmenu over-->
+                    </li>
+                </ol><!--Submenu over-->
+            </li>
+        </ol><!--menu over-->
+    </div>
+</div>
+<div class="col-md-6">
+    <form ng-submit="AddBigClass(0)">
+        编号:<input type="text" class="form-control" ng-model="ClassElement.NewBigClass.Id" maxlength="6" required/><br />
+        名称:<input type="text" class="form-control" ng-model="ClassElement.NewBigClass.Name" maxlength="20" required/><br />
+        描述: <textarea class="form-control" cols="20" ng-model="ClassElement.NewBigClass.Description"></textarea><br />
+        <button class="btn btn-success" type="submit" ng-disabled="!ClassElement.NewBigClass.Id||ClassElement.isAjax||!ClassElement.NewBigClass.Name"><img src="../../Content/images/loading.gif" ng-if="ClassElement.isAjax" style="vertical-align:middle;" />添加</button>
+    </form>
+</div>
+
+<script src="../FrameWorks/assets/js/jquery.nestable.min.js"></script>

@@ -1,0 +1,208 @@
+﻿@{
+    Layout = null;
+}
+
+<link href="../Content/css/style.css" rel="stylesheet" />
+<div class="row" ng-init="intialize()">
+    <div class="col-xs-12">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>名称</th>
+                    <th>收银部门</th>
+                    <th>传菜部门</th>
+                    <th class="hidden-480">
+                        <i class="icon-comment bigger-110"></i>
+                        描述
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="area in AreaElement.Areas">
+                    <td>{{area.Id}}</td>
+                    <td>{{area.Name}}</td>
+                    <td>{{area.ReciptDepartment}}</td>
+                    <td>{{area.ServiceDepartment}}</td>
+                    <td class="hidden-480">{{area.Description}}</td>
+                    <td>
+                        <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                            <button class="btn btn-xs btn-info" ng-click="OpenEditModel(area)">
+                                <i class="icon-edit bigger-120"></i>
+                            </button>
+                            <button class="btn btn-xs btn-danger" ng-click="DeleteArea(area)">
+                                <i class="icon-trash bigger-120"></i>
+                            </button>
+                        </div>
+                        <div class="visible-xs visible-sm hidden-md hidden-lg">
+                            <div class="inline position-relative">
+                                <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
+                                    <i class="icon-cog icon-only bigger-110"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                    <li>
+                                        <a href="javascript:;" class="tooltip-success" data-rel="tooltip" title="编辑" ng-click="OpenEditModel(area)">
+                                            <span class="green">
+                                                <i class="icon-edit bigger-120"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;" class="tooltip-error" data-rel="tooltip" title="删除" ng-click="DeleteArea(area)">
+                                            <span class="red">
+                                                <i class="icon-trash bigger-120"></i>
+                                            </span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div><!--hidden over-->
+                    </td>
+                </tr>
+            </tbody>
+        </table><!--table over-->
+        <p>
+            <a href="javascript:;" class="btn btn-app btn-primary btn-xs" ng-click="OpenAddModel()">
+                <i class="icon-edit bigger-230"></i>
+                添加
+            </a>
+        </p>
+    </div><!--col over-->
+</div><!--row over-->
+
+
+<script type="text/ng-template" id="ModalAreaEdit.html">
+    <form ng-submit="EditArea()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                修改区域信息
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                        <p>
+                            编号:<span class="input-icon">
+                                <input type="text" ng-model="CurrentArea.Id" class="AreaId" maxlength="3" />
+                                <i class="icon-lemon blue"></i>
+                            </span>
+                        </p>
+                        <br />
+                        <br />
+                        <p>
+                            名称:<span class="input-icon">
+                                <input type="text" ng-model="CurrentArea.Name" maxlength="20" />
+                                <i class="icon-film blue"></i>
+                            </span>
+                        </p>
+                        <br />
+                        <br />
+                        <p>
+                            收银处:
+                            <select ng-model="AreaElement.ReciptDepartment"
+                                    chosen
+                                    placeholder-text-single="'选择收银区域'"
+                                    no-results-text="'没有找到'"
+                                    ng-options="area.Name for area in AreaElement.Departments"
+                                    style="width:50%;" ng-change="SelectReciptChange()">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                        <br />
+                        <br />
+                        <p>
+                            传菜处:
+                            <select ng-model="AreaElement.ServiceDepartment"
+                                    chosen
+                                    placeholder-text-single="'选择服务区域'"
+                                    no-results-text="'没有找到'"
+                                    ng-options="area.Name for area in AreaElement.Departments"
+                                    style="width:50%;" ng-change="SelectServiceChange()">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <p>
+                            描述:<textarea class="autosize-transition form-control" ng-model="CurrentArea.Description"></textarea>
+                        </p>
+                    </div>
+                </div><!-- row end  -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit"ng-disabled="AreaElement.isAjax"><img src="../../Content/images/loading.gif" ng-if="AreaElement.isAjax" style="vertical-align:middle;" />保存</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>
+
+<script type="text/ng-template" id="ModalAreaAdd.html">
+    <form ng-submit="AddArea()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                新增区域信息
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6">
+                        <p>
+                            编号:<span class="input-icon">
+                                <input type="text" ng-model="AreaElement.newArea.Id" class="AreaId" maxlength="3" required />
+                                <i class="icon-lemon blue"></i>
+                            </span>
+                        </p>
+                        <br />
+                        <br />
+                        <p>
+                            名称:<span class="input-icon">
+                                <input type="text" ng-model="AreaElement.newArea.Name" maxlength="20" required />
+                                <i class="icon-film blue"></i>
+                            </span>
+                        </p>
+                        <br />
+                        <br />
+                        <p>
+                            收银处:
+                            <select ng-model="AreaElement.ReciptDepartment"
+                                    chosen
+                                    placeholder-text-single="'选择收银区域'"
+                                    no-results-text="'没有找到'"
+                                    ng-options="area.Name for area in AreaElement.Departments"
+                                    style="width:50%;" ng-change="SelectReciptChange()">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                        <br />
+                        <br />
+                        <p>
+                            传菜处:
+                            <select ng-model="AreaElement.ServiceDepartment"
+                                    chosen
+                                    placeholder-text-single="'选择服务区域'"
+                                    no-results-text="'没有找到'"
+                                    ng-options="area.Name for area in AreaElement.Departments"
+                                    style="width:50%;" ng-change="SelectServiceChange()">
+                                <option value=""></option>
+                            </select>
+                        </p>
+                    </div>
+                    <div class="col-xs-12 col-sm-6">
+                        <p>
+                            描述:<textarea class="autosize-transition form-control" ng-model="AreaElement.newArea.Description"></textarea>
+                        </p>
+                    </div>
+                </div><!-- row end  -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit" ng-disabled="AreaElement.isAjax&&AreaElement.newArea.Id"><img src="../../Content/images/loading.gif" ng-if="AreaElement.isAjax" style="vertical-align:middle;" />添加</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>
+

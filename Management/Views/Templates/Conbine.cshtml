@@ -1,0 +1,38 @@
+﻿@{
+    Layout = null;
+}
+<link href="../Content/css/style.css" rel="stylesheet" />
+<div ng-if="IsStaffReturn">
+    <div class="row" ng-init="initialize()">
+        <div class="col-xs-12">
+            桌台号: <select ng-model="ConbineElements.CurrentDesk"
+                         chosen
+                         placeholder-text-single="'选择桌台'"
+                         no-results-text="'没有找到'"
+                         ng-options="desk.Id for desk in ConbineElements.UnpaidDesk"
+                         style="width:100px;">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <p class="text-center">未支付订单</p>
+            <select multiple="multiple" ng-model="ConbineElements.SelectDines" class="Conbine" ng-options="dine.Id for dine in ConbineElements.UnpaidDines|filter:{DeskId:ConbineElements.CurrentDesk.Id} track by dine.Id"></select>
+            <button class="btn btn-success Conbine-button" ng-click="MoveRight()">选中右移></button> <button class="btn btn-success Conbine-button" ng-click="MoveRightAll()">全部右移>></button>
+        </div>
+        <div class="col-xs-6">
+            <p class="text-center">希望合桌订单</p>
+            <select multiple="multiple" class="Conbine" ng-model="ConbineElements.SelectConbineDines" ng-options="dine.Id for dine in ConbineElements.ConbineDines track by dine.Id"></select>
+            <button class="btn btn-success Conbine-button" ng-click="MoveLeft()">选中左移<</button> <button class="btn btn-success Conbine-button" ng-click="MoveLeftAll()">全部左移<<</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <button class="btn btn-success Conbine-button" ng-click="Conbine()">合并</button>
+        </div>
+    </div>
+</div>
+<div ng-if="!IsStaffReturn">
+    对不起你没有相关权限
+</div>

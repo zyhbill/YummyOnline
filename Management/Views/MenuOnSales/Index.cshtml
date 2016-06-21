@@ -1,0 +1,118 @@
+﻿
+@{
+
+    Layout = null;
+}
+
+<div ng-controller="MenuOnSalesCtrl">
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+         aria-labelledby="myModalLabel" aria-hidden="false" data-backdrop = "static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="false">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        特价菜设置
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div ><span  class="col-md-2">菜品号:</span><input style="width:200px" type="text" ng-model="newMenuOnSale.id" ng-change="searchbyid()" /><span>{{idtoname.Name}}</span></div>
+                    <br />
+                    <div >
+                        <span  class="col-md-2">打折星期:</span>
+                        <form  role="form" >
+                            <div class="form-group" >
+                                <select style="width:200px" class="form-control" ng-model="newMenuOnSale.onsaleweek">
+                                    <option value="1">周一</option>
+                                    <option value="2">周二</option>
+                                    <option value="3">周三</option>
+                                    <option value="4">周四</option>
+                                    <option value="5">周五</option>
+                                    <option value="6">周六</option>
+                                    <option value="7">周日</option>
+
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div>
+                        <span  class="col-md-2">价格:</span><input style="width:200px" type="number" ng-model="newMenuOnSale.price" />
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" ng-click="addMenuOnSale(menuOnSale)" data-dismiss="modal">添加</button>
+                    <button class="btn btn-warning" type="button" data-dismiss="modal">取消</button>
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <table class="table table-bordered table-hover table-striped table-responsive">
+        <thead><tr><th>菜品号</th><th>菜品名称</th><th>打折星期</th><th class = text-right>原价格</th><th class=text-right>价格</th><th class="col-md-2">相关操作</th></tr></thead>
+
+        <tr ng-repeat="menuOnSale in menuOnSales">
+
+            <td>
+                <span >{{menuOnSale.Id}}</span>
+                
+
+            </td>
+            <td>
+                <span>{{menuOnSale.Name}}</span>
+
+
+            </td>
+            <td>
+                <span >{{menuOnSale.OnSaleWeek}}</span>
+                
+
+            </td>
+            <td class=text-right>
+                <span >{{menuOnSale.OriPrice |currency : '￥'}}</span>
+                
+
+
+            </td>
+            <td class = text-right>
+                <span ng-if="!menuOnSale.isAlt">{{menuOnSale.Price |currency : '￥'}}</span>
+                <input ng-if="menuOnSale.isAlt" type="text" ng-model="menuOnSale.Price" />
+                
+                
+            </td>
+            <td>
+                <button type="button" class="btn btn-minier btn-primary dropdown-toggle" ng-click="altMenuOnSale(menuOnSale)" ng-if="!menuOnSale.isAlt">
+                    @*修改*@
+                    <i class="icon-edit icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-success dropdown-toggle" ng-if="menuOnSale.isAlt" ng-click="finishaltMenuOnSale(menuOnSale)">
+                    @*完成*@
+                    <i class="icon-ok icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-danger dropdown-toggle" ng-click="altMenuOnSale(menuOnSale)" ng-if="menuOnSale.isAlt">
+                    @*取消*@
+                    <i class="icon-remove icon-on-right bigger-110"></i>
+                </button>
+                <button type="button" class="btn btn-minier btn-danger dropdown-toggle" ng-click="delete(menuOnSale)">
+                    @*删除*@
+                    <i class="icon-trash icon-on-right bigger-110"></i>
+                </button>
+            </td>
+        </tr>
+       
+
+
+
+    </table>
+    <button class="btn btn-app btn-primary btn-xs" data-toggle="modal" data-target="#myModal">
+        添加
+        <i class="icon-edit bigger-230"></i>
+    </button>
+</div>

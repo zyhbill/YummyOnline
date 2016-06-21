@@ -1,0 +1,330 @@
+﻿/******************************order**********************************/
+.desk {
+    cursor:pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.18);
+    margin:5px 10px;
+    float:left;
+    width:13%;
+    border-radius:8px;
+}
+.desk h4{
+    margin:0;
+    padding:0;
+}
+.desk p{
+    margin:0;
+    padding:0;
+}
+
+
+@media (min-width:768px) {
+    .modal-dialog {
+        width: 600px;
+        margin: 30px auto;
+    }
+}
+@media (min-width:992px){.modal-lg{width:80%}}
+
+/*******************************************支付结账**********************************************************/
+.Pay-Title{
+    padding-left:20px;
+}
+
+.Pay-Desk{
+    display:inline-block;
+    width:60px;
+    text-align:center;
+}
+
+.Pay{
+    padding-left:40px;
+}
+
+.Pay-Discount{
+    width:60px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button{
+    -webkit-appearance: none !important;
+    margin: 0; 
+}
+input[type="number"]{-moz-appearance:textfield;}
+.Dine{
+    margin-left:20px;
+    max-height:220px;
+    overflow:auto;
+}
+.DineInfo{
+    margin:10px 40px;
+}
+.DineMenu{
+    max-height:200px;
+    overflow:auto;
+    margin-left:20px;
+}
+.payLabel{
+    margin:3px 0;
+    width:45%;
+    display:inline-block;
+}
+span.payLabel{
+    font-size:18px;
+}
+span.money{
+    font-size:16px;
+    display:inline-block;
+    width:23%;
+    text-align:center;
+}
+.login{
+    display:inline-block;
+    width:35%;
+}
+.loginBtn{
+    height:50px;
+    width:50px;
+}
+/*********************************开桌***************************************************************/
+.openDesk{
+    margin-left:40px;
+}
+.Headcount{
+    display:inline-block;
+    width:50px;
+    text-align:center;
+}
+.userLogin{
+    display:inline-block;
+}
+.userLogin-username{
+    width:120px;
+}
+.userLogin-password{
+    width:50px;
+}
+.openDiscount{
+    display:inline-block;
+    width:48%;
+}
+.menuShow{
+    height:220px;
+    overflow:auto;
+}
+.NowMenu{
+    display:inline-block;
+    width:100%;
+}
+.orderMenuRemove{
+    cursor:pointer;
+}
+.num-spinner{
+    width:40px;
+    height:28px;
+    line-height:28px;
+    position:relative;
+    display:inline-block;
+}
+.num-spinnerP{
+    position:absolute;
+    box-sizing: content-box !important;
+    height: 5px;
+    line-height: 5px;
+    padding:0;
+    z-index:200;
+    font-size:5px;
+    color:#fff;
+    font-weight:bolder;
+    display:inline-block;
+    text-align:center;
+}
+.num-spinnerUp{
+    top:0;
+    width:5px;
+}
+.num-spinnerDown{
+    bottom:0;
+    width:5px;
+}
+.OpenList{
+    list-style:none;
+}
+.OpenList>li{
+    cursor:pointer;
+}
+.OpenList>li:hover{
+    background:#f00;
+    opacity:0.5;
+}
+.MenuList{
+    display:inline-block;
+    cursor:pointer;
+    min-height:80px;
+    border:1px solid #4c8fbd;
+    float:left;
+    width:20%;
+}
+.MenuList:hover{
+    opacity:0.8;
+}
+.MaxLength{
+    height:350px;
+    overflow:auto;
+}
+.MenuPic{
+    min-height:78px;
+}
+.MenuOrdered{
+    background:#59e6ea;
+}
+.shift{
+    position:absolute;
+    right:0;
+    top:0;
+}
+/************************************退菜************************************************/
+.ReeturnShow{
+    max-height:180px;
+    margin-top:10px;
+}
+/***************************************合单***************************************************/
+.Conbine{
+    display:block;
+    width:100%;
+    height:172px !important;
+}
+.Conbine-button{
+    margin-top:5px;
+}
+
+/*********************************区域*****************************************/
+.AreaId{
+    display:inline-block;
+    width:80px;
+}
+
+/***********************************桌台***********************************************/
+.max-show{
+    max-height:400px;
+    overflow:auto;
+}
+.nomargin{
+    margin:0;
+}
+.IdFilter{
+    width:50%;
+    display:inline-block;
+}
+@media (min-width:480px) { 
+    .DId{
+        width:8%;
+    }
+    .DName{
+        width:12%;
+    }
+    .DCode{
+        width:8%;
+    }
+    .DOrder{
+        width:8%;
+    }
+    .DSeat{
+        width:8%;
+    }
+    .DMin{
+        width:8%;
+    }
+    .DCom{
+        width:20%;
+    }
+    .DArea{
+        width:8%;
+    }
+    .DLet{
+        width:8%;
+    }
+}
+@media(max-width:480px){
+    .DId{
+        width:10%;
+    }
+    .DName{
+        width:40%;
+    }
+    .DCode{
+        width:10%;
+    }
+     .DMin{
+        width:15%;
+    }
+     .DArea{
+        width:20%;
+    }
+     .DLet{
+        width:15%;
+    }
+}
+/******************************************菜品******************************************************/
+@media (min-width:480px) { 
+    .MId{
+        width:15%;
+    }
+    .MName{
+        width:30%;
+    }
+    .MPrice{
+        width:5%;
+    }
+    .MStatus{
+        width:10%;
+    }
+    .MUnit{
+        width:5%;
+    }
+    .MRemark{
+        width:20%
+    }
+}
+.MenuLabel{
+    width:80px;
+    display:inline-block;
+    text-align:right;
+    height:29px;
+    line-height:29px;
+}
+
+#spinner3{
+    width:40px;
+    height:26px;
+    position:relative;
+    float:left;
+    text-align:center;
+}
+
+
+
+/*****************************************************************************************************/
+.clearfix { 
+  *zoom: 1; 
+} 
+.clearfix:before, 
+.clearfix:after { 
+  display: table;
+  line-height: 0; 
+  content: ""; 
+} 
+.clearfix:after { 
+  clear: both; 
+} 
+.clean{
+    clear:both;
+}
+
+/******************************************/
+.register {
+    padding-left:20px;
+    margin-top:30px;
+} 
+.register input{
+    margin:5px 
+}

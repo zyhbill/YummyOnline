@@ -1,0 +1,67 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html ng-app="Management" lang="zh_cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width" />
+    <title>注册</title>
+    <link href="../Content/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../FrameWorks/assets/css/font-awesome.min.css" />
+    <link href="../Content/css/signin.css" rel="stylesheet">
+    <link href="../Content/css/fakeLoader.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../FrameWorks/assets/css/ace.min.css" />
+    <link href="~/Content/css/style.css" rel="stylesheet" />
+    <meta name="description" content="店小二" />
+</head>
+<body ng-controller="LoginCtrl">
+    <div class="signin">
+        <div class="signin-head"><img src="../Content/images/test/logo_menu.png" alt="" class="img-circle"></div>
+        <form ng-submit="register()" name="Register" class="register">
+            饭店名称:<input type="text" ng-model="Hotel.Name" required /> <br/>
+            手机号码:<input type="text" name="phone" ng-model="Hotel.Phone" required pattern="^(13[0-9]|15[012356789]|17[678]|18[0-9]|14[57])[0-9]{8}$" /><br/>
+            初始密码:<input type="password" name="PassWord" ng-model="Hotel.PassWord" required /><br />
+            验证号码:<input type="text" ng-model="KeyInfo.Key" required pattern="^\d{6}$" />
+            <button type="button" ng-click="GetKey()" ng-disabled="!KeyInfo.IsReget||Register.phone.$invalid">
+                <span ng-show="KeyInfo.IsFirst">
+                    获取验证码
+                </span>
+                <span ng-show="KeyInfo.IsReget&&!KeyInfo.IsFirst">
+                    重新获取
+                </span>
+                <span ng-show="!KeyInfo.IsReget&&!KeyInfo.IsFirst">
+                    {{KeyInfo.Time}}秒后重新获取
+                </span>
+            </button><br />
+            <button class="btn btn-lg btn-warning btn-block" style="display:inline-block;width:430px;margin-top:10px;"  type="submit" ng-disabled="">注册</button>
+        </form>
+        <a href="/Login" class="pink btn btn-success" style="display:inline-block;margin-top:25px;margin-left:20px;">返回</a>
+    </div><!-- PAGE CONTENT ENDS -->
+    <script src="../FrameWorks/assets/js/jquery-2.0.3.min.js"></script>
+    <script src="../FrameWorks/assets/js/bootstrap.min.js"></script>
+    <script src="../FrameWorks/assets/js/ace-elements.min.js"></script>
+    <script src="../FrameWorks/assets/js/ace.min.js"></script>
+    <script src="../FrameWorks/fakeLoader.min.js"></script>
+    <script src="../FrameWorks/angular.min.js"></script>
+    <script src="../FrameWorks/angular-animate.min.js"></script>
+    <script src="../FrameWorks/angular-cookies.min.js"></script>
+    <script src="../FrameWorks/angular-route.min.js"></script>
+    <script src="../FrameWorks/angular-touch.min.js"></script>
+    <script src="../FrameWorks/reconnecting-websocket.min.js"></script>
+    <script src="../FrameWorks/ui-bootstrap-tpls-0.14.3.min.js"></script>
+    <script src="../FrameWorks/assets/js/chosen.jquery.min.js"></script>
+    <script src="../FrameWorks/angular-chosen.min.js"></script>
+    <script src="../Script/CeryController.js"></script>
+    <script src="../Script/Config.js"></script>
+    <script src="../Script/Services.js"></script>
+    <script src="../Script/CeryFactory.js"></script>
+    <script src="../Script/CeryDirective.js"></script>
+    <script src="../Script/BaseInfoController.js"></script>
+    <script src="../Script/BaseInfoFactorys.js"></script>
+    <script src="../Script/PayKindsController.js"></script>
+    <script src="../Script/ReportController.js"></script>
+    <script src="../Script/ReportFactory.js"></script>
+</body>
+</html>

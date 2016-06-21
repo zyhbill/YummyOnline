@@ -1,0 +1,155 @@
+﻿@{
+    Layout = null;
+}
+<link href="../FrameWorks/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<link href="../Content/css/Reporter.css" rel="stylesheet" />
+<link href="../Content/css/style.css" rel="stylesheet" />
+<div class="row" ng-init="Initialize()">
+    <div class="col-md-8 col-xs-12">
+        <form class="form-horizontal">
+            <fieldset>
+                <div class="control-group">
+                    <label class="control-label">选择开始和结束时间:</label>
+                    <div class="controls">
+                        <div class="input-prepend input-group">
+                            <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                            <input type="text" style="width:600px;" name="reservation" id="reservation" class="form-control" datetime time="MonthElements.Month" value="@DateTime.Now.ToString("yyyy-MM")"/>
+                        </div>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+    <div class="col-md-4 col-xs-12">
+        <button type="button" class="btn btn-purple btn-sm" style="margin-top:28px;" ng-click="Search()">
+            查找
+            <i class="icon-search icon-on-right bigger-110"></i>
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="AllSelect()">
+            全选
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="NoneSelect()">
+            全不选
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" style="margin-top:28px;" ng-click="ReverseSelect()">
+            反选
+        </button>
+    </div>
+    <div class="clean"></div>
+    <div class="showBox clearfix" style="padding-left:10px;">
+        选择统计方式:
+        <select ng-options="option.Name for option in MonthElements.Options" ng-model="MonthElements.SelectOption" ng-change="TypeChange()">
+        </select>
+        <br />
+        <div class="widget-box half" ng-if="MonthElements.SelectOption.Id==2||MonthElements.SelectOption.Id==1">
+            <div class="widget-header">
+                <h4 class="smaller">一级类别</h4>
+            </div>
+
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                    <li ng-repeat="fa in MonthElements.FatherClasses">
+                        <label>
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="fa.IsChoose" />
+                            <span class="lbl">{{fa.Name}}</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+       
+        <div class="widget-box half" ng-if="MonthElements.ChildClasses.length>0&&MonthElements.SelectOption.Id==2">
+            <div class="widget-header">
+                <h4 class="smaller">二级类别</h4>
+            </div>
+
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                    <span ng-repeat="fa in MonthElements.FatherClasses|filter:{IsChoose:true}">
+                        <li ng-repeat="cd in MonthElements.ChildClasses|filter:{ParentMenuClassId:fa.Id}">
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="cd.IsChoose" />
+                                <span class="lbl">{{cd.Name}}</span>
+                            </label>
+                        </li>
+                    </span>
+                </ul>
+            </div>
+        </div>
+
+        <div class="widget-box menu" ng-if="MonthElements.SelectOption.Id==0">
+            <div class="widget-header">
+                <h4 class="smaller">菜品</h4>
+            </div>
+
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                        <li ng-repeat="menu in MonthElements.Menus">
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="menu.IsChoose" />
+                                <span class="lbl">{{menu.Name}}</span>
+                            </label>
+                        </li>
+                </ul>
+            </div>
+        </div>
+        <div class="clean"></div>
+    </div>
+    <div class="clean"></div>
+</div>
+<div class="vspace-xs-6"></div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabbable tabs-below">
+            <div class="tab-content">
+                <div id="home2" class="tab-pane in active">
+                    <p class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped" id="datatable">
+                            <thead>
+                                <tr>
+                                    <td class="text-center">编号</td>
+                                    <td class="text-center">名称</td>
+                                    <td class="text-center">汇总</td>
+                                    <td ng-repeat="day in MonthElements.Days" class="text-center">{{day}}</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data in MonthElements.MonthDatas">
+                                    <td>{{data.Menu.Id}}</td>
+                                    <td>{{data.Menu.Name}}</td>
+                                    <td class="text-right">{{data.CountAll}}</td>
+                                    <td class="text-right" ng-repeat="count in data.Counts track by $index">{{count}}</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>总计</td>
+                                    <td class="text-right">{{MonthElements.CountAll}}</td>
+                                    <td class="text-right" ng-repeat="sum in MonthElements.Sum track by $index">{{sum}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </p>
+                </div>
+
+                @*<div id="profile2" class="tab-pane">
+                    <p>
+                        <div id="DataReport"></div>
+                    </p>
+                </div>*@
+            </div>
+
+            <ul class="nav nav-tabs" id="myTab2">
+                <li class="active">
+                    <a data-toggle="tab" href="/#home2">报表</a>
+                </li>
+
+                @*<li>
+                    <a data-toggle="tab" href="/#profile2">图表</a>
+                </li>*@
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="../FrameWorks/assets/js/date-time/bootstrap-datetimepicker.min.js"></script>
+<script src="../FrameWorks/assets/js/date-time/locales/bootstrap-datetimepicker.zh-CN.js" charset="utf-8"></script>

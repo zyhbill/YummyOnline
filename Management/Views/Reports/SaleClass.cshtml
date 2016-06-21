@@ -1,0 +1,159 @@
+﻿@{
+    Layout = null;
+}
+
+
+<link rel="stylesheet" href="../FrameWorks/assets/css/bootstrap-timepicker.css" />
+<link href="../Content/css/style.css" rel="stylesheet" />
+<link href="../Content/css/Reporter.css" rel="stylesheet" />
+<div class="row" ng-init="Initialize()">
+    <div class="col-md-4 col-xs-12">
+        <p class="form-group">
+            <div class="input-group bootstrap-timepicker FloatLeft">
+                从:<input type="text" class="form-control" btime-picker time="ClassElement.BeginTime" />
+            </div>
+            <div class="input-group bootstrap-timepicker FloatLeft">
+                到:<input type="text" class="form-control" etime-picker time="ClassElement.EndTime" />
+            </div>
+        </p>
+    </div>
+    <div class="col-md-4 col-xs-12" style="padding-top:18px">
+        区域:<br />
+        <select ng-options="area.Name for area in ClassElement.Areas" ng-model="ClassElement.SelectArea"></select>
+    </div>
+    <div class="col-md-4 col-xs-12" style="padding-top:32px">
+        <button type="button" class="btn btn-purple btn-sm" ng-click="Search()">
+            查找
+            <i class="icon-search icon-on-right bigger-110"></i>
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" ng-click="AllSelect()">
+            全选
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" ng-click="NoneSelect()">
+            全不选
+        </button>
+        <button type="button" class="btn btn-blue btn-sm" ng-click="ReverseSelect()">
+            反选
+        </button>
+    </div>
+    <div class="clean"></div>
+    <div class="showBox clearfix" style="padding-left:10px;">
+        选择统计方式:
+        <select ng-options="option.Name for option in ClassElement.Options" ng-model="ClassElement.SelectOption" ng-change="TypeChange()"></select>
+        <br />
+        <div class="widget-box half" ng-if="ClassElement.SelectOption.Id==2||ClassElement.SelectOption.Id==1">
+            <div class="widget-header">
+                <h4 class="smaller">一级类别</h4>
+            </div>
+
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                    <li ng-repeat="fa in ClassElement.FatherClasses">
+                        <label>
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="fa.IsChoose" />
+                            <span class="lbl">{{fa.Name}}</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="widget-box half" ng-if="ClassElement.ChildClasses.length>0&&ClassElement.SelectOption.Id==2">
+            <div class="widget-header">
+                <h4 class="smaller">二级类别</h4>
+            </div>
+
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                    <span ng-repeat="fa in ClassElement.FatherClasses|filter:{IsChoose:true}">
+                        <li ng-repeat="cd in ClassElement.ChildClasses|filter:{ParentMenuClassId:fa.Id}">
+                            <label>
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="cd.IsChoose" />
+                                <span class="lbl">{{cd.Name}}</span>
+                            </label>
+                        </li>
+                    </span>
+                </ul>
+            </div>
+        </div>
+
+        <div class="widget-box menu" ng-if="ClassElement.SelectOption.Id==0">
+            <div class="widget-header">
+                <h4 class="smaller">菜品</h4>
+            </div>
+
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                    <li ng-repeat="menu in ClassElement.Menus">
+                        <label>
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="menu.IsChoose" />
+                            <span class="lbl">{{menu.Name}}</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="clean"></div>
+    </div>
+</div>
+<div class="vspace-xs-6"></div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabbable tabs-below">
+            <div class="tab-content">
+                <div id="home2" class="tab-pane in active">
+                    <p>
+                        <table class="table table-bordered table-hover table-striped table-responsive" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">序号</th>
+                                    <th class="text-center">项目编码</th>
+                                    <th class="text-center">项目名称</th>
+                                    <th class="text-center">销售数量</th>
+                                    <th class="text-center">应计金额</th>
+                                    <th class="text-center">优惠金额</th>
+                                    <th class="text-center">实收金额</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data in ClassElement.Datas">
+                                    <td>{{$index+1}}</td>
+                                    <td>{{data.Id}}</td>
+                                    <td>{{data.Name}}</td>
+                                    <td class="text-right">{{data.Count}}</td>
+                                    <td class="text-right">{{data.OriPrice|currency:'￥'}}</td>
+                                    <td class="text-right">{{data.SaveMoney|currency:'￥'}}</td>
+                                    <td class="text-right">{{data.Price|currency:'￥'}}</td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td>总计</td>
+                                    <td class="text-right">{{ClassElement.Sum.TotalCount}}</td>
+                                    <td class="text-right">{{ClassElement.Sum.TotalOriPrice|currency:'￥'}}</td>
+                                    <td class="text-right">{{ClassElement.Sum.TotalSaveMoney|currency:'￥'}}</td>
+                                    <td class="text-right">{{ClassElement.Sum.TotalPrice|currency:'￥'}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </p>
+                </div>
+                 
+
+            </div>
+
+            <ul class="nav nav-tabs" id="myTab2">
+                <li class="active">
+                    <a data-toggle="tab" href="/#home2">报表</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="../FrameWorks/assets/js/date-time/bootstrap-timepicker.min.js"></script>

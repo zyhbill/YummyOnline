@@ -1,0 +1,219 @@
+﻿@{
+    Layout = null;
+}
+
+<link href="../Content/css/style.css" rel="stylesheet" />
+<div class="row max-300" ng-init="intialize()">
+    <div class="col-xs-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover nomargin">
+                <thead>
+                    <tr>
+                        <th>编号<input  type="text" ng-model="DeskElement.IdFilter.Id"  class="IdFilter"/></th>
+                        <th>名称</th>
+                        <th>二维码</th>
+                        <th class="hidden-480">排序编号</th>
+                        <th class="hidden-480">位置数</th>
+                        <th class="text-right">最低消费</th>
+                        <th>所属区域</th>
+                        <th></th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="desk in DeskElement.Desks|filter:{Id:DeskElement.IdFilter.Id}">
+                        <td>{{desk.Id}}</td>
+                        <td>{{desk.Name}}</td>
+                        <td class=" text-right">{{desk.QrCode}}</td>
+                        <td class="hidden-480  text-right">{{desk.Order}}</td>
+                        <td class="hidden-480  text-right">{{desk.HeadCount}}</td>
+                        <td class="text-right">{{desk.MinPrice.toFixed(2)}}</td>
+                        <td>{{desk.AreaName}}</td>
+                        <td>
+                            <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                <button class="btn btn-xs btn-info" ng-click="OpenEditModel(desk)">
+                                    <i class="icon-edit bigger-120"></i>
+                                </button>
+                                <button class="btn btn-xs btn-danger" ng-click="DeleteDesk(desk)">
+                                    <i class="icon-trash bigger-120"></i>
+                                </button>
+                            </div>
+                            <div class="visible-xs visible-sm hidden-md hidden-lg">
+                                <div class="inline position-relative">
+                                    <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
+                                        <i class="icon-cog icon-only bigger-110"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                        <li>
+                                            <a href="javascript:;" class="tooltip-success" data-rel="tooltip" title="编辑" ng-click="OpenEditModel(desk)">
+                                                <span class="green">
+                                                    <i class="icon-edit bigger-120"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" class="tooltip-error" data-rel="tooltip" title="删除" ng-click="DeleteDesk(desk)">
+                                                <span class="red">
+                                                    <i class="icon-trash bigger-120"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div><!--hidden over-->
+                        </td>
+                    </tr>
+                </tbody>
+            </table><!--table over-->
+        </div><!--table over-->
+        <p>
+            <a href="javascript:;" class="btn btn-app btn-primary btn-xs" ng-click="OpenAddModel()">
+                <i class="icon-edit bigger-230"></i>
+                添加
+            </a>
+        </p>
+    </div><!--col over-->
+</div><!--row over-->
+
+
+<script type="text/ng-template" id="ModalDeskEdit.html">
+    <form ng-submit="EditDesk()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                修改桌台信息
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid" ng-init="LoadPic()">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-5">
+                        <p>
+                            二维码:
+                            <input type="text" maxlength="5" required ng-model="CurrentDesk.QrCode" />
+                        </p>
+                        @*<input multiple="" type="file" id="id-input-file-3" />*@
+                        <div class="space"></div>
+                        <select ng-model="DeskElement.SelectArea"
+                                chosen
+                                placeholder-text-single="'选择对应区域'"
+                                no-results-text="'没有找到'"
+                                ng-options="area.Name for area in DeskElement.Areas"
+                                style="width:100%;" ng-change="AreaChange()">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-12 col-sm-7">
+                        <p>
+                            编号:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="input-icon">
+                                <input type="text" ng-model="CurrentDesk.Id" maxlength="4" required/>
+                                <i class="icon-lemon blue"></i>
+                            </span>
+                        </p>
+                        <p>
+                            名称:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="input-icon">
+                                <input type="text" ng-model="CurrentDesk.Name" maxlength="20" required/>
+                                <i class="icon-film blue"></i>
+                            </span>
+                        </p>
+                        <p>
+                            排序编号:<span class="input-icon">
+                                <input type="number" ng-model="CurrentDesk.Order" min="0" required/>
+                                <i class="icon-move blue"></i>
+                            </span>
+                        </p>
+                        <p>
+                            座位数:&nbsp;&nbsp;&nbsp;&nbsp;<span class="input-icon">
+                                <input type="number" ng-model="CurrentDesk.HeadCount" min="0" required/>
+                                <i class="icon-move blue"></i>
+                            </span>
+                        </p>
+                        <p>
+                            最低消费:<span class="input-icon">
+                                <input type="number" ng-model="CurrentDesk.MinPrice" min="0" required/>
+                                <i class="icon-money blue"></i>
+                            </span>
+                        </p>
+                        <p>
+                            描述:<textarea class="autosize-transition form-control" ng-model="CurrentDesk.Description"></textarea>
+                        </p>
+                    </div>
+                </div><!-- row end  -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit" ng-disabled="DeskElement.isAjax"><img src="../../Content/images/loading.gif" ng-if="DeskElement.isAjax" style="vertical-align:middle;" />保存</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>
+
+<script type="text/ng-template" id="ModalDeskAdd.html">
+    <form ng-submit="AddDesk()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                新增桌台信息
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid" ng-init="LoadPic()">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-5">
+                        <p>
+                            二维码:
+                            <input type="text" maxlength="5" required ng-model="DeskElement.newDesk.QrCode" />
+                        </p>
+                        @*<input multiple="" type="file" id="id-input-file-3" />*@
+                        <div class="space"></div>
+                        <select ng-model="DeskElement.SelectArea"
+                                chosen
+                                placeholder-text-single="'选择所属区域'"
+                                no-results-text="'没有找到'"
+                                ng-options="area.Name for area in DeskElement.Areas"
+                                style="width:100%;" ng-change="NewAreaChange()">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-12 col-sm-7">
+                        <p>
+                            编号:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="input-icon">
+                                <input type="text" ng-model="DeskElement.newDesk.Id" maxlength="4" required />
+                                <i class="icon-lemon blue"></i>
+                            </span>
+                        </p>
+                        <p>
+                            名称:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="input-icon">
+                                <input type="text" ng-model="DeskElement.newDesk.Name" maxlength="20" required />
+                                <i class="icon-film blue"></i>
+                            </span>
+                        </p>
+                        <p>
+                            排序编号:<span class="input-icon">
+                                <input type="number" ng-model="DeskElement.newDesk.Order" min="0" required />
+                                <i class="icon-move blue"></i>
+                            </span>
+                        </p>
+                        <p>
+                            座位数:&nbsp;&nbsp;&nbsp;&nbsp;<span class="input-icon">
+                                <input type="number" ng-model="DeskElement.newDesk.HeadCount" min="0" required />
+                                <i class="icon-move blue"></i>
+                            </span>
+                        </p>
+                        <p>
+                            最低消费:<span class="input-icon">
+                                <input type="number" ng-model="DeskElement.newDesk.MinPrice" min="0" required />
+                                <i class="icon-money blue"></i>
+                            </span>
+                        </p>
+                        <p>
+                            描述:<textarea class="autosize-transition form-control" ng-model="DeskElement.newDesk.Description"></textarea>
+                        </p>
+                    </div>
+                </div><!-- row end  -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit" ng-click="" ng-disabled="DeskElement.isAjax&&DeskElement.newDesk.Id==''"><img src="../../Content/images/loading.gif" ng-if="DeskElement.isAjax" style="vertical-align:middle;" />添加</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>
+

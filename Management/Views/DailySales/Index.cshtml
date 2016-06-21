@@ -1,0 +1,88 @@
+﻿
+@{
+
+    Layout = null;
+}
+<script src="../FrameWorks/moment.js"></script>
+<script src="../FrameWorks/daterangepicker.js"></script>
+<link href="../Content/css/daterangepicker.css" rel="stylesheet" />
+<div ng-controller="DailySalesCtrl">
+    <div class="row" ng-init="Initialize()">
+        <div class="col-md-8 col-xs-12">
+            <form class="form-horizontal">
+                <fieldset>
+                    <div class="control-group">
+                        <label class="control-label">选择开始和结束时间:</label>
+                        <div class="controls">
+                            <div class="input-prepend input-group">
+                                <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                                <input type="text" style="width:600px;" name="reservation" id="reservation" class="form-control" daterange date-start="begintime" date-end="endtime" value="@(DateTime.Now.ToString("yyyy-MM-dd") + "- " + DateTime.Now.ToString("yyyy-MM-dd"))"/>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="col-md-4 col-xs-12">
+            <button type="button" class="btn btn-purple btn-sm" style="margin-top:28px;" ng-click="search()">
+                查找
+                <i class="icon-search icon-on-right bigger-110"></i>
+            </button>
+        </div>
+    </div>
+    <div class="col-xs-12 cleanfix" style="overflow:auto;">
+        <table class="table table-bordered table-hover table-striped">
+            <tr ><th class = text-center>序号</th><th class = text-center>营业日期</th><th class = text-center>累计消费</th><th class = text-center>累计应付</th><th class = text-center>累计优惠</th><th class = text-center>累计人数</th><th class = text-center>人均消费</th></tr>
+
+            <tr ng-repeat="dailysale in dailysales">
+                <td align="center">
+                    <span>{{$index+1}}</span>
+
+                </td>
+                <td align="center">
+                    <span >{{dailysale.begindate.Year}}-{{dailysale.begindate.Month}}-{{dailysale.begindate.Day}}</span>
+
+                </td>
+                <td class=text-right>
+                    <span >{{dailysale.sumoriprice|currency: '￥'}}</span>
+
+                </td>
+                <td class=text-right>
+                    <span >{{dailysale.sumprice|currency: '￥'}}</span>
+
+                </td>
+                <td class=text-right>
+                    <span >{{dailysale.sumdiscount|currency: '￥'}}</span>
+
+                </td>
+                <td class=text-right>
+                    <span >{{dailysale.sumheadcount}}</span>
+
+                </td>
+                <td class=text-right>
+                    <span >{{dailysale.cpi|currency: '￥'}}</span>
+
+                </td>
+            </tr>
+            <tr>
+                <td class = text-center>总计</td>
+                <td></td>
+                <td class=text-right>
+                    <span>{{totaloriprice|currency: '￥'}}</span>
+                </td>
+                <td class=text-right>
+                    <span>{{totalprice|currency: '￥'}}</span>
+                </td>
+                <td class=text-right>
+                    <span>{{totaldiscount|currency: '￥'}}</span>
+                </td>
+                <td class=text-right>
+                    <span>{{totalheadcount}}</span>
+                </td>
+                <td class=text-right>
+                    <span>{{totalcpi|currency: '￥'}}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

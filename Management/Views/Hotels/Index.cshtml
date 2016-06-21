@@ -1,0 +1,54 @@
+﻿
+@{
+
+    Layout = null;
+}
+
+<div ng-controller="HotelsCtrl">
+    <div class="col-xs-12 cleanfix" style="overflow:auto;">
+        <table class="table table-bordered table-hover table-striped">
+            <tr><th>饭店名字</th><th>饭店地址</th><th>饭店电话</th><th>登记时间</th><th>营业时间</th><th>关门时间</th><th class="col-md-2">相关操作</th></tr>
+
+            <tr ng-repeat="hotel in hotels">
+
+                <td>
+                    <span ng-if="!hotel.isAlt">{{hotel.Name}}</span>
+                    <input ng-if="hotel.isAlt" type="text" ng-model="hotel.Name" />
+                </td>
+                <td>
+                    <span ng-if="!hotel.isAlt">{{hotel.Address}}</span>
+                    <input ng-if="hotel.isAlt" type="text" ng-model="hotel.Address" />
+                </td>
+                <td>
+                    <span ng-if="!hotel.isAlt">{{hotel.Tel}}</span>
+                    <input ng-if="hotel.isAlt" type="text" ng-model="hotel.Tel" />
+                </td>
+                <td>
+                    <span>{{hotel.CreateDate |date:'yyyy-MM-dd'}}</span>
+                </td>
+                <td>
+                    <span ng-if="!hotel.isAlt">{{hotel.OpenTime}}</span>
+                    <input ng-if="hotel.isAlt" type="text" ng-model="hotel.OpenTime" />
+                </td>
+                <td>
+                    <span ng-if="!hotel.isAlt">{{hotel.CloseTime}}</span>
+                    <input ng-if="hotel.isAlt" type="text"  ng-model="hotel.CloseTime" />
+                </td>
+                <td>
+                    <button type="button" class="btn btn-minier btn-primary dropdown-toggle"  ng-click="altHotel(hotel)" ng-if="!hotel.isAlt">
+                        @*修改*@
+                        <i class="icon-edit icon-on-right bigger-110"></i>
+                    </button>
+                    <button type="button" class="btn btn-minier btn-success dropdown-toggle"  ng-if="hotel.isAlt" ng-click="finishaltHotel(hotel)">
+                        @*完成*@
+                        <i class="icon-ok icon-on-right bigger-110"></i>
+                    </button>
+                    <button type="button" class="btn btn-minier btn-danger dropdown-toggle"  ng-click="altHotel(hotel)" ng-if="hotel.isAlt">
+                        @*取消*@
+                        <i class="icon-remove icon-on-right bigger-110"></i>
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,102 @@
+﻿@{
+    Layout = null;
+}
+<link href="../Content/css/daterangepicker.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-8 col-xs-12">
+        <div class="control-group">
+            <label class="control-label">选择开始和结束时间:</label>
+            <div class="controls">
+                <div class="input-prepend input-group">
+                    <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                    <input type="text" style="width:600px;" name="reservation" id="reservation" class="form-control" daterange date-start="SalesElement.DateStart" date-end="SalesElement.DateEnd" value="@(DateTime.Now.ToString("yyyy-MM-dd") + "- " + DateTime.Now.ToString("yyyy-MM-dd"))"/>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 col-xs-12">
+        <button type="button" class="btn btn-purple btn-sm" style="margin-top:28px;" ng-click="Search()">
+            查找
+            <i class="icon-search icon-on-right bigger-110"></i>
+        </button>
+    </div>
+</div>
+<div class="vspace-xs-6"></div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabbable tabs-below">
+            <div class="tab-content">
+                <div id="home2" class="tab-pane in active">
+                    <p>
+                        <table class="table table-bordered table-hover table-striped table-responsive" id="datatable">
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="text-center">序号</th>
+                                    <th rowspan="2" class="text-center">营业日期</th>
+                                    <th ng-repeat="class in SalesElement.Classes track by $index" colspan="2" class="text-center">{{class}}</th>
+                                </tr>
+                                <tr>
+                                    <th ng-repeat="class in SalesElement.Classes" class="text-center">
+                                        <span ng-if="!$odd">
+                                            销售金额
+                                        </span>
+                                        <span ng-if="$odd">
+                                            销售金额占比
+                                        </span>
+                                    </th>
+                                    <th ng-repeat="class in SalesElement.Classes" class="text-center">
+                                        <span ng-if="!$odd">
+                                            销售金额
+                                        </span>
+                                        <span ng-if="$odd">
+                                            销售金额占比
+                                        </span>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="data in SalesElement.Datas">
+                                    <td class="text-center">{{$index+1}}</td>
+                                    <td class="text-center">{{data.Time|date:'yyyy-mm-dd'}}</td>
+                                    <td ng-repeat="sale in data.DoubleDatas track by $index" class="text-right">
+                                        <span ng-if="!$odd">{{sale|currency:'￥'}}</span>
+                                        <span ng-if="$odd">{{(sale*100).toFixed(2)}}%</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>总计</td>
+                                    <td></td>
+                                    <td class="text-right" ng-repeat="data in SalesElement.Sum track by $index">
+                                        <span ng-if="!$odd">
+                                            {{data|currency:'￥'}}
+                                        </span>
+                                        <span ng-if="$odd">
+                                            {{data.toFixed(2)}}%
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </p>
+                </div>
+
+            </div>
+
+            <ul class="nav nav-tabs" id="myTab2">
+                <li class="active">
+                    <a data-toggle="tab" href="/#home2">销售汇总</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<script src="../FrameWorks/moment.js"></script>
+<script src="../FrameWorks/daterangepicker.js"></script>

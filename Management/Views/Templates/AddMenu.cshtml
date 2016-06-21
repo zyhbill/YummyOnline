@@ -1,0 +1,158 @@
+﻿@{
+    Layout = null;
+}
+
+<link href="../Content/css/style.css" rel="stylesheet" />
+桌台:
+<input type="text" ng-model="FilterDesk"/>
+<div class="row max-300" ng-init="Initialize()" style="margin-top:10px;">
+    <div class="col-xs-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover nomargin">
+                <thead>
+                    <tr>
+                        <th>订单号</th>
+                        <th>订单桌台</th>
+                        <th>订单金额</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="dine in MenuElement.UnpaidDines|filter:{DeskId:FilterDesk}">
+                        <td>{{dine.Id}}</td>
+                        <td>{{dine.DeskId}}</td>
+                        <td>{{dine.Price}}</td>
+                        <td>
+                            <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                <button class="btn btn-xs btn-info" ng-click="OpenAddMenu(dine)">
+                                    加菜
+                                </button>
+                            </div>
+                            <div class="visible-xs visible-sm hidden-md hidden-lg">
+                                <div class="inline position-relative">
+                                    <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
+                                        <i class="icon-cog icon-only bigger-110"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                        <li>
+                                            <a href="javascript:;" class="tooltip-success" data-rel="tooltip" title="编辑" ng-click="OpenAddMenu(dine)">
+                                                <span class="green">
+                                                    加菜
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div><!--hidden over-->
+                        </td>
+                    </tr>
+                </tbody>
+            </table><!--table over-->
+        </div><!--table over-->
+    </div><!--col over-->
+</div><!--row over-->
+
+<script type="text/ng-template" id="ModalOpen.html">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            <div class=" form-inline" ng-init="initialize()">
+                加菜
+                <div class="form-group openDesk">
+                    <label>订单号:{{OpenElements.CurrentDine.Id}}</label>
+                    <label>桌台号:{{OpenElements.CurrentDine.DeskId}}</label>
+                    <label>折扣率:{{OpenElements.CurrentDine.Discount*100}}%</label>
+                    <label>管理员:&nbsp;@((Session["User"] as Management.ObjectClasses.RStatus).Name)</label>
+                </div>
+            </div>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <div class="fakeloader"></div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-7">
+                    <div class="table-responsive menuShow">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>项目名称</th>
+                                    <th>数量</th>
+                                    <th>原价</th>
+                                    <th>折后金额</th>
+                                    <th>制作方式</th>
+                                    <th></th>
+                                </tr>
+                            </thead> 
+                            <tbody>
+                                <tr ng-repeat="oldmenu in OpenElements.CurrentDine.DineMenus">
+                                    <td>{{oldmenu.Menu.Name}}</td>
+                                    <td class="text-right">{{oldmenu.Count}}</td>
+                                    <td class="text-right">{{(oldmenu.OriPrice * oldmenu.Count).toFixed(2)}}</td>
+                                    <td class="text-right">{{(oldmenu.Price * oldmenu.Count).toFixed(2)}}</td>
+                                    <td><span class="label label-success arrowed" ng-repeat="remark in oldmenu.Remarks">{{remark.Name}}</span>&nbsp;</td>
+                                    <td>原有</td>
+                                </tr>
+                                <tr ng-repeat="orderMenu in OpenElements.OrderMenus track by $index">
+                                    <td><span ng-if="orderMenu.IsSend" class="red">送</span>{{orderMenu.Name}}</td>
+                                    <td class="text-right">{{orderMenu.Num}}</td>
+                                    <td class="text-right">{{(orderMenu.MenuPrice.Price*orderMenu.Num).toFixed(2)}}</td>
+                                    <td class="text-right">
+                                        <span ng-if="!orderMenu.IsSend">{{CalcMenuPrice(orderMenu)}}</span>
+                                        <span ng-if="orderMenu.IsSend">0.00</span>
+                                    </td>
+                                    <td><span class="label label-success arrowed" ng-repeat="remark in orderMenu.Remarks">{{remark.Name}}</span>&nbsp;</td>
+                                    <td class="orderMenuRemove text-center" ng-click="RemoveMenu($index)"><span class="icon-trash"></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div><!-- /.table-responsive -->
+                </div><!-- /span -->
+                <div class="col-xs-5">
+                    <h2 class="text-danger">新增金额:{{account()}}</h2>
+                </div>
+            </div><!-- row end  -->
+            <br />
+            <br />
+            <div class="row">
+                <div class="col-xs-1">
+                    <p class="text-center">输入名称或编号</p>
+                </div>
+                <div class="col-xs-4">
+                    <input type="text" ng-model="OpenElements.FilterInfo" class="form-control" />
+                    <div style="max-height:200px;overflow:auto;">
+                        <ul style="list-style:none;" class="OpenList">
+                            <li ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.FilterInfo}" ng-click="SelectChange(menu)">
+                                {{menu.Name}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-xs-2">
+                    <select chosen
+                            multiple
+                            allow-single-deselect="true"
+                            max-selected-options="3"
+                            no-results-text="'没有找到'"
+                            placeholder-text-multiple="'选择备注'"
+                            ng-model="OpenElements.CurrentMenuRemarks"
+                            ng-options="remark.Name for remark in OpenElements.CurrentMenu.Remarks"
+                            style="width:100%;">
+                        <option value=""></option>
+                    </select>
+                </div>
+                <div class="col-xs-2">
+                    数量:<input type="number" ng-model="OpenElements.CurrentMenu.Num" ng-change="NumChange()" class="num-spinner" />
+                    <spinner-up ng-click="Up()"></spinner-up><spinner-down ng-click="Down()"></spinner-down>
+                </div>
+                <div class="col-xs-2">
+                    <button class="btn btn-success" ng-click="AddMenu()">添加</button>
+                    <button class="btn btn-primary" ng-click="SendMenu()">赠送</button>
+                </div>
+            </div><!--row end-->
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="AddDineMenu()" ng-disabled="AllowOpen()">确认</button>
+        <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+    </div>
+</script>

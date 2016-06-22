@@ -73,6 +73,11 @@ namespace Management.Controllers
         {
             return View("Reason");
         }
+
+        public ActionResult Printer()
+        {
+            return View("Printer");
+        }
         /// <summary>
         /// 获取区域相关信息
         /// </summary>
@@ -1090,5 +1095,13 @@ namespace Management.Controllers
             return Json(new { Status = true });
         }
 
+
+        public async Task<JsonResult> getPrint()
+        {
+            var rate = await db.HotelConfigs.Select(d => d.PointsRatio).FirstOrDefaultAsync();
+            var printers = await db.Printers.Where(d => d.Usable == true).ToListAsync();
+            var format = await db.PrinterFormats.FirstOrDefaultAsync();
+            return Json(new { Rate = rate, Printers = printers, Format = format });
+        }
     }
 }

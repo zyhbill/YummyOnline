@@ -360,6 +360,7 @@
     <Content Include="Views\Reports\MenuSaleclass.cshtml" />
     <Content Include="Views\Login\register.cshtml" />
     <Content Include="Views\Baseinfo\Reason.cshtml" />
+    <Content Include="Views\Baseinfo\Printer.cshtml" />
     <None Include="Views\Templates\Error-500.cshtml" />
     <Content Include="Web.config" />
   </ItemGroup>

@@ -23,7 +23,6 @@ namespace Management.Controllers
 {
     public class BaseinfoController : BaseController
     {
-
         public ActionResult Areas()
         {
             return View("Areas");

@@ -185,11 +185,11 @@ namespace Management.Controllers
             {
                 if (menu.Menu.MenuPrice.ExcludePayDiscount)
                 {//不打折
-                    totalPrcie += menu.Price * menu.Count + menu.RemarkPrice;
+                    totalPrcie += menu.OriPrice * menu.Count + menu.RemarkPrice;
                 }
                 else
                 {//整单打折
-                    totalPrcie += menu.Price * menu.Count * (decimal)(Dine.Discount / 100) + menu.RemarkPrice;
+                    totalPrcie += menu.OriPrice * menu.Count * (decimal)(Dine.Discount*1.0 / 100) + menu.RemarkPrice;
                 }
             }
             decimal PayTotal = 0;//总共价格
@@ -228,7 +228,7 @@ namespace Management.Controllers
             else
             {//支付找零
                 decimal charge = PayTotal - totalPrcie;
-                if (Cash > charge)
+                if (Cash >= charge)
                 {//支付找零
                     Cash -= charge;
                     var paid = new DinePaidDetail();

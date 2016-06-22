@@ -1,10 +1,9 @@
 ﻿@{
     Layout = null;
 }
-
 <link href="../Content/css/style.css" rel="stylesheet" />
 桌台:
-<input type="text" ng-model="FilterDesk"/>
+<input type="text" ng-model="FilterDesk" />
 <div class="row max-300" ng-init="Initialize()" style="margin-top:10px;">
     <div class="col-xs-12">
         <div class="table-responsive">
@@ -51,7 +50,6 @@
         </div><!--table over-->
     </div><!--col over-->
 </div><!--row over-->
-
 <script type="text/ng-template" id="ModalOpen.html">
     <div class="modal-header">
         <h3 class="modal-title">
@@ -65,13 +63,45 @@
                 </div>
             </div>
         </h3>
+        <div class="btn btn-default shift" ng-click="ShiftType()">
+            切换
+        </div>
     </div>
     <div class="modal-body">
         <div class="fakeloader"></div>
         <div class="container-fluid">
             <div class="row">
-                <div class="col-xs-7">
-                    <div class="table-responsive menuShow">
+                <div class="col-xs-7" ng-show="OpenElements.Type==0">
+                    <!--图片文字模式-->
+                    <input type="text" ng-model="OpenElements.FilterInfo" class="form-control" placeholder="若要搜索,请输入名称或编号" />
+                    <uib-tabset active="activeJustified" justified="true">
+                        <uib-tab index="0" heading="所有">
+                            <div class="MenuColumn clearfix MaxLength">
+                                <div class="MenuList" ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.FilterInfo}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class}">
+                                    <div class="text-center">{{menu.Name}}</div>
+                                </div>
+                                <div class="clean"></div>
+                            </div>
+                        </uib-tab>
+                        <uib-tab ng-repeat="class in OpenElements.Classes" index="{{$index + 1}}" heading="{{class.Name}}" ng-click="MenuFilter(class.Id)">
+                            <div class="MenuColumn clearfix MaxLength">
+                                <div class="MenuList" ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.FilterInfo}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class}">
+                                    <div class="text-center">{{menu.Name}}</div>
+                                </div>
+                                <div class="clean"></div>
+                            </div>
+                        </uib-tab>
+                    </uib-tabset>
+                </div>
+                <div class="col-xs-7" ng-show="OpenElements.Type==1">
+                    <!--文字模式-->
+                    <input type="text" ng-model="OpenElements.FilterInfo" class="form-control" placeholder="若要搜索,请输入名称或编号" />
+                    <ul class="menuShow OpenList">
+                        <li ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.FilterInfo}" ng-click="SelectChange(menu)">{{menu.Name}}</li>
+                    </ul>
+                </div>
+                <div class="col-xs-5">
+                    <div class="table-responsive menuShowMax">
                         <table class="table table-striped table-bordered table-hover">
                             <thead>
                                 <tr>
@@ -82,7 +112,7 @@
                                     <th>制作方式</th>
                                     <th></th>
                                 </tr>
-                            </thead> 
+                            </thead>
                             <tbody>
                                 <tr ng-repeat="oldmenu in OpenElements.CurrentDine.DineMenus">
                                     <td>{{oldmenu.Menu.Name}}</td>
@@ -106,49 +136,33 @@
                             </tbody>
                         </table>
                     </div><!-- /.table-responsive -->
-                </div><!-- /span -->
-                <div class="col-xs-5">
-                    <h2 class="text-danger">新增金额:{{account()}}</h2>
-                </div>
-            </div><!-- row end  -->
-            <br />
-            <br />
-            <div class="row">
-                <div class="col-xs-1">
-                    <p class="text-center">输入名称或编号</p>
-                </div>
-                <div class="col-xs-4">
-                    <input type="text" ng-model="OpenElements.FilterInfo" class="form-control" />
-                    <div style="max-height:200px;overflow:auto;">
-                        <ul style="list-style:none;" class="OpenList">
-                            <li ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.FilterInfo}" ng-click="SelectChange(menu)">
-                                {{menu.Name}}
-                            </li>
-                        </ul>
+
+                    <div class="col-xs-5">
+                        <select chosen
+                                multiple
+                                allow-single-deselect="true"
+                                max-selected-options="3"
+                                no-results-text="'没有找到'"
+                                placeholder-text-multiple="'选择备注'"
+                                ng-model="OpenElements.CurrentMenuRemarks"
+                                ng-options="remark.Name for remark in OpenElements.CurrentMenu.Remarks"
+                                style="width:100%;">
+                            <option value=""></option>
+                        </select>
                     </div>
-                </div>
-                <div class="col-xs-2">
-                    <select chosen
-                            multiple
-                            allow-single-deselect="true"
-                            max-selected-options="3"
-                            no-results-text="'没有找到'"
-                            placeholder-text-multiple="'选择备注'"
-                            ng-model="OpenElements.CurrentMenuRemarks"
-                            ng-options="remark.Name for remark in OpenElements.CurrentMenu.Remarks"
-                            style="width:100%;">
-                        <option value=""></option>
-                    </select>
-                </div>
-                <div class="col-xs-2">
-                    数量:<input type="number" ng-model="OpenElements.CurrentMenu.Num" ng-change="NumChange()" class="num-spinner" />
-                    <spinner-up ng-click="Up()"></spinner-up><spinner-down ng-click="Down()"></spinner-down>
-                </div>
-                <div class="col-xs-2">
-                    <button class="btn btn-success" ng-click="AddMenu()">添加</button>
-                    <button class="btn btn-primary" ng-click="SendMenu()">赠送</button>
-                </div>
-            </div><!--row end-->
+                    <div class="col-xs-3">
+                        数量:<input type="number" ng-model="OpenElements.CurrentMenu.Num" ng-change="NumChange()" class="num-spinner" />
+                        <spinner-up ng-click="Up()"></spinner-up><spinner-down ng-click="Down()"></spinner-down>
+                    </div>
+                    <div class="col-xs-4">
+                        <button class="btn btn-success" ng-click="AddMenu()">添加</button>
+                        <button class="btn btn-primary" ng-click="SendMenu()">赠送</button>
+                    </div>
+                    <div class="col-xs-12">
+                        <h2 class="text-danger">新增金额:{{account()}}</h2>
+                    </div>
+                </div><!-- /span -->
+            </div><!-- row end  -->
         </div>
     </div>
     <div class="modal-footer">

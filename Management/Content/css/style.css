@@ -111,6 +111,10 @@ span.money{
     height:220px;
     overflow:auto;
 }
+.menuShowMax{
+    height:350px;
+    overflow:auto;
+}
 .NowMenu{
     display:inline-block;
     width:100%;

@@ -405,7 +405,16 @@
             }
         })
     }
-    $scope.cancel = function () { $uibModalInstance.dismiss('cancel'); }
+    $scope.ShiftType = function () {
+        option.method.ShiftType();
+    }
+    $scope.MenuFilter = function (id) {
+        option.method.MenuFilter(id);
+    }
+    $scope.cancel = function () {
+        option.method.KeepShift();
+        $uibModalInstance.dismiss('cancel');
+    }
 })
 .filter('day', function () {
     return function (input, formart) {

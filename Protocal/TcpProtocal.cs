@@ -23,6 +23,14 @@ namespace Protocal {
 		/// 饭店打印
 		/// </summary>
 		public const string PrintDine = "{8A39D55F-CC16-4798-990E-062A9260496C}";
+		/// <summary>
+		/// 请求饭店打印交接班信息
+		/// </summary>
+		public const string RequestPrintShifts = "{4E6D44F1-9FD6-4DAD-BAE6-545577701149}";
+		/// <summary>
+		/// 饭店打印交接班信息
+		/// </summary>
+		public const string PrintShifts = "{EBFC25BD-2F2A-4ED2-8DEF-3206C113913A}";
 	}
 	public class BaseTcpProtocal {
 		public BaseTcpProtocal(string type) {
@@ -73,19 +81,6 @@ namespace Protocal {
 		ServeOrder = 2
 	}
 
-	public class RequestPrintDineProtocal : BaseTcpProtocal {
-		public RequestPrintDineProtocal(int hotelId, string dineId, List<int> dineMenuIds, List<PrintType> printTypes)
-			: base(TcpProtocalType.RequestPrintDine) {
-			HotelId = hotelId;
-			DineId = dineId;
-			DineMenuIds = dineMenuIds;
-			PrintTypes = printTypes;
-		}
-		public int HotelId { get; set; }
-		public string DineId { get; set; }
-		public List<int> DineMenuIds { get; set; } = new List<int>();
-		public List<PrintType> PrintTypes { get; set; } = new List<PrintType>();
-	}
 	public class PrintDineProtocal : BaseTcpProtocal {
 		public PrintDineProtocal(string dineId, List<int> dineMenuIds, List<PrintType> printTypes)
 			: base(TcpProtocalType.PrintDine) {
@@ -96,5 +91,31 @@ namespace Protocal {
 		public string DineId { get; set; }
 		public List<int> DineMenuIds { get; set; } = new List<int>();
 		public List<PrintType> PrintTypes { get; set; } = new List<PrintType>();
+	}
+	public class RequestPrintDineProtocal : PrintDineProtocal {
+		public RequestPrintDineProtocal(int hotelId, string dineId, List<int> dineMenuIds, List<PrintType> printTypes)
+			: base(dineId, dineMenuIds, printTypes) {
+			Type = TcpProtocalType.RequestPrintDine;
+			HotelId = hotelId;
+		}
+		public int HotelId { get; set; }
+	}
+
+	public class PrintShiftsProtocal : BaseTcpProtocal {
+		public PrintShiftsProtocal(List<int> ids, DateTime dateTime)
+			: base(TcpProtocalType.PrintShifts) {
+			Ids = ids;
+			DateTime = dateTime;
+		}
+		public List<int> Ids { get; set; }
+		public DateTime DateTime { get; set; }
+	}
+	public class RequestPrintShiftsProtocal : PrintShiftsProtocal {
+		public RequestPrintShiftsProtocal(int hotelId, List<int> ids, DateTime dateTime)
+			: base(ids, dateTime) {
+			Type = TcpProtocalType.RequestPrintShifts;
+			HotelId = hotelId;
+		}
+		public int HotelId { get; set; }
 	}
 }

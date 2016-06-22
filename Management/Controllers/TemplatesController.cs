@@ -12,6 +12,7 @@ using Newtonsoft.Json;
 using YummyOnlineDAO.Models;
 using Management.Models;
 using Protocal;
+using System.Data.Entity.SqlServer;
 
 namespace Management.Controllers
 {
@@ -183,13 +184,16 @@ namespace Management.Controllers
                 .FirstOrDefaultAsync();
             foreach (var menu in dine.DineMenus)
             {
-                if (menu.Menu.MenuPrice.ExcludePayDiscount)
-                {//不打折
-                    totalPrcie += menu.OriPrice * menu.Count + menu.RemarkPrice;
-                }
-                else
-                {//整单打折
-                    totalPrcie += menu.OriPrice * menu.Count * (decimal)(Dine.Discount*1.0 / 100) + menu.RemarkPrice;
+                if (menu.Status == DineMenuStatus.Normal)
+                {
+                    if (menu.Menu.MenuPrice.ExcludePayDiscount)
+                    {//不打折
+                        totalPrcie += menu.OriPrice * menu.Count + menu.RemarkPrice;
+                    }
+                    else
+                    {//整单打折
+                        totalPrcie += menu.OriPrice * menu.Count * (decimal)(Dine.Discount * 1.0 / 100) + menu.RemarkPrice;
+                    }
                 }
             }
             decimal PayTotal = 0;//总共价格
@@ -257,18 +261,18 @@ namespace Management.Controllers
                         }
                     }
                     dine.Change = charge;
-                    dine.IsPaid = true;
                 }
                 else
                 {
                     return Json(new ErrorState("找零金额不能大于现金金额"));
                 }
             }
+            dine.IsPaid = true;
             db.SaveChanges();
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, dine.Id,new List<int>(), new List<PrintType>() { PrintType.Recipt}));
+                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, dine.Id, new List<int>(), new List<PrintType>() { PrintType.Recipt }));
             }
             catch
             {
@@ -322,10 +326,10 @@ namespace Management.Controllers
             var Discounts = await db.TimeDiscounts.ToListAsync();
             var menus = await db.Menus
                 .Where(m => m.Status == MenuStatus.Normal && m.Usable == true)
-                .Include(m=>m.Classes)
+                .Include(m => m.Classes)
                 .Include(m => m.Remarks)
                 .Include(m => m.MenuPrice)
-                .Select(m => new { m.Id, m.Name, m.Code, m.MinOrderCount,m.PicturePath, m.Remarks, m.MenuPrice,m.Classes })
+                .Select(m => new { m.Id, m.Name, m.Code, m.MinOrderCount, m.PicturePath, m.Remarks, m.MenuPrice, m.Classes })
                 .ToListAsync();
             var specials = await db.MenuOnSales.ToListAsync();
             foreach (var i in menus)
@@ -339,8 +343,8 @@ namespace Management.Controllers
                     }
                 }
             }
-            var Classes = await db.MenuClasses.Where(m => m.Usable == true&&m.Level==0).ToListAsync();
-            return JsonConvert.SerializeObject(new { Menus = menus, Discounts = Discounts , Classes = Classes }, setting);
+            var Classes = await db.MenuClasses.Where(m => m.Usable == true && m.Level == 0).ToListAsync();
+            return JsonConvert.SerializeObject(new { Menus = menus, Discounts = Discounts, Classes = Classes }, setting);
         }
         /// <summary>
         /// 开桌时用户登录
@@ -485,16 +489,16 @@ namespace Management.Controllers
         /// <param name="DineId"></param>
         /// <param name="MenuId"></param>
         /// <returns></returns>
-        public async Task<JsonResult> ReturnMenu(string DineId, int Id,string Reason)
+        public async Task<JsonResult> ReturnMenu(string DineId, int Id, string Reason)
         {
             string ClerkId = (Session["User"] as RStatus).ClerkId;
             if (ClerkId == "") return Json(new ErrorState("服务员不正确"));
             var Dine = db.Dines.Where(d => d.Id == DineId);
-            var Menu = db.DineMenus.Where(m => m.Id==Id && m.Status == DineMenuStatus.Normal);
+            var Menu = db.DineMenus.Where(m => m.Id == Id && m.Status == DineMenuStatus.Normal);
             if (Dine.Count() == 0 || Menu.Count() == 0) return Json(new ErrorState("点单或菜品数量不正确"));
             var dn = await Dine.FirstOrDefaultAsync();
             var mn = await Menu.FirstOrDefaultAsync();
-            var RMenu = db.DineMenus.Where(m =>m.Id == Id && m.Status == DineMenuStatus.Returned);
+            var RMenu = db.DineMenus.Where(m => m.Id == Id && m.Status == DineMenuStatus.Returned);
             var AdReMenu = new DineMenu();
             dn.OriPrice -= mn.OriPrice;
             dn.Price -= mn.Price;
@@ -547,7 +551,7 @@ namespace Management.Controllers
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, DineId,new List<int>() { Id},new List<PrintType>() { PrintType.KitchenOrder}));
+                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>() { Id }, new List<PrintType>() { PrintType.KitchenOrder }));
             }
             catch
             {
@@ -708,11 +712,74 @@ namespace Management.Controllers
             return Json(new { PayList = pays, PayKinds = PayKinds });
         }
 
+        public async Task<JsonResult> GetNumbers(string Time)
+        {
+            DateTime Date;
+            if (Time == null)
+            {
+                Date = DateTime.Now;
+            }
+            else
+            {
+                Date = Convert.ToDateTime(Time);
+            }
+            var Numbers = await db.Shifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, Date) == 0)
+                .GroupBy(d => d.Id)
+                .Select(d => new
+                {
+                    Id = d.Key
+                })
+                .ToListAsync();
+            return Json(new { Numbers = Numbers });
+        }
 
-        public async Task<JsonResult> CheckOut()
+        public async Task<JsonResult> RePrint(string Time, List<int> frequencies)
+        {
+            DateTime Date;
+            if (Time == null)
+            {
+                Date = DateTime.Now;
+            }
+            else
+            {
+                Date = Convert.ToDateTime(Time);
+            }
+
+        }
+
+        public async Task<JsonResult> CheckOut(List<Profit> Profit)
         {
             var dines = await db.Dines.Where(d => d.IsPaid == true && d.Status != DineStatus.Shifted)
                 .ToListAsync();
+            var DineIds = dines.Select(d => d.Id);
+            var PayList = await db.DinePaidDetails.Where(d => DineIds.Contains(d.DineId))
+                .GroupBy(d => d.PayKindId)
+                .Select(d => new
+                {
+                    PayKindId = d.Key,
+                    PayTotal = d.Sum(dd => dd.Price)
+                })
+                .ToListAsync();
+            if (Profit != null)
+            {
+                int Id = 1;
+                var Day = db.Shifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, DateTime.Now) == 0).ToList();
+                if (Day.Count != 0)
+                {
+                    Id = Day.Max(d => d.Id) + 1;
+                }
+                foreach (var pft in Profit)
+                {
+                    db.Shifts.Add(new Shift
+                    {
+                        DateTime = DateTime.Now,
+                        PayKindId = pft.Id,
+                        RealPrice = PayList.Where(p => p.PayKindId == pft.Id).Select(p => p.PayTotal).FirstOrDefault(),
+                        ReceivablePrice = pft.Num,
+                        Id = Id
+                    });
+                }
+            }
             foreach (var dine in dines)
             {
                 dine.Status = DineStatus.Shifted;
@@ -807,7 +874,7 @@ namespace Management.Controllers
             return Json(new { UnpaidDines = UnpaidDines, Menus = menus });
         }
 
-        public async Task<JsonResult> RePrint(string DineId,int Type)
+        public async Task<JsonResult> RePrint(string DineId, int Type)
         {
             try
             {
@@ -816,15 +883,15 @@ namespace Management.Controllers
                 {
                     if (Type == (int)ManagePrintType.Recipt)
                     {
-                        MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, DineId,new List<int>(), new List<PrintType>() { PrintType.Recipt }));
+                        MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>(), new List<PrintType>() { PrintType.Recipt }));
 
                     }
-                    else if(Type== (int)ManagePrintType.Kitchen)
+                    else if (Type == (int)ManagePrintType.Kitchen)
                     {
-                        MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>(), new List<PrintType>() { PrintType.KitchenOrder,PrintType.ServeOrder }));
+                        MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>(), new List<PrintType>() { PrintType.KitchenOrder, PrintType.ServeOrder }));
                     }
                 }
-                    
+
             }
             catch
             {
@@ -910,20 +977,20 @@ namespace Management.Controllers
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, dine.Id, menus,new List<PrintType>() { PrintType.KitchenOrder, PrintType.ServeOrder }));
+                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, dine.Id, menus, new List<PrintType>() { PrintType.KitchenOrder, PrintType.ServeOrder }));
             }
             catch
             {
 
             }
-            var OriPrice = await db.Dines.Where(d => d.Id == dine.Id).Select(d=>d.OriPrice).FirstOrDefaultAsync();
-            var Price = await db.Dines.Where(d => d.Id == dine.Id).Select(d=>d.Price).FirstOrDefaultAsync();
-            return Json(new { Status = true, OriPrice = OriPrice , Price = Price });
+            var OriPrice = await db.Dines.Where(d => d.Id == dine.Id).Select(d => d.OriPrice).FirstOrDefaultAsync();
+            var Price = await db.Dines.Where(d => d.Id == dine.Id).Select(d => d.Price).FirstOrDefaultAsync();
+            return Json(new { Status = true, OriPrice = OriPrice, Price = Price });
         }
 
         public async Task<JsonResult> EditReason(int Id, string Reason)
         {
-            var reason =await db.ReturnedReasons.Where(r => r.Id == Id).FirstOrDefaultAsync();
+            var reason = await db.ReturnedReasons.Where(r => r.Id == Id).FirstOrDefaultAsync();
             reason.Description = Reason;
             db.SaveChanges();
             return Json(new SuccessState());

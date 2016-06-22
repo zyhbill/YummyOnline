@@ -21,7 +21,7 @@
         var promise = UserLogin.Register();
         promise.then(function (data) {
             console.log(data);
-            if(!data.Status) {
+            if (!data.Status) {
                 alert(data.ErrorMessage);
             }
             else {
@@ -70,7 +70,7 @@
             backdrop: 'static',
             size: 'lg',
             resolve: {
-                option: { desk: myDesk, method: Open ,Pay:Pay}
+                option: { desk: myDesk, method: Open, Pay: Pay }
             }
         });
         //}
@@ -130,7 +130,7 @@
     $scope.Kitchen = function () { return option.method.Kitchen(); }
 
 })
-.controller('ModalOpenCtrl', function ($scope, $rootScope,$uibModal, $uibModalInstance, $q, $timeout, option) {
+.controller('ModalOpenCtrl', function ($scope, $rootScope, $uibModal, $uibModalInstance, $q, $timeout, option) {
     //开桌控制
     $scope.initialize = function () {
         option.method.OpenElements.CurrentDesk = option.desk;
@@ -219,7 +219,7 @@
             size: 'lg',
             resolve: {
                 option: {
-                    Returned:Returned,Reason:reason
+                    Returned: Returned, Reason: reason
                 }
             }
         });
@@ -292,7 +292,7 @@
     $scope.getFirstDine = function () { Replace.getFirstDine(); }
     $scope.AllowChange = function () { return Replace.AllowChange(); }
 }])
-.controller('HandOutCtrl', ['$scope', '$rootScope', 'HandOut', function ($scope, $rootScope, HandOut) {
+.controller('HandOutCtrl', ['$scope', '$rootScope', '$uibModal', 'HandOut', function ($scope, $rootScope, $uibModal, HandOut) {
     $scope.initialize = function () {
         var promise = HandOut.getElement();
         promise.then(function (data) {
@@ -302,7 +302,33 @@
         })
     }
     $scope.CheckOut = function () { HandOut.CheckOut(); }
+    $scope.rePrint = function () {
+        var modalInstance = $uibModal.open({//打开支付
+            animation: $scope.animationsEnabled,
+            templateUrl: 'ModelPrint.html',
+            controller: 'ModelPrintCtrl',
+            backdrop: 'static',
+            size: 'lg',
+            resolve: {
+                option: {
+                    HandOut: HandOut
+                }
+            }
+        });
+    }
 }])
+.controller('ModelPrintCtrl', function ($scope, $rootScope, $uibModalInstance, $q, $timeout, option) {
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    }
+    $scope.HandElement = option.HandOut.HandElement;
+    $scope.Print = function () {
+        option.HandOut.Print();
+    }
+    $scope.getNumbers = function () {
+        option.HandOut.getNumbers();
+    }
+})
 .controller('TakeOutCtrl', ['$scope', '$rootScope', '$uibModal', 'Order', 'Pay', function ($scope, $rootScope, $uibModal, Order, Pay) {
     //点单
     $rootScope.FatherPage = "店小二营业"; $rootScope.FatherPath = "#/CheckOut"; $rootScope.ChildPage = "结账";
@@ -355,10 +381,10 @@
         })
     }
 }])
-.controller('AddMenuCtrl', ['$scope', '$rootScope', '$uibModal', 'AddMenu','Open', function ($scope, $rootScope, $uibModal, AddMenu,Open) {
+.controller('AddMenuCtrl', ['$scope', '$rootScope', '$uibModal', 'AddMenu', 'Open', function ($scope, $rootScope, $uibModal, AddMenu, Open) {
     $rootScope.FatherPage = "店小二营业"; $rootScope.ChildPage = "加菜";
     $scope.Initialize = function () {
-        var promise  = AddMenu.Initialize();
+        var promise = AddMenu.Initialize();
         promise.then(function (data) {
             $scope.MenuElement = AddMenu.MenuElement;
         })
@@ -372,7 +398,7 @@
             size: 'lg',
             resolve: {
                 option: {
-                    CurDine : dine , method : Open
+                    CurDine: dine, method: Open
                 }
             }
         });

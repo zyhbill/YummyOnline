@@ -4,8 +4,8 @@
         $('.PayInput').eq(0).focus();
     };
 }).directive('spinnerUp', function () {
-    return{
-        restrict:'E',
+    return {
+        restrict: 'E',
         template: '<div class="btn btn-success num-spinnerP num-spinnerUp">+</div>'
     };
 }).directive('spinnerDown', function () {
@@ -77,7 +77,7 @@
 }])
 .directive('timePicker', function () {
     return {
-        scope:{
+        scope: {
             time: "=",
         },
         link: function (scope, element, attributes) {
@@ -108,7 +108,7 @@
                 showSeconds: true,
                 defaultTime: scope.time,
                 showMeridian: false
-            }).next().on(ace.click_event, function(){
+            }).next().on(ace.click_event, function () {
                 $(this).prev().focus();
             });
             element.bind('change', function (changeEvent) {
@@ -120,33 +120,33 @@
 })
 .directive('fileUpdate', function () {
     return {
-        scope:{
-            menus:"="
+        scope: {
+            menus: "="
         },
         link: function (scope, element, attributes) {
             console.log(element);
             element.bind('submit', function () {
                 var formData = new FormData(element[0]);
                 console.log(formData);
-                $.ajax({  
+                $.ajax({
                     url: '../Baseinfo/FileTrs',
-                    type: 'POST',  
-                    data: formData,  
-                    async: false,  
-                    cache: false,  
-                    contentType: false,  
-                    processData: false,  
+                    type: 'POST',
+                    data: formData,
+                    async: false,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
                     success: function (returndata) {
                         scope.menus = returndata.Menus;
                         scope.menus.forEach(function (x, index) {
                             x.MenuPrice.Discount *= 100;
                         })
                         scope.$apply();
-                        alert("更新成功");  
-                    },  
-                    error: function (returndata) {  
-                        alert("更新失败");  
-                    }  
+                        alert("更新成功");
+                    },
+                    error: function (returndata) {
+                        alert("更新失败");
+                    }
                 });
                 return false;
             })
@@ -164,7 +164,7 @@
     return {
         scope: {
             dateStart: "=",
-            dateEnd:"="
+            dateEnd: "="
         },
         link: function (scope, element, attributes) {
             Date.prototype.format = function (format) {
@@ -220,10 +220,54 @@
         }
     }
 })
+.directive('dateday', function () {
+    return {
+        scope: {
+            time: '=',
+            change:'&'
+        },
+        link: function (scope, element, attributes) {
+            Date.prototype.format = function (format) {
+                var date = {
+                    "M+": this.getMonth() + 1,
+                    "d+": this.getDate(),
+                    "h+": this.getHours(),
+                    "m+": this.getMinutes(),
+                    "s+": this.getSeconds(),
+                    "q+": Math.floor((this.getMonth() + 3) / 3),
+                    "S+": this.getMilliseconds()
+                };
+                if (/(y+)/i.test(format)) {
+                    format = format.replace(RegExp.$1, (this.getFullYear() + '').substr(4 - RegExp.$1.length));
+                }
+                for (var k in date) {
+                    if (new RegExp("(" + k + ")").test(format)) {
+                        format = format.replace(RegExp.$1, RegExp.$1.length == 1
+                               ? date[k] : ("00" + date[k]).substr(("" + date[k]).length));
+                    }
+                }
+                return format;
+            }
+            scope.time = new Date().format('yyyy-mm-dd');
+            element.datetimepicker({
+                format: 'yyyy-mm-dd',
+                minView: '2',
+                maxView: '4',
+                startView: '2',
+                todayBtn: true,
+                language: 'zh-CN'
+            }).on('changeDate', function (ev) {
+                scope.time = ev.date.format('YYYY-MM-dd');
+                scope.change();
+                scope.$apply();
+            });
+        }
+    }
+})
 .directive('datetime', function () {
     return {
         scope: {
-            time:'='
+            time: '='
         },
         link: function (scope, element, attributes) {
             Date.prototype.format = function (format) {
@@ -252,13 +296,13 @@
                 format: 'yyyy-mm',
                 minView: '3',
                 maxView: '4',
-                startView:'3',
-                todayBtn:true,
+                startView: '3',
+                todayBtn: true,
                 language: 'zh-CN'
-            }).on('changeDate', function(ev){
-                    scope.time = ev.date.format('YYYY-MM');
-                    console.log(scope.time);
-                    scope.$apply();
+            }).on('changeDate', function (ev) {
+                scope.time = ev.date.format('YYYY-MM');
+                console.log(scope.time);
+                scope.$apply();
             });
         }
     }
@@ -295,7 +339,7 @@
                 format: 'yyyy',
                 minView: '4',
                 maxView: '4',
-                startView:'4',
+                startView: '4',
                 todayBtn: true,
                 language: 'zh-CN'
             }).on('changeDate', function (ev) {

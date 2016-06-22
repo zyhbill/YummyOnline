@@ -363,4 +363,10 @@ namespace Management.ObjectClasses
         public bool Succeeded { get; set; }
         public string Data { get; set; }
     }
+
+    public class Profit
+    {
+        public int Id { get; set; }
+        public decimal Num { get; set; }
+    }
 }

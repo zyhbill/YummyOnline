@@ -1174,7 +1174,11 @@
     var service = {
         HandElement: {
             PayList: [],
-            PayKinds: []
+            PayKinds: [],
+            Time: null,
+            NumberStart: 1,
+            NumberBegin: 1,
+            Numbers:[]
         },
         getElement: function () {
             var _this = this;
@@ -1183,6 +1187,7 @@
                 console.log(data);
                 _this.HandElement.PayList = data.PayList;
                 _this.HandElement.PayKinds = data.PayKinds;
+                _this.getNumbers();
                 _this.HandElement.PayKinds.forEach(function (x) {
                     x.Num = 0;
                     x.Gain = 0;
@@ -1196,9 +1201,43 @@
             })
             return deferred.promise;
         },
+        getNumbers:function(){
+            var _this = this;
+            $http.post('../Templates/GetNumbers', {
+                Time:_this.HandElement.Time
+            }).success(function (data) {
+                data.Numbers.forEach(function (x) { x.IsChoose = true; });
+                _this.HandElement.Numbers = data.Numbers;
+            })
+        },
         CheckOut: function () {
             var _this = this;
-            $http.post('../Templates/CheckOut').success(function (data) {
+            var price = this.HandElement.PayKinds.filter(function (x) { return x.Num }).map(function (x) { return x.Num }).reduce(function (a, b) { return +a + +b }, 0);
+            if (price > 0) {
+                var profit = this.HandElement.PayKinds.filter(function (x) { return x.Gain }).map(function (x) { return { Id: x.Id, Num: x.Gain } });
+                $http.post('../Templates/CheckOut', {
+                    Profit: profit
+                }).success(function (data) {
+                    _this.HandElement.PayKinds.forEach(function (x) {
+                        x.Num = 0;
+                        x.Gain = 0;
+                    })
+                    alert("交接成功");
+                }).error(function (data) {
+                    console.log(data);
+                })
+            }
+            else {
+                alert("金额为0不用交接");
+            }
+        },
+        Print: function () {
+            var _this = this;
+            var frequencies = _this.HandElement.Numbers.filter(function (x) { return x.IsChoose }).map(function (x) { return x.Id });
+            $http.post('../Templates/RePrint', {
+                Time: _this.HandElement.Time,
+                frequencies: frequencies
+            }).success(function (data) {
                 _this.HandElement.PayKinds.forEach(function (x) {
                     x.Num = 0;
                     x.Gain = 0;

@@ -1,4 +1,5 @@
-﻿angular.module('Baseinfo', [])
+﻿
+angular.module('Baseinfo', [])
 .controller('AreasCtrl', ['$scope', '$rootScope', '$uibModal', 'Area', function ($scope, $rootScope, $uibModal, Area) {
     $rootScope.FatherPage = "餐桌管理"; $rootScope.FatherPath = "#/Areas"; $rootScope.ChildPage = "区域设置";
     $scope.intialize = function () {

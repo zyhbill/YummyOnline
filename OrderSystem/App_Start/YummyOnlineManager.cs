@@ -9,10 +9,10 @@ using Utility;
 
 namespace OrderSystem {
 	public class YummyOnlineManager : YummyOnlineDAO.YummyOnlineManager {
-		public async Task<Protocal.DineForPrintingProtocal.Hotel> GetHotelForPrintingById(int hotelId) {
+		public async Task<Protocal.PrintingProtocal.Hotel> GetHotelForPrintingById(int hotelId) {
 			return await ctx.Hotels
 				.Where(p => p.Id == hotelId)
-				.Select(p => new Protocal.DineForPrintingProtocal.Hotel {
+				.Select(p => new Protocal.PrintingProtocal.Hotel {
 					Id = p.Id,
 					Name = p.Name,
 					Address = p.Address,
@@ -23,10 +23,10 @@ namespace OrderSystem {
 				}).FirstOrDefaultAsync();
 		}
 
-		public async Task<Protocal.DineForPrintingProtocal.User> GetUserForPrintingById(string userId) {
+		public async Task<Protocal.PrintingProtocal.User> GetUserForPrintingById(string userId) {
 			return await ctx.Users
 				.Where(p => p.Id == userId)
-				.Select(p => new Protocal.DineForPrintingProtocal.User {
+				.Select(p => new Protocal.PrintingProtocal.User {
 					Id = p.Id,
 					Email = p.Email,
 					UserName = p.UserName,

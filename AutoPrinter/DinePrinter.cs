@@ -3,11 +3,98 @@ using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
 using Protocal;
-using Protocal.DineForPrintingProtocal;
+using Protocal.PrintingProtocal;
 using System;
 
 namespace AutoPrinter {
-	public class DinePrinter {
+	public abstract class BasePrinter {
+		protected void printGrid55(PrinterGraphics printer, string[] texts, float fontSize) {
+			printer.DrawGrid(new float[] { 0.5f, 0.5f, },
+				texts,
+				fontSize,
+				new StringAlignment[] { StringAlignment.Near, StringAlignment.Near });
+		}
+		protected void printGrid55f(PrinterGraphics printer, string[] texts, float fontSize) {
+			printer.DrawGrid(new float[] { 0.5f, 0.5f, },
+				texts,
+				fontSize,
+				new StringAlignment[] { StringAlignment.Near, StringAlignment.Far });
+		}
+		protected void printGrid82(PrinterGraphics printer, string[] texts, float fontSize) {
+			printer.DrawGrid(new float[] { 0.8f, 0.2f, },
+				texts,
+				fontSize,
+				new StringAlignment[] { StringAlignment.Near, StringAlignment.Center });
+		}
+		protected void printGrid5122(PrinterGraphics printer, string[] texts, float fontSize) {
+			printer.DrawGrid(new float[] { 0.5f, 0.1f, 0.2f, 0.2f },
+				texts,
+				fontSize,
+				new StringAlignment[] { StringAlignment.Near, StringAlignment.Near, StringAlignment.Far, StringAlignment.Far });
+		}
+		protected void printGrid433(PrinterGraphics printer, string[] texts, float fontSize) {
+			printer.DrawGrid(new float[] { 0.4f, 0.3f, 0.3f },
+				texts,
+				fontSize,
+				new StringAlignment[] { StringAlignment.Near, StringAlignment.Far, StringAlignment.Far });
+		}
+		protected void printHr(PrinterGraphics printer) {
+			printer.TrimY(-5);
+			printer.DrawStringLineLoop("-", 8);
+			printer.TrimY(-4);
+		}
+		protected void printEnd(PrinterGraphics printer) {
+			printer.TrimY(20);
+		}
+	}
+
+	public class ShiftPrinter : BasePrinter {
+		private ShiftForPrinting protocal;
+
+		public void Print(ShiftForPrinting protocal) {
+			this.protocal = protocal;
+
+			PrinterGraphics.FontName = "宋体";
+			PrinterGraphics.PaperWidth = 278;
+
+			PrintDocument printer = new PrintDocument();
+			printer.DefaultPageSettings.PaperSize = new PaperSize("Custom", PrinterGraphics.PaperWidth, 1000);
+			PrintPageEventHandler printHandler = (sender, e) => {
+				printShifts(e.Graphics);
+			};
+
+			printer.PrinterSettings.PrinterName = protocal.PrinterName;
+			printer.PrintPage += printHandler;
+			printer.Print();
+			printer.PrintPage -= printHandler;
+		}
+
+		private void printShifts(Graphics g) {
+			PrinterGraphics printer = new PrinterGraphics(g);
+			decimal receivablePriceAll = 0, realPriceAll = 0;
+
+			printer.DrawStringLine($"交接班", protocal.PrinterFormat.ShiftBigFontSize, align: StringAlignment.Center);
+			foreach(Shift shift in protocal.Shifts) {
+				printer.DrawStringLine($"班次: {shift.Id}", protocal.PrinterFormat.ShiftFontSize);
+				printer.DrawStringLine($"时间: {shift.DateTime.ToString("yyyy-MM-dd HH:mm:ss")}", protocal.PrinterFormat.ShiftFontSize);
+
+				printGrid433(printer, new string[] { "支付名称", "应收", "实收" }, protocal.PrinterFormat.ShiftSmallFontSize);
+				foreach(ShiftDetail detail in shift.ShiftDetails) {
+					receivablePriceAll += detail.ReceivablePrice;
+					realPriceAll += detail.RealPrice;
+					printGrid433(printer, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}", $"￥{detail.RealPrice}" }, protocal.PrinterFormat.ShiftFontSize);
+				}
+				printHr(printer);
+			}
+
+			printer.DrawStringLine("总计:", protocal.PrinterFormat.ShiftSmallFontSize);
+			printGrid55f(printer, new string[] { "应收", $"￥{receivablePriceAll}" }, protocal.PrinterFormat.ShiftFontSize);
+			printGrid55f(printer, new string[] { "实收", $"￥{realPriceAll}" }, protocal.PrinterFormat.ShiftFontSize);
+			printGrid55f(printer, new string[] { "盈亏", $"￥{(realPriceAll - receivablePriceAll)}" }, protocal.PrinterFormat.ShiftFontSize);
+		}
+	}
+
+	public class DinePrinter : BasePrinter {
 		private DineForPrinting protocal;
 
 		public static List<string> ListPrinters() {
@@ -18,7 +105,7 @@ namespace AutoPrinter {
 			return printers;
 		}
 
-		public void PrintDine(DineForPrinting protocal, List<PrintType> printTypes) {
+		public void Print(DineForPrinting protocal, List<PrintType> printTypes) {
 			this.protocal = protocal;
 			PrinterGraphics.FontName = protocal.PrinterFormat.Font;
 			PrinterGraphics.PaperWidth = protocal.PrinterFormat.PaperSize;
@@ -246,40 +333,6 @@ namespace AutoPrinter {
 			}
 
 			printEnd(printer);
-		}
-
-
-		private void printGrid55(PrinterGraphics printer, string[] texts, float fontSize) {
-			printer.DrawGrid(new float[] { 0.5f, 0.5f, },
-				texts,
-				fontSize,
-				new StringAlignment[] { StringAlignment.Near, StringAlignment.Near });
-		}
-		private void printGrid55f(PrinterGraphics printer, string[] texts, float fontSize) {
-			printer.DrawGrid(new float[] { 0.5f, 0.5f, },
-				texts,
-				fontSize,
-				new StringAlignment[] { StringAlignment.Near, StringAlignment.Far });
-		}
-		private void printGrid82(PrinterGraphics printer, string[] texts, float fontSize) {
-			printer.DrawGrid(new float[] { 0.8f, 0.2f, },
-				texts,
-				fontSize,
-				new StringAlignment[] { StringAlignment.Near, StringAlignment.Center });
-		}
-		private void printGrid5122(PrinterGraphics printer, string[] texts, float fontSize) {
-			printer.DrawGrid(new float[] { 0.5f, 0.1f, 0.2f, 0.2f },
-				texts,
-				fontSize,
-				new StringAlignment[] { StringAlignment.Near, StringAlignment.Near, StringAlignment.Far, StringAlignment.Far });
-		}
-		private void printHr(PrinterGraphics printer) {
-			printer.TrimY(-5);
-			printer.DrawStringLineLoop("-", protocal.PrinterFormat.ReciptFontSize);
-			printer.TrimY(-4);
-		}
-		private void printEnd(PrinterGraphics printer) {
-			printer.TrimY(20);
 		}
 	}
 }

@@ -1,7 +1,7 @@
 ﻿using HotelDAO.Models;
 using Newtonsoft.Json;
 using Protocal;
-using Protocal.DineForPrintingProtocal;
+using Protocal.PrintingProtocal;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -38,7 +38,10 @@ namespace AutoPrinter {
 					PrintDineProtocal protocal = (PrintDineProtocal)p;
 					await printDine(protocal.DineId, protocal.DineMenuIds, protocal.PrintTypes);
 				}
-
+				else if(t == TcpProtocalType.PrintShifts) {
+					PrintShiftsProtocal protocal = (PrintShiftsProtocal)p;
+					await printShifts(protocal.Ids, protocal.DateTime);
+				}
 			};
 			tcp.CallBackWhenConnected = () => {
 				Console.WriteLine("服务器连接成功");
@@ -84,7 +87,7 @@ namespace AutoPrinter {
 				Console.WriteLine($"正在打印 单号: {dineId}");
 				StringBuilder dineMenuStr = new StringBuilder();
 
-				dinePrinter.PrintDine(dp, printTypes);
+				dinePrinter.Print(dp, printTypes);
 				Console.WriteLine($"打印成功 单号: {dineId}");
 				printCompleted(dineId);
 			}
@@ -92,6 +95,28 @@ namespace AutoPrinter {
 				Console.WriteLine("无法打印, 请检查打印机设置");
 				Console.WriteLine($"单号: {dineId}, 错误信息: {e}");
 				log(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
+				return;
+			}
+		}
+		static async Task printShifts(List<int> Ids, DateTime dateTime) {
+			ShiftForPrinting sp = null;
+			try {
+				sp = await getShiftsForPrinting(Ids, dateTime);
+				if(sp == null) {
+					Console.WriteLine("获取交接班信息失败，请检查网络设置");
+					return;
+				}
+				ShiftPrinter dinePrinter = new ShiftPrinter();
+				Console.WriteLine($"正在打印 交接班");
+
+				dinePrinter.Print(sp);
+
+				Console.WriteLine($"打印成功 交接班");
+			}
+			catch(Exception e) {
+				Console.WriteLine("无法打印, 请检查打印机设置");
+				Console.WriteLine($"交接班, 错误信息: {e}");
+				log(Log.LogLevel.Error, $"ShiftInfos, {e.Message}", $"Data: {JsonConvert.SerializeObject(sp)}, Error: {e}");
 				return;
 			}
 		}
@@ -112,7 +137,7 @@ namespace AutoPrinter {
 				}
 				DinePrinter dinePrinter = new DinePrinter();
 				Console.WriteLine($"正在打印测试单");
-				dinePrinter.PrintDine(dp, printTypes);
+				dinePrinter.Print(dp, printTypes);
 				Console.WriteLine($"测试单打印成功");
 				printCompleted(dineId);
 			}
@@ -136,6 +161,20 @@ namespace AutoPrinter {
 			DineForPrinting protocal = JsonConvert.DeserializeObject<DineForPrinting>(response);
 			if(protocal.Hotel == null)
 				return null;
+			return protocal;
+		}
+		static async Task<ShiftForPrinting> getShiftsForPrinting(List<int> ids, DateTime dateTime) {
+			object postData = new {
+				HotelId = hotelId,
+				Ids = ids,
+				DateTime = dateTime
+			};
+			string response = await HttpPost.PostAsync(ConfigurationManager.AppSettings["RemoteGetShiftsForPrintingUrl"].ToString(), postData);
+			if(response == null)
+				return null;
+
+			ShiftForPrinting protocal = JsonConvert.DeserializeObject<ShiftForPrinting>(response);
+
 			return protocal;
 		}
 

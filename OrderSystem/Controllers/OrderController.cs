@@ -71,8 +71,8 @@ namespace OrderSystem.Controllers {
 }
 
 namespace OrderSystem.Controllers {
-	using Protocal.DineForPrintingProtocal;
-	using YummyOnlineDAO.Identity;
+	using Protocal.PrintingProtocal;
+
 	public class OrderForPrintingController : BaseOrderSystemController {
 		public async Task<JsonResult> GetDineForPrinting(int hotelId, string dineId, List<int> dineMenuIds) {
 			if(dineId == "00000000000000") {
@@ -278,6 +278,22 @@ namespace OrderSystem.Controllers {
 			}
 
 			return p;
+		}
+
+		public async Task<JsonResult> GetShiftsForPrinting(int hotelId, List<int> ids, DateTime dateTime) {
+			string connStr = await YummyOnlineManager.GetHotelConnectionStringById(hotelId);
+			var manager = new HotelManager(connStr);
+
+			var tShifts = new HotelManager(connStr).GetShiftsForPrinting(ids, dateTime);
+			var tPrinterName = new HotelManager(connStr).GetShiftPrinterName();
+			var tPrinterFormat = new HotelManager(connStr).GetPrinterFormatForPrinting();
+
+
+			return Json(new ShiftForPrinting {
+				Shifts = await tShifts,
+				PrinterName = await tPrinterName,
+				PrinterFormat = await tPrinterFormat
+			});
 		}
 	}
 }

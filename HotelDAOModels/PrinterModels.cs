@@ -39,5 +39,9 @@ namespace HotelDAO.Models {
 
 		public int ServeOrderFontSize { get; set; }
 		public int ServeOrderSmallFontSize { get; set; }
+
+		public int ShiftBigFontSize { get; set; }
+		public int ShiftFontSize { get; set; }
+		public int ShiftSmallFontSize { get; set; }
 	}
 }

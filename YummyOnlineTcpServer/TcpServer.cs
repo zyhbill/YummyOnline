@@ -118,6 +118,9 @@ namespace YummyOnlineTcpServer {
 					case TcpProtocalType.RequestPrintDine:
 						requestPrintDine(clientInfo, JsonConvert.DeserializeObject<RequestPrintDineProtocal>(content));
 						break;
+					case TcpProtocalType.RequestPrintShifts:
+						requestPrintShifts(clientInfo, JsonConvert.DeserializeObject<RequestPrintShiftsProtocal>(content));
+						break;
 				}
 			}
 			catch(Exception e) {
@@ -221,7 +224,9 @@ namespace YummyOnlineTcpServer {
 				if(printProtocal.Type == TcpProtocalType.PrintDine) {
 					sendPrintDineProtocal(pair.Key, (PrintDineProtocal)printProtocal);
 				}
-
+				else if(printProtocal.Type == TcpProtocalType.PrintShifts) {
+					sendPrintShiftsProtocal(pair.Key, (PrintShiftsProtocal)printProtocal);
+				}
 				log($"Send Waited Dine of Hotel {pair.Key}", Log.LogLevel.Success);
 			}
 		}
@@ -284,7 +289,7 @@ namespace YummyOnlineTcpServer {
 			log($"{clientInfo.OriginalRemotePoint} (RequestPrintDine): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, DineMenuIds: {dineMenuStr}, PrintTypes: {typeStr}",
 				Log.LogLevel.Success);
 
-			PrintDineProtocal p = new PrintDineProtocal(protocal.DineId, null, protocal.PrintTypes);
+			PrintDineProtocal p = new PrintDineProtocal(protocal.DineId, protocal.DineMenuIds, protocal.PrintTypes);
 			if(PrinterClients[protocal.HotelId] == null) {
 				printerWaitedQueue[protocal.HotelId].Enqueue(p);
 				log($"Printer of Hotel {protocal.HotelId} is not connected", Log.LogLevel.Error);
@@ -301,6 +306,33 @@ namespace YummyOnlineTcpServer {
 				ReferenceLoopHandling = ReferenceLoopHandling.Ignore
 			}), null);
 		}
+
+		private void requestPrintShifts(TcpClientInfo clientInfo, RequestPrintShiftsProtocal protocal) {
+			protocal.Ids = protocal.Ids ?? new List<int>();
+
+			StringBuilder idStr = new StringBuilder();
+			foreach(int id in protocal.Ids) {
+				idStr.Append($"{id} ");
+			}
+
+			log($"{clientInfo.OriginalRemotePoint} (RequestPrintShifts): HotelId: {protocal.HotelId}, Ids: {idStr}, DateTime: {protocal.DateTime.ToString("yyyy-MM-dd")}",
+				Log.LogLevel.Success);
+
+			PrintShiftsProtocal p = new PrintShiftsProtocal(protocal.Ids, protocal.DateTime);
+			if(PrinterClients[protocal.HotelId] == null) {
+				printerWaitedQueue[protocal.HotelId].Enqueue(p);
+				log($"Printer of Hotel {protocal.HotelId} is not connected", Log.LogLevel.Error);
+				return;
+			}
+			sendPrintShiftsProtocal(protocal.HotelId, p);
+		}
+		private void sendPrintShiftsProtocal(int hotelId, PrintShiftsProtocal protocal) {
+			var _ = tcp.Send(PrinterClients[hotelId].Client, JsonConvert.SerializeObject(protocal, new JsonSerializerSettings {
+				ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+			}), null);
+		}
+
+
 
 		private void log(string log, Log.LogLevel level) {
 			logDelegate(log, level);

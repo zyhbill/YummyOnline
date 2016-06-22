@@ -5,7 +5,6 @@ using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
 using Protocal;
 
-
 namespace OrderSystem.Waiter.Controllers {
 	public class AccountController : BaseWaiterController {
 		public ActionResult Index() {

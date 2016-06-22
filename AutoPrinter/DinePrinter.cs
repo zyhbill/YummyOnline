@@ -44,7 +44,9 @@ namespace AutoPrinter {
 			printer.TrimY(-4);
 		}
 		protected void printEnd(PrinterGraphics printer) {
-			printer.TrimY(20);
+			printer.TrimY(10);
+			printer.DrawStringLineLoop("*", 8);
+			printer.TrimY(10);
 		}
 	}
 
@@ -91,6 +93,8 @@ namespace AutoPrinter {
 			printGrid55f(printer, new string[] { "应收", $"￥{receivablePriceAll}" }, protocal.PrinterFormat.ShiftFontSize);
 			printGrid55f(printer, new string[] { "实收", $"￥{realPriceAll}" }, protocal.PrinterFormat.ShiftFontSize);
 			printGrid55f(printer, new string[] { "盈亏", $"￥{(realPriceAll - receivablePriceAll)}" }, protocal.PrinterFormat.ShiftFontSize);
+
+			printEnd(printer);
 		}
 	}
 

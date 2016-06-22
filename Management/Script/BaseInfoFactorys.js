@@ -1157,3 +1157,22 @@
     }
     return service;
 }])
+.factory('Print', ['$http', '$rootScope', '$q', function ($http, $rootScope, $q) {
+    var service = {
+        PrintElement: {
+            Printers: [],
+            PrinterFormat: {},
+            CurrentPrinter:{},
+            Rate:0
+        },
+        Initialize: function () {
+            var _this = this;
+            $http.post('../Baseinfo/getPrint').success(function (data) {
+                _this.PrintElement.Printers = data.Printers;
+                _this.PrintElement.PrinterFormat = data.Format;
+                _this.PrintElement.Rate = data.Rate;
+            });
+        }
+    }
+    return service;
+}])

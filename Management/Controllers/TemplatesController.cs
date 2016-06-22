@@ -733,7 +733,7 @@ namespace Management.Controllers
             return Json(new { Numbers = Numbers });
         }
 
-        public async Task<JsonResult> RePrint(string Time, List<int> frequencies)
+        public JsonResult RePrint(string Time, List<int> frequencies)
         {
             DateTime Date;
             if (Time == null)
@@ -744,11 +744,13 @@ namespace Management.Controllers
             {
                 Date = Convert.ToDateTime(Time);
             }
-
+            MvcApplication.client.Send(new RequestPrintShiftsProtocal((int)(Session["User"] as RStatus).HotelId,frequencies,Date));
+            return null;
         }
 
         public async Task<JsonResult> CheckOut(List<Profit> Profit)
         {
+            int Id = 1;
             var dines = await db.Dines.Where(d => d.IsPaid == true && d.Status != DineStatus.Shifted)
                 .ToListAsync();
             var DineIds = dines.Select(d => d.Id);
@@ -762,7 +764,6 @@ namespace Management.Controllers
                 .ToListAsync();
             if (Profit != null)
             {
-                int Id = 1;
                 var Day = db.Shifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, DateTime.Now) == 0).ToList();
                 if (Day.Count != 0)
                 {
@@ -785,6 +786,7 @@ namespace Management.Controllers
                 dine.Status = DineStatus.Shifted;
                 db.SaveChanges();
             }
+            MvcApplication.client.Send(new RequestPrintShiftsProtocal((int)(Session["User"] as RStatus).HotelId, new List<int>() { Id }, DateTime.Now));
             return Json(new { Succeeded = true });
         }
 
@@ -977,7 +979,9 @@ namespace Management.Controllers
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, dine.Id, menus, new List<PrintType>() { PrintType.KitchenOrder, PrintType.ServeOrder }));
+                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId
+                    , dine.Id, menus
+                    , new List<PrintType>() { PrintType.KitchenOrder, PrintType.ServeOrder }));
             }
             catch
             {

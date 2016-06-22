@@ -1,0 +1,59 @@
+﻿@{
+    Layout = null;
+}
+
+<link href="../Content/css/style.css" rel="stylesheet" />
+
+<div class="row" ng-init="Initialize()">
+    <div class="col-xs-12">
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4>
+                    积分设置
+                    <small>如果不使用积分则填0</small>
+                </h4>
+
+                <div class="widget-toolbar">
+                    <a href="/#" data-action="collapse">
+                        <i class="icon-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div>
+                        <label for="form-field-8">积分兑换比率</label>
+
+                        <input type="number" ng-model="PrintElement.Rate"  ng-change="Max()"/>
+                        <span ng-if="PrintElement.Rate!=0">100 积分 等于 {{(100/PrintElement.Rate).toFixed(0)}}元</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4>
+                    打印机设置
+                </h4>
+
+                <div class="widget-toolbar">
+                    <a href="/#" data-action="collapse">
+                        <i class="icon-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div>
+                        <label for="form-field-10">选择收银打印机</label>
+                        <select ng-options="print.Name for print  in PrintElement.Printers" ng-model="PrintElement.CurrentPrinter">
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

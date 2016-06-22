@@ -114,6 +114,9 @@
     }).when('/Reasons', {
         templateUrl: '/Baseinfo/Reason',
         controller: 'ReturnCtrl'
+    }).when('/Printer', {
+        templateUrl: '/Baseinfo/Printer',
+        controller: 'PrinterCtrl'
     }).otherwise({
         redirectTo: '/404'
     });

@@ -840,3 +840,10 @@ angular.module('Baseinfo', [])
         $uibModalInstance.dismiss('cancel');
     }
 })
+.controller('PrinterCtrl', ['$scope', '$rootScope', 'Print', function ($scope, $rootScope, Print) {
+    $scope.Initialize = function () { Print.Initialize(); }
+    $scope.PrintElement = Print.PrintElement;
+    $scope.Max = function () {
+        if ($scope.PrintElement.Rate <= 0) $scope.PrintElement.Rate = 0;
+    }
+}])

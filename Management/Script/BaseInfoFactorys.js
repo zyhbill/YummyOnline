@@ -1170,8 +1170,12 @@
             $http.post('../Baseinfo/getPrint').success(function (data) {
                 _this.PrintElement.Printers = data.Printers;
                 _this.PrintElement.PrinterFormat = data.Format;
+                _this.PrintElement.CurrentPrinter = data.Printers[0];
                 _this.PrintElement.Rate = data.Rate;
             });
+        },
+        changeInfo: function () {
+
         }
     }
     return service;

@@ -1234,15 +1234,10 @@
         Print: function () {
             var _this = this;
             var frequencies = _this.HandElement.Numbers.filter(function (x) { return x.IsChoose }).map(function (x) { return x.Id });
-            $http.post('../Templates/RePrint', {
+            $http.post('../Templates/RePrintCheck', {
                 Time: _this.HandElement.Time,
                 frequencies: frequencies
             }).success(function (data) {
-                _this.HandElement.PayKinds.forEach(function (x) {
-                    x.Num = 0;
-                    x.Gain = 0;
-                })
-                alert("交接成功");
             }).error(function (data) {
                 console.log(data);
             })

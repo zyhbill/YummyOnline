@@ -733,7 +733,7 @@ namespace Management.Controllers
             return Json(new { Numbers = Numbers });
         }
 
-        public JsonResult RePrint(string Time, List<int> frequencies)
+        public JsonResult RePrintCheck(string Time, List<int> frequencies)
         {
             DateTime Date;
             if (Time == null)
@@ -751,6 +751,7 @@ namespace Management.Controllers
         public async Task<JsonResult> CheckOut(List<Profit> Profit)
         {
             int Id = 1;
+            var Now = DateTime.Now;
             var dines = await db.Dines.Where(d => d.IsPaid == true && d.Status != DineStatus.Shifted)
                 .ToListAsync();
             var DineIds = dines.Select(d => d.Id);
@@ -773,10 +774,10 @@ namespace Management.Controllers
                 {
                     db.Shifts.Add(new Shift
                     {
-                        DateTime = DateTime.Now,
+                        DateTime = Now,
                         PayKindId = pft.Id,
-                        RealPrice = PayList.Where(p => p.PayKindId == pft.Id).Select(p => p.PayTotal).FirstOrDefault(),
-                        ReceivablePrice = pft.Num,
+                        ReceivablePrice = PayList.Where(p => p.PayKindId == pft.Id).Select(p => p.PayTotal).FirstOrDefault(),
+                        RealPrice = pft.Num,
                         Id = Id
                     });
                 }

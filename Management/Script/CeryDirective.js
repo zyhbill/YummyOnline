@@ -248,9 +248,9 @@
                 }
                 return format;
             }
-            scope.time = new Date().format('yyyy-mm-dd');
+            scope.time = new Date().format('YYYY-MM-dd');
             element.datetimepicker({
-                format: 'yyyy-mm-dd',
+                format: 'yyyy-MM-dd',
                 minView: '2',
                 maxView: '4',
                 startView: '2',
@@ -293,7 +293,7 @@
             }
             scope.time = new Date().format('yyyy-mm');
             element.datetimepicker({
-                format: 'yyyy-mm',
+                format: 'yyyy-MM',
                 minView: '3',
                 maxView: '4',
                 startView: '3',

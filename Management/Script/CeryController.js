@@ -293,6 +293,7 @@
     $scope.AllowChange = function () { return Replace.AllowChange(); }
 }])
 .controller('HandOutCtrl', ['$scope', '$rootScope', '$uibModal', 'HandOut', function ($scope, $rootScope, $uibModal, HandOut) {
+    $rootScope.FatherPage = "结账系统管理"; $rootScope.ChildPage = "交接班";
     $scope.initialize = function () {
         var promise = HandOut.getElement();
         promise.then(function (data) {
@@ -320,6 +321,9 @@
 .controller('ModelPrintCtrl', function ($scope, $rootScope, $uibModalInstance, $q, $timeout, option) {
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
+    }
+    $scope.initialize = function () {
+        option.HandOut.getNumbers();
     }
     $scope.HandElement = option.HandOut.HandElement;
     $scope.Print = function () {

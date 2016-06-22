@@ -843,6 +843,9 @@ angular.module('Baseinfo', [])
 .controller('PrinterCtrl', ['$scope', '$rootScope', 'Print', function ($scope, $rootScope, Print) {
     $scope.Initialize = function () { Print.Initialize(); }
     $scope.PrintElement = Print.PrintElement;
+    $scope.changeInfo = function () {
+        Print.changeInfo();
+    }
     $scope.Max = function () {
         if ($scope.PrintElement.Rate <= 0) $scope.PrintElement.Rate = 0;
     }

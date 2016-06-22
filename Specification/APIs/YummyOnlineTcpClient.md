@@ -8,12 +8,6 @@ YummyOnline项目中与Tcp服务器连接交换数据的客户端类库
 - `HotelDAOModels.dll`: 饭店数据库模型
 - `YummyOnlineDAOModels.dll`: 总数据库模型
 
-## Install
-- 进入 `工具` - `NuGet 包管理器` - `程序包管理器设置` - `程序包源`
-- 新增程序包源 `http://nuget.yummyonline.net/nuget` 名称 `YummyOnline`
-- 进入程序包管理界面, 程序包源选择 `YummyOnline`, 即可搜索到 `YummyOnlineTcpClient`
-- 选择要安装的项目安装即可
-
 ## To Do
 - 引用 `YummyOnlineTcpClient` 与 `Protocal` 两个命名空间
 - 创建客户端对象
@@ -70,8 +64,8 @@ public TcpClient(
 发送Tcp请求:
 
 eg. :
-```csharp
-client.Send(new RequestPrintDineProtocal(hotelId, dineId, new List<PrintType>() { PrintType.Recipt, PrintType.KitchenOrder, PrintType.ServeOrder }));
+```
+	client.Send(new RequestPrintDineProtocal(hotelId, dineId, new List<PrintType>() { PrintType.Recipt, PrintType.KitchenOrder, PrintType.ServeOrder }));
 ```
 #### `int ReconnectInterval`
 重新连接的等待时间(秒), 默认5秒
@@ -85,42 +79,62 @@ Tcp连接成功回调函数，默认NULL
 #### `Action<string, object> CallBackWhenMessageReceived`
 接收到新消息回调函数，默认NULL
 
+---
+
 ### `class NewDineInformProtocal`
 新订单通知协议
 
-`public int HotelId { get; set; }` 饭店Id
+#### `int HotelId { get; set; }`
+饭店Id
 
-`public string DineId { get; set; }` 新增订单号
+#### `string DineId { get; set; }`
+新增订单号
 
-`public bool IsPaid { get; set; }` 订单是否支付
+#### `bool IsPaid { get; set; }`
+订单是否支付
+
+---
 
 ### `class RequestPrintDineProtocal`
 打印请求协议
 
-`public int HotelId { get; set; }` 饭店Id
+#### `int HotelId { get; set; }`
+饭店Id
 
-`public string DineId { get; set; }` 订单号
+#### `string DineId { get; set; }`
+订单号
 
-`public List<PrintType> PrintTypes { get; set; }` 请求的打印类型集合
+#### `List<int> DineMenuIds { get; set; }`
+菜品编号
+
+#### `List<PrintType> PrintTypes { get; set; }`
+请求的打印类型集合
+
+---
 
 ### `enum PrintType`
 请求打印类型
 
-`Recipt = 0` 收银条
+#### `Recipt = 0`
+收银条
 
-`KitchenOrder = 1`, 厨房单
+#### `KitchenOrder = 1`
+厨房单
 
-`ServeOrder = 2` 传菜单
+#### `ServeOrder = 2`
+传菜单
 
 ## Updates
-- v0.9.1 2016-3-6: 优化`TcpClient`类，改进构造函数，增加`Start`启动函数
-- v0.9.0 2016-2-22: 更改底层tcp协议
-- v0.8.0 2016-2-19: 删除`PrintDineProtocal`, 分离到`OrderSystem`中, 由打印客户端接收到打印信息后http到`OrderSystem`获取打印的订单信息
-- v0.7.0 2016-2-18: 增加接收到的数据不完整的异常处理, 不会导致程序奔溃
-- v0.6.0 2016-2-16: 新增连接成功时的回调函数
-- v0.9.6 2016-4-3: 修复可能导致远程连接断开后, Client的cpu使用率上升的bug, 修改底层TCP传输时的头字节
-- v0.9.7 2016-4-19: NewDineInformConnect协议增加Guid
-- v0.1.0 2016-5-22: 修复在服务器断开的极端情况下, 客户端主线程阻塞的bug
+- 2016-3-6: 优化`TcpClient`类，改进构造函数，增加`Start`启动函数
+- 2016-2-22: 更改底层tcp协议
+- 2016-2-19: 删除`PrintDineProtocal`, 分离到`OrderSystem`中, 由打印客户端接收到打印信息后http到`OrderSystem`获取打印的订单信息
+- 2016-2-18: 增加接收到的数据不完整的异常处理, 不会导致程序奔溃
+- 2016-2-16: 新增连接成功时的回调函数
+- 2016-4-3: 修复可能导致远程连接断开后, Client的cpu使用率上升的bug, 修改底层TCP传输时的头字节
+- 2016-4-19: NewDineInformConnect协议增加Guid
+- 2016-5-22: 修复在服务器断开的极端情况下, 客户端主线程阻塞的bug
+- 2016-6-20: 修改打印订单协议, 可以打印单个菜品
+- 2016-6-22: 加入打印交接班协议
 
 # YummyOnlineTcpClient (Cross Platform)
 
@@ -158,6 +172,7 @@ Tcp连接成功回调函数，默认NULL
 	"Type": "{FCAC99D2-1807-4FD0-8B5C-71D00B91A927}",
 	"HotelId": <int>,
 	"DineId": <string>,
+	"DineMenuIds": [<int>, ...],
 	"PrintTypes": [<int>, ...]
 }
 ```

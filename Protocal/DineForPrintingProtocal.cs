@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Protocal.DineForPrintingProtocal {
+namespace Protocal.PrintingProtocal {
 	public class Dine {
 		public string Id { get; set; }
 		public DineStatus Status { get; set; }
@@ -102,7 +102,7 @@ namespace Protocal.DineForPrintingProtocal {
 		public string UserName { get; set; }
 		public string PhoneNumber { get; set; }
 	}
-	
+
 
 	public class PrinterFormat {
 		public int PaperSize { get; set; }
@@ -114,12 +114,31 @@ namespace Protocal.DineForPrintingProtocal {
 		public int KitchenOrderSmallFontSize { get; set; }
 		public int ServeOrderFontSize { get; set; }
 		public int ServeOrderSmallFontSize { get; set; }
+		public int ShiftBigFontSize { get; set; }
+		public int ShiftFontSize { get; set; }
+		public int ShiftSmallFontSize { get; set; }
 	}
 
 	public class DineForPrinting {
 		public Hotel Hotel { get; set; }
 		public Dine Dine { get; set; }
 		public User User { get; set; }
+		public PrinterFormat PrinterFormat { get; set; }
+	}
+
+	public class ShiftDetail {
+		public string PayKind { get; set; }
+		public decimal ReceivablePrice { get; set; }
+		public decimal RealPrice { get; set; }
+	}
+	public class Shift {
+		public List<ShiftDetail> ShiftDetails { get; set; }
+		public DateTime DateTime { get; set; }
+		public int Id { get; set; }
+	}
+	public class ShiftForPrinting {
+		public List<Shift> Shifts { get; set; }
+		public string PrinterName { get; set; }
 		public PrinterFormat PrinterFormat { get; set; }
 	}
 }

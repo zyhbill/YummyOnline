@@ -24,5 +24,9 @@ namespace HotelDAO.Models {
 		public int PointsRatio { get; set; }
 		public TrimZero TrimZero { get; set; }
 		public bool HasAutoPrinter { get; set; }
+
+		[ForeignKey(nameof(ShiftPrinter))]
+		public int ShiftPrinterId { get; set; }
+		public Printer ShiftPrinter { get; set; }
 	}
 }

@@ -54,6 +54,10 @@ namespace YummyOnlineTcpClient {
 
 					object obj = null;
 					switch(p.Type) {
+						case TcpProtocalType.HeartBeat:
+							// 如果接收到心跳包, 则发送心跳包
+							var _ = tcp.Send(client, JsonConvert.SerializeObject(new HeartBeatProtocal()), null);
+							return;
 						case TcpProtocalType.NewDineInform:
 							obj = JsonConvert.DeserializeObject<NewDineInformProtocal>(content);
 							break;
@@ -91,15 +95,7 @@ namespace YummyOnlineTcpClient {
 					Send(waitedQueue.Dequeue());
 				}
 
-				// 10秒发送一次心跳包
-				Timer timer = new Timer(10 * 1000);
-				timer.Elapsed += Timer_Elapsed;
-				//timer.Start();
 			});
-		}
-
-		private async void Timer_Elapsed(object sender, ElapsedEventArgs e) {
-			await tcp.Send(client, JsonConvert.SerializeObject(new HeartBeatProtocal()), null);
 		}
 
 		private void exceptionOccured(Exception e) {

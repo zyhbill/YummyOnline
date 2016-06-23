@@ -26,7 +26,7 @@ namespace HotelDAO.Models {
 		public bool HasAutoPrinter { get; set; }
 
 		[ForeignKey(nameof(ShiftPrinter))]
-		public int ShiftPrinterId { get; set; }
+		public int? ShiftPrinterId { get; set; }
 		public Printer ShiftPrinter { get; set; }
 	}
 }

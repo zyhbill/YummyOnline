@@ -35,16 +35,18 @@
 			备份文件列表
 		</h3>
 	</div>
-	<table class="table">
-		<tr>
-			<th>文件名</th>
-			<th>大小</th>
-			<th class="shrink">创建时间</th>
-		</tr>
-		<tr ng-repeat="backup in backups">
-			<td>{{backup.Name}}</td>
-			<td>{{backup.Length / 1024 / 1024 | number : 2}} MB</td>
-			<td class="shrink">{{backup.LastWriteTime | date:'yyyy/M/d HH:mm:ss'}}</td>
-		</tr>
-	</table>
+	<div class="table-responsive">
+		<table class="table">
+			<tr>
+				<th>文件名</th>
+				<th>大小</th>
+				<th class="shrink">创建时间</th>
+			</tr>
+			<tr ng-repeat="backup in backups">
+				<td>{{backup.Name}}</td>
+				<td>{{backup.Length / 1024 / 1024 | number : 2}} MB</td>
+				<td class="shrink">{{backup.LastWriteTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+			</tr>
+		</table>
+	</div>
 </div>

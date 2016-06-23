@@ -24,6 +24,10 @@ namespace YummyOnlineTcpServer {
 			public TcpClient Client { get; set; }
 			public IPEndPoint OriginalRemotePoint { get; set; }
 			public DateTime ConnectedTime { get; set; }
+			/// <summary>
+			/// 心跳数, 大于3则为断开连接
+			/// </summary>
+			public int HeartAlive { get; set; }
 		}
 
 		private TcpManager tcp;
@@ -32,6 +36,7 @@ namespace YummyOnlineTcpServer {
 		private Action<string, Log.LogLevel> logDelegate;
 		private Action<TcpServerStatusProtocal> clientsStatusDelegate;
 
+		// 用于打印机或新订单通知客户端重复连接时, 等待原有客户端断开日志记录完毕再执行下面代码·
 		private ManualResetEvent clientCloseMutex = new ManualResetEvent(true);
 
 		/// <summary>
@@ -87,14 +92,30 @@ namespace YummyOnlineTcpServer {
 				log($"{clientInfo.OriginalRemotePoint} Connected, Waiting for verification", Log.LogLevel.Info);
 			});
 
-			// 30秒之内断开已连接但是未发送身份信息的socket
+
 			System.Timers.Timer timer = new System.Timers.Timer(10 * 1000);
 			timer.Elapsed += (e, o) => {
-				List<TcpClientInfo> clientInfos = WaitingForVerificationClients.FindAll(p => (DateTime.Now - p.ConnectedTime).Seconds >= 30);
-				clientInfos.ForEach(c => {
+				// 30秒之内断开已连接但是未发送身份信息的socket
+				List<TcpClientInfo> waitingForVerificationClientInfos = WaitingForVerificationClients.FindAll(p => (DateTime.Now - p.ConnectedTime).Seconds >= 30);
+				waitingForVerificationClientInfos.ForEach(c => {
 					log($"{c.OriginalRemotePoint} Timeout", Log.LogLevel.Warning);
 					c.Client.Close();
 				});
+
+				foreach(var pair in PrinterClients) {
+					pair.Value.HeartAlive++;
+					if(pair.Value.HeartAlive > 6) {
+						log($"{pair.Value.OriginalRemotePoint} Printer (Hotel{pair.Key}) HeartAlive Timeout", Log.LogLevel.Error);
+						pair.Value.Client.Close();
+					}
+				}
+				foreach(var pair in NewDineInformClients) {
+					pair.Value.HeartAlive++;
+					if(pair.Value.HeartAlive > 6) {
+						log($"{pair.Value.OriginalRemotePoint} ({pair.Key.Description}) HeartAlive Timeout", Log.LogLevel.Success);
+						pair.Value.Client.Close();
+					}
+				}
 			};
 			timer.Start();
 		}
@@ -106,6 +127,9 @@ namespace YummyOnlineTcpServer {
 				TcpClientInfo clientInfo = new TcpClientInfo(client);
 
 				switch(baseProtocal.Type) {
+					case TcpProtocalType.HeartBeat:
+						heartBeat(clientInfo);
+						break;
 					case TcpProtocalType.NewDineInformClientConnect:
 						newDineInfromClientConnected(clientInfo, JsonConvert.DeserializeObject<NewDineInformClientConnectProtocal>(content));
 						break;
@@ -151,6 +175,22 @@ namespace YummyOnlineTcpServer {
 				if(pair.Value?.Client == client) {
 					PrinterClients[pair.Key] = null;
 					log($"Printer (Hotel{pair.Key}) {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
+					return;
+				}
+			}
+		}
+
+		private void heartBeat(TcpClientInfo clientInfo) {
+
+			foreach(var pair in PrinterClients) {
+				if(pair.Value.Client == clientInfo.Client) {
+					pair.Value.HeartAlive = 0;
+					return;
+				}
+			}
+			foreach(var pair in NewDineInformClients) {
+				if(pair.Value.Client == clientInfo.Client) {
+					pair.Value.HeartAlive = 0;
 					return;
 				}
 			}

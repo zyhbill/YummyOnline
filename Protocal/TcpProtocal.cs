@@ -4,6 +4,10 @@ using System.Collections.Generic;
 namespace Protocal {
 	public static class TcpProtocalType {
 		/// <summary>
+		/// 心跳包
+		/// </summary>
+		public const string HeartBeat = "{F3E101EA-F55D-40DD-9747-BF0DB29C98AF}";
+		/// <summary>
 		/// 需要及时收到新订单消息的客户端连接
 		/// </summary>
 		public const string NewDineInformClientConnect = "{053A168C-D4B8-409A-A058-7E2208B57CDA}";
@@ -37,6 +41,10 @@ namespace Protocal {
 			Type = type;
 		}
 		public string Type { get; set; }
+	}
+
+	public class HeartBeatProtocal : BaseTcpProtocal {
+		public HeartBeatProtocal() : base(TcpProtocalType.HeartBeat) { }
 	}
 
 	public class NewDineInformClientConnectProtocal : BaseTcpProtocal {

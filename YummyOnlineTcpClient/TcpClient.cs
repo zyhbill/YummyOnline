@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace YummyOnlineTcpClient {
 	public class TcpClient {
@@ -89,7 +90,16 @@ namespace YummyOnlineTcpClient {
 				while(waitedQueue.Count > 0) {
 					Send(waitedQueue.Dequeue());
 				}
+
+				// 10秒发送一次心跳包
+				Timer timer = new Timer(10 * 1000);
+				timer.Elapsed += Timer_Elapsed;
+				//timer.Start();
 			});
+		}
+
+		private async void Timer_Elapsed(object sender, ElapsedEventArgs e) {
+			await tcp.Send(client, JsonConvert.SerializeObject(new HeartBeatProtocal()), null);
 		}
 
 		private void exceptionOccured(Exception e) {

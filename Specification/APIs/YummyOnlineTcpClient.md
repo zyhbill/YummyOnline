@@ -135,14 +135,15 @@ Tcp连接成功回调函数，默认NULL
 - 2016-5-22: 修复在服务器断开的极端情况下, 客户端主线程阻塞的bug
 - 2016-6-20: 修改打印订单协议, 可以打印单个菜品
 - 2016-6-22: 加入打印交接班协议
+- 2016-6-23: 加入心跳包机制
 
 # YummyOnlineTcpClient (Cross Platform)
 
 ## To Do
 1. 连接Tcp服务器, Ip: `122.114.96.157`, Port: `18000`, 建立连接
 2. 发送身份信息(详见`ConnectionProtocal`)
-3. 等待接收信息(详见`ReceivingProtocal`)
-4. 发送信息(详见`SendingProtocal`)
+3. 每隔10秒左右发送接收心跳包信息(详见ReceivingProtocal, SendingProtocal)
+4. 等待接收信息(详见ReceivingProtocal), 发送信息(详见SendingProtocal)
 
 ## Protocals
 ### NewDineInform
@@ -155,6 +156,12 @@ Tcp连接成功回调函数，默认NULL
 ```
 ==*特别注意！ Guid请向管理员申请，同一时刻，只能有一个Guid对应的Socket连入*==
 #### ReceivingProtocal
+心跳包
+```json
+{
+    "Type": "{F3E101EA-F55D-40DD-9747-BF0DB29C98AF}",
+}
+```
 新订单通知
 ```json
 {
@@ -163,9 +170,16 @@ Tcp连接成功回调函数，默认NULL
 	"DineId": <string>,
 	"IsPaid": <bool>
 }
-
 ```
+==*特别注意！ 心跳包每隔10秒左右服务器会发送心跳包, 客户端接收到心跳包后立即返回相同的心跳包, 如果服务器在60秒之内没有接收到客户端发来的心跳包则视为客户端已断开连接并强制与客户端断开连接
+客户端应自行判断服务器在多少时间之内如果没有接收到服务器发来的心跳包, 则视为服务器已断开连接需要重连, 推荐60秒*==
 ### SendingProtocal
+心跳包
+```json
+{
+    "Type": "{F3E101EA-F55D-40DD-9747-BF0DB29C98AF}",
+}
+```
 请求打印
 ```json
 {

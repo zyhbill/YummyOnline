@@ -15,6 +15,7 @@ namespace YummyOnlineTcpClient {
 
 		private TcpManager tcp;
 		private System.Net.Sockets.TcpClient client = null;
+		private int heartAlive = 0;
 
 		private Queue<BaseTcpProtocal> waitedQueue = new Queue<BaseTcpProtocal>();
 
@@ -56,6 +57,7 @@ namespace YummyOnlineTcpClient {
 					switch(p.Type) {
 						case TcpProtocalType.HeartBeat:
 							// 如果接收到心跳包, 则发送心跳包
+							heartAlive = 0;
 							var _ = tcp.Send(client, JsonConvert.SerializeObject(new HeartBeatProtocal()), null);
 							return;
 						case TcpProtocalType.NewDineInform:
@@ -82,11 +84,28 @@ namespace YummyOnlineTcpClient {
 				await Task.Delay(ReconnectInterval * 1000);
 				Start();
 			};
+
+			Timer timer = new Timer(10 * 1000);
+			timer.Elapsed += Timer_Elapsed;
+			timer.Start();
 		}
+
+		private void Timer_Elapsed(object sender, ElapsedEventArgs e) {
+			if(client == null)
+				return;
+
+			heartAlive++;
+			if(heartAlive > 0) {
+				CallBackWhenExceptionOccured(new Exception("远程服务器长时间未响应"));
+				client?.Close();
+			}
+		}
+
 		public void Start() {
 			var _ = tcp.StartConnecting(ip, port, p => {
 				CallBackWhenConnected?.Invoke();
 
+				heartAlive = 0;
 				client = p;
 				string content = JsonConvert.SerializeObject(connectSender);
 				var t = tcp.Send(p, content, null);
@@ -94,7 +113,6 @@ namespace YummyOnlineTcpClient {
 				while(waitedQueue.Count > 0) {
 					Send(waitedQueue.Dequeue());
 				}
-
 			});
 		}
 

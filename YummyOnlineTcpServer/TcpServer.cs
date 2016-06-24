@@ -25,7 +25,7 @@ namespace YummyOnlineTcpServer {
 			public IPEndPoint OriginalRemotePoint { get; set; }
 			public DateTime ConnectedTime { get; set; }
 			/// <summary>
-			/// 心跳数, 大于3则为断开连接
+			/// 心跳数
 			/// </summary>
 			public int HeartAlive { get; set; }
 		}
@@ -95,30 +95,32 @@ namespace YummyOnlineTcpServer {
 
 			System.Timers.Timer timer = new System.Timers.Timer(10 * 1000);
 			timer.Elapsed += (e, o) => {
-				// 30秒之内断开已连接但是未发送身份信息的socket
-				List<TcpClientInfo> waitingForVerificationClientInfos = WaitingForVerificationClients.FindAll(p => (DateTime.Now - p.ConnectedTime).Seconds >= 30);
-				waitingForVerificationClientInfos.ForEach(c => {
-					log($"{c.OriginalRemotePoint} Timeout", Log.LogLevel.Warning);
-					c.Client.Close();
-				});
+				// 30秒之内已连接但是未发送身份信息的socket断开
+				foreach(var client in WaitingForVerificationClients) {
+					client.HeartAlive++;
+					if(client.HeartAlive > 3) {
+						log($"{client.OriginalRemotePoint} Timeout", Log.LogLevel.Warning);
+						client.Client.Close();
+					}
+				}
 
 				// 60秒之内没有接收到心跳包的socket断开, 或发送心跳包失败的socket断开
 				foreach(var pair in PrinterClients.Where(p => p.Value != null)) {
-					sendHeartBeat(pair.Value);
+					//sendHeartBeat(pair.Value);
 					pair.Value.HeartAlive++;
 					if(pair.Value.HeartAlive > 6) {
 						log($"{pair.Value.OriginalRemotePoint} Printer (Hotel{pair.Key}) HeartAlive Timeout", Log.LogLevel.Error);
 						pair.Value.Client.Close();
 					}
 				}
-				foreach(var pair in NewDineInformClients.Where(p => p.Value != null)) {
-					sendHeartBeat(pair.Value);
-					pair.Value.HeartAlive++;
-					if(pair.Value.HeartAlive > 6) {
-						log($"{pair.Value.OriginalRemotePoint} ({pair.Key.Description}) HeartAlive Timeout", Log.LogLevel.Success);
-						pair.Value.Client.Close();
-					}
-				}
+				//foreach(var pair in NewDineInformClients.Where(p => p.Value != null)) {
+				//	sendHeartBeat(pair.Value);
+				//	pair.Value.HeartAlive++;
+				//	if(pair.Value.HeartAlive > 6) {
+				//		log($"{pair.Value.OriginalRemotePoint} ({pair.Key.Description}) HeartAlive Timeout", Log.LogLevel.Success);
+				//		pair.Value.Client.Close();
+				//	}
+				//}
 			};
 			timer.Start();
 		}
@@ -184,13 +186,13 @@ namespace YummyOnlineTcpServer {
 		}
 
 		private void heartBeat(TcpClientInfo clientInfo) {
-			foreach(var pair in PrinterClients) {
+			foreach(var pair in PrinterClients.Where(p => p.Value != null)) {
 				if(pair.Value.Client == clientInfo.Client) {
 					pair.Value.HeartAlive = 0;
 					return;
 				}
 			}
-			foreach(var pair in NewDineInformClients) {
+			foreach(var pair in NewDineInformClients.Where(p => p.Value != null)) {
 				if(pair.Value.Client == clientInfo.Client) {
 					pair.Value.HeartAlive = 0;
 					return;

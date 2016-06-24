@@ -122,6 +122,17 @@ span.money{
 .orderMenuRemove{
     cursor:pointer;
 }
+.menu-filter{
+    position:relative;
+}
+.CleanOut{
+    cursor:pointer;
+    position:absolute;
+    z-index:300;
+    right:20px;
+    top:8px;
+    font-size:20px;
+}
 .num-spinner{
     width:40px;
     height:28px;
@@ -160,7 +171,21 @@ span.money{
     background:#f00;
     opacity:0.5;
 }
+.bigfont{
+    font-size:14px;
+}
+.PicChoose .nav-tabs>li.active>a
+, .PicChoose .nav-tabs>li.active>a:hover
+,.PicChoose  .nav-tabs>li.active>a:focus{
+    background-color:#59e6ea;
+}
+.MenuPrice{
+    position:absolute;
+    right:10px;
+    bottom:0px;
+}
 .MenuList{
+    position:relative;
     display:inline-block;
     cursor:pointer;
     min-height:80px;

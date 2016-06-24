@@ -181,11 +181,17 @@
             console.log(data);
         })
     }
+    $scope.CleanFilter = function () {
+        option.method.CleanFilter();
+    }
     $scope.ShiftType = function () {
         option.method.ShiftType();
     }
     $scope.MenuFilter = function (id) {
         option.method.MenuFilter(id);
+    }
+    $scope.Filter = function () {
+        option.method.Filter();
     }
     $scope.Up = function () { option.method.Up(); }
     $scope.Down = function () { option.method.Down(); }
@@ -444,6 +450,12 @@
     $scope.cancel = function () {
         option.method.KeepShift();
         $uibModalInstance.dismiss('cancel');
+    }
+    $scope.Filter = function () {
+        option.method.Filter();
+    }
+    $scope.CleanFilter = function () {
+        option.method.CleanFilter();
     }
 })
 .filter('day', function () {

@@ -517,7 +517,9 @@
             CurrentMenu: {},
             CurrentMenuRemarks: [],
             CurrentDine:{},
-            FilterInfo: ""
+            FilterInfo: "",
+            CurrentFilter: "",
+            allchoose:true
         },
         getElements: function () {
             var _this = this;
@@ -610,6 +612,7 @@
             this.OpenElements.CurrentMenu = {};
             this.OpenElements.CurrentMenuRemarks = [];
             this.OpenElements.FilterInfo = "";
+            this.OpenElements.CurrentFilter = "";
         },
         SendMenu: function () {
             var _this = this;
@@ -628,6 +631,7 @@
             this.OpenElements.CurrentMenu = {};
             this.OpenElements.CurrentMenuRemarks = [];
             this.OpenElements.FilterInfo = "";
+            this.OpenElements.CurrentFilter = "";
         },
         CalcMenuPrice: function (menu) {
             if (menu.IsSend) {
@@ -768,6 +772,11 @@
                 })
                 return flag;
             })
+            this.OpenElements.allchoose = false;
+            this.OpenElements.Classes.forEach(function (x) {
+                x.Current = false;
+                if (x.Id == ClassId) { x.Current = true;}
+            })
         },
         ShiftType: function () {
             var _this = this;
@@ -804,6 +813,20 @@
             } else {
                 $cookies.put('Type', _this.OpenElements.Type, { 'expires': expireDate });
             }
+        },
+        Filter: function () {
+            this.OpenElements.CurrentFilter = this.OpenElements.FilterInfo;
+        },
+        CleanFilter: function () {
+            this.OpenElements.CurrentFilter = "";
+            this.OpenElements.FilterInfo = "";
+            this.OpenElements.CurrentMenu = {};
+        },
+        ChooseAll: function () {
+            this.OpenElements.Classes.forEach(function (x) {
+                x.Current = false;
+            });
+            this.OpenElements.allchoose = true;
         }
     }
     return service;

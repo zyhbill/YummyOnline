@@ -128,6 +128,8 @@ h6,
 		transform: translateX(-50%);
 	}
 
+	.waterfall-2,
+	.waterfall-3,
 	.waterfall-4 {
 		-moz-column-count: auto;
 		-webkit-column-count: auto;

@@ -10,7 +10,7 @@ namespace OrderSystem {
 		public override void OnException(ExceptionContext filterContext) {
 			Exception exception = filterContext.Exception;
 			
-			AsyncInline.Run(() => new YummyOnlineManager().RecordLog(Log.LogProgram.System, Log.LogLevel.Error,
+			AsyncInline.Run(() => new YummyOnlineManager().RecordLog(Log.LogProgram.OrderSystem, Log.LogLevel.Error,
 				$"Host: {HttpContext.Current.Request.UserHostAddress}, RequestUrl: {HttpContext.Current.Request.RawUrl}, Message: {exception.Message}",
 				$"PostData: {HttpPost.GetPostData(HttpContext.Current.Request)}, Exception: {exception}"));
 

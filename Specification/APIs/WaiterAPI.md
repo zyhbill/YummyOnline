@@ -2,7 +2,7 @@
 waiter.yummyonline.net
 
 ### Updates
-- v0.1.0 增加`交接班`与`切换菜品状态`两个Api
+- 2016-6-19 增加`交接班`与`切换菜品状态`两个Api, 更改获取订单相关协议中的`Waiter`与`Clerk`
 
 ### 服务员登录
 #### POST

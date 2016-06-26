@@ -33,6 +33,13 @@
 		width: 230px;
 	}
 
+.search .input-group-addon {
+	border-radius: 0;
+}
+
+.search .form-control {
+	border-radius: 0;
+}
 
 .remark-modal p {
 	margin-bottom: 5px;

@@ -1,8 +1,6 @@
-﻿using HotelDAO;
-using HotelDAO.Models;
+﻿using HotelDAO.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Web;
@@ -11,18 +9,16 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using System.Web.Security;
 using Utility;
-using YummyOnlineDAO;
 using YummyOnlineDAO.Identity;
 
 namespace OrderSystem.Waiter {
 	public class MvcApplication : HttpApplication {
 		protected void Application_Start() {
-			YummyOnlineManager manager = new YummyOnlineManager();
-			var _ = manager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.OrderSystem_Waiter, YummyOnlineDAO.Models.Log.LogLevel.Info, "OrderSystem.Waiter Initializing");
+			var _ = new YummyOnlineManager().RecordLog(YummyOnlineDAO.Models.Log.LogProgram.OrderSystem_Waiter, YummyOnlineDAO.Models.Log.LogLevel.Info, "OrderSystem.Waiter Initializing");
 			_ = NewDineInformTcpClient.Initialize(async () => {
-				await manager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.OrderSystem_Waiter, YummyOnlineDAO.Models.Log.LogLevel.Success, "TcpServer Connected");
+				await new YummyOnlineManager().RecordLog(YummyOnlineDAO.Models.Log.LogProgram.OrderSystem_Waiter, YummyOnlineDAO.Models.Log.LogLevel.Success, "TcpServer Connected");
 			}, async e => {
-				await manager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.OrderSystem_Waiter, YummyOnlineDAO.Models.Log.LogLevel.Error, e.Message);
+				await new YummyOnlineManager().RecordLog(YummyOnlineDAO.Models.Log.LogProgram.OrderSystem_Waiter, YummyOnlineDAO.Models.Log.LogLevel.Error, e.Message);
 			});
 
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);

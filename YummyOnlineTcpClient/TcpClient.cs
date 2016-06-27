@@ -87,7 +87,7 @@ namespace YummyOnlineTcpClient {
 
 			Timer timer = new Timer(10 * 1000);
 			timer.Elapsed += Timer_Elapsed;
-			timer.Start();
+			//timer.Start();
 		}
 
 		private void Timer_Elapsed(object sender, ElapsedEventArgs e) {
@@ -95,7 +95,7 @@ namespace YummyOnlineTcpClient {
 				return;
 
 			heartAlive++;
-			if(heartAlive > 0) {
+			if(heartAlive > 6) {
 				CallBackWhenExceptionOccured(new Exception("远程服务器长时间未响应"));
 				client?.Close();
 			}

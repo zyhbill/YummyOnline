@@ -34,7 +34,7 @@ namespace Utility {
 		public static List<SiteInfo> GetSites() {
 			List<SiteInfo> infos = new List<SiteInfo>();
 
-			foreach(Site s in sm.Sites) {
+			foreach(Site s in sm.Sites.OrderBy(p => p.Id)) {
 				string protocal = s.Bindings[0].Protocol;
 				SiteInfo info = new SiteInfo {
 					Id = s.Id,
@@ -72,12 +72,7 @@ namespace Utility {
 		}
 
 		public static Site GetSiteById(long id) {
-			foreach(Site s in sm.Sites) {
-				if(s.Id == id) {
-					return s;
-				}
-			}
-			return null;
+			return sm.Sites.FirstOrDefault(p => p.Id == id);
 		}
 
 		public static List<W3wpInfo> GetWorkerProcesses() {

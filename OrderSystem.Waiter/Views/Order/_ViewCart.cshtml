@@ -79,9 +79,25 @@
 </section>
 
 <section>
-	<ul class="control">
+	<ul class="control" ng-show="cart.Desk==null">
+		<li class="control-btn control-btn-9 control-btn-desk no-border">
+			@Html.Partial("_PartialOpenDesk")
+		</li>
+		<li class="control-btn control-btn-3 control-btn-option index">
+			<div uib-dropdown>
+				<div uib-dropdown-toggle>
+					选项
+				</div>
+				<ul class="dropdown-menu">
+					<li route-href="/History">当日订单</li>
+					<li ng-click="signout()">退出</li>
+				</ul>
+			</div>
+		</li>
+	</ul>
+	<ul class="control" ng-show="cart.Desk!=null">
 		<li class="control-btn control-btn-3 control-btn-class no-border"
-			ng-hide="cart.Desk==null || menuFilter.IsResultMode()">
+			ng-hide="menuFilter.IsResultMode()">
 			<div uib-dropdown>
 				<div uib-dropdown-toggle>
 					分类
@@ -113,28 +129,17 @@
 			返回
 		</li>
 
-		<li class="control-btn control-btn-3 control-btn-desk" ng-class="{'control-btn-9':cart.Desk==null}">
+		<li class="control-btn control-btn-3 control-btn-desk">
 			@Html.Partial("_PartialOpenDesk")
 		</li>
-		<li class="control-btn control-btn-3 control-btn-option index" ng-show="cart.Desk==null">
-			<div uib-dropdown>
-				<div uib-dropdown-toggle>
-					选项
-				</div>
-				<ul class="dropdown-menu">
-					<li route-href="/History">历史订单</li>
-					<li ng-click="signout()">退出</li>
-				</ul>
-			</div>
-		</li>
 
-		<li class="control-btn control-btn-3 control-btn-option" ng-hide="cart.Desk==null">
+		<li class="control-btn control-btn-3 control-btn-option">
 			@Html.Partial("_PartialOpenOption")
 		</li>
 
 		<li class="control-btn control-btn-3"
 			ng-click="menuFilter.IntoResultMode()"
-			ng-hide="menuFilter.IsResultMode() || cart.Desk==null">
+			ng-hide="menuFilter.IsResultMode()">
 			查看点单
 		</li>
 		<li class="control-btn control-btn-3"

@@ -7,6 +7,7 @@
 	<div class="table-responsive">
 		<table class="table no-margin">
 			<tr>
+				<th>Id</th>
 				<th>网站名</th>
 				<th>应用程序池名</th>
 				<th>物理路径</th>
@@ -21,6 +22,7 @@
 				}
 			</tr>
 			<tr ng-repeat="site in sites">
+				<td>{{site.Id}}</td>
 				<td>{{site.Name}}</td>
 				<td>{{site.ApplicationPoolName}}</td>
 				<td>{{site.PhysicalPath}}</td>

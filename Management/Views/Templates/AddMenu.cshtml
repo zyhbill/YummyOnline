@@ -126,14 +126,32 @@
                                 </tr>
                                 <tr ng-repeat="orderMenu in OpenElements.OrderMenus track by $index">
                                     <td><span ng-if="orderMenu.IsSend" class="red">送</span>{{orderMenu.Name}}</td>
-                                    <td class="text-right">{{orderMenu.Num}}</td>
+                                    <td class="text-right">
+                                        <span ng-if="!orderMenu.IsEdit">{{orderMenu.Num}}</span>
+                                        <span ng-if="orderMenu.IsEdit">
+                                            <input type="number" ng-model="orderMenu.Num" class="Num" ng-change="CheckAddNum(orderMenu)" />
+                                        </span>
+                                    </td>
                                     <td class="text-right">{{(orderMenu.MenuPrice.Price*orderMenu.Num).toFixed(2)}}</td>
                                     <td class="text-right">
                                         <span ng-if="!orderMenu.IsSend">{{CalcMenuPrice(orderMenu)}}</span>
                                         <span ng-if="orderMenu.IsSend">0.00</span>
                                     </td>
                                     <td><span class="label label-success arrowed" ng-repeat="remark in orderMenu.Remarks">{{remark.Name}}</span>&nbsp;</td>
-                                    <td class="orderMenuRemove text-center" ng-click="RemoveMenu($index)"><span class="icon-trash"></span></td>
+                                    <td class="text-center">
+                                        <button ng-click="RemoveMenu($index)"  ng-if="!orderMenu.IsEdit">
+                                            <span class="icon-trash"></span>
+                                        </button>
+                                        <button ng-click="EditMenu(orderMenu)" ng-if="!orderMenu.IsEdit">
+                                            <span class="icon-edit"></span>
+                                        </button>
+                                        <button ng-click="EditCheck(orderMenu)" ng-if="orderMenu.IsEdit">
+                                            <span class="icon-ok green"></span>
+                                        </button>
+                                        <button ng-click="EditRemove(orderMenu)" ng-if="orderMenu.IsEdit">
+                                            <span class="icon-remove red"></span>
+                                        </button>
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>

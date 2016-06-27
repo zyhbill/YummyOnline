@@ -519,7 +519,8 @@
             CurrentDine:{},
             FilterInfo: "",
             CurrentFilter: "",
-            allchoose:true
+            allchoose: true,
+            CurrentNum:0
         },
         getElements: function () {
             var _this = this;
@@ -827,6 +828,22 @@
                 x.Current = false;
             });
             this.OpenElements.allchoose = true;
+        },
+        EditMenu: function (menu) {
+            var _this = this;
+            this.OpenElements.CurrentNum = menu.Num;
+            menu.IsEdit = true;
+        },
+        EditCheck: function (menu) {
+            menu.IsEdit = false;
+            this.OpenElements.CurrentNum = 1;
+        },
+        EditRemove: function (menu) {
+            menu.Num = this.OpenElements.CurrentNum;
+            menu.IsEdit = false;
+        },
+        CheckAddNum: function (menu) {
+            if (menu.Num < menu.MinOrderCount) menu.Num = menu.MinOrderCount;
         }
     }
     return service;

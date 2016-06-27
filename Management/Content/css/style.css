@@ -23,7 +23,7 @@
         margin: 30px auto;
     }
 }
-@media (min-width:992px){.modal-lg{width:80%}}
+@media (min-width:992px){.modal-lg{width:85%}}
 
 /*******************************************支付结账**********************************************************/
 .Pay-Title{
@@ -119,8 +119,9 @@ span.money{
     display:inline-block;
     width:100%;
 }
-.orderMenuRemove{
-    cursor:pointer;
+.Num{
+    display:inline-block;
+    width:50px;
 }
 .menu-filter{
     position:relative;

@@ -187,6 +187,18 @@
     $scope.ShiftType = function () {
         option.method.ShiftType();
     }
+    $scope.EditMenu = function (menu) {
+        option.method.EditMenu(menu);
+    }
+    $scope.EditCheck = function (menu) {
+        option.method.EditCheck(menu);
+    }
+    $scope.EditRemove = function (menu) {
+        option.method.EditRemove(menu);
+    }
+    $scope.CheckAddNum = function (menu) {
+        option.method.CheckAddNum(menu);
+    }
     $scope.MenuFilter = function (id) {
         option.method.MenuFilter(id);
     }
@@ -456,6 +468,18 @@
     }
     $scope.CleanFilter = function () {
         option.method.CleanFilter();
+    }
+    $scope.EditMenu = function (menu) {
+        option.method.EditMenu(menu);
+    }
+    $scope.EditCheck = function (menu) {
+        option.method.EditCheck(menu);
+    }
+    $scope.EditRemove = function (menu) {
+        option.method.EditRemove(menu);
+    }
+    $scope.CheckAddNum = function (menu) {
+        option.method.CheckAddNum(menu);
     }
 })
 .filter('day', function () {

@@ -519,7 +519,9 @@
             CurrentDine:{},
             FilterInfo: "",
             CurrentFilter: "",
-            allchoose:true
+            allchoose: true,
+            CurrentNum:0,
+            isAjax:false
         },
         getElements: function () {
             var _this = this;
@@ -594,6 +596,9 @@
             if (this.OpenElements.CurrentMenu.Num < this.OpenElements.CurrentMenu.MinOrderCount) this.OpenElements.CurrentMenu.Num = this.OpenElements.CurrentMenu.MinOrderCount
         },
         SelectChange: function (menu) {
+            this.OpenElements.OriMenus.forEach(function (x) { x.Click = false;})
+            this.OpenElements.Menus.forEach(function (x) { x.Click = false; });
+            menu.Click = true;
             this.OpenElements.CurrentMenu = menu;
             this.OpenElements.FilterInfo = menu.Name;
             this.OpenElements.CurrentMenu.Num = this.OpenElements.CurrentMenu.MinOrderCount;
@@ -604,9 +609,11 @@
             temp.Remarks = this.OpenElements.CurrentMenuRemarks;
             if (temp.Id) this.OpenElements.OrderMenus.push(temp);
             this.OpenElements.OriMenus.forEach(function (x) {
+                x.Click = false;
                 if (x.Id == _this.OpenElements.CurrentMenu.Id) x.Class = true;
             });
             this.OpenElements.Menus.forEach(function (x) {
+                x.Click = false;
                 if (x.Id == _this.OpenElements.CurrentMenu.Id) x.Class = true;
             })
             this.OpenElements.CurrentMenu = {};
@@ -715,16 +722,22 @@
                     return { Id: x.Id, Num: x.Num, Remarks: x.Remarks.map(function (x) { return x.Id }), IsSend: !!x.IsSend }
                 })
             }
-            $http.post('../Templates/AddDineMenu', {
-                Menus:temp
-            }).success(function (data) {
-                if (data.Status) {
-                    if (data.OriPrice) _this.OpenElements.CurrentDine.OriPrice = data.OriPrice;
-                    if (data.Price) _this.OpenElements.CurrentDine.Price = data.Price;
-                }
-              
-                deferred.resolve(data);
-            })
+            if (!this.OpenElements.isAjax) {
+                this.OpenElements.isAjax = true;
+                $http.post('../Templates/AddDineMenu', {
+                    Menus: temp
+                }).success(function (data) {
+                    _this.OpenElements.isAjax = false;
+                    if (data.Status) {
+                        if (data.OriPrice) _this.OpenElements.CurrentDine.OriPrice = data.OriPrice;
+                        if (data.Price) _this.OpenElements.CurrentDine.Price = data.Price;
+                    }
+
+                    deferred.resolve(data);
+                }).error(function (data) {
+                    _this.OpenElements.isAjax = false;
+                })
+            }
             return deferred.promise;
         },
         OpenDesk: function () {
@@ -827,6 +840,22 @@
                 x.Current = false;
             });
             this.OpenElements.allchoose = true;
+        },
+        EditMenu: function (menu) {
+            var _this = this;
+            this.OpenElements.CurrentNum = menu.Num;
+            menu.IsEdit = true;
+        },
+        EditCheck: function (menu) {
+            menu.IsEdit = false;
+            this.OpenElements.CurrentNum = 1;
+        },
+        EditRemove: function (menu) {
+            menu.Num = this.OpenElements.CurrentNum;
+            menu.IsEdit = false;
+        },
+        CheckAddNum: function (menu) {
+            if (menu.Num < menu.MinOrderCount) menu.Num = menu.MinOrderCount;
         }
     }
     return service;

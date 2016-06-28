@@ -1,0 +1,40 @@
+﻿@{
+    Layout = null;
+}
+
+
+<table class="table table-bordered table-hover table-striped table-responsive">
+    <thead><tr><th>菜品编码<input type="text" ng-model="MenuElement.IdFilter.Id" class="IdFilter" /></th><th>菜品名称</th><th>状态</th><th class="col-md-2">沽清操作</th></tr></thead>
+
+    <tr ng-repeat="soldout in soldOut|filter:{Id:MenuElement.IdFilter.Id,Status:1}">
+        <td>
+            <span>{{soldout.Id}}</span>
+
+        </td>
+        <td>
+            <span>{{soldout.Name}}</span>
+
+        </td>
+        <td>
+            <span class="label label-success arrowed" ng-if="!soldout.Status">正常</span>
+            <span class="label label-warning" ng-if="soldout.Status">
+                <i class="icon-warning-sign bigger-120"></i>
+                已售完
+            </span>
+        </td>
+
+        <td>
+
+            <button type="button" class="btn btn-minier btn-danger dropdown-toggle" ng-click="switch(soldout)" ng-if="!soldout.Status">
+                @*禁用*@
+                <i class="icon-ban-circle icon-on-right bigger-110"></i>
+            </button>
+            <button type="button" class="btn btn-minier btn-success dropdown-toggle" ng-click="switch(soldout)" ng-if="soldout.Status">
+                @*启用*@
+                <i class="icon-ok-circle icon-on-right bigger-110"></i>
+            </button>
+        </td>
+    </tr>
+
+
+</table>

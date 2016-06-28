@@ -158,6 +158,8 @@
     <Content Include="Views\Error\HttpError500.cshtml" />
     <Content Include="Views\Error\HotelUnavailable.cshtml" />
     <None Include="Properties\PublishProfiles\CompanyServer.pubxml" />
+    <Content Include="Views\Order\_PartialCartFashion.cshtml" />
+    <Content Include="Views\Order\_PartialCartSimple.cshtml" />
     <None Include="Web.CompanyServer.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

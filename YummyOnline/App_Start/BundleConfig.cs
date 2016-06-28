@@ -32,8 +32,8 @@ namespace YummyOnline {
 			List<BundleInfo> scriptInfos = new List<BundleInfo> {
 				new BundleInfo("jquery","//cdn.bootcss.com/jquery/2.2.1/jquery.min.js"),
 				new BundleInfo("bootstrap","//cdn.bootcss.com/bootstrap/3.3.6/js/bootstrap.min.js"),
-				new BundleInfo("angular","//cdn.bootcss.com/angular.js/1.5.0/angular.min.js"),
-				new BundleInfo("angular-route","//cdn.bootcss.com/angular.js/1.5.0/angular-route.min.js"),
+				new BundleInfo("angular","//cdn.bootcss.com/angular.js/1.5.7/angular.min.js"),
+				new BundleInfo("angular-route","//cdn.bootcss.com/angular.js/1.5.7/angular-route.min.js"),
 				new BundleInfo("angular-ui-bootstrap","//cdn.bootcss.com/angular-ui-bootstrap/1.2.1/ui-bootstrap-tpls.min.js"),
 
 				new BundleInfo("toastr","//cdn.bootcss.com/toastr.js/latest/js/toastr.min.js"),

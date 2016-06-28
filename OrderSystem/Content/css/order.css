@@ -43,7 +43,7 @@
 
 		.section-category .list-group .list-group-item {
 			margin-bottom: 0;
-			padding: 10px;
+			padding: 10px 0 10px 10px;
 			border: none;
 			border-radius: 0;
 		}
@@ -189,6 +189,103 @@
 					margin: 0 5px;
 					font-size: 18px;
 				}
+
+
+
+
+
+
+
+.section-menu-simple {
+	width: 70%;
+	float: left;
+}
+
+	.section-menu-simple .list-group {
+		margin-bottom: 50px;
+	}
+
+	.section-menu-simple .list-group-item {
+		padding: 10px 8px;
+		margin-bottom: 0;
+		border: none;
+		border-bottom: 1px solid #EDEDED;
+		border-radius: 0;
+	}
+
+	.section-menu-simple .cart-control {
+		box-shadow: none;
+	}
+
+	.section-menu-simple .media-left .media-object {
+		width: 70px;
+	}
+
+	.section-menu-simple .media-body p {
+		margin-bottom: 6px;
+	}
+
+	.section-menu-simple .media-body .meal-title {
+		font-size: 15px;
+	}
+
+	.section-menu-simple .media-body .meal-on-sale {
+		display: inline-block;
+		padding: 0 5px;
+		border-radius: 2px;
+		font-size: 3px;
+	}
+
+	.section-menu-simple .media-body .meal-point {
+		font-size: 12px;
+	}
+
+	.section-menu-simple .media-body .meal-bottom {
+		margin-bottom: 2px;
+	}
+
+		.section-menu-simple .media-body .meal-bottom .meal-price {
+			margin-bottom: 0;
+			font-size: 18px;
+		}
+
+	.section-menu-simple .setmeals .btn {
+		margin-right: 2px;
+		margin-bottom: 2px;
+	}
+
+	.section-menu-simple .setmeals .well {
+		margin-bottom: 2px;
+		padding: 2px;
+		padding-bottom: 0;
+	}
+
+		.section-menu-simple .setmeals .well p {
+			margin-bottom: 2px;
+		}
+
+			.section-menu-simple .setmeals .well p:last-child {
+				margin-bottom: 0;
+			}
+
+	.section-menu-simple .remark .btn {
+		margin-right: 2px;
+		margin-bottom: 2px;
+	}
+
+	.section-menu-simple .remark .well {
+		margin-bottom: 0;
+		padding: 2px;
+		padding-bottom: 0;
+	}
+
+
+
+
+
+
+
+
 
 
 .menu-modal {

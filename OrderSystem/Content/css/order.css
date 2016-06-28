@@ -72,16 +72,16 @@
 		border-radius: 50%;
 	}
 
-.section-menu {
+.section-menu-fashion {
 	width: 70%;
 	float: left;
 }
 
-	.section-menu .list-group {
+	.section-menu-fashion .list-group {
 		margin-bottom: 50px;
 	}
 
-	.section-menu .list-group-item {
+	.section-menu-fashion .list-group-item {
 		padding: 0;
 		margin-bottom: 2px;
 		min-height: 120px;
@@ -91,17 +91,17 @@
 		border-radius: 0;
 	}
 
-	.section-menu .media-left {
+	.section-menu-fashion .media-left {
 		display: block;
 		padding: 0;
 	}
 
-		.section-menu .media-left .media-object {
+		.section-menu-fashion .media-left .media-object {
 			width: 100%;
 		}
 
 
-	.section-menu .media-body {
+	.section-menu-fashion .media-body {
 		display: block;
 		position: absolute;
 		top: 0;
@@ -109,7 +109,7 @@
 		height: 100%;
 	}
 
-		.section-menu .media-body .meal-point {
+		.section-menu-fashion .media-body .meal-point {
 			display: inline-block;
 			position: absolute;
 			padding: 1px 8px 1px 2px;
@@ -119,7 +119,7 @@
 			font-size: 12px;
 		}
 
-		.section-menu .media-body .remark-container {
+		.section-menu-fashion .media-body .remark-container {
 			position: absolute;
 			padding: 5px;
 			right: 0;
@@ -128,33 +128,33 @@
 			z-index: 1;
 		}
 
-		.section-menu .media-body .remark {
+		.section-menu-fashion .media-body .remark {
 			text-align: right;
 			border-radius: 5px;
 		}
 
-			.section-menu .media-body .remark .btn {
+			.section-menu-fashion .media-body .remark .btn {
 				margin-right: 2px;
 				margin-bottom: 2px;
 			}
 
-			.section-menu .media-body .remark .remark-collapse {
+			.section-menu-fashion .media-body .remark .remark-collapse {
 				padding: 5px;
 			}
 
-		.section-menu .media-body .setmeals {
+		.section-menu-fashion .media-body .setmeals {
 			position: absolute;
 			top: 35px;
 			left: 0;
 		}
 
-			.section-menu .media-body .setmeals .btn {
+			.section-menu-fashion .media-body .setmeals .btn {
 				padding: 1px 8px 1px 2px;
 				border-radius: 0 10px 10px 0;
 				font-size: 12px;
 			}
 
-		.section-menu .media-body .meal-bottom {
+		.section-menu-fashion .media-body .meal-bottom {
 			position: absolute;
 			padding: 2px 5px;
 			bottom: 0;
@@ -162,38 +162,33 @@
 			font-size: 13px;
 		}
 
-			.section-menu .media-body .meal-bottom .meal-title {
+			.section-menu-fashion .media-body .meal-bottom .meal-title {
 				margin-right: 55px;
 			}
 
-			.section-menu .media-body .meal-bottom .meal-price {
-				float: right;
-				width: 55px;
-				text-align: right;
-			}
+.section-menu .media-body .meal-bottom .meal-price {
+	float: right;
+	width: 55px;
+	text-align: right;
+}
 
-			.section-menu .media-body .meal-bottom .meal-on-sale {
-				display: inline-block;
-				padding: 0 5px;
-				border-radius: 2px;
-				font-size: 3px;
-			}
+.section-menu-fashion .media-body .meal-bottom .meal-on-sale {
+	display: inline-block;
+	padding: 0 5px;
+	border-radius: 2px;
+	font-size: 3px;
+}
 
-			.section-menu .media-body .meal-bottom .cart-control {
-				position: absolute;
-				top: -22px;
-				right: 10px;
-			}
+.section-menu-fashion .media-body .meal-bottom .cart-control {
+	position: absolute;
+	top: -22px;
+	right: 10px;
+}
 
-				.section-menu .media-body .meal-bottom .cart-control .btn-cart-num {
-					margin: 0 5px;
-					font-size: 18px;
-				}
-
-
-
-
-
+	.section-menu-fashion .media-body .meal-bottom .cart-control .btn-cart-num {
+		margin: 0 5px;
+		font-size: 18px;
+	}
 
 
 .section-menu-simple {
@@ -278,14 +273,6 @@
 		padding: 2px;
 		padding-bottom: 0;
 	}
-
-
-
-
-
-
-
-
 
 
 .menu-modal {

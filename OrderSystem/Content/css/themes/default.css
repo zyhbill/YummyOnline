@@ -144,36 +144,36 @@ nav {
 	background-color: #673e1e;
 }
 
-.section-menu {
+.section-menu-fashion {
 }
 
-	.section-menu .media-body .meal-point {
+	.section-menu-fashion .media-body .meal-point {
 		color: #fff;
 		background-color: rgba(103,62,30,.4);
 	}
 
-	.section-menu .media-body .remark.active {
+	.section-menu-fashion .media-body .remark.active {
 		background-color: #fff;
 		box-shadow: 0 1px 5px rgba(0,0,0,.5);
 	}
 
-	.section-menu .media-body .meal-bottom {
+	.section-menu-fashion .media-body .meal-bottom {
 		background-color: rgba(250,250,250,.9);
 	}
 
-		.section-menu .media-body .meal-bottom .meal-title {
+		.section-menu-fashion .media-body .meal-bottom .meal-title {
 			color: #333;
 		}
 
-		.section-menu .media-body .meal-bottom .meal-price {
+		.section-menu-fashion .media-body .meal-bottom .meal-price {
 			color: #ff6000;
 		}
 
-		.section-menu .media-body .meal-bottom .meal-oriprice {
+		.section-menu-fashion .media-body .meal-bottom .meal-oriprice {
 			color: #666;
 		}
 
-		.section-menu .media-body .meal-bottom .meal-on-sale {
+		.section-menu-fashion .media-body .meal-bottom .meal-on-sale {
 			color: #fff;
 			background-color: #c9302c;
 		}

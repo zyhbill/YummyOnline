@@ -59,7 +59,7 @@ namespace OrderSystem.Controllers {
 					await UserManager.DeleteAsync(user);
 					await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Warning, $"Anonymous User Deleted {user.Id}, Via OrderSystem");
 				}
-				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}", HttpPost.GetPostData(Request));
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}, Host:{Request.UserHostAddress}", HttpPost.GetPostData(Request));
 				return Json(new JsonError(result.Message));
 			}
 
@@ -121,7 +121,7 @@ namespace OrderSystem.Controllers {
 					await UserManager.DeleteAsync(user);
 					await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Warning, $"Anonymous User Deleted {user.Id}, Via Manager");
 				}
-				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}", HttpPost.GetPostData(Request));
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}, Host:{Request.UserHostAddress}", HttpPost.GetPostData(Request));
 				return Json(new JsonError(result.Message));
 			}
 
@@ -200,7 +200,7 @@ namespace OrderSystem.Controllers {
 			return user;
 		}
 		private async Task newDineInform(Dine dine, string via) {
-			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Dine recorded DineId: {dine.Id}, Price: {dine.Price}, IsOnline: {dine.IsOnline}, Via {via}",
+			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Dine recorded DineId: {dine.Id}, IsOnline: {dine.IsOnline}, Via {via}, Host: {Request.UserHostAddress}",
 				HttpPost.GetPostData(Request));
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dine.Id, false);
 		}

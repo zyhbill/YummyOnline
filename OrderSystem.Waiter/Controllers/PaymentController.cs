@@ -98,14 +98,14 @@ namespace OrderSystem.Waiter.Controllers {
 			// 创建新订单
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
 			if(!result.Succeeded) {
-				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}", HttpPost.GetPostData(Request));
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}, Host:{Request.UserHostAddress}", HttpPost.GetPostData(Request));
 			}
 
 			return result;
 		}
 
 		private async Task newDineInform(Dine dine, string via) {
-			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Dine recorded DineId: {dine.Id}, Price: {dine.Price}, IsOnline: {dine.IsOnline}, Via {via}",
+			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Dine recorded DineId: {dine.Id}, IsOnline: {dine.IsOnline}, Via {via}, Host:{Request.UserHostAddress}",
 				HttpPost.GetPostData(Request));
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dine.Id, false);
 		}

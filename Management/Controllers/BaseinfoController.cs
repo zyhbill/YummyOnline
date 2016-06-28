@@ -379,6 +379,8 @@ namespace Management.Controllers
                     string BaseUrl = Method.GetBaseUrl((int)HotelId);
                     menu.PicturePath = HotelId.ToString() + "/" + Menu.Id + ".png";
                     Method.SaveImg(menu.Id, image, BaseUrl);
+                    var MenuPlace  = BaseUrl + Menu.Id + ".png";
+                    var flag = Method.GetPicThumbnail(MenuPlace, MenuPlace, 200, 300, 50);
                     Method.SaveImg(menu.Id, image, Method.MyGetBaseUrl((int)HotelId));
                 }
                 db.SaveChanges();

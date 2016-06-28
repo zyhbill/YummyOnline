@@ -75,7 +75,7 @@
                     <!--图片文字模式-->
                     <input type="text" ng-model="OpenElements.FilterInfo" class="form-control menu-filter" placeholder="若要搜索,请输入名称或编号" ng-change="Filter()" />
                     <span class="red  icon-remove  CleanOut" ng-click="CleanFilter()"></span>
-                    <uib-tabset active="active Justified" justified="true" class="bigfont">
+                    <uib-tabset active="active Justified" id="MenuLists" justified="true" class="bigfont">
                         <uib-tab index="0" heading="所有" ng-click="ChooseAll()">
                             <div class="MenuColumn clearfix MaxLength">
                                 <div class="MenuList" ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class}">
@@ -86,7 +86,7 @@
                         </uib-tab>
                         <uib-tab ng-repeat="class in OpenElements.Classes" index="{{$index + 1}}" heading="{{class.Name}}" ng-click="MenuFilter(class.Id)">
                             <div class="MenuColumn clearfix MaxLength">
-                                <div class="MenuList" ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class}">
+                                <div class="MenuList" ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}">
                                     <div class="text-center bigfont">{{menu.Name}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
                                 </div>
                                 <div class="clean"></div>
@@ -166,12 +166,12 @@
     </div>
     <div class="modal-footer">
         <div class="row">
-            <div class="col-xs-5">
+            <div class="col-xs-2">
                 <select chosen
                         multiple
                         allow-single-deselect="true"
                         max-selected-options="3"
-                        no-results-text="'没有找到'"
+                        no-results-text="'没有备注'"
                         placeholder-text-multiple="'选择备注'"
                         ng-model="OpenElements.CurrentMenuRemarks"
                         ng-options="remark.Name for remark in OpenElements.CurrentMenu.Remarks"
@@ -179,7 +179,7 @@
                     <option value=""></option>
                 </select>
             </div>
-            <div class="col-xs-3">
+            <div class="col-xs-1">
                 数量:<input type="number" ng-model="OpenElements.CurrentMenu.Num" ng-change="NumChange()" class="num-spinner" />
                 <spinner-up ng-click="Up()"></spinner-up><spinner-down ng-click="Down()"></spinner-down>
             </div>
@@ -189,6 +189,7 @@
                 <button class="btn btn-primary" type="button" ng-click="AddDineMenu()" ng-disabled="AllowOpen()">确认</button>
                 <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
             </div>
+            <div class="col-xs-5"></div>
         </div>
     </div>
 </script>

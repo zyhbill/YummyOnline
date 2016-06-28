@@ -361,6 +361,7 @@
     <Content Include="Views\Login\register.cshtml" />
     <Content Include="Views\Baseinfo\Reason.cshtml" />
     <Content Include="Views\Baseinfo\Printer.cshtml" />
+    <Content Include="Views\Baseinfo\ReSoldOut.cshtml" />
     <None Include="Views\Templates\Error-500.cshtml" />
     <Content Include="Web.config" />
   </ItemGroup>

@@ -103,16 +103,19 @@ span.money{
 .userLogin-password{
     width:50px;
 }
+.chosen-choices{
+    min-height: 28px;
+}
 .openDiscount{
     display:inline-block;
     width:48%;
 }
 .menuShow{
-    height:220px;
+    height:330px;
     overflow:auto;
 }
 .menuShowMax{
-    height:350px;
+    height:420px;
     overflow:auto;
 }
 .NowMenu{
@@ -125,6 +128,9 @@ span.money{
 }
 .menu-filter{
     position:relative;
+}
+.CurrentClick{
+    border:1px solid #ec2c2c !important;
 }
 .CleanOut{
     cursor:pointer;
@@ -184,6 +190,10 @@ span.money{
     position:absolute;
     right:10px;
     bottom:0px;
+}
+#MenuLists>ul>li>a{
+    height:50px;
+    overflow:hidden;
 }
 .MenuList{
     position:relative;

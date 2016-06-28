@@ -78,6 +78,11 @@ namespace Management.Controllers
         {
             return View("Printer");
         }
+
+        public ActionResult ReSoldOut()
+        {
+            return View("ReSoldOut");
+        }
         /// <summary>
         /// 获取区域相关信息
         /// </summary>

@@ -117,6 +117,9 @@
     }).when('/Printer', {
         templateUrl: '/Baseinfo/Printer',
         controller: 'PrinterCtrl'
+    }).when('/ReSoldOut', {
+        templateUrl: '/Baseinfo/ReSoldOut',
+        controller: 'SoldOutCtrl'
     }).otherwise({
         redirectTo: '/404'
     });

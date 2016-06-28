@@ -18,14 +18,7 @@ namespace OrderSystem.Controllers {
 				JsonRequestBehavior = behavior
 			};
 		}
-		protected override void OnActionExecuted(ActionExecutedContext filterContext) {
-			if(CurrHotel != null) {
-				ViewBag.HotelId = CurrHotel?.Id;
-				ViewBag.CssThemePath = AsyncInline.Run(() => { return YummyOnlineManager.GetHotelById(CurrHotel.Id); }).CssThemePath;
-			}
-
-			base.OnActionExecuted(filterContext);
-		}
+		
 		private YummyOnlineManager _yummyOnlineManager;
 		public YummyOnlineManager YummyOnlineManager {
 			get {
@@ -86,6 +79,15 @@ namespace OrderSystem.Controllers {
 				}
 				return _hotelManager;
 			}
+		}
+
+		protected override void OnActionExecuted(ActionExecutedContext filterContext) {
+			if(CurrHotel != null) {
+				ViewBag.HotelId = CurrHotel?.Id;
+				ViewBag.CssThemePath = AsyncInline.Run(() => { return YummyOnlineManager.GetHotelById(CurrHotel.Id); }).CssThemePath;
+			}
+
+			base.OnActionExecuted(filterContext);
 		}
 	}
 

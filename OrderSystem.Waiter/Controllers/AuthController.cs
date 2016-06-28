@@ -1,9 +1,8 @@
-﻿using OrderSystem.Models;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Protocal;
 
-namespace OrderSystem.Controllers {
-	public class AuthController : BaseOrderSystemController {
+namespace OrderSystem.Waiter.Controllers {
+	public class AuthController : BaseWaiterController {
 		// GET: Auth
 		public ActionResult Index(string ReturnUrl) {
 			if(Request.IsAjaxRequest()) {

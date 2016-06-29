@@ -1108,7 +1108,9 @@ namespace Management.Controllers
             var rate = await db.HotelConfigs.Select(d => d.PointsRatio).FirstOrDefaultAsync();
             var printers = await db.Printers.Where(d => d.Usable == true).ToListAsync();
             var format = await db.PrinterFormats.FirstOrDefaultAsync();
-            return Json(new { Rate = rate, Printers = printers, Format = format });
+            var AccountPrint = await db.HotelConfigs.Select(h => h.ShiftPrinterId).FirstOrDefaultAsync();
+            var font = await db.PrinterFormats.FirstOrDefaultAsync();
+            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font });
         }
     }
 }

@@ -25,7 +25,7 @@ namespace OrderSystem.Controllers {
 				return RedirectToAction("HotelUnavailable", "Error");
 			}
 
-			CurrHotel = hotel;
+			CurrHotel = new CurrHotelInfo(hotel.Id, hotel.ConnectionString);
 
 			Desk desk = await new HotelManager(hotel.ConnectionString).GetDeskByQrCode(qrCode);
 			if(desk == null) {

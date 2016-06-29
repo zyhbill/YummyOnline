@@ -4,6 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace YummyOnlineDAO.Models {
+	public enum OrderSystemStyle {
+		Simple = 0,
+		Fashion = 1
+	}
 	public class Hotel {
 		[Key]
 		public int Id { get; set; }
@@ -12,6 +16,7 @@ namespace YummyOnlineDAO.Models {
 		public string AdminConnectionString { get; set; }
 		[Required]
 		public string CssThemePath { get; set; }
+		public OrderSystemStyle OrderSystemStyle { get; set; }
 		/// <summary>
 		/// 酒店名称
 		/// </summary>
@@ -25,7 +30,6 @@ namespace YummyOnlineDAO.Models {
 		[MaxLength(128)]
 		[Required]
 		public string Address { get; set; }
-		//经纬度
 
 		/// <summary>
 		/// 酒店电话

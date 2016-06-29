@@ -1,0 +1,94 @@
+﻿<script type="text/ng-template" id="setMealsModal.html">
+	<div class="modal-header">
+		<button type="button" class="close" ng-click="close()"><span>&times;</span></button>
+		<h4 class="modal-title">{{menu.Name}}</h4>
+	</div>
+	<div class="modal-body setmeals-modal">
+		<p ng-repeat="menuSetMeal in menu.Addition.SetMeals">
+			{{menuSetMeal.Name}}&times;{{menuSetMeal.Addition.Ordered}}
+		</p>
+	</div>
+</script>
+
+<section class="section-menu-fashion" ng-static-height="88">
+	<ul class="list-group">
+		<!-- ngRepeat Menus -->
+		<li class="list-group-item"
+			ng-repeat="menu in menuFilter.FilteredMenus track by menu.Id">
+			<div class="media">
+				<div class="media-left">
+					<a href="javascript:;">
+						<img class="media-object"
+							 ng-src="/Content/image/{{menu.PicturePath}}">
+					</a>
+				</div>
+				<div class="media-body">
+					<div class="meal-point"><i class="fa fa-heart"></i> {{menu.Ordered}}</div>
+
+					<div class="remark-container" ng-if="menu.IsShowRemark()">
+						<div class="remark" ng-class="{active: menu.IsRemarkCollapsed()}">
+							@* 已添加备注 *@
+							<button class="btn btn-primary btn-xs"
+									ng-repeat="remark in menu.Addition.Remarks"
+									ng-click="cart.RemoveRemark(menu,remark,$index)">
+								{{remark.Name}}
+								<span ng-if="remark.Price>0">({{remark.Price | currency : "￥"}})</span>
+								<span class="fa fa-times-circle"></span>
+							</button>
+
+							<button class="btn btn-primary btn-xs btn-circle btn-toggle-remark"
+									ng-click="menu.ToggleRemark()">
+								<img src="~/Content/image/remark.png" alt="" />
+							</button>
+
+							<div class="remark-collapse" ng-show="menu.IsRemarkCollapsed()">
+								@* 未添加备注 *@
+								<button class="btn btn-default btn-xs"
+										ng-repeat="remark in menu.Remarks"
+										ng-click="cart.AddRemark(menu,remark,$index)"
+										ng-disabled="menu.Addition.Remarks.length>=3">
+									{{remark.Name}}
+									<span ng-if="remark.Price>0">({{remark.Price | currency : "￥"}})</span>
+									<span class="fa fa-check-circle"></span>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="setmeals" ng-if="menu.IsShowSetMeal()">
+						<button class="btn btn-primary btn-xs"
+								ng-click="showSetMealsModal(menu)">
+							套餐详情
+						</button>
+					</div>
+
+					<div class="meal-bottom">
+						<div class="cart-control">
+							<span ng-if="menu.Addition.Ordered>0">
+								<button class="btn btn-sm btn-cart-decrease"
+										ng-click="cart.RemoveMenu(menu)">
+									<i class="fa fa-minus"></i>
+								</button>
+								<span class="btn btn-sm btn-cart-num">{{menu.Addition.Ordered}}</span>
+							</span>
+							<button class="btn btn-sm btn-cart-add"
+									ng-click="cart.AddMenu(menu)">
+								<i class="fa fa-plus"></i>
+							</button>
+						</div>
+						<div class="meal-price">
+							{{menu.MenuPrice.Price | currency : "￥"}}
+							<s ng-show="menu.Addition.OriPrice!=menu.MenuPrice.Price" class="meal-oriprice">
+								{{menu.Addition.OriPrice | currency : "￥"}}
+							</s>
+						</div>
+						<div class="meal-title">
+							{{menu.Name}}
+							<span class="meal-on-sale" ng-if="menu.Addition.IsOnSale">特价</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</li>
+	</ul>
+</section>

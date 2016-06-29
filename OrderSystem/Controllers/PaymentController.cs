@@ -59,7 +59,7 @@ namespace OrderSystem.Controllers {
 					await UserManager.DeleteAsync(user);
 					await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Warning, $"Anonymous User Deleted {user.Id}, Via OrderSystem");
 				}
-				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}", HttpPost.GetPostData(Request));
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}, Host:{Request.UserHostAddress}", HttpPost.GetPostData(Request));
 				return Json(new JsonError(result.Message));
 			}
 
@@ -97,8 +97,10 @@ namespace OrderSystem.Controllers {
 				return Json(new JsonError("身份验证失败"));
 			}
 
-			CurrHotel = await YummyOnlineManager.GetHotelById(cartAddition.HotelId);
-			if(!CurrHotel.Usable)
+			var hotel = await YummyOnlineManager.GetHotelById(cartAddition.HotelId);
+			CurrHotel = new CurrHotelInfo(hotel.Id, hotel.ConnectionString);
+
+			if(!hotel.Usable)
 				return RedirectToAction("HotelUnavailable", "Error");
 
 			cart.PayKindId = await new HotelManager(CurrHotel.ConnectionString).GetOtherPayKindId();
@@ -119,7 +121,7 @@ namespace OrderSystem.Controllers {
 					await UserManager.DeleteAsync(user);
 					await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Warning, $"Anonymous User Deleted {user.Id}, Via Manager");
 				}
-				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}", HttpPost.GetPostData(Request));
+				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}, Host:{Request.UserHostAddress}", HttpPost.GetPostData(Request));
 				return Json(new JsonError(result.Message));
 			}
 
@@ -152,7 +154,7 @@ namespace OrderSystem.Controllers {
 				return Json(new JsonError());
 			}
 
-			CurrHotel = await YummyOnlineManager.GetHotelById(model.HotelId);
+			CurrHotel = new CurrHotelInfo(await YummyOnlineManager.GetHotelById(model.HotelId));
 
 			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Info, $"Notified DineId: {model.DineId}");
 			await onlinePayCompleted(model.DineId, model.RecordId);
@@ -164,7 +166,7 @@ namespace OrderSystem.Controllers {
 		/// 打印完成
 		/// </summary>
 		public async Task<JsonResult> PrintCompleted(int hotelId, string dineId) {
-			CurrHotel = await YummyOnlineManager.GetHotelById(hotelId);
+			CurrHotel = new CurrHotelInfo(await YummyOnlineManager.GetHotelById(hotelId));
 
 			if(dineId == "00000000000000") {
 				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Print Test Dine Completed");
@@ -198,7 +200,7 @@ namespace OrderSystem.Controllers {
 			return user;
 		}
 		private async Task newDineInform(Dine dine, string via) {
-			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Dine recorded DineId: {dine.Id}, Price: {dine.Price}, IsOnline: {dine.IsOnline}, Via {via}",
+			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"Dine recorded DineId: {dine.Id}, IsOnline: {dine.IsOnline}, Via {via}, Host: {Request.UserHostAddress}",
 				HttpPost.GetPostData(Request));
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dine.Id, false);
 		}

@@ -51,6 +51,12 @@
 		<h2>YummyOnline Database Specification</h2>
 
 		<div class="alert alert-danger">
+			<p>Hotels表中增加OrderSystemStyle字段</p>
+			<p class="text-right">
+				<small>2016-6-28 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
 			<h4>此为累积更新</h4>
 			<p>Dines表加入Change</p>
 			<p>Logs表加入Detail</p>
@@ -1506,6 +1512,15 @@
 				<td>nvarchar(max)</td>
 				<td>点菜界面主题css路径</td>
 				<td></td>
+			</tr>
+			<tr>
+				<td>OrderSystemStyle</td>
+				<td>int</td>
+				<td>点菜界面样式</td>
+				<td>
+					<p>0 简单样式</p>
+					<p>1 时尚样式</p>
+				</td>
 			</tr>
 			<tr>
 				<td>Name</td>

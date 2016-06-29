@@ -18,12 +18,7 @@ namespace OrderSystem.Controllers {
 				JsonRequestBehavior = behavior
 			};
 		}
-		protected override void OnActionExecuted(ActionExecutedContext filterContext) {
-			ViewBag.HotelId = CurrHotel?.Id;
-			ViewBag.CssThemePath = CurrHotel?.CssThemePath;
-
-			base.OnActionExecuted(filterContext);
-		}
+		
 		private YummyOnlineManager _yummyOnlineManager;
 		public YummyOnlineManager YummyOnlineManager {
 			get {
@@ -34,9 +29,21 @@ namespace OrderSystem.Controllers {
 			}
 		}
 
-		public Hotel CurrHotel {
+		public class CurrHotelInfo {
+			public CurrHotelInfo(int id, string connectionString) {
+				Id = id;
+				ConnectionString = connectionString;
+			}
+			public CurrHotelInfo(Hotel hotel) {
+				Id = hotel.Id;
+				ConnectionString = hotel.ConnectionString;
+			}
+			public int Id { get; set; }
+			public string ConnectionString { get; set; }
+		}
+		public CurrHotelInfo CurrHotel {
 			get {
-				return (Hotel)Session["Hotel"];
+				return (CurrHotelInfo)Session["Hotel"];
 			}
 			set {
 				Session["Hotel"] = value;
@@ -72,6 +79,15 @@ namespace OrderSystem.Controllers {
 				}
 				return _hotelManager;
 			}
+		}
+
+		protected override void OnActionExecuted(ActionExecutedContext filterContext) {
+			if(CurrHotel != null) {
+				ViewBag.HotelId = CurrHotel?.Id;
+				ViewBag.CssThemePath = AsyncInline.Run(() => { return YummyOnlineManager.GetHotelById(CurrHotel.Id); }).CssThemePath;
+			}
+
+			base.OnActionExecuted(filterContext);
 		}
 	}
 
@@ -126,7 +142,7 @@ namespace OrderSystem.Controllers {
 			if(currHotel != null) {
 				Hotel hotel = AsyncInline.Run(() => new YummyOnlineManager().GetHotelById(currHotel.Id));
 				if(!hotel.Usable) {
-					filterContext.Result = new RedirectResult("/Error/HotelUnavailable"); 
+					filterContext.Result = new RedirectResult("/Error/HotelUnavailable");
 					return;
 				}
 			}

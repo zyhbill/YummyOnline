@@ -16,7 +16,8 @@ namespace OrderSystem.Controllers {
 			return View();
 		}
 
-		public ActionResult _ViewMenu() {
+		public async Task<ActionResult> _ViewMenu() {
+			ViewBag.OrderSystemStyle = (await YummyOnlineManager.GetHotelById(CurrHotel.Id)).OrderSystemStyle;
 			return View();
 		}
 		public ActionResult _ViewCart() {
@@ -42,6 +43,7 @@ namespace OrderSystem.Controllers {
 			var t6 = new HotelManager(CurrHotel.ConnectionString).GetHotelConfig();
 			var t7 = new HotelManager(CurrHotel.ConnectionString).GetTimeDiscounts();
 			var t8 = new HotelManager(CurrHotel.ConnectionString).GetVipDiscounts();
+			var currHotel = await new YummyOnlineManager().GetHotelById(CurrHotel.Id);
 
 			var result = new {
 				MenuClasses = await t1,
@@ -54,11 +56,11 @@ namespace OrderSystem.Controllers {
 					VipDiscounts = await t8
 				},
 				Hotel = DynamicsCombination.CombineDynamics(await t6, new {
-					CurrHotel.Name,
-					CurrHotel.Address,
-					CurrHotel.Tel,
-					CurrHotel.OpenTime,
-					CurrHotel.CloseTime
+					currHotel.Name,
+					currHotel.Address,
+					currHotel.Tel,
+					currHotel.OpenTime,
+					currHotel.CloseTime
 				})
 			};
 			return Json(result);

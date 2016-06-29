@@ -1162,7 +1162,10 @@
         PrintElement: {
             Printers: [],
             PrinterFormat: {},
-            CurrentPrinter:{},
+            CurrentPrinter: {},
+            CurrentFont:{},
+            Fonts: ["宋体", "黑体"],
+            OldFormat:{},
             Rate:0
         },
         Initialize: function () {
@@ -1170,7 +1173,9 @@
             $http.post('../Baseinfo/getPrint').success(function (data) {
                 _this.PrintElement.Printers = data.Printers;
                 _this.PrintElement.PrinterFormat = data.Format;
-                _this.PrintElement.CurrentPrinter = data.Printers[0];
+                _this.PrintElement.Printers.forEach(function (x) {
+                    if (x.Id == data.AccountPrint) _this.PrintElement.CurrentPrinter = x;
+                })
                 _this.PrintElement.Rate = data.Rate;
             });
         },

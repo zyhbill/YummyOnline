@@ -6,7 +6,7 @@
     <div class="col-xm-12">
         <div class="tabbable tabs-left">
             <ul class="nav nav-tabs">
-                <li ng-repeat="area in SysElements.Areas">
+                <li ng-repeat="area in SysElements.Areas" setfirstfocus index="$index">
                     <a data-toggle="tab" href="{{getId($index)}}">
                         <i class="pink icon-dashboard bigger-110"></i>
                         {{area.Name}}&nbsp;&nbsp;&nbsp;<span class="badge badge-danger" ng-if="unpaid(area)>0">{{unpaid(area)}}</span>
@@ -14,7 +14,7 @@
                 </li>
             </ul>
             <div class="tab-content">
-                <div ng-repeat="area in SysElements.Areas" id="{{getIdShow($index)}}" class="tab-pane">
+                <div ng-repeat="area in SysElements.Areas" id="{{getIdShow($index)}}" class="tab-pane" setfirstfocus index="$index">
                     <div class="desk" ng-repeat="desk in SysElements.Desks|filter:{AreaId:area.Id}" ng-click="OpenModel(desk)">
                         <h4 ng-if="!desk.Status"><img src="~/Content/images/nobody.png" class="img-responsive"></h4>
                         <h4 ng-if="desk.Status"><img src="~/Content/images/eating.png" class="img-responsive"></h4>
@@ -191,7 +191,7 @@
                         </uib-tab>
                         <uib-tab ng-repeat="class in OpenElements.Classes" index="{{$index + 1}}" heading="{{class.Name}}" ng-click="MenuFilter(class.Id)">
                             <div class="MenuColumn clearfix MaxLength">
-                                <div class="MenuList" ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class}">
+                                <div class="MenuList" ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}">
                                     <div class="text-center bigfont">{{menu.Name}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
                                 </div>
                                 <div class="clean"></div>

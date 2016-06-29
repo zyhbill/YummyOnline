@@ -436,3 +436,15 @@
         }
     }
 })
+.directive('setfirstfocus', function () {
+    return {
+        scope: {
+            index: "=",
+        },
+        link: function (scope, element, attributes) {
+            if (scope.index == 0) {
+                element.addClass('active');
+            }
+        }
+    }
+})

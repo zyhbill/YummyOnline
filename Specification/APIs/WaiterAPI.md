@@ -1,4 +1,8 @@
-### 服务员API域名
+# 服务员APIs
+
+[TOC]
+
+### 域名
 waiter.yummyonline.net
 
 ### Updates

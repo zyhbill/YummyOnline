@@ -1255,7 +1255,8 @@
             Time: null,
             NumberStart: 1,
             NumberBegin: 1,
-            Numbers:[]
+            Numbers: [],
+            isAjax:false
         },
         getElement: function () {
             var _this = this;
@@ -1292,17 +1293,22 @@
             var price = this.HandElement.PayKinds.filter(function (x) { return x.Num }).map(function (x) { return x.Num }).reduce(function (a, b) { return +a + +b }, 0);
             if (price > 0) {
                 var profit = this.HandElement.PayKinds.filter(function (x) { return x.Gain }).map(function (x) { return { Id: x.Id, Num: x.Gain } });
-                $http.post('../Templates/CheckOut', {
-                    Profit: profit
-                }).success(function (data) {
-                    _this.HandElement.PayKinds.forEach(function (x) {
-                        x.Num = 0;
-                        x.Gain = 0;
+                if (!_this.HandElement.isAjax) {
+                    _this.HandElement.isAjax = true;
+                    $http.post('../Templates/CheckOut', {
+                        Profit: profit
+                    }).success(function (data) {
+                        _this.HandElement.isAjax = false;
+                        _this.HandElement.PayKinds.forEach(function (x) {
+                            x.Num = 0;
+                            x.Gain = 0;
+                        })
+                        alert("交接成功");
+                    }).error(function (data) {
+                        _this.HandElement.isAjax = false;
+                        console.log(data);
                     })
-                    alert("交接成功");
-                }).error(function (data) {
-                    console.log(data);
-                })
+                }
             }
             else {
                 alert("金额为0不用交接");

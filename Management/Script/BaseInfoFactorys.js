@@ -366,7 +366,7 @@
             return num;
         },
         WatchPath: function () {
-            return "../Content/ModelImage/" + $rootScope.HotelId + "/" + this.MenuElement.CurrentMenu.Id + ".png";
+            return "../Content/ModelImage/" + $rootScope.HotelId + "/" + this.MenuElement.CurrentMenu.Id + ".jpg";
         },
         Plus: function () {
             this.MenuElement.CurrentMenu.MinOrderCount++;

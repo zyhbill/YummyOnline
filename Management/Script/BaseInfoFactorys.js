@@ -1164,7 +1164,8 @@
             PrinterFormat: {},
             CurrentPrinter: {},
             CurrentFont:{},
-            Fonts: [{Name:"宋体"}, {Name:"黑体"}],
+            Fonts: [{ Name: "宋体" }, { Name: "黑体" }],
+            Styles: [{ Id: 0, Name: "简单" }, {Id:1,Name:"时尚"}],
             OldFormat: {},
             CurrentFormat:{
                 KitchenOrderFontSize:0,

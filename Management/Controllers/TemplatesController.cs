@@ -437,7 +437,7 @@ namespace Management.Controllers
         /// <returns></returns>
         public async Task<JsonResult> getReturn()
         {
-            var Desk = await db.Desks.Where(d => d.Usable).Select(d => new { d.Id, d.Name, d.Status }).ToListAsync();
+            var Desk = await db.Desks.Where(d => d.Usable).OrderBy(d=>d.Order).Select(d => new { d.Id, d.Name, d.Status }).ToListAsync();
             var UnpaidDines = await db.Dines
                     .Include(p => p.DineMenus.Select(pp => pp.Remarks))
                     .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
@@ -587,7 +587,7 @@ namespace Management.Controllers
         /// <returns></returns>
         public async Task<JsonResult> GetConbine()
         {
-            var Desks = await db.Desks.Where(d => d.Status == DeskStatus.Used && d.Usable == true).ToListAsync();
+            var Desks = await db.Desks.Where(d => d.Status == DeskStatus.Used && d.Usable == true).OrderBy(d=>d.Order).ToListAsync();
             var Dines = await db.Dines.Where(order => order.IsPaid == false && order.IsOnline == false)
                 .Select(dine => new { dine.Id, dine.DeskId }).ToListAsync();
             return Json(new { Desks = Desks, Dines = Dines });
@@ -644,7 +644,7 @@ namespace Management.Controllers
         public async Task<JsonResult> getReplace()
         {
             var Desks = await db.Desks
-                .Where(d => d.Status == DeskStatus.Used && d.Usable == true).ToListAsync();
+                .Where(d => d.Status == DeskStatus.Used && d.Usable == true).OrderBy(d=>d.Order).ToListAsync();
             var Dines = await db.Dines.Where(d => d.IsOnline == false && d.IsPaid == false)
                 .Select(dine => new { dine.Id, dine.DeskId }).ToListAsync();
             var TotalDesk = await db.Desks.Where(d => d.Usable == true).ToListAsync();

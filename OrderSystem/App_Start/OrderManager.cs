@@ -103,6 +103,9 @@ namespace OrderSystem {
 				if(!menu.Usable) {
 					return new FunctionResult(false, $"{menu.Name} 不可用", $"Menu Disabled {menu.Id}: {menu.Name}");
 				}
+				if(menu.Status == MenuStatus.SellOut) {
+					return new FunctionResult(false, $"{menu.Name} 已售完", $"Menu SellOut {menu.Id}: {menu.Name}");
+				}
 
 				DineMenu dineMenu = new DineMenu {
 					Count = menuExtension.Ordered,

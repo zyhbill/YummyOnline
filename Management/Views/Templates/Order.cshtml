@@ -183,7 +183,7 @@
                     <uib-tabset active="active Justified" id="MenuLists" justified="true" class="bigfont">
                         <uib-tab index="0" heading="所有" ng-click="ChooseAll()">
                             <div class="MenuColumn clearfix MaxLength">
-                                <div class="MenuList" ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}">
+                                <div class="MenuList" ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}" ng-dblclick="AddSingle(menu)">
                                     <div class="text-center bigfont">{{menu.Name}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
                                 </div>
                                 <div class="clean"></div>
@@ -191,7 +191,7 @@
                         </uib-tab>
                         <uib-tab ng-repeat="class in OpenElements.Classes" index="{{$index + 1}}" heading="{{class.Name}}" ng-click="MenuFilter(class.Id)">
                             <div class="MenuColumn clearfix MaxLength">
-                                <div class="MenuList" ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}">
+                                <div class="MenuList" ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}" ng-dblclick="AddSingle(menu)">
                                     <div class="text-center bigfont">{{menu.Name}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
                                 </div>
                                 <div class="clean"></div>
@@ -234,20 +234,39 @@
                                         <span ng-if="!orderMenu.IsSend">{{CalcMenuPrice(orderMenu)}}</span>
                                         <span ng-if="orderMenu.IsSend">0.00</span>
                                     </td>
-                                    <td><span class="label label-success arrowed" ng-repeat="remark in orderMenu.Remarks">{{remark.Name}}</span>&nbsp;</td>
+                                    <td>
+                                        <span ng-if="!orderMenu.IsEdit" class="label label-success arrowed" ng-repeat="remark in orderMenu.Remarks">
+                                            {{remark.Name}}
+                                        </span>
+                                        <span ng-if="orderMenu.IsEdit">
+                                            <select chosen
+                                                    multiple
+                                                    allow-single-deselect="true"
+                                                    max-selected-options="3"
+                                                    no-results-text="'没有备注'"
+                                                    placeholder-text-multiple="'选择备注'"
+                                                    ng-model="orderMenu.Remarks"
+                                                    ng-options="remark.Name for remark in OpenElements.CurrentMenu.Remarks"
+                                                    style="width:100%;">
+                                                <option value=""></option>
+                                            </select>
+                                        </span>
+                                    </td>
                                     <td class="text-center EditBtn">
-                                        <button ng-click="RemoveMenu($index)"  ng-if="!orderMenu.IsEdit">
-                                            <span class="icon-trash"></span>
-                                        </button>
-                                        <button ng-click="EditMenu(orderMenu)" ng-if="!orderMenu.IsEdit">
-                                            <span class="icon-edit"></span>
-                                        </button>
-                                        <button ng-click="EditCheck(orderMenu)" ng-if="orderMenu.IsEdit">
-                                            <span class="icon-ok green"></span>
-                                        </button>
-                                        <button ng-click="EditRemove(orderMenu)" ng-if="orderMenu.IsEdit">
-                                            <span class="icon-remove red"></span>
-                                        </button>
+                                        <nobr>
+                                            <button ng-click="RemoveMenu($index)" ng-if="!orderMenu.IsEdit">
+                                                <span class="icon-trash"></span>
+                                            </button>
+                                            <button ng-click="EditMenu(orderMenu)" ng-if="!orderMenu.IsEdit">
+                                                <span class="icon-edit"></span>
+                                            </button>
+                                            <button ng-click="EditCheck(orderMenu)" ng-if="orderMenu.IsEdit">
+                                                <span class="icon-ok green"></span>
+                                            </button>
+                                            <button ng-click="EditRemove(orderMenu)" ng-if="orderMenu.IsEdit">
+                                                <span class="icon-remove red"></span>
+                                            </button>
+                                        </nobr>
                                     </td>
                                 </tr>
                             </tbody>

@@ -204,6 +204,9 @@
     $scope.MenuFilter = function (id) {
         option.method.MenuFilter(id);
     }
+    $scope.AddSingle = function (menu) {
+        option.method.AddSingle(menu);
+    }
     $scope.Filter = function () {
         option.method.Filter();
     }
@@ -566,6 +569,9 @@
     $scope.cancel = function () {
         option.method.KeepShift();
         $uibModalInstance.dismiss('cancel');
+    }
+    $scope.AddSingle = function (menu) {
+        option.method.AddSingle(menu);
     }
     $scope.Filter = function () {
         option.method.Filter();

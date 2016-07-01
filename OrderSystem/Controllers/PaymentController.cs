@@ -1,5 +1,4 @@
-﻿using HotelDAO;
-using HotelDAO.Models;
+﻿using HotelDAO.Models;
 using Newtonsoft.Json;
 using OrderSystem.Models;
 using Protocol;
@@ -10,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Utility;
-using YummyOnlineDAO;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
 
@@ -71,8 +69,8 @@ namespace OrderSystem.Controllers {
 			string redirectUrl = null;
 
 			if(payKind.Type == PayKindType.Online) {
-				DinePaidDetail paidDetail = dine.DinePaidDetails.FirstOrDefault(p => p.PayKind.Id == payKind.Id);
-				if(Math.Abs((double)(paidDetail.Price - 0)) < 0.01) {
+				DinePaidDetail pointsPaidDetail = dine.DinePaidDetails.FirstOrDefault(p => p.PayKind.Type == PayKindType.Points);
+				if(Math.Abs((double)(dine.Price - pointsPaidDetail.Price)) < 0.01) {
 					redirectUrl = $"{payKind.CompleteUrl}?Succeeded={true}&DineId={dine.Id}";
 					await onlinePayCompleted(dine.Id, null);
 				}
@@ -241,7 +239,7 @@ namespace OrderSystem.Controllers {
 		/// <param name="recordId">附加信息</param>
 		/// <returns></returns>
 		private async Task onlinePayCompleted(string dineId, string recordId) {
-			bool isPaid = await new HotelManager(CurrHotel.ConnectionString).IsDinePaid(dineId);
+			bool isPaid = await HotelManager.IsDinePaid(dineId);
 			if(isPaid) {
 				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Warning, $"DineId: {dineId} Has Been Paid");
 				return;

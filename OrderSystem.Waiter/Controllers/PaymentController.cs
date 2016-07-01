@@ -1,7 +1,9 @@
 ﻿using HotelDAO.Models;
 using OrderSystem.Models;
 using Protocol;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using Utility;
@@ -99,6 +101,13 @@ namespace OrderSystem.Waiter.Controllers {
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
 			if(!result.Succeeded) {
 				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}, Host:{Request.UserHostAddress}", HttpPost.GetPostData(Request));
+			}
+
+			Dine dine = ((Dine)result.Data);
+
+			DinePaidDetail pointsPaidDetail = dine.DinePaidDetails.FirstOrDefault(p => p.PayKind.Type == PayKindType.Points);
+			if(Math.Abs((double)(dine.Price - pointsPaidDetail.Price)) < 0.01) {
+				await OrderManager.OfflinePayCompleted(dine.Id);
 			}
 
 			return result;

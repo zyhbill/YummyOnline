@@ -1,5 +1,4 @@
-﻿using HotelDAO;
-using HotelDAO.Models;
+﻿using HotelDAO.Models;
 using OrderSystem.Models;
 using Protocol;
 using System;
@@ -278,6 +277,14 @@ namespace OrderSystem {
 			return new FunctionResult();
 		}
 
+		public async Task OfflinePayCompleted(string dineId) {
+			Dine dine = await ctx.Dines.FirstOrDefaultAsync(p => p.Id == dineId);
+			dine.IsPaid = true;
+
+			await changeCustomerPoints(dine);
+
+			await ctx.SaveChangesAsync();
+		}
 		public async Task<bool> OfflinePayCompleted(WaiterPaidDetails paidDetails) {
 			Dine dine = await ctx.Dines.FirstOrDefaultAsync(p => p.Id == paidDetails.DineId);
 			List<DinePaidDetail> exisedPaidDetails = await ctx.DinePaidDetails.Where(p => p.Dine.Id == paidDetails.DineId).ToListAsync();

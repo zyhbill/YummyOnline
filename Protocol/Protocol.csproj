@@ -7,8 +7,8 @@
     <ProjectGuid>{08106E56-C685-4860-AF3A-396DD9333299}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Protocal</RootNamespace>
-    <AssemblyName>Protocal</AssemblyName>
+    <RootNamespace>Protocol</RootNamespace>
+    <AssemblyName>Protocol</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -51,12 +51,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DineForPrintingProtocal.cs" />
+    <Compile Include="DineForPrintingProtocol.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="JsonFunctionProtocals.cs" />
-    <Compile Include="TcpProtocal.cs" />
-    <Compile Include="TcpServerStatusProtocal.cs" />
-    <Compile Include="WebSocketProtocal.cs" />
+    <Compile Include="JsonFunctionProtocols.cs" />
+    <Compile Include="TcpProtocol.cs" />
+    <Compile Include="TcpServerStatusProtocol.cs" />
+    <Compile Include="WebSocketProtocol.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HotelDAOModels\HotelDAOModels.csproj">

@@ -1,5 +1,5 @@
 ﻿using HotelDAO.Models;
-using Protocal;
+using Protocol;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;

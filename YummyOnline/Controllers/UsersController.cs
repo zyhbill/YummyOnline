@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using YummyOnlineDAO.Models;
-using Protocal;
+using Protocol;
 
 namespace YummyOnline.Controllers {
 	[Authorize(Roles = nameof(Role.Admin))]

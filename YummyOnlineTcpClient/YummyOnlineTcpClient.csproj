@@ -76,9 +76,9 @@
       <Project>{c7df2c8c-8edb-4cb0-a384-412ec7b8b14f}</Project>
       <Name>AsynchronousTcp</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Protocal\Protocal.csproj">
+    <ProjectReference Include="..\Protocol\Protocol.csproj">
       <Project>{08106e56-c685-4860-af3a-396dd9333299}</Project>
-      <Name>Protocal</Name>
+      <Name>Protocol</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

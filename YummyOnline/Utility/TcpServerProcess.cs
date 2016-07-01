@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Protocal;
+using Protocol;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -67,14 +67,14 @@ namespace YummyOnline.Utility {
 				statusStr = System.IO.File.ReadAllText(config.TcpServerDir + @"\status.json");
 			}
 			catch { }
-			TcpServerStatusProtocal status = JsonConvert.DeserializeObject<TcpServerStatusProtocal>(statusStr);
+			TcpServerStatusProtocol status = JsonConvert.DeserializeObject<TcpServerStatusProtocol>(statusStr);
 
 			return new {
 				ProcessName = process.ProcessName,
 				StartTime = process.StartTime,
 				Memory = curpcp.NextValue() / (1024 * 1024),
 				Cpu = curtime.NextValue() / Environment.ProcessorCount,
-				Status = JsonConvert.DeserializeObject<TcpServerStatusProtocal>(statusStr)
+				Status = JsonConvert.DeserializeObject<TcpServerStatusProtocol>(statusStr)
 			};
 		}
 	}

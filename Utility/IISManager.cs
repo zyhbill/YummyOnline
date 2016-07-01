@@ -12,7 +12,7 @@ namespace Utility {
 			public string Name { get; set; }
 			public string PhysicalPath { get; set; }
 			public string ApplicationPoolName { get; set; }
-			public string Protocal { get; set; }
+			public string Protocol { get; set; }
 			public bool AutoStart { get; set; }
 			public string State { get; set; }
 			public string Address { get; set; }
@@ -35,15 +35,15 @@ namespace Utility {
 			List<SiteInfo> infos = new List<SiteInfo>();
 
 			foreach(Site s in sm.Sites.OrderBy(p => p.Id)) {
-				string protocal = s.Bindings[0].Protocol;
+				string protocol = s.Bindings[0].Protocol;
 				SiteInfo info = new SiteInfo {
 					Id = s.Id,
 					Name = s.Name,
 					PhysicalPath = s.Applications[0].VirtualDirectories["/"].PhysicalPath,
 					ApplicationPoolName = s.Applications[0].ApplicationPoolName,
-					Protocal = s.Bindings[0].Protocol
+					Protocol = s.Bindings[0].Protocol
 				};
-				if(protocal == "http") {
+				if(protocol == "http") {
 					info.State = s.State.ToString();
 					info.Address = s.Bindings[0].EndPoint.Address.ToString();
 					info.Port = s.Bindings[0].EndPoint.Port;

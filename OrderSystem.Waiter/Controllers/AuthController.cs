@@ -1,5 +1,5 @@
 ﻿using System.Web.Mvc;
-using Protocal;
+using Protocol;
 
 namespace OrderSystem.Waiter.Controllers {
 	public class AuthController : BaseWaiterController {

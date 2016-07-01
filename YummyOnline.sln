@@ -15,7 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YummyOnlineTcpClient", "Yum
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoPrinter", "AutoPrinter\AutoPrinter.csproj", "{5F642D99-C4A1-4DA6-9C19-1FA8CE0B4740}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocal", "Protocal\Protocal.csproj", "{08106E56-C685-4860-AF3A-396DD9333299}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol", "Protocol\Protocol.csproj", "{08106E56-C685-4860-AF3A-396DD9333299}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TCP", "TCP", "{088B6A77-501B-439B-9236-5534BC0A6B1A}"
 EndProject

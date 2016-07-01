@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Protocal {
+namespace Protocol {
 	public class JsonError {
 		public JsonError() { }
 		public JsonError(string errorMessage) {

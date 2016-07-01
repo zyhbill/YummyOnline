@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using System.Web.Mvc;
 using YummyOnlineDAO.Models;
-using Protocal;
+using Protocol;
 
 namespace YummyOnline.Controllers {
 	public class ErrorController : BaseController {

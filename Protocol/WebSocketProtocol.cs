@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Protocal {
+namespace Protocol {
 	public class SitePerformance {
 		public string Name { get; set; }
 		public float CurrentConnections { get; set; }
 	}
-	public class WebSocketProtocal {
+	public class WebSocketProtocol {
 		public DateTime DateTime { get; set; } = DateTime.Now;
 		public float CpuTime { get; set; }
 		public float DiskIdle { get; set; }

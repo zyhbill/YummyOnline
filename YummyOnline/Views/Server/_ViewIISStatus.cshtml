@@ -26,18 +26,18 @@
 				<td>{{site.Name}}</td>
 				<td>{{site.ApplicationPoolName}}</td>
 				<td>{{site.PhysicalPath}}</td>
-				<td>{{site.Protocal}}</td>
+				<td>{{site.Protocol}}</td>
 
-				<td ng-if="site.Protocal=='ftp'" colspan="5"></td>
-				<td ng-if="site.Protocal!='ftp'">{{site.Address}}</td>
-				<td ng-if="site.Protocal!='ftp'">{{site.Port}}</td>
-				<td ng-if="site.Protocal!='ftp'">{{site.Host}}</td>
-				<td ng-if="site.Protocal!='ftp'">{{site.State}}</td>
+				<td ng-if="site.Protocol=='ftp'" colspan="5"></td>
+				<td ng-if="site.Protocol!='ftp'">{{site.Address}}</td>
+				<td ng-if="site.Protocol!='ftp'">{{site.Port}}</td>
+				<td ng-if="site.Protocol!='ftp'">{{site.Host}}</td>
+				<td ng-if="site.Protocol!='ftp'">{{site.State}}</td>
 				@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin))) {
-					<td class="text-right" ng-if="site.State == 'Started' && site.Protocal!='ftp'">
+					<td class="text-right" ng-if="site.State == 'Started' && site.Protocol!='ftp'">
 						<button class="btn btn-danger" ng-click="stopSite(site.Id)">关闭</button>
 					</td>
-					<td class="text-right" ng-if="site.State == 'Stopped' && site.Protocal!='ftp'">
+					<td class="text-right" ng-if="site.State == 'Stopped' && site.Protocol!='ftp'">
 						<button class="btn btn-primary" ng-click="startSite(site.Id)">开启</button>
 					</td>
 				}

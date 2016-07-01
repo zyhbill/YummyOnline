@@ -61,8 +61,8 @@ namespace OrderSystem {
 
 	// 打印协议相关
 	public partial class HotelManager {
-		public async Task<Protocal.PrintingProtocal.PrinterFormat> GetPrinterFormatForPrinting() {
-			return await ctx.PrinterFormats.Select(p => new Protocal.PrintingProtocal.PrinterFormat {
+		public async Task<Protocol.PrintingProtocol.PrinterFormat> GetPrinterFormatForPrinting() {
+			return await ctx.PrinterFormats.Select(p => new Protocol.PrintingProtocol.PrinterFormat {
 				Font = p.Font,
 				PaperSize = p.PaperSize,
 				ReciptBigFontSize = p.ReciptBigFontSize,
@@ -77,7 +77,7 @@ namespace OrderSystem {
 				ShiftSmallFontSize = p.ShiftSmallFontSize,
 			}).FirstOrDefaultAsync();
 		}
-		public async Task<Protocal.PrintingProtocal.Dine> GetDineForPrintingById(string dineId, List<int> dineMenuIds = null) {
+		public async Task<Protocol.PrintingProtocol.Dine> GetDineForPrintingById(string dineId, List<int> dineMenuIds = null) {
 			var dine = await formatDineForPrinting(ctx.Dines
 					.Where(p => p.Id == dineId))
 					.FirstOrDefaultAsync();
@@ -90,7 +90,7 @@ namespace OrderSystem {
 				if(dineMenu.Menu.IsSetMeal) {
 					dineMenu.Menu.SetMealMenus = await ctx.MenuSetMeals
 					.Where(p => p.MenuSetId == dineMenu.Menu.Id)
-					.Select(p => new Protocal.PrintingProtocal.SetMealMenu {
+					.Select(p => new Protocol.PrintingProtocol.SetMealMenu {
 						Id = p.Menu.Id,
 						Name = p.Menu.Name,
 						Count = p.Count
@@ -100,8 +100,8 @@ namespace OrderSystem {
 			return dine;
 		}
 
-		private IQueryable<Protocal.PrintingProtocal.Dine> formatDineForPrinting(IQueryable<Dine> dine) {
-			return dine.Select(p => new Protocal.PrintingProtocal.Dine {
+		private IQueryable<Protocol.PrintingProtocol.Dine> formatDineForPrinting(IQueryable<Dine> dine) {
+			return dine.Select(p => new Protocol.PrintingProtocol.Dine {
 				Id = p.Id,
 				Status = p.Status,
 				Type = p.Type,
@@ -116,73 +116,73 @@ namespace OrderSystem {
 				IsPaid = p.IsPaid,
 				IsOnline = p.IsOnline,
 				UserId = p.UserId,
-				Waiter = new Protocal.PrintingProtocal.Staff {
+				Waiter = new Protocol.PrintingProtocol.Staff {
 					Id = p.Waiter.Id,
 					Name = p.Waiter.Name
 				},
-				Clerk = new Protocal.PrintingProtocal.Staff {
+				Clerk = new Protocol.PrintingProtocol.Staff {
 					Id = p.Clerk.Id,
 					Name = p.Clerk.Name
 				},
-				Remarks = p.Remarks.Select(pp => new Protocal.PrintingProtocal.Remark {
+				Remarks = p.Remarks.Select(pp => new Protocol.PrintingProtocol.Remark {
 					Id = pp.Id,
 					Name = pp.Name,
 					Price = pp.Price
 				}).ToList(),
-				Desk = new Protocal.PrintingProtocal.Desk {
+				Desk = new Protocol.PrintingProtocol.Desk {
 					Id = p.Desk.Id,
 					QrCode = p.Desk.QrCode,
 					Name = p.Desk.Name,
 					Description = p.Desk.Description,
-					ReciptPrinter = new Protocal.PrintingProtocal.Printer {
+					ReciptPrinter = new Protocol.PrintingProtocol.Printer {
 						Id = p.Desk.Area.DepartmentRecipt.Printer.Id,
 						Name = p.Desk.Area.DepartmentRecipt.Printer.Name,
 						IpAddress = p.Desk.Area.DepartmentRecipt.Printer.IpAddress,
 						Usable = p.Desk.Area.DepartmentRecipt.Printer.Usable
 					},
-					ServePrinter = new Protocal.PrintingProtocal.Printer {
+					ServePrinter = new Protocol.PrintingProtocol.Printer {
 						Id = p.Desk.Area.DepartmentServe.Printer.Id,
 						Name = p.Desk.Area.DepartmentServe.Printer.Name,
 						IpAddress = p.Desk.Area.DepartmentServe.Printer.IpAddress,
 						Usable = p.Desk.Area.DepartmentServe.Printer.Usable
 					}
 				},
-				DineMenus = p.DineMenus.Select(d => new Protocal.PrintingProtocal.DineMenu {
+				DineMenus = p.DineMenus.Select(d => new Protocol.PrintingProtocol.DineMenu {
 					Id = d.Id,
 					Status = d.Status,
 					Count = d.Count,
 					OriPrice = d.OriPrice,
 					Price = d.Price,
 					RemarkPrice = d.RemarkPrice,
-					Remarks = d.Remarks.Select(r => new Protocal.PrintingProtocal.Remark {
+					Remarks = d.Remarks.Select(r => new Protocol.PrintingProtocol.Remark {
 						Id = r.Id,
 						Name = r.Name,
 						Price = r.Price
 					}).ToList(),
-					Menu = new Protocal.PrintingProtocal.Menu {
+					Menu = new Protocol.PrintingProtocol.Menu {
 						Id = d.Menu.Id,
 						Code = d.Menu.Code,
 						Name = d.Menu.Name,
 						NameAbbr = d.Menu.NameAbbr,
 						Unit = d.Menu.Unit,
 						IsSetMeal = d.Menu.IsSetMeal,
-						Printer = new Protocal.PrintingProtocal.Printer {
+						Printer = new Protocol.PrintingProtocol.Printer {
 							Id = d.Menu.Department.Printer.Id,
 							Name = d.Menu.Department.Printer.Name,
 							IpAddress = d.Menu.Department.Printer.IpAddress,
 							Usable = d.Menu.Department.Printer.Usable
 						}
 					},
-					ReturnedWaiter = new Protocal.PrintingProtocal.Staff {
+					ReturnedWaiter = new Protocol.PrintingProtocol.Staff {
 						Id = d.ReturnedWaiter.Id,
 						Name = d.ReturnedWaiter.Name
 					},
 					ReturnedReason = d.ReturnedReason
 				}).ToList(),
-				DinePaidDetails = p.DinePaidDetails.Select(d => new Protocal.PrintingProtocal.DinePaidDetail {
+				DinePaidDetails = p.DinePaidDetails.Select(d => new Protocol.PrintingProtocol.DinePaidDetail {
 					Price = d.Price,
 					RecordId = d.RecordId,
-					PayKind = new Protocal.PrintingProtocal.PayKind {
+					PayKind = new Protocol.PrintingProtocol.PayKind {
 						Id = d.PayKind.Id,
 						Name = d.PayKind.Name,
 						Type = d.PayKind.Type
@@ -195,7 +195,7 @@ namespace OrderSystem {
 		public async Task<string> GetShiftPrinterName() {
 			return await ctx.HotelConfigs.Select(p => p.ShiftPrinter.Name).FirstOrDefaultAsync();
 		}
-		public async Task<List<Protocal.PrintingProtocal.Shift>> GetShiftsForPrinting(List<int> ids, DateTime dateTime) {
+		public async Task<List<Protocol.PrintingProtocol.Shift>> GetShiftsForPrinting(List<int> ids, DateTime dateTime) {
 			var dbShifts = await ctx.Shifts.Where(p => ids.Contains(p.Id) && SqlFunctions.DateDiff("day", p.DateTime, dateTime) == 0)
 				.Select(p => new {
 					p.Id,
@@ -206,17 +206,17 @@ namespace OrderSystem {
 				})
 				.ToListAsync();
 
-			List<Protocal.PrintingProtocal.Shift> shifts = new List<Protocal.PrintingProtocal.Shift>();
+			List<Protocol.PrintingProtocol.Shift> shifts = new List<Protocol.PrintingProtocol.Shift>();
 
 			while(dbShifts.Count != 0) {
-				Protocal.PrintingProtocal.Shift shift = new Protocal.PrintingProtocal.Shift {
+				Protocol.PrintingProtocol.Shift shift = new Protocol.PrintingProtocol.Shift {
 					Id = dbShifts[0].Id,
 					DateTime = dbShifts[0].DateTime,
-					ShiftDetails = new List<Protocal.PrintingProtocal.ShiftDetail>()
+					ShiftDetails = new List<Protocol.PrintingProtocol.ShiftDetail>()
 				};
 				shift.ShiftDetails = dbShifts
 					.Where(p => p.Id == shift.Id && p.DateTime == shift.DateTime)
-					.Select(p => new Protocal.PrintingProtocal.ShiftDetail {
+					.Select(p => new Protocol.PrintingProtocol.ShiftDetail {
 						PayKind = p.Name,
 						RealPrice = p.RealPrice,
 						ReceivablePrice = p.ReceivablePrice

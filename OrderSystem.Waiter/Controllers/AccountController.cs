@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
-using Protocal;
+using Protocol;
 
 namespace OrderSystem.Waiter.Controllers {
 	public class AccountController : BaseWaiterController {

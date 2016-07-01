@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Protocal.PrintingProtocal {
+namespace Protocol.PrintingProtocol {
 	public class Dine {
 		public string Id { get; set; }
 		public DineStatus Status { get; set; }

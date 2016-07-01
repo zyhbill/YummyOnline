@@ -7,7 +7,7 @@ using Fleck;
 using YummyOnlineDAO.Models;
 using System.Timers;
 using Utility;
-using Protocal;
+using Protocol;
 using System.Diagnostics;
 using Newtonsoft.Json;
 using System.Runtime.InteropServices;
@@ -64,21 +64,21 @@ namespace YummyOnlineTcpServer {
 		}
 
 		private void Timer_Elapsed(object sender, ElapsedEventArgs e) {
-			WebSocketProtocal protocal = new WebSocketProtocal();
+			WebSocketProtocol protocol = new WebSocketProtocol();
 
-			protocal.CpuTime = cputime.NextValue();
-			protocal.DiskIdle = diskIdle.NextValue();
-			protocal.MemoryUsage = memoryCounter.NextValue() / 1024 / memorySize * 100;
+			protocol.CpuTime = cputime.NextValue();
+			protocol.DiskIdle = diskIdle.NextValue();
+			protocol.MemoryUsage = memoryCounter.NextValue() / 1024 / memorySize * 100;
 
 			siteCurrentConnections.ForEach(s => {
-				protocal.SitePerformances.Add(new SitePerformance {
+				protocol.SitePerformances.Add(new SitePerformance {
 					Name = s.InstanceName,
 					CurrentConnections = s.NextValue()
 				});
 			});
 
 			AllSockets.ForEach(s => {
-				s.Send(JsonConvert.SerializeObject(protocal));
+				s.Send(JsonConvert.SerializeObject(protocol));
 			});
 		}
 	}

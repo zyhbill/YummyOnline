@@ -5,7 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Protocal {
+namespace Protocol {
 	public class ClientStatus {
 		public string IpAddress { get; set; }
 		public int Port { get; set; }
@@ -22,7 +22,7 @@ namespace Protocal {
 		public int HotelId { get; set; }
 		public int WaitedCount { get; set; }
 	}
-	public class TcpServerStatusProtocal {
+	public class TcpServerStatusProtocol {
 		public List<ClientStatus> WaitingForVerificationClients { get; set; } = new List<ClientStatus>();
 		public List<NewDineInformClientStatus> NewDineInformClients { get; set; } = new List<NewDineInformClientStatus>();
 		public List<PrinterClientStatus> PrinterClients { get; set; } = new List<PrinterClientStatus>();

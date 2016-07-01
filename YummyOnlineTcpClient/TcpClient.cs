@@ -1,6 +1,6 @@
 ﻿using AsynchronousTcp;
 using Newtonsoft.Json;
-using Protocal;
+using Protocol;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -11,13 +11,13 @@ namespace YummyOnlineTcpClient {
 	public class TcpClient {
 		private IPAddress ip;
 		private int port;
-		private BaseTcpProtocal connectSender;
+		private BaseTcpProtocol connectSender;
 
 		private TcpManager tcp;
 		private System.Net.Sockets.TcpClient client = null;
 		private int heartAlive = 0;
 
-		private Queue<BaseTcpProtocal> waitedQueue = new Queue<BaseTcpProtocal>();
+		private Queue<BaseTcpProtocol> waitedQueue = new Queue<BaseTcpProtocol>();
 
 		/// <summary>
 		/// 连接成功回调函数
@@ -28,7 +28,7 @@ namespace YummyOnlineTcpClient {
 		/// </summary>
 		public Action<Exception> CallBackWhenExceptionOccured = null;
 		/// <summary>
-		/// 接收到信息回调函数(TcpProtocalType, Protocal)
+		/// 接收到信息回调函数(TcpProtocolType, Protocol)
 		/// </summary>
 		public Action<string, object> CallBackWhenMessageReceived = null;
 		/// <summary>
@@ -43,7 +43,7 @@ namespace YummyOnlineTcpClient {
 		/// <param name="ip">ip地址</param>
 		/// <param name="port">端口</param>
 		/// <param name="connectSender">连接完成发送的身份信息</param>
-		public TcpClient(IPAddress ip, int port, BaseTcpProtocal connectSender) {
+		public TcpClient(IPAddress ip, int port, BaseTcpProtocol connectSender) {
 			this.ip = ip;
 			this.port = port;
 			this.connectSender = connectSender;
@@ -51,23 +51,23 @@ namespace YummyOnlineTcpClient {
 			tcp = new TcpManager();
 			tcp.MessageReceivedEvent += (client, content) => {
 				try {
-					BaseTcpProtocal p = JsonConvert.DeserializeObject<BaseTcpProtocal>(content);
+					BaseTcpProtocol p = JsonConvert.DeserializeObject<BaseTcpProtocol>(content);
 
 					object obj = null;
 					switch(p.Type) {
-						case TcpProtocalType.HeartBeat:
+						case TcpProtocolType.HeartBeat:
 							// 如果接收到心跳包, 则发送心跳包
 							heartAlive = 0;
-							var _ = tcp.Send(client, JsonConvert.SerializeObject(new HeartBeatProtocal()), null);
+							var _ = tcp.Send(client, JsonConvert.SerializeObject(new HeartBeatProtocol()), null);
 							return;
-						case TcpProtocalType.NewDineInform:
-							obj = JsonConvert.DeserializeObject<NewDineInformProtocal>(content);
+						case TcpProtocolType.NewDineInform:
+							obj = JsonConvert.DeserializeObject<NewDineInformProtocol>(content);
 							break;
-						case TcpProtocalType.PrintDine:
-							obj = JsonConvert.DeserializeObject<PrintDineProtocal>(content);
+						case TcpProtocolType.PrintDine:
+							obj = JsonConvert.DeserializeObject<PrintDineProtocol>(content);
 							break;
-						case TcpProtocalType.PrintShifts:
-							obj = JsonConvert.DeserializeObject<PrintShiftsProtocal>(content);
+						case TcpProtocolType.PrintShifts:
+							obj = JsonConvert.DeserializeObject<PrintShiftsProtocol>(content);
 							break;
 					}
 
@@ -124,7 +124,7 @@ namespace YummyOnlineTcpClient {
 		/// 发送tcp协议
 		/// </summary>
 		/// <param name="p">协议</param>
-		public void Send(BaseTcpProtocal p, Action callBack = null) {
+		public void Send(BaseTcpProtocol p, Action callBack = null) {
 			if(client == null) {
 				waitedQueue.Enqueue(p);
 				return;

@@ -1,6 +1,6 @@
 ﻿using HotelDAO.Models;
 using Management.Models;
-using Protocal;
+using Protocol;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -30,18 +30,18 @@ namespace Management
             client = new TcpClient(
                IPAddress.Parse(tcp.FirstOrDefault()?.TcpServerIp),
                tcp.FirstOrDefault().TcpServerPort,
-               new NewDineInformClientConnectProtocal(guid)
+               new NewDineInformClientConnectProtocol(guid)
            );
             client.CallBackWhenMessageReceived = async (t, p) =>
             {
-                if (t != TcpProtocalType.NewDineInform)
+                if (t != TcpProtocolType.NewDineInform)
                 {
                     return;
                 }
-                NewDineInformProtocal protocal = (NewDineInformProtocal)p;
-                string Cstr = await (db.Hotels.Where(h => h.Id == protocal.HotelId).Select(h => h.ConnectionString)).FirstOrDefaultAsync();
+                NewDineInformProtocol protocol = (NewDineInformProtocol)p;
+                string Cstr = await (db.Hotels.Where(h => h.Id == protocol.HotelId).Select(h => h.ConnectionString)).FirstOrDefaultAsync();
                 var hotel = new HotelContext(Cstr);
-                var temp = await hotel.Dines.Where(dine => dine.Id == protocal.DineId).Select(dine => new { dine.DeskId, dine.IsOnline }).FirstOrDefaultAsync();
+                var temp = await hotel.Dines.Where(dine => dine.Id == protocol.DineId).Select(dine => new { dine.DeskId, dine.IsOnline }).FirstOrDefaultAsync();
                 if (!temp.IsOnline)
                 {
                     var desk = hotel.Desks.FirstOrDefault(d => d.Id == temp.DeskId);
@@ -52,8 +52,8 @@ namespace Management
                         desk.Status = DeskStatus.StandBy;
                     }
                     hotel.SaveChanges();
-                    await ws.SendToClient(protocal.HotelId, "desk");
-                    await ws.SendToClient(protocal.HotelId, "dine");
+                    await ws.SendToClient(protocol.HotelId, "desk");
+                    await ws.SendToClient(protocol.HotelId, "dine");
                 }
             };
 

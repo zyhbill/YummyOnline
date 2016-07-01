@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using YummyOnlineDAO.Identity;
 using YummyOnlineDAO.Models;
-using Protocal;
+using Protocol;
 using System.Collections.Generic;
 
 namespace OrderSystem.Controllers {

@@ -2,7 +2,7 @@
 using HotelDAO.Models;
 using Newtonsoft.Json;
 using OrderSystem.Models;
-using Protocal;
+using Protocol;
 using System;
 using System.Collections.Generic;
 using System.Linq;

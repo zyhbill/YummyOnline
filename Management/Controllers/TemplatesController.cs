@@ -11,7 +11,7 @@ using System.Data.Entity;
 using Newtonsoft.Json;
 using YummyOnlineDAO.Models;
 using Management.Models;
-using Protocal;
+using Protocol;
 using System.Data.Entity.SqlServer;
 
 namespace Management.Controllers
@@ -272,13 +272,13 @@ namespace Management.Controllers
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, dine.Id, new List<int>(), new List<PrintType>() { PrintType.Recipt }));
+                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, dine.Id, new List<int>(), new List<PrintType>() { PrintType.Recipt }));
             }
             catch
             {
 
             }
-            MvcApplication.client.Send(new NewDineInformProtocal((int)(Session["User"] as RStatus).HotelId, dine.Id, true));
+            MvcApplication.client.Send(new NewDineInformProtocol((int)(Session["User"] as RStatus).HotelId, dine.Id, true));
             var CurDesk = dine.DeskId;
             var CleanDeskDine = db.Dines.Where(d => d.IsPaid == false && d.IsOnline == false && d.DeskId == CurDesk).Count();
             if (CleanDeskDine == 0)
@@ -420,7 +420,7 @@ namespace Management.Controllers
                 try
                 {
                     var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                    if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, pd.Data, new List<int>(), new List<PrintType>() { PrintType.Recipt, PrintType.KitchenOrder, PrintType.ServeOrder }));
+                    if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, pd.Data, new List<int>(), new List<PrintType>() { PrintType.Recipt, PrintType.KitchenOrder, PrintType.ServeOrder }));
                 }
                 catch
                 {
@@ -551,7 +551,7 @@ namespace Management.Controllers
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>() { Id }, new List<PrintType>() { PrintType.KitchenOrder }));
+                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>() { Id }, new List<PrintType>() { PrintType.KitchenOrder }));
             }
             catch
             {
@@ -744,7 +744,7 @@ namespace Management.Controllers
             {
                 Date = Convert.ToDateTime(Time);
             }
-            MvcApplication.client.Send(new RequestPrintShiftsProtocal((int)(Session["User"] as RStatus).HotelId,frequencies,Date));
+            MvcApplication.client.Send(new RequestPrintShiftsProtocol((int)(Session["User"] as RStatus).HotelId,frequencies,Date));
             return null;
         }
 
@@ -787,7 +787,7 @@ namespace Management.Controllers
                 dine.Status = DineStatus.Shifted;
                 db.SaveChanges();
             }
-            MvcApplication.client.Send(new RequestPrintShiftsProtocal((int)(Session["User"] as RStatus).HotelId, new List<int>() { Id }, DateTime.Now));
+            MvcApplication.client.Send(new RequestPrintShiftsProtocol((int)(Session["User"] as RStatus).HotelId, new List<int>() { Id }, DateTime.Now));
             return Json(new { Succeeded = true });
         }
 
@@ -886,12 +886,12 @@ namespace Management.Controllers
                 {
                     if (Type == (int)ManagePrintType.Recipt)
                     {
-                        MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>(), new List<PrintType>() { PrintType.Recipt }));
+                        MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>(), new List<PrintType>() { PrintType.Recipt }));
 
                     }
                     else if (Type == (int)ManagePrintType.Kitchen)
                     {
-                        MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>(), new List<PrintType>() { PrintType.KitchenOrder, PrintType.ServeOrder }));
+                        MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>(), new List<PrintType>() { PrintType.KitchenOrder, PrintType.ServeOrder }));
                     }
                 }
 
@@ -980,7 +980,7 @@ namespace Management.Controllers
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocal((int)(Session["User"] as RStatus).HotelId
+                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId
                     , dine.Id, menus
                     , new List<PrintType>() { PrintType.KitchenOrder, PrintType.ServeOrder }));
             }

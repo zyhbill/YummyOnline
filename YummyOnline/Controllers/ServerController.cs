@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Web.Mvc;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
-using Protocal;
+using Protocol;
 using Newtonsoft.Json;
 using Utility;
 using YummyOnline.Utility;

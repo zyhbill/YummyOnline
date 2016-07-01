@@ -128,9 +128,9 @@
       <Project>{c9f71545-1363-4ad1-b50b-dc903fd66770}</Project>
       <Name>HotelDAOModels</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Protocal\Protocal.csproj">
+    <ProjectReference Include="..\Protocol\Protocol.csproj">
       <Project>{08106e56-c685-4860-af3a-396dd9333299}</Project>
-      <Name>Protocal</Name>
+      <Name>Protocol</Name>
     </ProjectReference>
     <ProjectReference Include="..\Utility\Utility.csproj">
       <Project>{8b2af470-27a1-4dc9-b228-0942dc9e85a1}</Project>

@@ -1,7 +1,7 @@
 ﻿using HotelDAO.Models;
 using Newtonsoft.Json;
-using Protocal;
-using Protocal.PrintingProtocal;
+using Protocol;
+using Protocol.PrintingProtocol;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -31,16 +31,16 @@ namespace AutoPrinter {
 			TcpClient tcp = new TcpClient(
 				IPAddress.Parse(tcpServerIp),
 				tcpServerPort,
-				new PrintDineClientConnectProtocal(hotelId)
+				new PrintDineClientConnectProtocol(hotelId)
 			);
 			tcp.CallBackWhenMessageReceived = async (t, p) => {
-				if(t == TcpProtocalType.PrintDine) {
-					PrintDineProtocal protocal = (PrintDineProtocal)p;
-					await printDine(protocal.DineId, protocal.DineMenuIds, protocal.PrintTypes);
+				if(t == TcpProtocolType.PrintDine) {
+					PrintDineProtocol protocol = (PrintDineProtocol)p;
+					await printDine(protocol.DineId, protocol.DineMenuIds, protocol.PrintTypes);
 				}
-				else if(t == TcpProtocalType.PrintShifts) {
-					PrintShiftsProtocal protocal = (PrintShiftsProtocal)p;
-					await printShifts(protocal.Ids, protocal.DateTime);
+				else if(t == TcpProtocolType.PrintShifts) {
+					PrintShiftsProtocol protocol = (PrintShiftsProtocol)p;
+					await printShifts(protocol.Ids, protocol.DateTime);
 				}
 			};
 			tcp.CallBackWhenConnected = () => {
@@ -158,10 +158,10 @@ namespace AutoPrinter {
 			if(response == null)
 				return null;
 
-			DineForPrinting protocal = JsonConvert.DeserializeObject<DineForPrinting>(response);
-			if(protocal.Hotel == null)
+			DineForPrinting protocol = JsonConvert.DeserializeObject<DineForPrinting>(response);
+			if(protocol.Hotel == null)
 				return null;
-			return protocal;
+			return protocol;
 		}
 		static async Task<ShiftForPrinting> getShiftsForPrinting(List<int> ids, DateTime dateTime) {
 			object postData = new {
@@ -173,9 +173,9 @@ namespace AutoPrinter {
 			if(response == null)
 				return null;
 
-			ShiftForPrinting protocal = JsonConvert.DeserializeObject<ShiftForPrinting>(response);
+			ShiftForPrinting protocol = JsonConvert.DeserializeObject<ShiftForPrinting>(response);
 
-			return protocal;
+			return protocol;
 		}
 
 		static void printCompleted(string dineId) {

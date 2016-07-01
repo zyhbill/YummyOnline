@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
 using Newtonsoft.Json;
-using Protocal;
+using Protocol;
 using System.Threading;
 
 namespace YummyOnlineTcpServer {
@@ -35,7 +35,7 @@ namespace YummyOnlineTcpServer {
 			}
 		}
 
-		static async void clientsStatusChange(TcpServerStatusProtocal status) {
+		static async void clientsStatusChange(TcpServerStatusProtocol status) {
 			fileWritten.WaitOne();
 			try {
 				SystemConfig config = await new YummyOnlineManager().GetSystemConfig();

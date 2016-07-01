@@ -1,5 +1,5 @@
 ﻿using System.Web.Mvc;
-using Protocal;
+using Protocol;
 
 namespace YummyOnline.Controllers {
 	public class AuthController : BaseController {

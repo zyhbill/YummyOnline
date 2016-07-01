@@ -1,6 +1,6 @@
 ﻿using HotelDAO.Models;
 using OrderSystem.Models;
-using Protocal;
+using Protocol;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web.Mvc;

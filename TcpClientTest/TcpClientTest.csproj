@@ -82,9 +82,9 @@
       <Project>{b17fc72a-8690-4072-b49f-ec98ab59f944}</Project>
       <Name>HotelDAO</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Protocal\Protocal.csproj">
+    <ProjectReference Include="..\Protocol\Protocol.csproj">
       <Project>{08106e56-c685-4860-af3a-396dd9333299}</Project>
-      <Name>Protocal</Name>
+      <Name>Protocol</Name>
     </ProjectReference>
     <ProjectReference Include="..\YummyOnlineDAOModels\YummyOnlineDAOModels.csproj">
       <Project>{3625134d-bf70-4481-a2e8-4150256def32}</Project>

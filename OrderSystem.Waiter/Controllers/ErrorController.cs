@@ -1,4 +1,4 @@
-﻿using Protocal;
+﻿using Protocol;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using YummyOnlineDAO.Models;

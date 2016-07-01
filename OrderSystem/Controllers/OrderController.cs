@@ -73,12 +73,12 @@ namespace OrderSystem.Controllers {
 }
 
 namespace OrderSystem.Controllers {
-	using Protocal.PrintingProtocal;
+	using Protocol.PrintingProtocol;
 
 	public class OrderForPrintingController : BaseOrderSystemController {
 		public async Task<JsonResult> GetDineForPrinting(int hotelId, string dineId, List<int> dineMenuIds) {
 			if(dineId == "00000000000000") {
-				return Json(generateTestProtocal());
+				return Json(generateTestProtocol());
 			}
 
 			string connStr = await YummyOnlineManager.GetHotelConnectionStringById(hotelId);
@@ -96,7 +96,7 @@ namespace OrderSystem.Controllers {
 			});
 		}
 
-		private DineForPrinting generateTestProtocal() {
+		private DineForPrinting generateTestProtocol() {
 			DineForPrinting p = new DineForPrinting {
 				Hotel = new Hotel {
 					Id = 1,

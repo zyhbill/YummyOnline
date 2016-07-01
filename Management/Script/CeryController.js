@@ -459,7 +459,6 @@
                     // ***UPDATE AVATAR HERE*** //
                     //You can replace the contents of this function with examples/profile-avatar-update.js for actual upload
 
-
                     var deferred = new $.Deferred
 
                     //if value is empty, means no valid files were selected

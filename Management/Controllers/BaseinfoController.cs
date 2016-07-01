@@ -377,9 +377,9 @@ namespace Management.Controllers
                 if (image != null)
                 {
                     string BaseUrl = Method.GetBaseUrl((int)HotelId);
-                    menu.PicturePath = HotelId.ToString() + "/" + Menu.Id + ".png";
+                    menu.PicturePath = HotelId.ToString() + "/" + Menu.Id + ".jpg";
                     Method.SaveImg(menu.Id, image, BaseUrl);
-                    var MenuPlace  = BaseUrl + Menu.Id + ".png";
+                    var MenuPlace  = BaseUrl + Menu.Id + ".jpg";
                     var flag = Method.GetPicThumbnail(MenuPlace, MenuPlace, 200, 300, 50);
                     Method.SaveImg(menu.Id, image, Method.MyGetBaseUrl((int)HotelId));
                 }
@@ -496,7 +496,7 @@ namespace Management.Controllers
                 if (image != null)
                 {
                     string BaseUrl = Method.GetBaseUrl((int)HotelId);
-                    menu.PicturePath = HotelId.ToString() + "/" + Menu.Id + ".png";
+                    menu.PicturePath = HotelId.ToString() + "/" + Menu.Id + ".jpg";
                     Method.SaveImg(menu.Id, image, BaseUrl);
                     Method.SaveImg(menu.Id, image, Method.MyGetBaseUrl((int)HotelId));
                 }
@@ -767,7 +767,7 @@ namespace Management.Controllers
                     var paths = await db.Menus.Where(m => m.Usable == true).ToListAsync();
                     foreach (var path in paths)
                     {
-                        path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/" + path.Id + ".png";
+                        path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/" + path.Id + ".jpg";
                         db.SaveChanges();
                     }
                 }
@@ -803,7 +803,7 @@ namespace Management.Controllers
                                 me.Code = row[1].ToString();
                                 me.Name = row[2].ToString();
                                 me.NameAbbr = row[3].ToString();
-                                me.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".png";
+                                me.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
                                 me.IsFixed = false;
                                 me.SupplyDate = 127;
                                 me.Unit = row[4].ToString();
@@ -832,7 +832,7 @@ namespace Management.Controllers
                                 clean.Code = row[1].ToString();
                                 clean.Name = row[2].ToString();
                                 clean.NameAbbr = row[3].ToString();
-                                clean.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".png";
+                                clean.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
                                 clean.IsFixed = false;
                                 clean.SupplyDate = 127;
                                 clean.Unit = row[4].ToString();

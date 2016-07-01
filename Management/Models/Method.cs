@@ -116,8 +116,8 @@ namespace Management.Models
             {
                 Directory.CreateDirectory(path);
             }
-            string Url = path + Name + ".png";
-            image.Save(Url, ImageFormat.Png);
+            string Url = path + Name + ".jpg";
+            image.Save(Url, ImageFormat.Jpeg);
         }
         /// <summary>
         /// 二维码解析

@@ -1164,8 +1164,23 @@
             PrinterFormat: {},
             CurrentPrinter: {},
             CurrentFont:{},
-            Fonts: ["宋体", "黑体"],
-            OldFormat:{},
+            Fonts: [{Name:"宋体"}, {Name:"黑体"}],
+            OldFormat: {},
+            CurrentFormat:{
+                KitchenOrderFontSize:0,
+                KitchenOrderSmallFontSize:0,
+                PaperSize:0,
+                ReciptBigFontSize:0,
+                ReciptFontSize:0,
+                ReciptSmallFontSize:0,
+                ServeOrderFontSize:0,
+                ServeOrderSmallFontSize:0,
+                ShiftBigFontSize:0,
+                ShiftFontSize:0,
+                ShiftSmallFontSize:0
+            },
+            UsePrint: true,
+            IsPayFirst:true,
             Rate:0
         },
         Initialize: function () {
@@ -1176,11 +1191,40 @@
                 _this.PrintElement.Printers.forEach(function (x) {
                     if (x.Id == data.AccountPrint) _this.PrintElement.CurrentPrinter = x;
                 })
+                console.log(data);
+                _this.PrintElement.OldFormat = data.font;
+                _this.PrintElement.IsPayFirst = data.IsPayFirst;
+                _this.PrintElement.CurrentFont = { Name: data.font.Font };
+                _this.PrintElement.CurrentFormat = {
+                    KitchenOrderFontSize: data.font.KitchenOrderFontSize,
+                    KitchenOrderSmallFontSize: data.font.KitchenOrderSmallFontSize,
+                    PaperSize: data.font.PaperSize,
+                    ReciptBigFontSize: data.font.ReciptBigFontSize,
+                    ReciptFontSize: data.font.ReciptFontSize,
+                    ReciptSmallFontSize: data.font.ReciptSmallFontSize,
+                    ServeOrderFontSize: data.font.ServeOrderFontSize,
+                    ServeOrderSmallFontSize: data.font.ServeOrderSmallFontSize,
+                    ShiftBigFontSize: data.font.ShiftBigFontSize,
+                    ShiftFontSize: data.font.ShiftFontSize,
+                    ShiftSmallFontSize: data.font.ShiftSmallFontSize
+                }
+                _this.PrintElement.UsePrint = data.IsUsePrinter;
                 _this.PrintElement.Rate = data.Rate;
             });
         },
         changeInfo: function () {
-
+            var _this = this;
+            $http.post('../Baseinfo/ChangePrintFormat', {
+                Format: _this.PrintElement.CurrentFormat,
+                Font: _this.PrintElement.CurrentFont,
+                Rate: _this.PrintElement.Rate,
+                IsUsePrint: _this.PrintElement.UsePrint,
+                ShiftPrintId: _this.PrintElement.CurrentPrinter.Id,
+                IsPayFirst:_this.PrintElement.IsPayFirst
+            }).success(function (data) {
+                $rootScope.IsPayFirst = _this.PrintElement.IsPayFirst;
+                alert("保存成功");
+            })
         }
     }
     return service;

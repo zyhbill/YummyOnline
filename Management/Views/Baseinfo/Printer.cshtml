@@ -51,6 +51,19 @@
                         <label for="form-field-10">选择交接班打印机</label>
                         <select ng-options="print.Name for print  in PrintElement.Printers" ng-model="PrintElement.CurrentPrinter">
                         </select>
+
+                        是否使用打印机:  
+                        <label>
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="PrintElement.UsePrint" />
+                            <span class="lbl">使用网络打印机</span>
+                        </label>
+
+                        <br />
+                        是否为先支付:
+                        <label>
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="PrintElement.IsPayFirst" />
+                            <span class="lbl">先支付</span>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -72,12 +85,36 @@
             <div class="widget-body">
                 <div class="widget-main">
                     <div>
-                        <select ng-options="font  in PrintElement.Fonts track by $index" ng-model="PrintElement.CurrentFont"></select>
+                        选择字体: <select ng-options="font.Name for font  in PrintElement.Fonts track by $index" ng-model="PrintElement.CurrentFont">
+                        </select>
+                        厨房大字号:
+                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.KitchenOrderFontSize"/>
+                        厨房小字号:
+                        <input type="number"  class="FormatPrint" ng-model="PrintElement.CurrentFormat.KitchenOrderSmallFontSize" />
+                        纸张大小:
+                        <input type="number" class="FormatPrint"  ng-model="PrintElement.CurrentFormat.PaperSize" />
+                        收银大字号:
+                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.ReciptFontSize" />
+                        收银小字号:
+                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.ReciptSmallFontSize" />
+                        传菜大字号:
+                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.ServeOrderFontSize" />
+                        传菜小字号:
+                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.ServeOrderSmallFontSize" />
+                        交接班大字号:
+                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.ShiftBigFontSize" />
+                        交接班小字号:
+                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.ShiftSmallFontSize" />
+                        交接班字号:
+                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.ShiftFontSize" />
                     </div>
                 </div>
             </div>
         </div>
-
+        <a href="javascript:;" class="btn btn-app btn-primary btn-xs" ng-click="changeInfo()">
+            <i class="icon-save bigger-230"></i>
+            保存
+        </a>
 
     </div>
 </div>

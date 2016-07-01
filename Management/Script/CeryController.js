@@ -161,18 +161,20 @@
         var promise = option.method.OpenDesk();
         promise.then(function (data) {
             if (data.Succeeded) {
-                var modalInstance = $uibModal.open({//打开支付
-                    animation: $scope.animationsEnabled,
-                    templateUrl: 'ModalPay.html',
-                    controller: 'ModalPayCtrl',
-                    backdrop: 'static',
-                    size: 'lg',
-                    resolve: {
-                        option: {
-                            desk: angular.copy(option.desk), method: option.Pay
+                if ($rootScope.IsPayFirst) {
+                    var modalInstance = $uibModal.open({//打开支付
+                        animation: $scope.animationsEnabled,
+                        templateUrl: 'ModalPay.html',
+                        controller: 'ModalPayCtrl',
+                        backdrop: 'static',
+                        size: 'lg',
+                        resolve: {
+                            option: {
+                                desk: angular.copy(option.desk), method: option.Pay
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 $uibModalInstance.dismiss('cancel');
             } else {
                 alert(data.ErrorMessage);
@@ -201,6 +203,9 @@
     }
     $scope.MenuFilter = function (id) {
         option.method.MenuFilter(id);
+    }
+    $scope.AddSingle = function (menu) {
+        option.method.AddSingle(menu);
     }
     $scope.Filter = function () {
         option.method.Filter();
@@ -389,10 +394,11 @@
 }])
 .controller('BaseCtrl', ['$scope', '$rootScope', '$http', '$window', 'WebSocketService', function ($scope, $rootScope, $http, $window, WebSocketService) {
     //基础控制器
-    $scope.initialize = function (id, rate, pu, a, b, c, d) {
+    $scope.initialize = function (id, rate, pu, a, b, c, d,e) {
         $rootScope.HotelId = id; $rootScope.Rate = rate; $rootScope.PayUnder = pu;
         $rootScope.IsStaffPay = a == 1 ? true : false; $rootScope.IsStaffReturn = b == 1 ? true : false; $rootScope.IsStaffEdit = c == 1 ? true : false;
         $rootScope.WebSocketUrl = d;
+        $rootScope.IsPayFirst = !!e;
         WebSocketService.Start($rootScope.WebSocketUrl);
     }
 
@@ -452,7 +458,6 @@
                 url: function (params) {
                     // ***UPDATE AVATAR HERE*** //
                     //You can replace the contents of this function with examples/profile-avatar-update.js for actual upload
-
 
                     var deferred = new $.Deferred
 
@@ -563,6 +568,9 @@
     $scope.cancel = function () {
         option.method.KeepShift();
         $uibModalInstance.dismiss('cancel');
+    }
+    $scope.AddSingle = function (menu) {
+        option.method.AddSingle(menu);
     }
     $scope.Filter = function () {
         option.method.Filter();

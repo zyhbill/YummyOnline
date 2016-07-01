@@ -6,6 +6,10 @@
     var Port = ctx.SystemConfigs.Select(s => s.ManagementWebSocketPort).FirstOrDefault();
     Url = Url.Replace("http", "ws");
     var WebSocketUrl = Url + ":" + Port.ToString();
+    var HotelId = (int)(Session["User"] as Management.ObjectClasses.RStatus).HotelId;
+    var cns = ctx.Hotels.Where(h => h.Id==HotelId).Select(h => h.ConnectionString).FirstOrDefault();
+    var db = new HotelDAO.Models.HotelContext(cns);
+    var Config = db.HotelConfigs.FirstOrDefault();
 }
 
 <!DOCTYPE html>
@@ -59,13 +63,14 @@
 <body ng-controller="BaseCtrl">
     <div class="navbar navbar-default" id="navbar" ng-init="
          initialize(
-         @(((Session["User"] as Management.ObjectClasses.RStatus)).HotelId)
-         ,@((int)Session["Rate"])
+         @(HotelId)
+         ,@(Config.PointsRatio)
          ,0
          ,@((Session["User"] as Management.ObjectClasses.RStatus).IsStaffPay)
          ,@((Session["User"] as Management.ObjectClasses.RStatus).IsStaffReturn)
          ,@((Session["User"] as Management.ObjectClasses.RStatus).IsStaffEdit)
          ,'@(WebSocketUrl)'
+         ,'@(Config.IsPayFirst)'
          )
          ">
         <script type="text/javascript">

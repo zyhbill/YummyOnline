@@ -523,6 +523,7 @@
             CurrentNum:0,
             isAjax:false
         },
+        tempRemarks:[],
         getElements: function () {
             var _this = this;
             var date = new Date();
@@ -607,6 +608,25 @@
             var _this = this;
             var temp = angular.copy(this.OpenElements.CurrentMenu);
             temp.Remarks = this.OpenElements.CurrentMenuRemarks;
+            if (temp.Id) this.OpenElements.OrderMenus.push(temp);
+            this.OpenElements.OriMenus.forEach(function (x) {
+                x.Click = false;
+                if (x.Id == _this.OpenElements.CurrentMenu.Id) x.Class = true;
+            });
+            this.OpenElements.Menus.forEach(function (x) {
+                x.Click = false;
+                if (x.Id == _this.OpenElements.CurrentMenu.Id) x.Class = true;
+            })
+            this.OpenElements.CurrentMenu = {};
+            this.OpenElements.CurrentMenuRemarks = [];
+            this.OpenElements.FilterInfo = "";
+            this.OpenElements.CurrentFilter = "";
+        },
+        AddSingle:function(menu){
+            var _this = this;
+            var temp = angular.copy(menu);
+            temp.Remarks = [];
+            temp.Num = 1;
             if (temp.Id) this.OpenElements.OrderMenus.push(temp);
             this.OpenElements.OriMenus.forEach(function (x) {
                 x.Click = false;
@@ -843,6 +863,10 @@
         },
         EditMenu: function (menu) {
             var _this = this;
+            this.tempRemarks = angular.copy(menu.Remarks);
+            this.OpenElements.Menus.forEach(function (x) {
+                if (x.Id == menu.Id) _this.OpenElements.CurrentMenu = x;
+            })
             this.OpenElements.CurrentNum = menu.Num;
             menu.IsEdit = true;
         },
@@ -852,6 +876,7 @@
         },
         EditRemove: function (menu) {
             menu.Num = this.OpenElements.CurrentNum;
+            menu.Remarks = this.tempRemarks;
             menu.IsEdit = false;
         },
         CheckAddNum: function (menu) {

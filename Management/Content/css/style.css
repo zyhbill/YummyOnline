@@ -130,7 +130,11 @@ span.money{
     position:relative;
 }
 .CurrentClick{
-    border:1px solid #ec2c2c !important;
+    border:5px solid #ec2c2c !important;
+}
+.EditBtn button{
+    font-size:18px;
+    margin:0 10px;
 }
 .CleanOut{
     cursor:pointer;
@@ -203,6 +207,10 @@ span.money{
     border:1px solid #4c8fbd;
     float:left;
     width:20%;
+}
+.FormatPrint{
+    display:inline-block;
+    width:50px;
 }
 .MenuList:hover{
     opacity:0.8;

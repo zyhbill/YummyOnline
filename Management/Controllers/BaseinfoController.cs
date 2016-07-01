@@ -377,9 +377,9 @@ namespace Management.Controllers
                 if (image != null)
                 {
                     string BaseUrl = Method.GetBaseUrl((int)HotelId);
-                    menu.PicturePath = HotelId.ToString() + "/" + Menu.Id + ".png";
+                    menu.PicturePath = HotelId.ToString() + "/" + Menu.Id + ".jpg";
                     Method.SaveImg(menu.Id, image, BaseUrl);
-                    var MenuPlace  = BaseUrl + Menu.Id + ".png";
+                    var MenuPlace  = BaseUrl + Menu.Id + ".jpg";
                     var flag = Method.GetPicThumbnail(MenuPlace, MenuPlace, 200, 300, 50);
                     Method.SaveImg(menu.Id, image, Method.MyGetBaseUrl((int)HotelId));
                 }
@@ -496,7 +496,7 @@ namespace Management.Controllers
                 if (image != null)
                 {
                     string BaseUrl = Method.GetBaseUrl((int)HotelId);
-                    menu.PicturePath = HotelId.ToString() + "/" + Menu.Id + ".png";
+                    menu.PicturePath = HotelId.ToString() + "/" + Menu.Id + ".jpg";
                     Method.SaveImg(menu.Id, image, BaseUrl);
                     Method.SaveImg(menu.Id, image, Method.MyGetBaseUrl((int)HotelId));
                 }
@@ -767,7 +767,7 @@ namespace Management.Controllers
                     var paths = await db.Menus.Where(m => m.Usable == true).ToListAsync();
                     foreach (var path in paths)
                     {
-                        path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/" + path.Id + ".png";
+                        path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/" + path.Id + ".jpg";
                         db.SaveChanges();
                     }
                 }
@@ -803,7 +803,7 @@ namespace Management.Controllers
                                 me.Code = row[1].ToString();
                                 me.Name = row[2].ToString();
                                 me.NameAbbr = row[3].ToString();
-                                me.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".png";
+                                me.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
                                 me.IsFixed = false;
                                 me.SupplyDate = 127;
                                 me.Unit = row[4].ToString();
@@ -832,7 +832,7 @@ namespace Management.Controllers
                                 clean.Code = row[1].ToString();
                                 clean.Name = row[2].ToString();
                                 clean.NameAbbr = row[3].ToString();
-                                clean.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".png";
+                                clean.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
                                 clean.IsFixed = false;
                                 clean.SupplyDate = 127;
                                 clean.Unit = row[4].ToString();
@@ -1110,7 +1110,32 @@ namespace Management.Controllers
             var format = await db.PrinterFormats.FirstOrDefaultAsync();
             var AccountPrint = await db.HotelConfigs.Select(h => h.ShiftPrinterId).FirstOrDefaultAsync();
             var font = await db.PrinterFormats.FirstOrDefaultAsync();
-            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font });
+            var IsUsePrinter = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
+            var IsPayFirst = await db.HotelConfigs.Select(h => h.IsPayFirst).FirstOrDefaultAsync();
+            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst });
+        }
+
+        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int ShiftPrintId,bool IsPayFirst)
+        {
+            var config = await db.HotelConfigs.FirstOrDefaultAsync();
+            config.PointsRatio = Rate;
+            config.ShiftPrinterId = ShiftPrintId;
+            config.HasAutoPrinter = IsUsePrint;
+            config.IsPayFirst = IsPayFirst;
+            var font = await db.PrinterFormats.FirstOrDefaultAsync();
+            font.KitchenOrderFontSize = Format.KitchenOrderFontSize;
+            font.KitchenOrderSmallFontSize = Format.KitchenOrderSmallFontSize;
+            font.PaperSize = Format.PaperSize;
+            font.ReciptBigFontSize = Format.ReciptBigFontSize;
+            font.ReciptFontSize = Format.ReciptFontSize;
+            font.ReciptSmallFontSize = Format.ReciptSmallFontSize;
+            font.ServeOrderFontSize = Format.ServeOrderFontSize;
+            font.ServeOrderSmallFontSize = Format.ServeOrderSmallFontSize;
+            font.ShiftBigFontSize = Format.ShiftBigFontSize;
+            font.ShiftFontSize = Format.ShiftFontSize;
+            font.ShiftSmallFontSize = Format.ShiftSmallFontSize;
+            db.SaveChanges();
+            return null;
         }
     }
 }

@@ -103,7 +103,7 @@ namespace YummyOnline {
 				KitchenOrderSmallFontSize = 9,
 				ServeOrderFontSize = 9,
 				ServeOrderSmallFontSize = 9
-			});
+			});			
 			await ctx.SaveChangesAsync();
 		}
 	}

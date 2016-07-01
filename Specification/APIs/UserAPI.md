@@ -1,8 +1,12 @@
-### 用户通用API域名
+# 用户APIs
+
+[TOC]
+
+### 域名
 ordersystem.yummyonline.net
 
 ### Updates
-- v0.1.0 用户通用API脱离原有OrderSystem API, 全新API, Controller为GlobalAccount
+- 2016-6-16 用户通用API脱离原有OrderSystem API, 全新API, Controller为GlobalAccount
 
 
 ### 发送用户注册短信

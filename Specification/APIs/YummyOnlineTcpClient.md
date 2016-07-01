@@ -1,6 +1,8 @@
 # YummyOnlineTcpClient
 YummyOnline项目中与Tcp服务器连接交换数据的客户端类库
 
+[TOC]
+
 ## DLLs Intro
 - `AsynchronousTcp.dll`: 异步Tcp的底层实现
 - `Protocal.dll`: 所有协议
@@ -39,7 +41,9 @@ client.Start();
 ```
 
 ## Specification
-### `class TcpClient`
+### *`class TcpClient`*
+
+
 Tcp客户端的核心类
 #### `Constructor`
 
@@ -81,7 +85,7 @@ Tcp连接成功回调函数，默认NULL
 
 ---
 
-### `class NewDineInformProtocal`
+### *`class NewDineInformProtocal`*
 新订单通知协议
 
 #### `int HotelId { get; set; }`
@@ -95,7 +99,7 @@ Tcp连接成功回调函数，默认NULL
 
 ---
 
-### `class RequestPrintDineProtocal`
+### *`class RequestPrintDineProtocal`*
 打印请求协议
 
 #### `int HotelId { get; set; }`
@@ -112,7 +116,7 @@ Tcp连接成功回调函数，默认NULL
 
 ---
 
-### `enum PrintType`
+### *`enum PrintType`*
 请求打印类型
 
 #### `Recipt = 0`

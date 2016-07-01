@@ -292,15 +292,11 @@ namespace YummyOnlineTcpServer {
 		/// <param name="clientInfo"></param>
 		/// <param name="protocal"></param>
 		private void newDineInform(TcpClientInfo clientInfo, NewDineInformProtocal protocal) {
-			NewDineInformClientGuid sender = NewDineInformClients
-				.Where(p => p.Value?.Client == clientInfo.Client)
-				.Select(p => p.Key)
-				.FirstOrDefault();
-
-			if(sender == null) {
-				log($"{clientInfo.OriginalRemotePoint} (NewDineInform): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, IsPaid: {protocal.IsPaid} No Such Client", Log.LogLevel.Warning);
+			NewDineInformClientGuid sender = getSender(clientInfo);
+			if(sender == null)
 				return;
-			}
+
+
 			log($"{clientInfo.OriginalRemotePoint} (NewDineInform): From: {sender.Description}, HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, IsPaid: {protocal.IsPaid}", Log.LogLevel.Success);
 
 			foreach(var p in NewDineInformClients) {
@@ -317,6 +313,10 @@ namespace YummyOnlineTcpServer {
 		/// 请求打印
 		/// </summary>
 		private void requestPrintDine(TcpClientInfo clientInfo, RequestPrintDineProtocal protocal) {
+			NewDineInformClientGuid sender = getSender(clientInfo);
+			if(sender == null)
+				return;
+
 			protocal.DineMenuIds = protocal.DineMenuIds ?? new List<int>();
 			protocal.PrintTypes = protocal.PrintTypes ?? new List<PrintType>();
 
@@ -332,7 +332,7 @@ namespace YummyOnlineTcpServer {
 				typeStr.Append($"{type.ToString()} ");
 			}
 
-			log($"{clientInfo.OriginalRemotePoint} (RequestPrintDine): HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, DineMenuIds: {dineMenuStr}, PrintTypes: {typeStr}",
+			log($"{clientInfo.OriginalRemotePoint} (RequestPrintDine): From: {sender.Description}, HotelId: {protocal.HotelId}, DineId: {protocal.DineId}, DineMenuIds: {dineMenuStr}, PrintTypes: {typeStr}",
 				Log.LogLevel.Success);
 
 			PrintDineProtocal p = new PrintDineProtocal(protocal.DineId, protocal.DineMenuIds, protocal.PrintTypes);
@@ -354,6 +354,10 @@ namespace YummyOnlineTcpServer {
 		}
 
 		private void requestPrintShifts(TcpClientInfo clientInfo, RequestPrintShiftsProtocal protocal) {
+			NewDineInformClientGuid sender = getSender(clientInfo);
+			if(sender == null)
+				return;
+
 			protocal.Ids = protocal.Ids ?? new List<int>();
 
 			StringBuilder idStr = new StringBuilder();
@@ -361,7 +365,7 @@ namespace YummyOnlineTcpServer {
 				idStr.Append($"{id} ");
 			}
 
-			log($"{clientInfo.OriginalRemotePoint} (RequestPrintShifts): HotelId: {protocal.HotelId}, Ids: {idStr}, DateTime: {protocal.DateTime.ToString("yyyy-MM-dd")}",
+			log($"{clientInfo.OriginalRemotePoint} (RequestPrintShifts): From: {sender.Description}, HotelId: {protocal.HotelId}, Ids: {idStr}, DateTime: {protocal.DateTime.ToString("yyyy-MM-dd")}",
 				Log.LogLevel.Success);
 
 			PrintShiftsProtocal p = new PrintShiftsProtocal(protocal.Ids, protocal.DateTime);
@@ -380,6 +384,13 @@ namespace YummyOnlineTcpServer {
 
 		private void sendHeartBeat(TcpClientInfo clientInfo) {
 			var _ = tcp.Send(clientInfo.Client, JsonConvert.SerializeObject(new HeartBeatProtocal()), null);
+		}
+
+		private NewDineInformClientGuid getSender(TcpClientInfo clientInfo) {
+			return NewDineInformClients
+				.Where(p => p.Value?.Client == clientInfo.Client)
+				.Select(p => p.Key)
+				.FirstOrDefault();
 		}
 
 		private void log(string log, Log.LogLevel level) {

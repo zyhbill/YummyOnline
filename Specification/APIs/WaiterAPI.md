@@ -28,9 +28,14 @@ waiter.yummyonline.net
 ```
 成功登录后，服务器会发送Cookie信息，以下所有带 ***AUTHORIZED*** 的API都需要验证该Cookie信息
 
-* * *
+
+
+------
+
+
 
 ### 服务员登出
+
 #### POST ***AUTHORIZED***
 #### URL
 	/Account/Signout
@@ -42,9 +47,14 @@ waiter.yummyonline.net
 }
 ```
 
-* * *
+
+
+------
+
+
 
 ### 获取所有数据
+
 #### POST ***AUTHORIZED***
 #### URL
 	/Order/GetMenuInfos
@@ -144,9 +154,14 @@ waiter.yummyonline.net
 }
 ```
 
-* * *
+
+
+------
+
+
 
 ### 获取饭店基本信息
+
 #### POST ***AUTHORIZED***
 #### URL
 	/Order/GetHotelInfos
@@ -189,12 +204,16 @@ waiter.yummyonline.net
 	],
 	"SellOutMenus": [<已沽清菜品, 详见/Order/GetMenuInfos中的Menus>, ...]
 }
-
 ```
 
-* * *
+
+
+------
+
+
 
 ### 获取会员信息
+
 #### POST ***AUTHORIZED***
 #### URL
 	/Account/VerifyCustomer
@@ -217,7 +236,11 @@ waiter.yummyonline.net
 }
 ```
 
-* * *
+
+
+------
+
+
 
 ### 验证是否为会员
 #### POST ***AUTHORIZED***
@@ -241,9 +264,14 @@ waiter.yummyonline.net
 }
 ```
 
-* * *
+
+
+------
+
+
 
 ### 提交点单
+
 #### POST ***AUTHORIZED***
 #### URL
 	/Payment/WaiterPay
@@ -278,7 +306,11 @@ waiter.yummyonline.net
 }
 ```
 
-* * *
+
+
+------
+
+
 
 ### 服务员支付完成，记录支付详情
 #### POST ***AUTHORIZED***
@@ -308,7 +340,11 @@ waiter.yummyonline.net
 }
 ```
 
-* * *
+
+
+------
+
+
 
 ### 服务员支付并且带所有支付详情
 #### POST ***AUTHORIZED***
@@ -343,7 +379,11 @@ waiter.yummyonline.net
 }
 ```
 
-* * *
+
+
+------
+
+
 
 ### 打印完成通知
 #### POST ***AUTHORIZED***
@@ -362,7 +402,11 @@ waiter.yummyonline.net
 }
 ```
 
-* * *
+
+
+------
+
+
 
 ### 获取当前的点单
 #### POST ***AUTHORIZED***
@@ -381,7 +425,11 @@ waiter.yummyonline.net
 }, ...]
 ```
 
-* * *
+
+
+------
+
+
 
 ### 根据订单号获取点单
 #### POST ***AUTHORIZED***
@@ -454,7 +502,11 @@ waiter.yummyonline.net
 }
 ```
 
-* * *
+
+
+------
+
+
 
 ### 交接班
 #### POST ***AUTHORIZED***
@@ -468,7 +520,11 @@ waiter.yummyonline.net
 }
 ```
 
-* * *
+
+
+------
+
+
 
 ### 切换菜品状态
 #### POST ***AUTHORIZED***
@@ -488,4 +544,6 @@ waiter.yummyonline.net
 }
 ```
 
-* * *
+
+
+------

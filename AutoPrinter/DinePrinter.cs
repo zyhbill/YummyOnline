@@ -50,7 +50,7 @@ namespace AutoPrinter {
 		}
 	}
 
-	
+
 
 	public class DinePrinter : BasePrinter {
 		private DineForPrinting protocol;
@@ -107,7 +107,7 @@ namespace AutoPrinter {
 							printKitchenOrder(e.Graphics, currDineMenu, currSetMealMenu);
 						};
 						printer.PrintPage += printHandler;
-						foreach(DineMenu dineMenu in protocol.Dine.DineMenus) {
+						foreach(DineMenu dineMenu in protocol.Dine.DineMenus.Where(p => p.Status != HotelDAO.Models.DineMenuStatus.Returned)) {
 							if(dineMenu.Menu.Printer == null) {
 								continue;
 							}
@@ -152,7 +152,7 @@ namespace AutoPrinter {
 
 			printHr(printer);
 
-			foreach(DineMenu dineMenu in protocol.Dine.DineMenus) {
+			foreach(DineMenu dineMenu in protocol.Dine.DineMenus.Where(p => p.Status != HotelDAO.Models.DineMenuStatus.Returned)) {
 				// 打印具体菜品信息
 				printGrid5122(printer, new string[] {
 					dineMenu.Menu.Name,
@@ -227,7 +227,7 @@ namespace AutoPrinter {
 
 			printHr(printer);
 
-			foreach(DineMenu dineMenu in protocol.Dine.DineMenus) {
+			foreach(DineMenu dineMenu in protocol.Dine.DineMenus.Where(p => p.Status != HotelDAO.Models.DineMenuStatus.Returned)) {
 				// 打印具体菜品信息
 				printGrid82(printer, new string[] { dineMenu.Menu.Name, dineMenu.Count.ToString() }, protocol.PrinterFormat.ServeOrderFontSize);
 

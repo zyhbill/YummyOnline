@@ -7,7 +7,7 @@
 	<ul class="dropdown-menu" ng-static-height="96">
 		<li ng-repeat="desk in dataSet.Desks"
 			ng-class="{active:desk.Addition.IsSelected}"
-			ng-click="cart.LoadCart(desk)">
+			ng-click="cart.LoadCart(desk); menuFilter.RefreshResultMode()">
 			{{desk.Id}}
 		</li>
 	</ul>

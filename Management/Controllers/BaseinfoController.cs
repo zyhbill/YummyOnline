@@ -1110,7 +1110,30 @@ namespace Management.Controllers
             var format = await db.PrinterFormats.FirstOrDefaultAsync();
             var AccountPrint = await db.HotelConfigs.Select(h => h.ShiftPrinterId).FirstOrDefaultAsync();
             var font = await db.PrinterFormats.FirstOrDefaultAsync();
-            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font });
+            var IsUsePrinter = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
+            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter });
+        }
+
+        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int ShiftPrintId)
+        {
+            var config = await db.HotelConfigs.FirstOrDefaultAsync();
+            config.PointsRatio = Rate;
+            config.ShiftPrinterId = ShiftPrintId;
+            config.HasAutoPrinter = IsUsePrint;
+            var font = await db.PrinterFormats.FirstOrDefaultAsync();
+            font.KitchenOrderFontSize = Format.KitchenOrderFontSize;
+            font.KitchenOrderSmallFontSize = Format.KitchenOrderSmallFontSize;
+            font.PaperSize = Format.PaperSize;
+            font.ReciptBigFontSize = Format.ReciptBigFontSize;
+            font.ReciptFontSize = Format.ReciptFontSize;
+            font.ReciptSmallFontSize = Format.ReciptSmallFontSize;
+            font.ServeOrderFontSize = Format.ServeOrderFontSize;
+            font.ServeOrderSmallFontSize = Format.ServeOrderSmallFontSize;
+            font.ShiftBigFontSize = Format.ShiftBigFontSize;
+            font.ShiftFontSize = Format.ShiftFontSize;
+            font.ShiftSmallFontSize = Format.ShiftSmallFontSize;
+            db.SaveChanges();
+            return null;
         }
     }
 }

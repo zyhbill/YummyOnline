@@ -369,4 +369,19 @@ namespace Management.ObjectClasses
         public int Id { get; set; }
         public decimal Num { get; set; }
     }
+
+    public class Format
+    {
+        public int KitchenOrderFontSize { get; set; }
+        public int KitchenOrderSmallFontSize { get; set; }
+        public int PaperSize { get; set; }
+        public int ReciptBigFontSize { get; set; }
+        public int ReciptFontSize { get; set; }
+        public int ReciptSmallFontSize { get; set; }
+        public int ServeOrderFontSize { get; set; }
+        public int ServeOrderSmallFontSize { get; set; }
+        public int ShiftBigFontSize { get; set; }
+        public int ShiftFontSize { get; set; }
+        public int ShiftSmallFontSize { get; set; }
+    }
 }

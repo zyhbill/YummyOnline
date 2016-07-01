@@ -212,7 +212,7 @@ namespace Management.Controllers
                 return Json(new { Status = false, ErrorMessage = "金额不正确重新输入" });
             }
             else if (PayTotal == totalPrcie)
-            {//支付钱和价钱相等
+            {//支付钱和价钱相等 
                 foreach (var pay in PayList)
                 {
                     var paid = new DinePaidDetail();

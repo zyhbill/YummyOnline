@@ -25,7 +25,7 @@
                     <div>
                         <label for="form-field-8">积分兑换比率</label>
 
-                        <input type="number" ng-model="PrintElement.Rate"  ng-change="Max()"/>
+                        <input type="number" ng-model="PrintElement.Rate" ng-change="Max()" />
                         <span ng-if="PrintElement.Rate!=0">100 积分 等于 {{(100/PrintElement.Rate).toFixed(0)}}元</span>
                     </div>
                 </div>
@@ -49,10 +49,9 @@
                 <div class="widget-main">
                     <div>
                         <label for="form-field-10">选择交接班打印机</label>
-                        <select ng-options="print.Name for print  in PrintElement.Printers" ng-model="PrintElement.CurrentPrinter">
-                        </select>
+                        <select ng-options="print.Name for print  in PrintElement.Printers" ng-model="PrintElement.CurrentPrinter"></select>
 
-                        是否使用打印机:  
+                        是否使用打印机:
                         <label>
                             <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="PrintElement.UsePrint" />
                             <span class="lbl">使用网络打印机</span>
@@ -85,14 +84,13 @@
             <div class="widget-body">
                 <div class="widget-main">
                     <div>
-                        选择字体: <select ng-options="font.Name for font  in PrintElement.Fonts track by $index" ng-model="PrintElement.CurrentFont">
-                        </select>
+                        选择字体: <select ng-options="font.Name for font  in PrintElement.Fonts track by $index" ng-model="PrintElement.CurrentFont"></select>
                         厨房大字号:
-                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.KitchenOrderFontSize"/>
+                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.KitchenOrderFontSize" />
                         厨房小字号:
-                        <input type="number"  class="FormatPrint" ng-model="PrintElement.CurrentFormat.KitchenOrderSmallFontSize" />
+                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.KitchenOrderSmallFontSize" />
                         纸张大小:
-                        <input type="number" class="FormatPrint"  ng-model="PrintElement.CurrentFormat.PaperSize" />
+                        <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.PaperSize" />
                         收银大字号:
                         <input type="number" class="FormatPrint" ng-model="PrintElement.CurrentFormat.ReciptFontSize" />
                         收银小字号:
@@ -111,10 +109,50 @@
                 </div>
             </div>
         </div>
+
+        <div class="widget-box">
+            <div class="widget-header">
+                <h4>
+                    饭店风格设置
+                </h4>
+
+                <div class="widget-toolbar">
+                    <a href="/#" data-action="collapse">
+                        <i class="icon-chevron-up"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main">
+                    <div>
+                        选择风格:
+                        <select ng-options="sytle.Name for sytle in PrintElement.Styles">
+                        </select>
+                        上传Logo
+                        <span class="profile-picture">
+                            <img id="logo" class="editable img-responsive editable-click editable-empty" alt="菜品的图片" ng-src="">
+                        </span>
+                        上传下单按钮
+                        <span class="profile-picture">
+                            <img id="banner" class="editable img-responsive editable-click editable-empty" alt="菜品的图片" ng-src="">
+                        </span>
+                        上传支付完成图片
+                        <span class="profile-picture">
+                            <img id="complete" class="editable img-responsive editable-click editable-empty" alt="菜品的图片" ng-src="">
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <a href="javascript:;" class="btn btn-app btn-primary btn-xs" ng-click="changeInfo()">
             <i class="icon-save bigger-230"></i>
             保存
         </a>
+
+
 
     </div>
 </div>

@@ -1164,7 +1164,8 @@
             PrinterFormat: {},
             CurrentPrinter: {},
             CurrentFont:{},
-            Fonts: [{Name:"宋体"}, {Name:"黑体"}],
+            Fonts: [{ Name: "宋体" }, { Name: "黑体" }],
+            Styles: [{ Id: 0, Name: "简单" }, {Id:1,Name:"时尚"}],
             OldFormat: {},
             CurrentFormat:{
                 KitchenOrderFontSize:0,
@@ -1192,21 +1193,23 @@
                     if (x.Id == data.AccountPrint) _this.PrintElement.CurrentPrinter = x;
                 })
                 console.log(data);
-                _this.PrintElement.OldFormat = data.font;
+                if (data.font) _this.PrintElement.OldFormat = data.font;
                 _this.PrintElement.IsPayFirst = data.IsPayFirst;
-                _this.PrintElement.CurrentFont = { Name: data.font.Font };
-                _this.PrintElement.CurrentFormat = {
-                    KitchenOrderFontSize: data.font.KitchenOrderFontSize,
-                    KitchenOrderSmallFontSize: data.font.KitchenOrderSmallFontSize,
-                    PaperSize: data.font.PaperSize,
-                    ReciptBigFontSize: data.font.ReciptBigFontSize,
-                    ReciptFontSize: data.font.ReciptFontSize,
-                    ReciptSmallFontSize: data.font.ReciptSmallFontSize,
-                    ServeOrderFontSize: data.font.ServeOrderFontSize,
-                    ServeOrderSmallFontSize: data.font.ServeOrderSmallFontSize,
-                    ShiftBigFontSize: data.font.ShiftBigFontSize,
-                    ShiftFontSize: data.font.ShiftFontSize,
-                    ShiftSmallFontSize: data.font.ShiftSmallFontSize
+                if (data.font) {
+                    _this.PrintElement.CurrentFont = { Name: data.font.Font };
+                    _this.PrintElement.CurrentFormat = {
+                        KitchenOrderFontSize: data.font.KitchenOrderFontSize,
+                        KitchenOrderSmallFontSize: data.font.KitchenOrderSmallFontSize,
+                        PaperSize: data.font.PaperSize,
+                        ReciptBigFontSize: data.font.ReciptBigFontSize,
+                        ReciptFontSize: data.font.ReciptFontSize,
+                        ReciptSmallFontSize: data.font.ReciptSmallFontSize,
+                        ServeOrderFontSize: data.font.ServeOrderFontSize,
+                        ServeOrderSmallFontSize: data.font.ServeOrderSmallFontSize,
+                        ShiftBigFontSize: data.font.ShiftBigFontSize,
+                        ShiftFontSize: data.font.ShiftFontSize,
+                        ShiftSmallFontSize: data.font.ShiftSmallFontSize
+                    }
                 }
                 _this.PrintElement.UsePrint = data.IsUsePrinter;
                 _this.PrintElement.Rate = data.Rate;

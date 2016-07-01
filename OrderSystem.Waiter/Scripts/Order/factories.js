@@ -534,6 +534,11 @@ app.factory('dataSet', [
 				this._changeMode(mode.result);
 				this._filterMenu();
 			},
+			RefreshResultMode: function () {
+				if (this.IsResultMode()) {
+					this.IntoResultMode();
+				}
+			},
 			ToggleSelected: function (menuClass) {
 				this._changeMode(mode.normal);
 

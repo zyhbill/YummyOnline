@@ -1180,6 +1180,7 @@
                 ShiftSmallFontSize:0
             },
             UsePrint: true,
+            IsPayFirst:true,
             Rate:0
         },
         Initialize: function () {
@@ -1192,6 +1193,7 @@
                 })
                 console.log(data);
                 _this.PrintElement.OldFormat = data.font;
+                _this.PrintElement.IsPayFirst = data.IsPayFirst;
                 _this.PrintElement.CurrentFont = { Name: data.font.Font };
                 _this.PrintElement.CurrentFormat = {
                     KitchenOrderFontSize: data.font.KitchenOrderFontSize,
@@ -1217,8 +1219,10 @@
                 Font: _this.PrintElement.CurrentFont,
                 Rate: _this.PrintElement.Rate,
                 IsUsePrint: _this.PrintElement.UsePrint,
-                ShiftPrintId:_this.PrintElement.CurrentPrinter.Id
+                ShiftPrintId: _this.PrintElement.CurrentPrinter.Id,
+                IsPayFirst:_this.PrintElement.IsPayFirst
             }).success(function (data) {
+                $rootScope.IsPayFirst = _this.PrintElement.IsPayFirst;
                 alert("保存成功");
             })
         }

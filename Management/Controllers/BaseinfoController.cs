@@ -1111,15 +1111,17 @@ namespace Management.Controllers
             var AccountPrint = await db.HotelConfigs.Select(h => h.ShiftPrinterId).FirstOrDefaultAsync();
             var font = await db.PrinterFormats.FirstOrDefaultAsync();
             var IsUsePrinter = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter });
+            var IsPayFirst = await db.HotelConfigs.Select(h => h.IsPayFirst).FirstOrDefaultAsync();
+            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst });
         }
 
-        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int ShiftPrintId)
+        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int ShiftPrintId,bool IsPayFirst)
         {
             var config = await db.HotelConfigs.FirstOrDefaultAsync();
             config.PointsRatio = Rate;
             config.ShiftPrinterId = ShiftPrintId;
             config.HasAutoPrinter = IsUsePrint;
+            config.IsPayFirst = IsPayFirst;
             var font = await db.PrinterFormats.FirstOrDefaultAsync();
             font.KitchenOrderFontSize = Format.KitchenOrderFontSize;
             font.KitchenOrderSmallFontSize = Format.KitchenOrderSmallFontSize;

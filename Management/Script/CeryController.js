@@ -161,18 +161,20 @@
         var promise = option.method.OpenDesk();
         promise.then(function (data) {
             if (data.Succeeded) {
-                var modalInstance = $uibModal.open({//打开支付
-                    animation: $scope.animationsEnabled,
-                    templateUrl: 'ModalPay.html',
-                    controller: 'ModalPayCtrl',
-                    backdrop: 'static',
-                    size: 'lg',
-                    resolve: {
-                        option: {
-                            desk: angular.copy(option.desk), method: option.Pay
+                if ($rootScope.IsPayFirst) {
+                    var modalInstance = $uibModal.open({//打开支付
+                        animation: $scope.animationsEnabled,
+                        templateUrl: 'ModalPay.html',
+                        controller: 'ModalPayCtrl',
+                        backdrop: 'static',
+                        size: 'lg',
+                        resolve: {
+                            option: {
+                                desk: angular.copy(option.desk), method: option.Pay
+                            }
                         }
-                    }
-                });
+                    });
+                }
                 $uibModalInstance.dismiss('cancel');
             } else {
                 alert(data.ErrorMessage);
@@ -389,10 +391,11 @@
 }])
 .controller('BaseCtrl', ['$scope', '$rootScope', '$http', '$window', 'WebSocketService', function ($scope, $rootScope, $http, $window, WebSocketService) {
     //基础控制器
-    $scope.initialize = function (id, rate, pu, a, b, c, d) {
+    $scope.initialize = function (id, rate, pu, a, b, c, d,e) {
         $rootScope.HotelId = id; $rootScope.Rate = rate; $rootScope.PayUnder = pu;
         $rootScope.IsStaffPay = a == 1 ? true : false; $rootScope.IsStaffReturn = b == 1 ? true : false; $rootScope.IsStaffEdit = c == 1 ? true : false;
         $rootScope.WebSocketUrl = d;
+        $rootScope.IsPayFirst = !!e;
         WebSocketService.Start($rootScope.WebSocketUrl);
     }
 

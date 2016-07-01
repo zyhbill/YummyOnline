@@ -267,6 +267,8 @@ namespace Management.Controllers
                     return Json(new ErrorState("找零金额不能大于现金金额"));
                 }
             }
+            dine.Price = totalPrcie;
+            dine.Discount = Dine.Discount;
             dine.IsPaid = true;
             db.SaveChanges();
             try

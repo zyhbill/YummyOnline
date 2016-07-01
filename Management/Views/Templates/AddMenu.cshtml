@@ -137,7 +137,24 @@
                                         <span ng-if="!orderMenu.IsSend">{{CalcMenuPrice(orderMenu)}}</span>
                                         <span ng-if="orderMenu.IsSend">0.00</span>
                                     </td>
-                                    <td><span class="label label-success arrowed" ng-repeat="remark in orderMenu.Remarks">{{remark.Name}}</span>&nbsp;</td>
+                                    <td>
+                                        <span ng-if="!orderMenu.IsEdit" class="label label-success arrowed" ng-repeat="remark in orderMenu.Remarks">
+                                            {{remark.Name}}
+                                        </span>
+                                        <span ng-if="orderMenu.IsEdit">
+                                            <select chosen
+                                                    multiple
+                                                    allow-single-deselect="true"
+                                                    max-selected-options="3"
+                                                    no-results-text="'没有备注'"
+                                                    placeholder-text-multiple="'选择备注'"
+                                                    ng-model="orderMenu.Remarks"
+                                                    ng-options="remark.Name for remark in OpenElements.CurrentMenu.Remarks"
+                                                    style="width:100%;">
+                                                <option value=""></option>
+                                            </select>
+                                        </span>
+                                    </td>
                                     <td class="text-center EditBtn">
                                         <nobr>
                                             <button ng-click="RemoveMenu($index)" ng-if="!orderMenu.IsEdit">

@@ -47,7 +47,7 @@ namespace Management.Controllers
                 logs.DateTime = DateTime.Now;
                 logs.Level = YummyOnlineDAO.Models.Log.LogLevel.Success;
                 logs.Program = YummyOnlineDAO.Models.Log.LogProgram.Identity;
-                logs.Message = $"Manager Signin: {ClerkInfo.Id} (HotelId {ClerkInfo.HotelId})";
+                logs.Message = $"Manager Signin: {ClerkInfo.Id} (HotelId {ClerkInfo.HotelId}), Host: {Request.UserHostAddress}";
                 db.Logs.Add(logs);
                 db.SaveChanges();
             }

@@ -51,21 +51,10 @@
 		<h2>YummyOnline Database Specification</h2>
 
 		<div class="alert alert-danger">
-			<p>Hotels表中增加OrderSystemStyle字段</p>
+			<p>Staffs表中增加IsHotelAdmin字段</p>
+			<p>HotelConfigs表中增加IsPayFirst字段</p>
 			<p class="text-right">
-				<small>2016-6-28 张朕煜</small>
-			</p>
-		</div>
-		<div class="alert alert-danger">
-			<h4>此为累积更新</h4>
-			<p>Dines表加入Change</p>
-			<p>Logs表加入Detail</p>
-			<p>加入Shifts表</p>
-			<p>DineMenus加入ReturnedReason</p>
-			<p>加入ReturnedReasons表</p>
-			<p>修改SystemConfigs</p>
-			<p class="text-right">
-				<small>2016-6-22 张朕煜</small>
+				<small>2016-7-1 张朕煜</small>
 			</p>
 		</div>
 
@@ -586,6 +575,12 @@
 					<p>2 角抹零</p>
 					<p>3 元抹零</p>
 				</td>
+			</tr>
+			<tr>
+				<td>IsPayFirst</td>
+				<td>bool</td>
+				<td>是否先支付</td>
+				<td></td>
 			</tr>
 			<tr>
 				<td>HasAutoPrinter</td>
@@ -1137,7 +1132,7 @@
 				<td></td>
 			</tr>
 		</table>
-			<table class="table table-bordered table-hover table-condensed">
+		<table class="table table-bordered table-hover table-condensed">
 			<tr>
 				<th>Reserves</th>
 				<th></th>
@@ -1459,7 +1454,7 @@
 				<td></td>
 			</tr>
 		</table>
-		
+
 		<h3>YummyOnlineDB</h3>
 
 		<table class="table table-bordered table-hover table-condensed">
@@ -1779,6 +1774,12 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>IsHotelAdmin</td>
+				<td>bit</td>
+				<td>是否为饭店管理员</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>CreateDate</td>
 				<td>datetime</td>
 				<td>创建时间</td>
@@ -1952,6 +1953,26 @@
 			</tr>
 		</table>
 
+
+
+		<div class="alert alert-danger">
+			<p>Hotels表中增加OrderSystemStyle字段</p>
+			<p class="text-right">
+				<small>2016-6-28 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<h4>此为累积更新</h4>
+			<p>Dines表加入Change</p>
+			<p>Logs表加入Detail</p>
+			<p>加入Shifts表</p>
+			<p>DineMenus加入ReturnedReason</p>
+			<p>加入ReturnedReasons表</p>
+			<p>修改SystemConfigs</p>
+			<p class="text-right">
+				<small>2016-6-22 张朕煜</small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>Hotels中加入Usable</p>
 			<p>Dines中加入DiscountType Type</p>

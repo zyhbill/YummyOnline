@@ -34,7 +34,7 @@ namespace Management.Models
                      logs.DateTime = DateTime.Now;
                      logs.Level = YummyOnlineDAO.Models.Log.LogLevel.Success;
                      logs.Program = YummyOnlineDAO.Models.Log.LogProgram.Manager;
-                     logs.Message = $"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort} WebScoket Open";
+                     logs.Message = $"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort} WebSocket Open";
                      sysdb.Logs.Add(logs);
                      sysdb.SaveChanges();
                      Console.WriteLine("Open!");
@@ -46,7 +46,7 @@ namespace Management.Models
                      logs.DateTime = DateTime.Now;
                      logs.Level = YummyOnlineDAO.Models.Log.LogLevel.Warning;
                      logs.Program = YummyOnlineDAO.Models.Log.LogProgram.Manager;
-                     logs.Message = $"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort} WebScoket Close";
+                     logs.Message = $"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort} WebSocket Close";
                      sysdb.Logs.Add(logs);
                      sysdb.SaveChanges();
                      Console.WriteLine("Close!");

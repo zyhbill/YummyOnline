@@ -167,6 +167,9 @@ app.factory('dataSet', [
 	'$localStorage',
 	'generateDataPromise',
 	function ($rootScope, $q, $http, $dataSet, $localStorage, generateData) {
+		var _carts = [];
+		var _emptyCart = null;
+
 		var cart = {
 			/* Cart Data */
 			HeadCount: 1, // 总人数
@@ -178,16 +181,13 @@ app.factory('dataSet', [
 			OrderedMenus: [],
 			/* Cart Data */
 
-			_carts: [],
-			_emptyCart: null,
-
 			IsInitialized: false, // 是否初始化
-			Ordered: 0, // 总共已选的份数
 			DiscountMethod: {
 				Discount: 1,
 				Name: ''
 			},
 			Customer: null,
+			Ordered: 0, // 总共已选的份数
 
 			Reset: function () {
 				this.IsInitialized = false;
@@ -199,7 +199,6 @@ app.factory('dataSet', [
 				this.OrderedMenus = [];
 				this.Desk = null;
 				$dataSet.Reset();
-				//delete $localStorage.cart;
 			},
 			Initialize: function (resolve) {
 				if (this.IsInitialized) {
@@ -208,15 +207,24 @@ app.factory('dataSet', [
 					var _this = this;
 					$rootScope.isLoading = true;
 					generateData().then(function () {
-						//if (!angular.isUndefined($localStorage.cart)) {
-						//	_this.LoadExistedCart($localStorage.cart);
-						//}
-						//$localStorage.cart = _this;
-						//$http.post('/Order/GetCurrentDesk').then(function (response) {
-						//	_this.Desk = response.data;
-						//});
 						_this.PayKind = $dataSet.PayKind;
-						_this._emptyCart = angular.copy(_this);
+						_emptyCart = angular.copy(_this);
+						if (!angular.isUndefined($localStorage.carts) && $localStorage.carts.length > 0) {
+							_carts = $localStorage.carts;
+
+							for (var i in _carts) {
+								for (var j in $dataSet.Desks) {
+									if (_carts[i].Desk.Id == $dataSet.Desks[j].Id) {
+										$dataSet.Desks[j] = _carts[i].Desk;
+										break;
+									}
+								}
+								_this.LoadCart(_carts[i].Desk);
+								_this.LoadExistedCart(_carts[i]);
+							}
+						}
+						$localStorage.carts = _carts;
+
 						if (resolve != null) resolve();
 						_this.IsInitialized = true;
 						$rootScope.isLoading = false;
@@ -254,18 +262,18 @@ app.factory('dataSet', [
 
 			LoadCart: function (desk) {
 				var loadCart = null;
-				for (var i in this._carts) {
-					if (this.Desk != null && this._carts[i].Desk.Id == this.Desk.Id) {
-						this._carts[i] = angular.copy(this);
+				for (var i in _carts) {
+					if (this.Desk != null && _carts[i].Desk.Id == this.Desk.Id) {
+						_carts[i] = angular.copy(this);
 						isCurrDeskExists = true;
 					}
-					if (this._carts[i].Desk.Id == desk.Id) {
-						loadCart = this._carts[i];
+					if (_carts[i].Desk.Id == desk.Id) {
+						loadCart = _carts[i];
 					}
 				}
 				if (loadCart == null) {
-					loadCart = angular.copy(this._emptyCart);
-					this._carts.push(loadCart);
+					loadCart = angular.copy(_emptyCart);
+					_carts.push(loadCart);
 				}
 				loadCart.Desk = desk;
 
@@ -298,6 +306,8 @@ app.factory('dataSet', [
 				}
 				this.Desk.Addition.Ordered += min;
 				this.Desk.Addition.IsSelected = true;
+
+				this._refreshCarts();
 				return min;
 			},
 			RemoveMenu: function (menu) {
@@ -326,17 +336,32 @@ app.factory('dataSet', [
 					}
 				}
 				this.Desk.Addition.Ordered -= min;
+
+				this._refreshCarts();
 				return min;
 			},
 			AddRemark: function (menu, remark, index) {
 				menu.Addition.Remarks.push(remark);
 				menu.Remarks.splice(index, 1);
 				this.Price += remark.Price;
+
+				this._refreshCarts();
 			},
 			RemoveRemark: function (menu, remark, index) {
 				menu.Remarks.push(remark);
 				menu.Addition.Remarks.splice(index, 1);
 				this.Price -= remark.Price;
+
+				this._refreshCarts();
+			},
+
+			_refreshCarts: function () {
+				for (var i in _carts) {
+					if (_carts[i].Desk.Id == this.Desk.Id) {
+						_carts[i] = this;
+						break;
+					}
+				}
 			},
 
 			// 获得最优的整单折扣方案
@@ -462,18 +487,18 @@ app.factory('dataSet', [
 				});
 			},
 			SubmitSucceeded: function () {
-				for (var i in this._carts) {
-					var cart = this._carts[i];
-					if (cart.Desk == this.Desk) {
+				for (var i in _carts) {
+					var cart = _carts[i];
+					if (cart.Desk.Id == this.Desk.Id) {
 						cart.Desk.Addition.IsSelected = false;
-						this._carts.splice(i, 1);
+						_carts.splice(i, 1);
 						break;
 					}
 				}
-				if (this._carts.length == 0) {
+				if (_carts.length == 0) {
 					this.Reset();
 				} else {
-					this.LoadCart(this._carts[0].Desk);
+					this.LoadCart(_carts[0].Desk);
 				}
 			}
 		}

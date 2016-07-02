@@ -1,5 +1,4 @@
-﻿using HotelDAO;
-using HotelDAO.Models;
+﻿using HotelDAO.Models;
 using OrderSystem.Models;
 using Protocol;
 using System;
@@ -102,6 +101,9 @@ namespace OrderSystem {
 				}
 				if(!menu.Usable) {
 					return new FunctionResult(false, $"{menu.Name} 不可用", $"Menu Disabled {menu.Id}: {menu.Name}");
+				}
+				if(menu.Status == MenuStatus.SellOut) {
+					return new FunctionResult(false, $"{menu.Name} 已售完", $"Menu SellOut {menu.Id}: {menu.Name}");
 				}
 
 				DineMenu dineMenu = new DineMenu {
@@ -275,6 +277,14 @@ namespace OrderSystem {
 			return new FunctionResult();
 		}
 
+		public async Task OfflinePayCompleted(string dineId) {
+			Dine dine = await ctx.Dines.FirstOrDefaultAsync(p => p.Id == dineId);
+			dine.IsPaid = true;
+
+			await changeCustomerPoints(dine);
+
+			await ctx.SaveChangesAsync();
+		}
 		public async Task<bool> OfflinePayCompleted(WaiterPaidDetails paidDetails) {
 			Dine dine = await ctx.Dines.FirstOrDefaultAsync(p => p.Id == paidDetails.DineId);
 			List<DinePaidDetail> exisedPaidDetails = await ctx.DinePaidDetails.Where(p => p.Dine.Id == paidDetails.DineId).ToListAsync();

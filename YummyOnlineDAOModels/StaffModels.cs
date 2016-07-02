@@ -16,6 +16,7 @@ namespace YummyOnlineDAO.Models {
 		public string Email { get; set; }
 		[Required]
 		public string PasswordHash { get; set; }
+		public bool IsHotelAdmin { get; set; }
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public DateTime CreateDate { get; set; }
 		

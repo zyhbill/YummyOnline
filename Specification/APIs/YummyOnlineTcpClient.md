@@ -1,7 +1,12 @@
-# YummyOnlineTcpClient
-YummyOnline项目中与Tcp服务器连接交换数据的客户端类库
+
 
 [TOC]
+
+# YummyOnlineTcpClient
+
+YummyOnline项目中与Tcp服务器连接交换数据的客户端类库
+
+
 
 ## DLLs Intro
 - `AsynchronousTcp.dll`: 异步Tcp的底层实现
@@ -139,8 +144,8 @@ Tcp连接成功回调函数，默认NULL
 - 2016-2-19: 删除`PrintDineProtocol`, 分离到`OrderSystem`中, 由打印客户端接收到打印信息后http到`OrderSystem`获取打印的订单信息
 - 2016-2-18: 增加接收到的数据不完整的异常处理, 不会导致程序奔溃
 - 2016-2-16: 新增连接成功时的回调函数
-- 2016-4-3: 修复可能导致远程连接断开后, Client的cpu使用率上升的bug, 修改底层TCP传输时的头字节
-- 2016-4-19: NewDineInformConnect协议增加Guid
+- 2016-4-3: 修复可能导致远程连接断开后, 客户端的CPU使用率上升的bug, 修改底层TCP传输时的头字节
+- 2016-4-19: `NewDineInformConnect`协议增加`Guid`
 - 2016-5-22: 修复在服务器断开的极端情况下, 客户端主线程阻塞的bug
 - 2016-6-20: 修改打印订单协议, 可以打印单个菜品
 - 2016-6-22: 加入打印交接班协议
@@ -151,8 +156,8 @@ Tcp连接成功回调函数，默认NULL
 ## To Do
 1. 连接Tcp服务器, Ip: `122.114.96.157`, Port: `18000`, 建立连接
 2. 发送身份信息(详见`ConnectionProtocol`)
-3. 每隔10秒左右发送接收心跳包信息(详见ReceivingProtocol, SendingProtocol)
-4. 等待接收信息(详见ReceivingProtocol), 发送信息(详见SendingProtocol)
+3. 每隔10秒左右发送接收心跳包信息(详见`ReceivingProtocol`, `SendingProtocol`)
+4. 等待接收信息(详见`ReceivingProtocol`), 发送信息(详见`SendingProtocol`)
 
 ## Protocols
 ### NewDineInform
@@ -219,7 +224,7 @@ Tcp连接成功回调函数，默认NULL
 | 字节       | 说明                                       |
 | -------- | ---------------------------------------- |
 | 1 - 4    | 0x00, 0xFF, 0x11, 0xEE                   |
-| 5 - 10   | 需要传输的字符串转换为字节数组之后的长度，即从第11个字节开始直到最后的数量，以little-endian形式存储6个字节 |
+| 5 - 10   | 需要传输的字符串转换为字节数组之后的长度，即从第11个字节开始直到最后的数量，以`little-endian`形式存储6个字节 |
 | 11 - ... | 需要传输的字节数组                                |
 
 * 发送传输字节数组

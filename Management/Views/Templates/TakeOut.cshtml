@@ -46,7 +46,7 @@
         <div class="row">
             <div class="col-xs-8">
                 <div class="Dine table-responsive">
-                    <table class="table table-striped table-bordered table-hover">
+                    <table class="table table-striped table-bordered table-hover" id="Unpaid">
                         <thead>
                             <tr>
                                 <th>订单号</th>
@@ -58,7 +58,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="dine in PayElements.UnpaidDines|filter:{DeskId:PayElements.Desk.Id}" ng-click="SetDine(dine)">
+                            <tr ng-repeat="dine in PayElements.UnpaidDines|filter:{DeskId:PayElements.Desk.Id}" ng-click="SetDine(dine)" ng-class="{DineChoose:dine.isChoose}">
                                 <td>{{dine.Id}}</td>
                                 <td>{{dine.HeadCount}}</td>
                                 <td>{{dine.BeginTime|date:'yyyy-MM-dd HH:mm:ss'}}</td>

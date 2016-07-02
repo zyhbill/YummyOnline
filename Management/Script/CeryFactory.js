@@ -179,6 +179,11 @@
             //设置当前点单
             if (dine == this.PayElements.CurrentDine) return;
             this.PayElements.CurrentDine = dine;
+            this.PayElements.UnpaidDines.forEach(function (x) {
+                x.isChoose = false;
+            })
+            this.PayElements.CurrentDine.isChoose = true;
+            console.log(this.PayElements.CurrentDine.isChoose);
             //当前用户注销  打折方案为自定义  获取订单用户登录
             this.PayElements.CurrentUser.Id = this.PayElements.CurrentDine.UserId;
             this.getUser();
@@ -263,10 +268,13 @@
             else {
                 if (this.PayElements.CurrentDine.Id == '当前桌台没有点单') {//当前是空单，默认是找到
                     this.PayElements.CurrentDine = $filter('filter')(this.PayElements.UnpaidDines, { DeskId: this.PayElements.Desk.Id })[0];
+                    this.PayElements.CurrentDine.isChoose = true;
+                    console.log(this.PayElements.CurrentDine.isChoose);
                     this.PayElements.CurrentUser.Id = this.PayElements.CurrentDine.UserId;
                     this.Login();
                 } else if (this.PayElements.CurrentDine.DeskId != this.PayElements.Desk.Id) {//换桌之后默认自动匹配
                     this.PayElements.CurrentDine = $filter('filter')(this.PayElements.UnpaidDines, { DeskId: this.PayElements.Desk.Id })[0];
+                    this.PayElements.CurrentDine.isChoose = true;
                     this.PayElements.Discounts.splice(temp, (this.PayElements.Discounts.length - temp));
                     this.DiscountClean();
                     this.PayElements.CurrentUser.Id = this.PayElements.CurrentDine.UserId;

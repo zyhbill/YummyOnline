@@ -106,7 +106,7 @@ namespace OrderSystem.Waiter.Controllers {
 			Dine dine = ((Dine)result.Data);
 
 			DinePaidDetail pointsPaidDetail = dine.DinePaidDetails.FirstOrDefault(p => p.PayKind.Type == PayKindType.Points);
-			if(Math.Abs((double)(dine.Price - pointsPaidDetail.Price)) < 0.01) {
+			if(pointsPaidDetail != null && Math.Abs((double)(dine.Price - pointsPaidDetail.Price)) < 0.01) {
 				await OrderManager.OfflinePayCompleted(dine.Id);
 			}
 

@@ -70,7 +70,7 @@ namespace OrderSystem.Controllers {
 
 			if(payKind.Type == PayKindType.Online) {
 				DinePaidDetail pointsPaidDetail = dine.DinePaidDetails.FirstOrDefault(p => p.PayKind.Type == PayKindType.Points);
-				if(Math.Abs((double)(dine.Price - pointsPaidDetail.Price)) < 0.01) {
+				if(pointsPaidDetail != null && Math.Abs((double)(dine.Price - pointsPaidDetail.Price)) < 0.01) {
 					redirectUrl = $"{payKind.CompleteUrl}?Succeeded={true}&DineId={dine.Id}";
 					await onlinePayCompleted(dine.Id, null);
 				}

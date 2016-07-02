@@ -12,8 +12,6 @@ This the main part of the project YummyOnline
 
 
 - TcpServer
-
-
 - AotoPrinter
 
 ## Libraries 

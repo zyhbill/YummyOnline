@@ -82,7 +82,6 @@ ordersystem.yummyonline.net
 }
 ```
 
-
 ------
 
 
@@ -130,7 +129,7 @@ ordersystem.yummyonline.net
 
 
 
-### 发送忘记密码短信
+### 忘记密码
 #### POST
 #### URL
 	/GlobalAccount/Forget

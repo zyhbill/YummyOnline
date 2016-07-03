@@ -129,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\HotelManager.cs" />
+    <Compile Include="App_Start\SystemTcpClient.cs" />
     <Compile Include="App_Start\YummyOnlineManager.cs" />
     <Compile Include="Controllers\AuthController.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
@@ -262,6 +263,10 @@
     <ProjectReference Include="..\YummyOnlineDAO\YummyOnlineDAO.csproj">
       <Project>{89c93a27-aed6-4db7-95e0-168c8c6e4531}</Project>
       <Name>YummyOnlineDAO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\YummyOnlineTcpClient\YummyOnlineTcpClient.csproj">
+      <Project>{ec57dd19-5fae-4217-ad83-6914e2718c71}</Project>
+      <Name>YummyOnlineTcpClient</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

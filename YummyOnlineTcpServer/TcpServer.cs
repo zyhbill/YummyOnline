@@ -25,16 +25,17 @@ namespace YummyOnlineTcpServer {
 		/// <summary>
 		/// 已经链接但是等待身份验证的socket
 		/// </summary>
-		private List<TcpClientInfo> waitingForVerificationClients { get; set; } = new List<TcpClientInfo>();
+		private List<TcpClientInfo> waitingForVerificationClients = new List<TcpClientInfo>();
 
+		private TcpClientInfo systemClient = null;
 		/// <summary>
 		/// 接收新订单的socket
 		/// </summary>
-		private Dictionary<NewDineInformClientGuid, TcpClientInfo> newDineInformClients { get; set; } = new Dictionary<NewDineInformClientGuid, TcpClientInfo>();
+		private Dictionary<NewDineInformClientGuid, TcpClientInfo> newDineInformClients = new Dictionary<NewDineInformClientGuid, TcpClientInfo>();
 		/// <summary>
 		/// 打印机socket
 		/// </summary>
-		private Dictionary<int, TcpClientInfo> printerClients { get; set; } = new Dictionary<int, TcpClientInfo>();
+		private Dictionary<int, TcpClientInfo> printerClients = new Dictionary<int, TcpClientInfo>();
 		/// <summary>
 		/// 打印等待队列
 		/// </summary>
@@ -92,6 +93,20 @@ namespace YummyOnlineTcpServer {
 				}
 
 				// 60秒之内没有接收到心跳包的socket断开, 或发送心跳包失败的socket断开
+				//sendHeartBeat(systemClient);
+				//systemClient.HeartAlive++;
+				//if(systemClient.HeartAlive > 6) {
+				//	log($"System {systemClient.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
+				//	systemClient.Client.Close();
+				//}
+				//foreach(var pair in newDineInformClients.Where(p => p.Value != null)) {
+				//	sendHeartBeat(pair.Value);
+				//	pair.Value.HeartAlive++;
+				//	if(pair.Value.HeartAlive > 6) {
+				//		log($"({pair.Key.Description}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Success);
+				//		pair.Value.Client.Close();
+				//	}
+				//}
 				foreach(var pair in printerClients.Where(p => p.Value != null)) {
 					sendHeartBeat(pair.Value);
 					pair.Value.HeartAlive++;
@@ -100,14 +115,6 @@ namespace YummyOnlineTcpServer {
 						pair.Value.Client.Close();
 					}
 				}
-				//foreach(var pair in NewDineInformClients.Where(p => p.Value != null)) {
-				//	sendHeartBeat(pair.Value);
-				//	pair.Value.HeartAlive++;
-				//	if(pair.Value.HeartAlive > 6) {
-				//		log($"({pair.Key.Description}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Success);
-				//		pair.Value.Client.Close();
-				//	}
-				//}
 			};
 			timer.Start();
 		}
@@ -121,6 +128,12 @@ namespace YummyOnlineTcpServer {
 				switch(baseProtocol.Type) {
 					case TcpProtocolType.HeartBeat:
 						heartBeat(clientInfo);
+						break;
+					case TcpProtocolType.SystemConnect:
+						systemConnect(clientInfo);
+						break;
+					case TcpProtocolType.SystemCommand:
+						systemCommand(clientInfo, JsonConvert.DeserializeObject<SystemCommandProtocol>(content));
 						break;
 					case TcpProtocolType.NewDineInformClientConnect:
 						newDineInfromClientConnected(clientInfo, JsonConvert.DeserializeObject<NewDineInformClientConnectProtocol>(content));
@@ -147,10 +160,15 @@ namespace YummyOnlineTcpServer {
 
 		private void Tcp_ErrorEvent(TcpClient client, Exception e) {
 			TcpClientInfo clientInfo = waitingForVerificationClients.FirstOrDefault(p => p.Client == client);
-
 			if(clientInfo != null) {
 				waitingForVerificationClients.Remove(clientInfo);
 				log($"WaitingForVerificationClient {clientInfo.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
+				return;
+			}
+
+			if(systemClient.Client == client) {
+				systemClient = null;
+				log($"System {systemClient.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
 				return;
 			}
 
@@ -183,6 +201,7 @@ namespace YummyOnlineTcpServer {
 			foreach(var p in waitingForVerificationClients) {
 				protocol.WaitingForVerificationClients.Add(getClientStatus(p));
 			}
+			protocol.SystemClient = getClientStatus(systemClient);
 			foreach(var pair in newDineInformClients) {
 				protocol.NewDineInformClients.Add(new NewDineInformClientStatus {
 					Guid = pair.Key.Guid,

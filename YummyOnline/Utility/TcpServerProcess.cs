@@ -36,7 +36,6 @@ namespace YummyOnline.Utility {
 				process.StartInfo.FileName = config.TcpServerDir + @"\YummyOnlineTcpServer.exe";
 				process.StartInfo.CreateNoWindow = true;
 				process.Start();
-
 				return true;
 			}
 			catch {

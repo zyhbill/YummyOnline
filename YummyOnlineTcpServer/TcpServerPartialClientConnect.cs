@@ -6,6 +6,12 @@ using YummyOnlineDAO.Models;
 
 namespace YummyOnlineTcpServer {
 	public partial class TcpServer {
+		private void systemConnect(TcpClientInfo clientInfo) {
+			log($"{clientInfo.OriginalRemotePoint} (System) Connected", Log.LogLevel.Success);
+			systemClient = clientInfo;
+
+			_clientVerified(clientInfo);
+		}
 		/// <summary>
 		/// 需要及时收到新订单的客户端连接
 		/// </summary>

@@ -87,6 +87,27 @@
 
 			<div class="box box-default">
 				<div class="box-header">
+					<h3 class="box-title">System 客户端</h3>
+				</div>
+				<div class="table-responsive">
+					<table class="table no-margin">
+						<tr>
+							<th class="col-md-4">IP</th>
+							<th class="col-md-3">端口</th>
+							<th class="col-md-5">连接时间</th>
+						</tr>
+						<tr>
+							<td colspan="3" class="danger" ng-hide="tcpServerInfo.Status.SystemClient.IsConnected">Disconnected</td>
+							<td ng-show="tcpServerInfo.Status.SystemClient.IsConnected">{{tcpServerInfo.Status.SystemClient.IpAddress}}</td>
+							<td ng-show="tcpServerInfo.Status.SystemClient.IsConnected">{{tcpServerInfo.Status.SystemClient.Port}}</td>
+							<td ng-show="tcpServerInfo.Status.SystemClient.IsConnected">{{tcpServerInfo.Status.SystemClient.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<div class="box box-default">
+				<div class="box-header">
 					<h3 class="box-title">打印客户端</h3>
 				</div>
 				<div class="table-responsive">

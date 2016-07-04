@@ -234,6 +234,9 @@ span.money{
 #Unpaid tr.DineChoose{
     border:5px solid #f00;
 }
+#logo,#button,#complete{
+    display:inline-block;
+}
 /************************************退菜************************************************/
 .ReeturnShow{
     max-height:180px;

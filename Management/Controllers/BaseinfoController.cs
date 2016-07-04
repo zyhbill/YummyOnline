@@ -1112,11 +1112,14 @@ namespace Management.Controllers
             var font = await db.PrinterFormats.FirstOrDefaultAsync();
             var IsUsePrinter = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
             var IsPayFirst = await db.HotelConfigs.Select(h => h.IsPayFirst).FirstOrDefaultAsync();
-            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst });
+            int HotelId = (int)(Session["User"] as RStatus).HotelId;
+            var Style = await sysdb.Hotels.Where(d => d.Id == HotelId).Select(d => d.CssThemePath).FirstOrDefaultAsync();
+            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst , Style = Style });
         }
 
-        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int ShiftPrintId,bool IsPayFirst)
+        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int ShiftPrintId,bool IsPayFirst,int Style)
         {
+            int HotelId = (int)(Session["User"] as RStatus).HotelId;
             var config = await db.HotelConfigs.FirstOrDefaultAsync();
             config.PointsRatio = Rate;
             config.ShiftPrinterId = ShiftPrintId;
@@ -1135,7 +1138,54 @@ namespace Management.Controllers
             font.ShiftFontSize = Format.ShiftFontSize;
             font.ShiftSmallFontSize = Format.ShiftSmallFontSize;
             db.SaveChanges();
+            var hotel = sysdb.Hotels.Where(h => h.Id == HotelId).FirstOrDefault();
+            if (Style == 0)
+            {
+                hotel.CssThemePath = "default.css";
+            }else if(Style == 1)
+            {
+                hotel.CssThemePath = "cafe.css";
+            }
+            sysdb.SaveChanges();
             return null;
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> FileUpLoader()
+        {
+            if (Request.Files.Count != 0)
+            {
+                HttpPostedFileBase logo = Request.Files["logo"];
+                HttpPostedFileBase button = Request.Files["button"];
+                HttpPostedFileBase complete = Request.Files["complete"];
+                string baseUrl = Method.MyGetBaseUrl((int)(Session["User"] as RStatus).HotelId);
+                string OrderUrl = Method.GetBaseUrl((int)(Session["User"] as RStatus).HotelId);
+                if (!Directory.Exists(baseUrl))
+                {
+                    Directory.CreateDirectory(baseUrl);
+                }
+                if (!Directory.Exists(OrderUrl))
+                {
+                    Directory.CreateDirectory(OrderUrl);
+                }
+                if (logo != null)
+                {
+                    logo.SaveAs(baseUrl + "index.png");
+                    logo.SaveAs(OrderUrl + "index.png");
+                }
+                if (button != null)
+                {
+                    button.SaveAs(baseUrl + "btn-cart.png");
+                    button.SaveAs(OrderUrl + "index.png");
+                }
+                if (complete != null)
+                {
+                    complete.SaveAs(baseUrl + "completed.gif");
+                    complete.SaveAs(OrderUrl + "completed.gif");
+                }
+                return Json(new SuccessState());
+            }
+            return Json(new ErrorState("请选择文件"));
         }
     }
 }

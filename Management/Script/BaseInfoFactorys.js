@@ -1163,7 +1163,8 @@
             Printers: [],
             PrinterFormat: {},
             CurrentPrinter: {},
-            CurrentFont:{},
+            CurrentFont: {},
+            CurrentStyle:{},
             Fonts: [{ Name: "宋体" }, { Name: "黑体" }],
             Styles: [{ Id: 0, Name: "简单" }, {Id:1,Name:"时尚"}],
             OldFormat: {},
@@ -1192,7 +1193,6 @@
                 _this.PrintElement.Printers.forEach(function (x) {
                     if (x.Id == data.AccountPrint) _this.PrintElement.CurrentPrinter = x;
                 })
-                console.log(data);
                 if (data.font) _this.PrintElement.OldFormat = data.font;
                 _this.PrintElement.IsPayFirst = data.IsPayFirst;
                 if (data.font) {
@@ -1211,6 +1211,11 @@
                         ShiftSmallFontSize: data.font.ShiftSmallFontSize
                     }
                 }
+                if (data.Style == "default.css") {
+                    _this.PrintElement.CurrentStyle = _this.PrintElement.Styles[0];
+                } else {
+                    _this.PrintElement.CurrentStyle = _this.PrintElement.Styles[1];
+                }
                 _this.PrintElement.UsePrint = data.IsUsePrinter;
                 _this.PrintElement.Rate = data.Rate;
             });
@@ -1223,11 +1228,36 @@
                 Rate: _this.PrintElement.Rate,
                 IsUsePrint: _this.PrintElement.UsePrint,
                 ShiftPrintId: _this.PrintElement.CurrentPrinter.Id,
-                IsPayFirst:_this.PrintElement.IsPayFirst
+                IsPayFirst: _this.PrintElement.IsPayFirst,
+                Style:_this.PrintElement.CurrentStyle.Id
             }).success(function (data) {
                 $rootScope.IsPayFirst = _this.PrintElement.IsPayFirst;
                 alert("保存成功");
             })
+        },
+        Upload: function () {
+            console.log($('#Other')[0]);
+            var formData = new FormData($('#Other')[0]);
+            console.log(formData);
+            $.ajax({
+                url: '../Baseinfo/FileUpLoader',
+                type: 'POST',
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (returndata) {
+                    if (returndata.Status) {
+                        alert("更新成功");
+                    } else {
+                        alert("更新失败");
+                    }
+                },
+                error: function (returndata) {
+                    alert("更新失败");
+                }
+            });
         }
     }
     return service;

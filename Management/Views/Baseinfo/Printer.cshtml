@@ -27,6 +27,10 @@
 
                         <input type="number" ng-model="PrintElement.Rate" ng-change="Max()" />
                         <span ng-if="PrintElement.Rate!=0">100 积分 等于 {{(100/PrintElement.Rate).toFixed(0)}}元</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        选择风格:
+                        <select ng-options="sytle.Name for sytle in PrintElement.Styles" ng-model="PrintElement.CurrentStyle"></select>
+                    
                     </div>
                 </div>
             </div>
@@ -110,10 +114,15 @@
             </div>
         </div>
 
+        <a href="javascript:;" class="btn btn-app btn-primary btn-xs" ng-click="changeInfo()">
+            <i class="icon-save bigger-230"></i>
+            保存
+        </a>
+
         <div class="widget-box">
             <div class="widget-header">
                 <h4>
-                    饭店风格设置
+                    图片设置
                 </h4>
 
                 <div class="widget-toolbar">
@@ -126,31 +135,19 @@
             <div class="widget-body">
                 <div class="widget-main">
                     <div>
-                        选择风格:
-                        <select ng-options="sytle.Name for sytle in PrintElement.Styles">
-                        </select>
-                        上传Logo
-                        <span class="profile-picture">
-                            <img id="logo" class="editable img-responsive editable-click editable-empty" alt="菜品的图片" ng-src="">
-                        </span>
-                        上传下单按钮
-                        <span class="profile-picture">
-                            <img id="banner" class="editable img-responsive editable-click editable-empty" alt="菜品的图片" ng-src="">
-                        </span>
-                        上传支付完成图片
-                        <span class="profile-picture">
-                            <img id="complete" class="editable img-responsive editable-click editable-empty" alt="菜品的图片" ng-src="">
-                        </span>
+                        <form ng-submit="Upload()" name="Other" id="Other">
+                            上传Logo
+                            <input type="file" name="logo" id="logo"/>
+                            上传下单按钮
+                            <input type="file" name="button" id="button" />
+                            上传支付完成图片
+                            <input type="file" name="complete" id="complete" />
+                            <button class="btn btn-default" type="submit">上传</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-
-
-        <a href="javascript:;" class="btn btn-app btn-primary btn-xs" ng-click="changeInfo()">
-            <i class="icon-save bigger-230"></i>
-            保存
-        </a>
 
 
 

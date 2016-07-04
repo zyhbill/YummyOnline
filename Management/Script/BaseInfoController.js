@@ -841,10 +841,14 @@ angular.module('Baseinfo', [])
     }
 })
 .controller('PrinterCtrl', ['$scope', '$rootScope', 'Print', function ($scope, $rootScope, Print) {
+    $rootScope.FatherPage = "酒店杂项管理";$rootScope.ChildPage = "杂项设置";
     $scope.Initialize = function () { Print.Initialize(); }
     $scope.PrintElement = Print.PrintElement;
     $scope.changeInfo = function () {
         Print.changeInfo();
+    }
+    $scope.Upload = function () {
+        Print.Upload();
     }
     $scope.Max = function () {
         if ($scope.PrintElement.Rate <= 0) $scope.PrintElement.Rate = 0;

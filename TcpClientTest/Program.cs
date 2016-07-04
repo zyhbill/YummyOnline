@@ -12,7 +12,7 @@ using HotelDAO.Models;
 
 namespace TcpClientTest {
 	class Program {
-		static string ip = "122.114.96.157";
+		static string ip = "127.0.0.1";
 		static void Main(string[] args) {
 			TcpClient client = new TcpClient(IPAddress.Parse(ip), 18000, new NewDineInformClientConnectProtocol("ec3ad9d8-1c48-420d-a33e-c2f83b761738"));
 

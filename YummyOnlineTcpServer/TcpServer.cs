@@ -92,27 +92,33 @@ namespace YummyOnlineTcpServer {
 					}
 				}
 
-				// 60秒之内没有接收到心跳包的socket断开, 或发送心跳包失败的socket断开
-				//sendHeartBeat(systemClient);
-				//systemClient.HeartAlive++;
-				//if(systemClient.HeartAlive > 6) {
-				//	log($"System {systemClient.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
-				//	systemClient.Client.Close();
+				//60秒之内没有接收到心跳包的socket断开, 或发送心跳包失败的socket断开
+				//if(systemClient != null) {
+				//	sendHeartBeat(systemClient);
+				//	systemClient.HeartAlive++;
+				//	if(systemClient.HeartAlive > 6) {
+				//		log($"System {systemClient.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
+				//		systemClient.Client.Close();
+				//		systemClient = null;
+				//		clientsStatusChange();
+				//	}
 				//}
 				//foreach(var pair in newDineInformClients.Where(p => p.Value != null)) {
 				//	sendHeartBeat(pair.Value);
 				//	pair.Value.HeartAlive++;
-				//	if(pair.Value.HeartAlive > 6) {
-				//		log($"({pair.Key.Description}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Success);
+				//	if(pair.Value.HeartAlive > 1) {
 				//		pair.Value.Client.Close();
+				//		newDineInformClients[pair.Key] = null;
+				//		log($"({pair.Key.Description}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Success);
 				//	}
 				//}
 				foreach(var pair in printerClients.Where(p => p.Value != null)) {
 					sendHeartBeat(pair.Value);
 					pair.Value.HeartAlive++;
 					if(pair.Value.HeartAlive > 6) {
-						log($"Printer (Hotel{pair.Key}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
 						pair.Value.Client.Close();
+						printerClients[pair.Key] = null;
+						log($"Printer (Hotel{pair.Key}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
 					}
 				}
 			};
@@ -166,7 +172,7 @@ namespace YummyOnlineTcpServer {
 				return;
 			}
 
-			if(systemClient.Client == client) {
+			if(systemClient?.Client == client) {
 				systemClient = null;
 				log($"System {systemClient.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
 				return;

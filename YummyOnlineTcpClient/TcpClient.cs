@@ -87,7 +87,7 @@ namespace YummyOnlineTcpClient {
 
 			Timer timer = new Timer(10 * 1000);
 			timer.Elapsed += Timer_Elapsed;
-			//timer.Start();
+			timer.Start();
 		}
 
 		private void Timer_Elapsed(object sender, ElapsedEventArgs e) {

@@ -14,10 +14,12 @@ namespace YummyOnlineTcpServer {
 		/// <param name="protocol"></param>
 		private void newDineInform(TcpClientInfo clientInfo, NewDineInformProtocol protocol) {
 			NewDineInformClientGuid sender = getSender(clientInfo);
-			if(sender == null)
+			if(sender == null) {
+				log($"{clientInfo.OriginalRemotePoint} Received NewDineInform From Invalid NewDineInformClient", Log.LogLevel.Error);
+				clientInfo.Client.Close();
 				return;
-
-
+			}
+			
 			log($"{clientInfo.OriginalRemotePoint} (NewDineInform): From: {sender.Description}, HotelId: {protocol.HotelId}, DineId: {protocol.DineId}, IsPaid: {protocol.IsPaid}", Log.LogLevel.Success);
 
 			foreach(var p in newDineInformClients) {
@@ -34,9 +36,12 @@ namespace YummyOnlineTcpServer {
 		/// </summary>
 		private void requestPrintDine(TcpClientInfo clientInfo, RequestPrintDineProtocol protocol) {
 			NewDineInformClientGuid sender = getSender(clientInfo);
-			if(sender == null)
+			if(sender == null) {
+				log($"{clientInfo.OriginalRemotePoint} Received RequestPrintDine From Invalid NewDineInformClient", Log.LogLevel.Error);
+				clientInfo.Client.Close();
 				return;
-
+			}
+			
 			protocol.DineMenuIds = protocol.DineMenuIds ?? new List<int>();
 			protocol.PrintTypes = protocol.PrintTypes ?? new List<PrintType>();
 
@@ -75,8 +80,11 @@ namespace YummyOnlineTcpServer {
 
 		private void requestPrintShifts(TcpClientInfo clientInfo, RequestPrintShiftsProtocol protocol) {
 			NewDineInformClientGuid sender = getSender(clientInfo);
-			if(sender == null)
+			if(sender == null) {
+				log($"{clientInfo.OriginalRemotePoint} Received RequestPrintShifts From Invalid NewDineInformClient", Log.LogLevel.Error);
+				clientInfo.Client.Close();
 				return;
+			}
 
 			protocol.Ids = protocol.Ids ?? new List<int>();
 

@@ -53,6 +53,14 @@ namespace YummyOnlineTcpServer {
 					displayClientStatus(p);
 				}
 				Console.WriteLine("========================");
+				Console.WriteLine("SystemClient:");
+				if(status.SystemClient.IsConnected) {
+					displayClientStatus(status.SystemClient);
+				}
+				else {
+					Console.WriteLine("Disconnected");
+				}
+				Console.WriteLine("========================");
 				Console.WriteLine("NewDineInformClients:");
 				foreach(var p in status.NewDineInformClients) {
 					Console.WriteLine("---------------------");

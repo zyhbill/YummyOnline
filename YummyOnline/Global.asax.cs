@@ -17,6 +17,12 @@ using YummyOnlineDAO.Models;
 namespace YummyOnline {
 	public class MvcApplication : HttpApplication {
 		protected void Application_Start() {
+			var _ = SystemTcpClient.Initialize(async () => {
+				await new YummyOnlineManager().RecordLog(Log.LogProgram.System, Log.LogLevel.Success, "TcpServer Connected");
+			}, async e => {
+				await new YummyOnlineManager().RecordLog(Log.LogProgram.System, Log.LogLevel.Error, e.Message);
+			});
+
 			AreaRegistration.RegisterAllAreas();
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);

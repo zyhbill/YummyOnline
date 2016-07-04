@@ -24,6 +24,7 @@ namespace Protocol {
 	}
 	public class TcpServerStatusProtocol {
 		public List<ClientStatus> WaitingForVerificationClients { get; set; } = new List<ClientStatus>();
+		public ClientStatus SystemClient { get; set; }
 		public List<NewDineInformClientStatus> NewDineInformClients { get; set; } = new List<NewDineInformClientStatus>();
 		public List<PrinterClientStatus> PrinterClients { get; set; } = new List<PrinterClientStatus>();
 	}

@@ -14,7 +14,7 @@ namespace TcpClientTest {
 	class Program {
 		static string ip = "122.114.96.157";
 		static void Main(string[] args) {
-			TcpClient client = new TcpClient(IPAddress.Parse(ip), 18000, new NewDineInformClientConnectProtocol("ec3ad9d8-1c48-420d-a33e-c2f83b761738"));
+			TcpClient client = new TcpClient(IPAddress.Parse(ip), 18000, new NewDineInformClientConnectProtocol("1c3ad9d8-1c48-420d-a33e-c2f83b761738"));
 
 			client.CallBackWhenMessageReceived = (s, o) => {
 				var a = (NewDineInformProtocol)o;

@@ -7,6 +7,8 @@ namespace Protocol {
 		/// 心跳包
 		/// </summary>
 		public const string HeartBeat = "{F3E101EA-F55D-40DD-9747-BF0DB29C98AF}";
+		public const string SystemConnect = "{9DA2754A-B3E5-408A-A8C5-524AEA61D2B3}";
+		public const string SystemCommand = "{8B0B5D6B-963B-4164-AB4D-9A37042057DC}";
 		/// <summary>
 		/// 需要及时收到新订单消息的客户端连接
 		/// </summary>
@@ -47,6 +49,9 @@ namespace Protocol {
 		public HeartBeatProtocol() : base(TcpProtocolType.HeartBeat) { }
 	}
 
+	public class SystemConnectProtocol : BaseTcpProtocol {
+		public SystemConnectProtocol() : base(TcpProtocolType.SystemConnect) { }
+	}
 	public class NewDineInformClientConnectProtocol : BaseTcpProtocol {
 		public NewDineInformClientConnectProtocol() : base(TcpProtocolType.NewDineInformClientConnect) { }
 		public NewDineInformClientConnectProtocol(string guidStr) : base(TcpProtocolType.NewDineInformClientConnect) {
@@ -60,6 +65,14 @@ namespace Protocol {
 			HotelId = hotelId;
 		}
 		public int HotelId { get; set; }
+	}
+
+	public enum SystemCommandType {
+		RefreshNewDineClients = 0
+	}
+	public class SystemCommandProtocol : BaseTcpProtocol {
+		public SystemCommandProtocol(SystemCommandType commandType) : base(TcpProtocolType.SystemCommand) { }
+		public SystemCommandType CommandType { get; set; }
 	}
 
 	public class NewDineInformProtocol : BaseTcpProtocol {

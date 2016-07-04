@@ -96,6 +96,7 @@
     <Compile Include="TcpClientInfo.cs" />
     <Compile Include="TcpServer.cs" />
     <Compile Include="TcpServerPartialClientConnect.cs" />
+    <Compile Include="TcpServerPartialSystemCommand.cs" />
     <Compile Include="TcpServerPartialMessageInform.cs" />
     <Compile Include="TcpServerPartialHeartBeat.cs" />
     <Compile Include="WebSocketServer.cs" />

@@ -98,8 +98,6 @@ namespace YummyOnline {
 			return await ctx.Hotels.FirstOrDefaultAsync();
 		}
 
-
-
 		public async Task<List<Hotel>> GetHotelReadyForConfirms() {
 			return await ctx.Hotels.Where(p => p.ConnectionString == null).ToListAsync();
 		}
@@ -233,8 +231,22 @@ namespace YummyOnline {
 			await ctx.SaveChangesAsync();
 		}
 
-		public async Task<string> GetFirstStaffId(int hotelId) {
-			return await ctx.Staffs.Where(p => p.HotelId == hotelId).Select(p => p.Id).FirstOrDefaultAsync();
+		public async Task<string> GetHotelAdminId(int hotelId) {
+			return await ctx.Staffs.Where(p => p.HotelId == hotelId && p.IsHotelAdmin).Select(p => p.Id).FirstOrDefaultAsync();
+		}
+		public async Task<dynamic> GetHotelAdmins() {
+			return await ctx.Staffs.Where(p => p.IsHotelAdmin).Select(p => new {
+				p.Id,
+				p.SigninName,
+				p.PhoneNumber,
+				p.Email,
+				p.CreateDate,
+				StaffCount = p.Hotel.Staffs.Count,
+				Hotel = new {
+					p.Hotel.Id,
+					p.Hotel.Name
+				}
+			}).ToListAsync();
 		}
 		#endregion
 	}

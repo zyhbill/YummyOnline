@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace YummyOnline {
 	public class HotelManager : HotelDAO.BaseHotelManager {
-		public HotelManager(string connString) : base(connString) {}
+		public HotelManager(string connString) : base(connString) { }
 
 		public async Task<dynamic> GetLogs(DateTime date, int? count) {
 			IQueryable<Log> linq = ctx.Logs.Where(p => SqlFunctions.DateDiff("day", p.DateTime, date) == 0)
@@ -25,6 +25,9 @@ namespace YummyOnline {
 			}).ToListAsync();
 		}
 
+		public async Task<List<string>> GetAllDineIds(DateTime dateTime) {
+			return await ctx.Dines.Where(p => SqlFunctions.DateDiff("day", p.BeginTime, dateTime) == 0).Select(p => p.Id).ToListAsync();
+		}
 		public async Task<int> GetDineCount(DateTime dateTime) {
 			return await ctx.Dines.CountAsync(p => SqlFunctions.DateDiff("day", p.BeginTime, dateTime) == 0);
 		}
@@ -103,7 +106,7 @@ namespace YummyOnline {
 				KitchenOrderSmallFontSize = 9,
 				ServeOrderFontSize = 9,
 				ServeOrderSmallFontSize = 9
-			});			
+			});
 			await ctx.SaveChangesAsync();
 		}
 	}

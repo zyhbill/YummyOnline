@@ -13,5 +13,8 @@
 	}).when('/Nemo', {
 		templateUrl: '/Users/_ViewNemo',
 		controller: 'NemoCtrl'
+	}).when('/HotelAdmin', {
+		templateUrl: '/Users/_ViewHotelAdmin',
+		controller: 'HotelAdminCtrl'
 	});
 });

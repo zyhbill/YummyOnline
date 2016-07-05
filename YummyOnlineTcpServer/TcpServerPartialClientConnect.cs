@@ -93,7 +93,6 @@ namespace YummyOnlineTcpServer {
 				clientInfo.ConnectedTime = waitedClientInfo.ConnectedTime;
 				waitingForVerificationClients.Remove(waitedClientInfo);
 			}
-			clientsStatusChange();
 		}
 	}
 }

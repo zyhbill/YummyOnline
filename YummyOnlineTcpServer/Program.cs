@@ -11,7 +11,6 @@ using System.Threading;
 
 namespace YummyOnlineTcpServer {
 	class Program {
-		static AutoResetEvent fileWritten = new AutoResetEvent(true);
 
 		static void Main(string[] args) {
 			Process[] tProcess = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
@@ -22,7 +21,7 @@ namespace YummyOnlineTcpServer {
 			SystemConfig config = new YummyOnlineManager().GetSystemConfig().Result;
 			TcpServer tcp = new TcpServer(config.TcpServerIp, config.TcpServerPort, async (log, level) => {
 				await new YummyOnlineManager().RecordLog(Log.LogProgram.TcpServer, level, log);
-			}, clientsStatusChange);
+			});
 			Task _ = tcp.Initialize();
 
 
@@ -31,61 +30,48 @@ namespace YummyOnlineTcpServer {
 			});
 
 			while(true) {
-				Console.Read();
+				string cmd = Console.ReadLine();
+				displayTcpServerStatus(tcp.GetTcpServerStatus());
 			}
 		}
 
-		static async void clientsStatusChange(TcpServerStatusProtocol status) {
-			fileWritten.WaitOne();
-			try {
-				SystemConfig config = await new YummyOnlineManager().GetSystemConfig();
-
-				File.WriteAllText(config.TcpServerDir + @"\status.json", JsonConvert.SerializeObject(status));
+		static void displayTcpServerStatus(TcpServerStatusProtocol status) {
+			Console.WriteLine("WaitingForVerificationClients:");
+			foreach(var p in status.WaitingForVerificationClients) {
+				displayClientStatus(p);
 			}
-			catch(Exception ex) {
-				Console.WriteLine("\nFail to write into Status File ");
-				Console.WriteLine(ex);
+			Console.WriteLine("========================");
+			Console.WriteLine("SystemClient:");
+			if(status.SystemClient.IsConnected) {
+				displayClientStatus(status.SystemClient);
 			}
-			finally {
-				Console.Clear();
-				Console.WriteLine("WaitingForVerificationClients:");
-				foreach(var p in status.WaitingForVerificationClients) {
-					displayClientStatus(p);
-				}
-				Console.WriteLine("========================");
-				Console.WriteLine("SystemClient:");
-				if(status.SystemClient.IsConnected) {
-					displayClientStatus(status.SystemClient);
+			else {
+				Console.WriteLine("Disconnected");
+			}
+			Console.WriteLine("========================");
+			Console.WriteLine("NewDineInformClients:");
+			foreach(var p in status.NewDineInformClients) {
+				Console.WriteLine("---------------------");
+				string guid = p.Guid.ToString();
+				Console.WriteLine($"Guid: {guid.Substring(0, 4)}...{guid.Substring(guid.Length - 4, 4)}, Description: {p.Description}");
+				if(p.Status.IsConnected) {
+					displayClientStatus(p.Status);
 				}
 				else {
 					Console.WriteLine("Disconnected");
 				}
-				Console.WriteLine("========================");
-				Console.WriteLine("NewDineInformClients:");
-				foreach(var p in status.NewDineInformClients) {
-					Console.WriteLine("---------------------");
-					string guid = p.Guid.ToString();
-					Console.WriteLine($"Guid: {guid.Substring(0, 4)}...{guid.Substring(guid.Length - 4, 4)}, Description: {p.Description}");
-					if(p.Status.IsConnected) {
-						displayClientStatus(p.Status);
-					}
-					else {
-						Console.WriteLine("Disconnected");
-					}
+			}
+			Console.WriteLine("========================");
+			foreach(var p in status.PrinterClients) {
+				Console.Write($"Hotel {p.HotelId}: ");
+				if(p.Status.IsConnected) {
+					displayClientStatus(p.Status);
+					Console.WriteLine($"\t({p.WaitedCount} standing by)");
 				}
-				Console.WriteLine("========================");
-				foreach(var p in status.PrinterClients) {
-					Console.Write($"Hotel {p.HotelId}: ");
-					if(p.Status.IsConnected) {
-						displayClientStatus(p.Status);
-						Console.WriteLine($"\t({p.WaitedCount} standing by)");
-					}
-					else {
-						Console.WriteLine("Disconnected");
-					}
+				else {
+					Console.WriteLine("Disconnected");
 				}
 			}
-			fileWritten.Set();
 		}
 
 		static void displayClientStatus(ClientStatus status) {

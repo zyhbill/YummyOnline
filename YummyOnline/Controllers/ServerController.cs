@@ -49,8 +49,8 @@ namespace YummyOnline.Controllers {
 			return Json(new JsonError("无法停止"));
 		}
 
-		public async Task<JsonResult> GetTcpServerInfo() {
-			return Json(await TcpServerProcess.GetTcpServerInfo());
+		public JsonResult GetTcpServerInfo() {
+			return Json(TcpServerProcess.GetTcpServerInfo());
 		}
 		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> StartTcpServer() {

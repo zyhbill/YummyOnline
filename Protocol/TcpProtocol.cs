@@ -9,6 +9,7 @@ namespace Protocol {
 		public const string HeartBeat = "{F3E101EA-F55D-40DD-9747-BF0DB29C98AF}";
 		public const string SystemConnect = "{9DA2754A-B3E5-408A-A8C5-524AEA61D2B3}";
 		public const string SystemCommand = "{8B0B5D6B-963B-4164-AB4D-9A37042057DC}";
+		public const string TcpServerStatusInform = "{DCF7434E-2A3E-4296-BED7-EFB528EA317A}";
 		/// <summary>
 		/// 需要及时收到新订单消息的客户端连接
 		/// </summary>
@@ -54,12 +55,14 @@ namespace Protocol {
 	}
 	public class NewDineInformClientConnectProtocol : BaseTcpProtocol {
 		public NewDineInformClientConnectProtocol() : base(TcpProtocolType.NewDineInformClientConnect) { }
-		public NewDineInformClientConnectProtocol(string guidStr) : base(TcpProtocolType.NewDineInformClientConnect) {
+		public NewDineInformClientConnectProtocol(string guidStr)
+			: base(TcpProtocolType.NewDineInformClientConnect) {
 			Guid = new Guid(guidStr);
 		}
 		public Guid Guid { get; set; }
 	}
 	public class PrintDineClientConnectProtocol : BaseTcpProtocol {
+		public PrintDineClientConnectProtocol() : base(TcpProtocolType.PrintDineClientConnect) { }
 		public PrintDineClientConnectProtocol(int hotelId)
 			: base(TcpProtocolType.PrintDineClientConnect) {
 			HotelId = hotelId;
@@ -68,14 +71,28 @@ namespace Protocol {
 	}
 
 	public enum SystemCommandType {
-		RefreshNewDineClients = 0
+		RefreshNewDineClients = 0,
+		RequestTcpServerStatus = 1
 	}
 	public class SystemCommandProtocol : BaseTcpProtocol {
-		public SystemCommandProtocol(SystemCommandType commandType) : base(TcpProtocolType.SystemCommand) { }
+		public SystemCommandProtocol() : base(TcpProtocolType.SystemCommand) { }
+		public SystemCommandProtocol(SystemCommandType commandType)
+			: base(TcpProtocolType.SystemCommand) {
+			CommandType = commandType;
+		}
 		public SystemCommandType CommandType { get; set; }
+	}
+	public class TcpServerStatusInformProtocol : BaseTcpProtocol {
+		public TcpServerStatusInformProtocol() : base(TcpProtocolType.TcpServerStatusInform) { }
+		public TcpServerStatusInformProtocol(TcpServerStatusProtocol status)
+			: base(TcpProtocolType.TcpServerStatusInform) {
+			Status = status;
+		}
+		public TcpServerStatusProtocol Status { get; set; }
 	}
 
 	public class NewDineInformProtocol : BaseTcpProtocol {
+		public NewDineInformProtocol() : base(TcpProtocolType.NewDineInform) { }
 		public NewDineInformProtocol(int hotelId, string dineId, bool isPaid)
 			: base(TcpProtocolType.NewDineInform) {
 			HotelId = hotelId;
@@ -103,6 +120,7 @@ namespace Protocol {
 	}
 
 	public class PrintDineProtocol : BaseTcpProtocol {
+		public PrintDineProtocol() : base(TcpProtocolType.PrintDine) { }
 		public PrintDineProtocol(string dineId, List<int> dineMenuIds, List<PrintType> printTypes)
 			: base(TcpProtocolType.PrintDine) {
 			DineId = dineId;
@@ -114,6 +132,7 @@ namespace Protocol {
 		public List<PrintType> PrintTypes { get; set; } = new List<PrintType>();
 	}
 	public class RequestPrintDineProtocol : PrintDineProtocol {
+		public RequestPrintDineProtocol() : base() { }
 		public RequestPrintDineProtocol(int hotelId, string dineId, List<int> dineMenuIds, List<PrintType> printTypes)
 			: base(dineId, dineMenuIds, printTypes) {
 			Type = TcpProtocolType.RequestPrintDine;
@@ -123,6 +142,7 @@ namespace Protocol {
 	}
 
 	public class PrintShiftsProtocol : BaseTcpProtocol {
+		public PrintShiftsProtocol() : base(TcpProtocolType.PrintShifts) { }
 		public PrintShiftsProtocol(List<int> ids, DateTime dateTime)
 			: base(TcpProtocolType.PrintShifts) {
 			Ids = ids;
@@ -132,6 +152,7 @@ namespace Protocol {
 		public DateTime DateTime { get; set; }
 	}
 	public class RequestPrintShiftsProtocol : PrintShiftsProtocol {
+		public RequestPrintShiftsProtocol() : base() { }
 		public RequestPrintShiftsProtocol(int hotelId, List<int> ids, DateTime dateTime)
 			: base(ids, dateTime) {
 			Type = TcpProtocolType.RequestPrintShifts;

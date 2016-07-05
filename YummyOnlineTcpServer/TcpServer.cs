@@ -17,7 +17,6 @@ namespace YummyOnlineTcpServer {
 		private string ip;
 		private int port;
 		private Action<string, Log.LogLevel> logDelegate;
-		private Action<TcpServerStatusProtocol> clientsStatusDelegate;
 
 		// 用于打印机或新订单通知客户端重复连接时, 等待原有客户端断开日志记录完毕再执行下面代码·
 		private ManualResetEvent clientCloseMutex = new ManualResetEvent(true);
@@ -46,14 +45,13 @@ namespace YummyOnlineTcpServer {
 		/// </summary>
 		/// <param name="logDelegate">记录日志回调函数, 参数1: 日志信息, 参数2: 日志等级</param>
 		/// <param name="clientsStatusDelegate">socket客户端状态变化回调函数</param>
-		public TcpServer(string ip, int port, Action<string, Log.LogLevel> logDelegate, Action<TcpServerStatusProtocol> clientsStatusDelegate) {
+		public TcpServer(string ip, int port, Action<string, Log.LogLevel> logDelegate) {
 			tcp = new TcpManager();
 			this.ip = ip;
 			this.port = port;
 			tcp.MessageReceivedEvent += Tcp_MessageReceivedEvent;
 			tcp.ErrorEvent += Tcp_ErrorEvent;
 			this.logDelegate = logDelegate;
-			this.clientsStatusDelegate = clientsStatusDelegate;
 		}
 		public async Task Initialize() {
 			YummyOnlineManager manager = new YummyOnlineManager();
@@ -139,6 +137,7 @@ namespace YummyOnlineTcpServer {
 						systemConnect(clientInfo);
 						break;
 					case TcpProtocolType.SystemCommand:
+						log(content, Log.LogLevel.Debug);
 						systemCommand(clientInfo, JsonConvert.DeserializeObject<SystemCommandProtocol>(content));
 						break;
 					case TcpProtocolType.NewDineInformClientConnect:
@@ -199,9 +198,8 @@ namespace YummyOnlineTcpServer {
 
 		private void log(string log, Log.LogLevel level) {
 			logDelegate(log, level);
-			clientsStatusChange();
 		}
-		private void clientsStatusChange() {
+		public TcpServerStatusProtocol GetTcpServerStatus() {
 			TcpServerStatusProtocol protocol = new TcpServerStatusProtocol();
 
 			foreach(var p in waitingForVerificationClients) {
@@ -223,8 +221,9 @@ namespace YummyOnlineTcpServer {
 				});
 			}
 
-			clientsStatusDelegate(protocol);
+			return protocol;
 		}
+
 		private ClientStatus getClientStatus(TcpClientInfo info) {
 			ClientStatus status = new ClientStatus();
 			if(info != null) {

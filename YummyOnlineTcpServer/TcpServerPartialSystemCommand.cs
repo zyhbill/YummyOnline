@@ -21,6 +21,10 @@ namespace YummyOnlineTcpServer {
 					log($"{clientInfo.OriginalRemotePoint} Refresh NewDineInformClients", Log.LogLevel.Success);
 					var _ = refreshNewDineInformClients();
 					break;
+				case SystemCommandType.RequestTcpServerStatus:
+					log($"{clientInfo.OriginalRemotePoint} Request TcpServerStatus", Log.LogLevel.Success);
+					requestTcpServerStatus();
+					break;
 			}
 		}
 		private async Task refreshNewDineInformClients() {
@@ -40,8 +44,11 @@ namespace YummyOnlineTcpServer {
 					newDineInformClients.Remove(oldGuid.Key);
 				}
 			}
+		}
 
-			clientsStatusChange();
+		private void requestTcpServerStatus() {
+			TcpServerStatusProtocol tcpServerStatus = GetTcpServerStatus();
+			var _ = tcp.Send(systemClient.Client, JsonConvert.SerializeObject(new TcpServerStatusInformProtocol(tcpServerStatus)), null);
 		}
 	}
 }

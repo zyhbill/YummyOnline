@@ -27,6 +27,7 @@ namespace HotelDAO {
 					p.NameAbbr,
 					p.PicturePath,
 					p.IsFixed,
+					p.IsSetMeal,
 					p.SupplyDate,
 					p.Unit,
 					p.MinOrderCount,

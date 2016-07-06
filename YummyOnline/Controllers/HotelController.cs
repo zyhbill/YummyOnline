@@ -1,4 +1,5 @@
 ﻿using Protocol;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -85,18 +86,25 @@ namespace YummyOnline.Controllers {
 			}
 
 			// 新数据库初始化
-			string staffId = await YummyOnlineManager.GetFirstStaffId(hotelId);
+			string staffId = await YummyOnlineManager.GetHotelAdminId(hotelId);
 			HotelManager hotelManager = new HotelManager(newHotel.AdminConnectionString);
 			await hotelManager.InitializeHotel(hotelId, staffId);
 			return Json(new JsonSuccess());
 		}
 
+		public async Task<JsonResult> GetAllDineIds(int hotelId, DateTime? dateTime) {
+			dateTime = dateTime ?? DateTime.Now;
+
+			string connStr = await YummyOnlineManager.GetHotelConnectionStringById(hotelId);
+
+			return Json(await new HotelManager(connStr).GetAllDineIds(dateTime.Value));
+		}
 		public async Task<JsonResult> GetDines(int hotelId, List<string> dineIds) {
-			Hotel hotel = await YummyOnlineManager.GetHotelById(hotelId);
+			string connStr = await YummyOnlineManager.GetHotelConnectionStringById(hotelId);
 
 			List<dynamic> dines = new List<dynamic>();
 			foreach(string dineId in dineIds) {
-				var dine = await new HotelManager(hotel.ConnectionString).GetFormatedDineById(dineId);
+				var dine = await new HotelManager(connStr).GetFormatedDineById(dineId);
 				if(dine != null)
 					dines.Add(dine);
 			}

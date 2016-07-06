@@ -200,7 +200,11 @@ namespace AutoPrinter {
 			string paidWay = protocol.Dine.IsOnline ? "线上支付" : "线下支付";
 			printer.DrawStringLine($"支付方式: {paidWay}", protocol.PrinterFormat.ReciptFontSize);
 			foreach(DinePaidDetail dinePaidDetail in protocol.Dine.DinePaidDetails) {
-				printer.DrawStringLine($"{dinePaidDetail.PayKind.Name}: ￥{dinePaidDetail.Price}", protocol.PrinterFormat.ReciptFontSize);
+				decimal dinePaidDetailPrice = dinePaidDetail.Price;
+				if(dinePaidDetail.PayKind.Type == HotelDAO.Models.PayKindType.Cash) {
+					dinePaidDetailPrice += protocol.Dine.Change;
+				}
+				printer.DrawStringLine($"{dinePaidDetail.PayKind.Name}: ￥{dinePaidDetailPrice}", protocol.PrinterFormat.ReciptFontSize);
 			}
 			if(protocol.Dine.IsPaid) {
 				printer.DrawStringLine($"找零: ￥{protocol.Dine.Change}", protocol.PrinterFormat.ReciptFontSize);

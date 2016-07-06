@@ -69,6 +69,9 @@ namespace YummyOnlineTcpClient {
 						case TcpProtocolType.PrintShifts:
 							obj = JsonConvert.DeserializeObject<PrintShiftsProtocol>(content);
 							break;
+						case TcpProtocolType.TcpServerStatusInform:
+							obj = JsonConvert.DeserializeObject<TcpServerStatusInformProtocol>(content);
+							break;
 					}
 
 					CallBackWhenMessageReceived?.Invoke(p.Type, obj);

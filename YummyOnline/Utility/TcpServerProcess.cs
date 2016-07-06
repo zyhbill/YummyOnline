@@ -54,26 +54,23 @@ namespace YummyOnline.Utility {
 			return true;
 		}
 
-		public static async Task<dynamic> GetTcpServerInfo() {
+		public static dynamic GetTcpServerInfo() {
 			Process process = getTcpServerProcess();
 			if(process == null) {
-				return null;
+				return new {
+					IsStarted = false,
+				};
 			}
 
-			SystemConfig config = await new YummyOnlineManager().GetSystemConfig();
-			string statusStr = null;
-			try {
-				statusStr = System.IO.File.ReadAllText(config.TcpServerDir + @"\status.json");
-			}
-			catch { }
-			TcpServerStatusProtocol status = JsonConvert.DeserializeObject<TcpServerStatusProtocol>(statusStr);
+			TcpServerStatusProtocol status = SystemTcpClient.GetTcpServerStatus();
 
 			return new {
+				IsStarted = true,
 				ProcessName = process.ProcessName,
 				StartTime = process.StartTime,
 				Memory = curpcp.NextValue() / (1024 * 1024),
 				Cpu = curtime.NextValue() / Environment.ProcessorCount,
-				Status = JsonConvert.DeserializeObject<TcpServerStatusProtocol>(statusStr)
+				Status = status
 			};
 		}
 	}

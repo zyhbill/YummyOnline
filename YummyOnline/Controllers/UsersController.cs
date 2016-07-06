@@ -24,7 +24,11 @@ namespace YummyOnline.Controllers {
 		public ActionResult _ViewAdmin() {
 			return View();
 		}
+		public ActionResult _ViewHotelAdmin() {
+			return View();
+		}
 
+		#region Admins
 		public async Task<JsonResult> GetAdmins() {
 			return Json(await YummyOnlineManager.GetUsers(Role.Admin));
 		}
@@ -49,7 +53,9 @@ namespace YummyOnline.Controllers {
 			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Warning, $"User {id} Removed from Admin");
 			return Json(new JsonSuccess());
 		}
+		#endregion
 
+		#region Nemoes
 		public async Task<JsonResult> GetNemoes(int countPerPage, int currPage) {
 			return Json(new {
 				Users = await YummyOnlineManager.GetUsers(Role.Nemo, countPerPage, currPage, true),
@@ -61,12 +67,19 @@ namespace YummyOnline.Controllers {
 			await YummyOnlineManager.DeleteNemoesHavenotDine();
 			return Json(new JsonSuccess());
 		}
+		#endregion
 
+		#region Customers
 		public async Task<JsonResult> GetCustomers(int countPerPage, int currPage) {
 			return Json(new {
 				Users = await YummyOnlineManager.GetUsers(Role.Customer, countPerPage, currPage, true),
 				Count = await YummyOnlineManager.GetUserCount(Role.Customer)
 			});
+		}
+		#endregion
+
+		public async Task<JsonResult> GetHotelAdmins() {
+			return Json(await YummyOnlineManager.GetHotelAdmins());
 		}
 
 		public async Task<JsonResult> GetUserDines(string userId) {

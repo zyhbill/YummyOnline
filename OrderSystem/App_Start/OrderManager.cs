@@ -134,7 +134,7 @@ namespace OrderSystem {
 						dineMenu.Price = menuOnSales.Price;
 					}
 					// 是否为套餐
-					var menuSetMeals = await ctx.MenuSetMeals.FirstOrDefaultAsync(p => p.MenuSetId == menu.Id);
+					var menuSetMeals = await ctx.MenuSetMeals.FirstOrDefaultAsync(p => p.MenuSetId == menu.Id && p.Menu.IsSetMeal);
 					if(menuSetMeals != null) {
 						excludePayDiscount = true;
 					}
@@ -164,6 +164,22 @@ namespace OrderSystem {
 
 				dine.DineMenus.Add(dineMenu);
 			}
+
+			// 根据饭店设置进行抹零
+			HotelConfig hotelConfig = await ctx.HotelConfigs.FirstOrDefaultAsync();
+			int trim = 100;
+			switch(hotelConfig.TrimZero) {
+				case TrimZero.Jiao:
+					trim = 10;
+					break;
+				case TrimZero.Yuan:
+					trim = 1;
+					break;
+			}
+			dine.Price = Math.Floor(dine.Price * trim) / trim;
+			decimal cartPrice = cart.Price ?? 0;
+			cartPrice = Math.Floor(cartPrice * trim) / trim;
+
 			mainPaidDetail.Price = dine.Price;
 
 			if(cart.PriceInPoints.HasValue) {
@@ -173,7 +189,7 @@ namespace OrderSystem {
 			}
 
 			// 检测前端计算的金额与后台计算的金额是否相同，如果前端金额为null则检测
-			if(cart.Price.HasValue && Math.Abs(mainPaidDetail.Price - cart.Price.Value) > 0.01m) {
+			if(Math.Abs(mainPaidDetail.Price - cartPrice) > 0.01m) {
 				await ctx.SaveChangesAsync();
 				return new FunctionResult(false, "金额有误",
 					$"Price Error, Cart Price: {cart.Price.Value}, Cal Price: {mainPaidDetail.Price}");

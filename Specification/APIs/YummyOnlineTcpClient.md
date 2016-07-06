@@ -138,6 +138,24 @@ Tcp连接成功回调函数，默认NULL
 #### `ServeOrder = 2`
 传菜单
 
+------
+
+### *class RequestPrintShiftsProtocol*
+
+打印交接班请求协议
+
+#### `List<int> Ids {get; set; }`
+
+交接班号
+
+#### `int HotelId { get; set; }`
+
+饭店Id
+
+#### `DateTime DateTime {get; set; }`
+
+交接班时间
+
 ## Updates
 - 2016-3-6: 优化`TcpClient`类，改进构造函数，增加`Start`启动函数
 - 2016-2-22: 更改底层tcp协议
@@ -206,7 +224,19 @@ Tcp连接成功回调函数，默认NULL
 	"PrintTypes": [<int>, ...]
 }
 ```
+请求打印交接班
+
+```json
+{
+	"Type": "{4E6D44F1-9FD6-4DAD-BAE6-545577701149}",
+	"HotelId": <int>,
+	"Ids": [<int>, ...],
+	"DateTime": <string>
+}
+```
+
 新订单通知
+
 ```json
 {
 	"Type": "{6309155D-B9D9-4417-B1BF-C985F2EA6630}",

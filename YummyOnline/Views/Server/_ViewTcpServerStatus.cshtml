@@ -4,7 +4,7 @@
 		<b><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</b>
 	</div>
 
-	<div class="col-md-12" ng-if="!isLoading && tcpServerInfo==null">
+	<div class="col-md-12" ng-if="!isLoading && !tcpServerInfo.IsStarted">
 		<div class="alert alert-danger">
 			<h4><i class="icon fa fa-warning"></i> 服务器未在运行!</h4>
 			<button class="btn btn-default"
@@ -18,7 +18,7 @@
 		</div>
 	</div>
 
-	<div ng-if="!isLoading && tcpServerInfo!=null">
+	<div ng-if="!isLoading && tcpServerInfo.IsStarted">
 		<div class="col-md-3">
 			<div class="info-box bg-green">
 				<span class="info-box-icon"><i class="fa fa-calendar-o"></i></span>

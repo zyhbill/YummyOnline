@@ -66,12 +66,13 @@ namespace OrderSystem.Controllers {
 			await newDineInform(dine, "OrderSystem");
 
 			PayKind payKind = await HotelManager.GetPayKindById(cart.PayKindId);
-			string redirectUrl = null;
-
+			string redirectUrl = $"{payKind.CompleteUrl}?Succeeded={true}&DineId={dine.Id}";
+			
 			if(payKind.Type == PayKindType.Online) {
 				DinePaidDetail pointsPaidDetail = dine.DinePaidDetails.FirstOrDefault(p => p.PayKind.Type == PayKindType.Points);
-				if(pointsPaidDetail != null && Math.Abs((double)(dine.Price - pointsPaidDetail.Price)) < 0.01) {
-					redirectUrl = $"{payKind.CompleteUrl}?Succeeded={true}&DineId={dine.Id}";
+				// 如果实际需要支付的价格等于0，或者积分支付的价格等于实际应付的价格则直接判为支付成功
+				if(Math.Abs((double)(dine.Price - 0.00m)) < 0.01 || 
+					(pointsPaidDetail != null && Math.Abs((double)(dine.Price - pointsPaidDetail.Price)) < 0.01)) {
 					await onlinePayCompleted(dine.Id, null);
 				}
 				else {
@@ -80,7 +81,6 @@ namespace OrderSystem.Controllers {
 			}
 			else {
 				await requestPrintDine(dine.Id, new List<PrintType> { PrintType.Recipt });
-				redirectUrl = $"{payKind.CompleteUrl}?Succeeded={true}&DineId={dine.Id}";
 			}
 
 			return Json(new JsonSuccess(redirectUrl));

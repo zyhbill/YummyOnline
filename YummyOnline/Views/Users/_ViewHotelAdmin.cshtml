@@ -1,0 +1,27 @@
+﻿<div class="box box-default">
+	<div class="table-responsive">
+		<table class="table no-margin">
+			<tr>
+				<th>Id</th>
+				<th>登录名</th>
+				<th>手机</th>
+				<th>邮箱</th>
+				<th>注册日期</th>
+				<th>饭店名</th>
+				<th>员工总数</th>
+			</tr>
+			<tr ng-show="isLoading">
+				<td colspan="7"><b><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</b></td>
+			</tr>
+			<tr ng-hide="isLoading" ng-repeat="hotelAdmin in hotelAdmins">
+				<td>{{hotelAdmin.Id}}</td>
+				<td>{{hotelAdmin.SigninName}}</td>
+				<td>{{hotelAdmin.PhoneNumber}}</td>
+				<td>{{hotelAdmin.Email}}</td>
+				<td>{{hotelAdmin.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
+				<td>{{hotelAdmin.Hotel.Name}} ({{hotelAdmin.Hotel.Id}})</td>
+				<td>{{hotelAdmin.StaffCount}}</td>
+			</tr>
+		</table>
+	</div>
+</div>

@@ -141,3 +141,20 @@ app.controller('AdminCtrl', [
 	}
 ]);
 
+app.controller('HotelAdminCtrl', [
+	'$scope',
+	'$http',
+	'layout',
+	function ($scope, $http, $layout) {
+		$layout.Set('饭店管理员管理', '');
+
+		function refresh() {
+			$scope.isLoading = true;
+			$http.post('/Users/GetHotelAdmins').then(function (response) {
+				$scope.hotelAdmins = response.data;
+				$scope.isLoading = false;
+			});
+		}
+		refresh();
+	}
+]);

@@ -110,7 +110,7 @@
 							}
 						}
 						for (var j in menuSetMeals) {
-							if (menuSetMeals[j].MenuSetId == menu.Id) {
+							if (menuSetMeals[j].MenuSetId == menu.Id && menu.IsSetMeal) {
 								menuSetMeals[j].Menu = _filterSetMenu(menuSetMeals[j].Menu);
 								menuSetMeals[j].Menu.Addition.Ordered = menuSetMeals[j].Count;
 								menu.Addition.SetMeals.push(menuSetMeals[j].Menu);

@@ -34,6 +34,7 @@ namespace YummyOnlineTcpServer {
 				if(pair.Value != null) {
 					log($"NewDineInformClient Guid {pair.Key.Guid} Repeated", Log.LogLevel.Warning);
 					pair.Value.Client.Client.Close();
+
 					clientCloseMutex.Reset();
 					clientCloseMutex.WaitOne();
 				}

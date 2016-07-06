@@ -269,7 +269,6 @@
                 if (this.PayElements.CurrentDine.Id == '当前桌台没有点单') {//当前是空单，默认是找到
                     this.PayElements.CurrentDine = $filter('filter')(this.PayElements.UnpaidDines, { DeskId: this.PayElements.Desk.Id })[0];
                     this.PayElements.CurrentDine.isChoose = true;
-                    console.log(this.PayElements.CurrentDine.isChoose);
                     this.PayElements.CurrentUser.Id = this.PayElements.CurrentDine.UserId;
                     this.Login();
                 } else if (this.PayElements.CurrentDine.DeskId != this.PayElements.Desk.Id) {//换桌之后默认自动匹配
@@ -306,8 +305,14 @@
                 }
             }
             else if (kind.Type != 4) {
-                if (kind.Number > this.PriceAll()) {
-                    kind.Number = this.PriceAll();
+                var nowPrice = this.PayElements.PayMethods.filter(function (x) { return x.Number }).map(function (x) { return x.Number }).reduce(function (a, b) { return +a + +b; }, 0);
+                var cash = this.PayElements.PayMethods.filter(function (x) { return x.Type == 4 }).map(function (x) { return x.Number }).reduce(function (a, b) { return +a + +b; }, 0);
+                nowPrice -= kind.Number;
+                nowPrice -= cash;
+                var UnpaidPrice = this.PriceAll() - nowPrice;//出现金外未支付的金额
+                console.log(UnpaidPrice);
+                if (kind.Number >= UnpaidPrice) {
+                    kind.Number = UnpaidPrice;
                 }
                 if (kind.Number < 0) kind.Number = 0;
             }
@@ -387,6 +392,7 @@
                     _this.PayElements.CurrentDine = {};
                     _this.PayElements.CurrentUser = {};
                     _this.getNowDine();
+                    _this.PayElements.CurrentDine.isChoose = true;
                     _this.getUser();
                     _this.PayClean();
                     _this.DiscountClean();
@@ -1162,7 +1168,6 @@
                $http.post('../Templates/ConbineDine', { ConbineDines: temp }).success(function (data) {
                    _this.ConbineElements.UnpaidDesk = data.Desks;
                    _this.ConbineElements.UnpaidDines = data.Dines;
-                   _this.getFirstDesk();
                    _this.ConbineElements.ConbineDines = [];
                    _this.ConbineElements.SelectDines = [];
                    swal("合并成功!", "已经成功合并订单.", "success");
@@ -1227,8 +1232,6 @@
                       _this.RepalceElements.UnpaidDesk = data.Desks;
                       _this.RepalceElements.UnpaidDines = data.Dines;
                       _this.RepalceElements.TotalDesks = data.TotalDesk;
-                      _this.getFirstDesk();
-                      _this.getFirstDine();
                       _this.RepalceElements.TagetDesk = {};
                       swal("更换成功!", "此项订单已经更换至目标页面.", "success");
                   } else {

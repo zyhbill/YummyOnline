@@ -619,9 +619,9 @@ namespace Management.Controllers
                         clean.Status = DeskStatus.StandBy;
                         await MvcApplication.ws.SendToClient((int)(Session["User"] as RStatus).HotelId, "desk");
                     }
+                    conbineDine.Price = 0;
+                    conbineDine.OriPrice = 0;
                 }
-                conbineDine.Price = 0;
-                conbineDine.OriPrice = 0;
                 var conbineMenus = await db.DineMenus.Where(d => d.DineId == dine.Id).ToListAsync();
                 foreach (var menu in conbineMenus)
                 {
@@ -633,7 +633,7 @@ namespace Management.Controllers
             targetDine.Price = allPrice;
             targetDine.OriPrice = allOPrice;
             db.SaveChanges();
-            var Desks = await db.Desks.Where(d => d.Status == DeskStatus.Used && d.Usable == true).ToListAsync();
+            var Desks = await db.Desks.Where(d => d.Status == DeskStatus.Used && d.Usable == true).OrderBy(d=>d.Order).ToListAsync();
             var Dines = await db.Dines.Where(d => d.IsOnline == false && d.IsPaid == false).Select(dine => new { dine.Id, dine.DeskId }).ToListAsync();
             return Json(new { Desks = Desks, Dines = Dines });
         }
@@ -644,7 +644,8 @@ namespace Management.Controllers
         public async Task<JsonResult> getReplace()
         {
             var Desks = await db.Desks
-                .Where(d => d.Status == DeskStatus.Used && d.Usable == true).OrderBy(d=>d.Order).ToListAsync();
+                .Where(d => d.Status == DeskStatus.Used && d.Usable == true)
+                .OrderBy(d=>d.Order).ToListAsync();
             var Dines = await db.Dines.Where(d => d.IsOnline == false && d.IsPaid == false)
                 .Select(dine => new { dine.Id, dine.DeskId }).ToListAsync();
             var TotalDesk = await db.Desks.Where(d => d.Usable == true).ToListAsync();
@@ -865,11 +866,12 @@ namespace Management.Controllers
                       Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
                       d.BeginTime,
                       d.DeskId,
+                      Desk = db.Desks.Where(dd=>dd.Id==d.DeskId).FirstOrDefault(),
                       d.HeadCount,
                       d.UserId,
                       d.OriPrice,
                       d.Price
-                  }).ToListAsync();
+                  }).OrderBy(d=>d.Desk.Order).ToListAsync();
             var menus = await db.Menus
                 .Where(m => m.Status == MenuStatus.Normal && m.Usable == true)
                 .Include(m => m.Remarks)

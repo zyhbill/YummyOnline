@@ -59,14 +59,27 @@ namespace Management.Controllers
 
         public async Task<JsonResult> getMenuSales(string Begin, string End ,List<string> Menus ,List<string> Classes,int Type)
         {
-            Begin = Begin == null ? DateTime.Now.ToString("yyyy-MM-dd") : Begin;
-            End = End == null ? DateTime.Now.AddDays(1).ToString("yyyy-MM-dd") : End;
-            var dateBegin = Begin.Split(new char[1] { '-' });
-            string beginDate = dateBegin[0].Substring(2, 2) + dateBegin[1] + dateBegin[2];
-            var dateEnd = End.Split(new char[1] { '-' });
-            string endDate = dateEnd[0].Substring(2, 2) + dateEnd[1] + dateBegin[2];
+            DateTime BeginTime;
+            DateTime EndTime;
+            if (Begin == null)
+            {
+                BeginTime = DateTime.Now;
+            }
+            else
+            {
+                BeginTime = Convert.ToDateTime(Begin);
+            }
+            if (End == null)
+            {
+                EndTime = DateTime.Now;
+            }
+            else
+            {
+                EndTime = Convert.ToDateTime(End);
+            }
+            
             var dines = await db.Dines
-                  .Where(d => d.IsPaid == true && string.Compare(d.Id, beginDate) >= 0 && string.Compare(d.Id, endDate) <= 0)
+                  .Where(d => d.IsPaid == true && SqlFunctions.DateDiff("day", BeginTime,d.BeginTime)>=0&& SqlFunctions.DateDiff("day", EndTime, d.BeginTime) <= 0)
                   .Select(d => d.Id)
                   .ToListAsync();
             var OriMenus = await db.Menus
@@ -349,11 +362,13 @@ namespace Management.Controllers
                         List<int> Prices = new List<int>();
                         foreach (var j in monthData)
                         {
-                            if (j.Count() == 0) Prices.Add(0);
+                            bool flag = false;
+                            if (j.Count() == 0) { Prices.Add(0); flag = true; }
                             foreach (var k in j)
                             {
-                                if (k.Id == i) Prices.Add(k.TotalPrice);
+                                if (k.Id == i) { Prices.Add(k.TotalPrice); flag = true; }
                             }
+                            if(!flag) Prices.Add(0);
                         }
                         Sdt.data = Prices;
                         Datas.Add(Sdt);
@@ -377,7 +392,7 @@ namespace Management.Controllers
                 }
                 else
                 {
-                    return Json(new { Status = false, ErrorMessage = "未选择菜品" });
+                    return Json(new SuccessState());
                 }
             }
             else if (Type == 1)
@@ -616,38 +631,41 @@ namespace Management.Controllers
                 //menu
 
                 var MonthSales = new List<MonthSale>();
-                dines = await db.DineMenus
-                .Include(d => d.Dine)
-                .Where(d => d.DineId.Substring(0, 4) == date && d.Dine.IsPaid == true && d.Status == DineMenuStatus.Normal && Menus.Contains(d.MenuId))
-                .GroupBy(d => d.DineId.Substring(0, 6))
-                .Select(g => g.Key)
-                .ToListAsync();
-
-
-
-                MenuIds = db.DineMenus.Include(d => d.Dine)
-                    .Where(d => dines.Contains(d.DineId.Substring(0, 6))&& Menus.Contains(d.MenuId))
-                    .Select(d => d.MenuId)
-                    .GroupBy(d => d)
-                    .Select(g => g.Key).ToList();
-
-                foreach (var i in MenuIds)
+                if (Menus != null)
                 {
-                    var newMonthSale = new MonthSale();
-                    newMonthSale.Menu = menus.Where(d => d.Id == i).FirstOrDefault();
-                    List<int> Counts = new List<int>();
-                    for (var j = 0; j < days[MonthIndex]; j++)
+                   dines = await db.DineMenus
+                      .Include(d => d.Dine)
+                      .Where(d => d.DineId.Substring(0, 4) == date && d.Dine.IsPaid == true && d.Status == DineMenuStatus.Normal && Menus.Contains(d.MenuId))
+                      .GroupBy(d => d.DineId.Substring(0, 6))
+                      .Select(g => g.Key)
+                      .ToListAsync();
+
+
+                    MenuIds = db.DineMenus.Include(d => d.Dine)
+                        .Where(d => dines.Contains(d.DineId.Substring(0, 6)) && Menus.Contains(d.MenuId))
+                        .Select(d => d.MenuId)
+                        .GroupBy(d => d)
+                        .Select(g => g.Key).ToList();
+
+                    foreach (var i in MenuIds)
                     {
-                        string day = year + month + (j + 1).ToString().PadLeft(2, '0');
-                        int num = DineMenus.Where(d => d.DineId.Substring(0, 6) == day && d.MenuId == i && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift))
-                            .GroupBy(g => g.MenuId)
-                            .Select(g => g.Sum(gg => gg.Count))
-                            .FirstOrDefault();
-                        Counts.Add(num);
+                        var newMonthSale = new MonthSale();
+                        newMonthSale.Menu = menus.Where(d => d.Id == i).FirstOrDefault();
+                        List<int> Counts = new List<int>();
+                        for (var j = 0; j < days[MonthIndex]; j++)
+                        {
+                            string day = year + month + (j + 1).ToString().PadLeft(2, '0');
+                            int num = DineMenus.Where(d => d.DineId.Substring(0, 6) == day && d.MenuId == i && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift))
+                                .GroupBy(g => g.MenuId)
+                                .Select(g => g.Sum(gg => gg.Count))
+                                .FirstOrDefault();
+                            Counts.Add(num);
+                        }
+                        newMonthSale.Counts = Counts;
+                        MonthSales.Add(newMonthSale);
                     }
-                    newMonthSale.Counts = Counts;
-                    MonthSales.Add(newMonthSale);
                 }
+                
                 var Sum = new List<int>();
                 for (var i = 0; i < days[MonthIndex]; i++)
                 {
@@ -1074,18 +1092,21 @@ namespace Management.Controllers
             if (Type == 0)
             {
                 //menu
-                Datas = OrderMenus.Where(d => Menus.Contains(d.MenuId))
-                    .GroupBy(d => d.MenuId)
-                    .Select(g => new DailyMenu
-                    {
-                        Id = g.Key,
-                        Name = OriMenus.Where(m => m.Usable == true && m.Id == g.Key).FirstOrDefault().Name,
-                        Count = g.Sum(gg => gg.Count),
-                        OriPrice = g.Sum(gg => gg.OriPrice * gg.Count + gg.RemarkPrice),
-                        Price = g.Sum(gg => gg.Price * gg.Count + gg.RemarkPrice),
-                        SaveMoney = g.Sum(gg => gg.OriPrice * gg.Count + gg.RemarkPrice) - g.Sum(gg => gg.Price * gg.Count + gg.RemarkPrice)
-                    })
-                    .ToList();
+                if (Menus != null)
+                {
+                    Datas = OrderMenus.Where(d => Menus.Contains(d.MenuId))
+                   .GroupBy(d => d.MenuId)
+                   .Select(g => new DailyMenu
+                   {
+                       Id = g.Key,
+                       Name = OriMenus.Where(m => m.Usable == true && m.Id == g.Key).FirstOrDefault().Name,
+                       Count = g.Sum(gg => gg.Count),
+                       OriPrice = g.Sum(gg => gg.OriPrice * gg.Count + gg.RemarkPrice),
+                       Price = g.Sum(gg => gg.Price * gg.Count + gg.RemarkPrice),
+                       SaveMoney = g.Sum(gg => gg.OriPrice * gg.Count + gg.RemarkPrice) - g.Sum(gg => gg.Price * gg.Count + gg.RemarkPrice)
+                   })
+                   .ToList();
+                }
             }
             else if(Type == 1)
             {

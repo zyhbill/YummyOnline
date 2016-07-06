@@ -1176,7 +1176,7 @@ namespace Management.Controllers
                 if (button != null)
                 {
                     button.SaveAs(baseUrl + "btn-cart.png");
-                    button.SaveAs(OrderUrl + "index.png");
+                    button.SaveAs(OrderUrl + "btn-cart.png");
                 }
                 if (complete != null)
                 {

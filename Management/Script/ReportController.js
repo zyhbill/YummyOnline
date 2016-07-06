@@ -24,7 +24,7 @@
     }
 }])
 .controller('MenuSaleClassCtrl', ['$scope', '$rootScope', 'MenuSaleClass', function ($scope, $rootScope, MenuSaleClass) {
-    $rootScope.FatherPage = "报表管理"; $rootScope.FatherPath = "#/MenuSaleClasss"; $rootScope.ChildPage = "菜品销售";
+    $rootScope.FatherPage = "报表管理";  $rootScope.ChildPage = "菜品类别销售统计";
     $scope.Initialize = function () {
         var promise = MenuSaleClass.Initialize();
         promise.then(function (data) {

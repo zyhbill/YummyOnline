@@ -174,7 +174,6 @@ app.factory('dataSet', [
 			/* Cart Data */
 			HeadCount: 1, // 总人数
 			Price: 0, // 总价
-			PriceInPoints: 0, // 通过积分支付的价格
 			Invoice: null, // 发票抬头
 			Desk: null,
 			PayKind: null,
@@ -431,24 +430,17 @@ app.factory('dataSet', [
 					}
 				}
 				price = parseFloat(price.toFixed(2));
-				// 如果用户抵扣的金额超过需要支付的金额
-				if (this.PriceInPoints > price) {
-					this.PriceInPoints = price;
-				}
-				// 总价减去积分抵扣的  价格
-				price -= this.PriceInPoints;
+
 				return price;
 			},
 			CanSubmit: function () {
-				return this.Price > 0 &&
-					this.Price - this.PriceInPoints >= 0 && this.PriceInPoints >= 0
+				return this.Price > 0;
 			},
 			_getSendData: function () {
 				var sendData = {
 					Cart: {
 						HeadCount: this.HeadCount,
 						Price: this.GetSubmitPrice(),
-						PriceInPoints: this.PriceInPoints,
 						Invoice: this.Invoice,
 
 						DeskId: this.Desk.Id,

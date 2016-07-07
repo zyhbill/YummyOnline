@@ -182,7 +182,8 @@ namespace OrderSystem {
 
 			mainPaidDetail.Price = dine.Price;
 
-			if(cart.PriceInPoints.HasValue) {
+			// 如果是线上支付并且使用了积分抵扣
+			if(mainPaidDetail.PayKind.Type == PayKindType.Online && cart.PriceInPoints.HasValue) {
 				FunctionResult result = await handlePoints(cart.PriceInPoints.Value, mainPaidDetail, dine);
 				if(!result.Succeeded)
 					return result;

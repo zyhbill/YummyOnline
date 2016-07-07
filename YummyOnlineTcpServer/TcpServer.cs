@@ -97,28 +97,29 @@ namespace YummyOnlineTcpServer {
 				//	if(systemClient.HeartAlive > 6) {
 				//		log($"System {systemClient.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
 				//		systemClient.Client.Close();
-				//		systemClient = null;
-				//		clientsStatusChange();
 				//	}
 				//}
-				//foreach(var pair in newDineInformClients.Where(p => p.Value != null)) {
-				//	sendHeartBeat(pair.Value);
-				//	pair.Value.HeartAlive++;
-				//	if(pair.Value.HeartAlive > 1) {
-				//		pair.Value.Client.Close();
-				//		newDineInformClients[pair.Key] = null;
-				//		log($"({pair.Key.Description}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Success);
+				//lock(newDineInformClients) {
+				//	foreach(var pair in newDineInformClients.Where(p => p.Value != null)) {
+				//		sendHeartBeat(pair.Value);
+				//		pair.Value.HeartAlive++;
+				//		if(pair.Value.HeartAlive > 1) {
+				//			log($"({pair.Key.Description}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Success);
+				//			pair.Value.Client.Close();
+				//		}
 				//	}
 				//}
-				foreach(var pair in printerClients.Where(p => p.Value != null)) {
-					sendHeartBeat(pair.Value);
-					pair.Value.HeartAlive++;
-					if(pair.Value.HeartAlive > 6) {
-						pair.Value.Client.Close();
-						printerClients[pair.Key] = null;
-						log($"Printer (Hotel{pair.Key}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
+				lock(printerClients) {
+					foreach(var pair in printerClients.Where(p => p.Value != null)) {
+						sendHeartBeat(pair.Value);
+						pair.Value.HeartAlive++;
+						if(pair.Value.HeartAlive > 6) {
+							log($"Printer (Hotel{pair.Key}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
+							pair.Value.Client.Close();
+						}
 					}
 				}
+
 			};
 			timer.Start();
 		}
@@ -137,7 +138,6 @@ namespace YummyOnlineTcpServer {
 						systemConnect(clientInfo);
 						break;
 					case TcpProtocolType.SystemCommand:
-						log(content, Log.LogLevel.Debug);
 						systemCommand(clientInfo, JsonConvert.DeserializeObject<SystemCommandProtocol>(content));
 						break;
 					case TcpProtocolType.NewDineInformClientConnect:
@@ -164,11 +164,13 @@ namespace YummyOnlineTcpServer {
 		}
 
 		private void Tcp_ErrorEvent(TcpClient client, Exception e) {
-			TcpClientInfo clientInfo = waitingForVerificationClients.FirstOrDefault(p => p.Client == client);
-			if(clientInfo != null) {
-				waitingForVerificationClients.Remove(clientInfo);
-				log($"WaitingForVerificationClient {clientInfo.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
-				return;
+			lock(waitingForVerificationClients) {
+				TcpClientInfo clientInfo = waitingForVerificationClients.FirstOrDefault(p => p.Client == client);
+				if(clientInfo != null) {
+					waitingForVerificationClients.Remove(clientInfo);
+					log($"WaitingForVerificationClient {clientInfo.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
+					return;
+				}
 			}
 
 			if(systemClient?.Client == client) {
@@ -177,21 +179,25 @@ namespace YummyOnlineTcpServer {
 				return;
 			}
 
-			foreach(var pair in newDineInformClients) {
-				if(pair.Value?.Client == client) {
-					newDineInformClients[pair.Key] = null;
-					log($"NewDineInformClient ({pair.Key.Description}) {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
-					clientCloseMutex.Set();
-					return;
+			lock(newDineInformClients) {
+				foreach(var pair in newDineInformClients) {
+					if(pair.Value?.Client == client) {
+						newDineInformClients[pair.Key] = null;
+						log($"NewDineInformClient ({pair.Key.Description}) {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
+						clientCloseMutex.Set();
+						return;
+					}
 				}
 			}
 
-			foreach(var pair in printerClients) {
-				if(pair.Value?.Client == client) {
-					printerClients[pair.Key] = null;
-					log($"Printer (Hotel{pair.Key}) {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
-					clientCloseMutex.Set();
-					return;
+			lock(printerClients) {
+				foreach(var pair in printerClients) {
+					if(pair.Value?.Client == client) {
+						printerClients[pair.Key] = null;
+						log($"Printer (Hotel{pair.Key}) {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
+						clientCloseMutex.Set();
+						return;
+					}
 				}
 			}
 		}

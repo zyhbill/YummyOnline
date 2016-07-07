@@ -5,14 +5,14 @@ using System.Linq;
 namespace YummyOnlineTcpServer {
 	public partial class TcpServer {
 		private void heartBeat(TcpClientInfo clientInfo) {
-			foreach(var pair in printerClients.Where(p => p.Value != null)) {
-				if(pair.Value.Client == clientInfo.Client) {
+			foreach(var pair in printerClients) {
+				if(pair.Value == clientInfo) {
 					pair.Value.HeartAlive = 0;
 					return;
 				}
 			}
-			foreach(var pair in newDineInformClients.Where(p => p.Value != null)) {
-				if(pair.Value.Client == clientInfo.Client) {
+			foreach(var pair in newDineInformClients) {
+				if(pair.Value == clientInfo) {
 					pair.Value.HeartAlive = 0;
 					return;
 				}

@@ -16,7 +16,7 @@ namespace YummyOnlineTcpServer {
 			NewDineInformClientGuid sender = getSender(clientInfo);
 			if(sender == null) {
 				log($"{clientInfo.OriginalRemotePoint} Received NewDineInform From Invalid NewDineInformClient", Log.LogLevel.Error);
-				clientInfo.Client.Close();
+				clientInfo.Close();
 				return;
 			}
 			
@@ -38,7 +38,7 @@ namespace YummyOnlineTcpServer {
 			NewDineInformClientGuid sender = getSender(clientInfo);
 			if(sender == null) {
 				log($"{clientInfo.OriginalRemotePoint} Received RequestPrintDine From Invalid NewDineInformClient", Log.LogLevel.Error);
-				clientInfo.Client.Close();
+				clientInfo.Close();
 				return;
 			}
 			
@@ -82,7 +82,7 @@ namespace YummyOnlineTcpServer {
 			NewDineInformClientGuid sender = getSender(clientInfo);
 			if(sender == null) {
 				log($"{clientInfo.OriginalRemotePoint} Received RequestPrintShifts From Invalid NewDineInformClient", Log.LogLevel.Error);
-				clientInfo.Client.Close();
+				clientInfo.Close();
 				return;
 			}
 

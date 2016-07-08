@@ -198,6 +198,8 @@ span.money{
 }
 #MenuLists>ul>li>a{
     height:50px;
+    font-size:14px;
+    font-weight:bolder;
     overflow:hidden;
 }
 .MenuList{

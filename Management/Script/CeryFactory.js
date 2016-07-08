@@ -183,7 +183,6 @@
                 x.isChoose = false;
             })
             this.PayElements.CurrentDine.isChoose = true;
-            console.log(this.PayElements.CurrentDine.isChoose);
             //当前用户注销  打折方案为自定义  获取订单用户登录
             this.PayElements.CurrentUser.Id = this.PayElements.CurrentDine.UserId;
             this.getUser();

@@ -948,7 +948,7 @@
                         _this.ClassElement.NewClass.IsLeaf = true;
                         _this.ClassElement.NewClass.ParentMenuClassId = ParentId;
                         if (level == 0) {
-                            _this.ClassElement.FirstMenuClasses.push(_this.ClassElement.NewClass);
+                            _this.ClassElement.FirstMenuClasses.push(angular.copy(_this.ClassElement.NewClass));
                         } else if (level == 1) {
                             _this.ClassElement.FirstMenuClasses.forEach(function (x) {
                                 if (x.Id == ParentId) {

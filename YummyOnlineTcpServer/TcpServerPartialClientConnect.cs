@@ -20,26 +20,25 @@ namespace YummyOnlineTcpServer {
 
 			if(protocol.Guid == new Guid()) {
 				log($"{clientInfo.OriginalRemotePoint} NewDineInformClient Lack Guid", Log.LogLevel.Warning);
-				clientInfo.Client.Client.Close();
+				clientInfo.Close();
 				return;
 			}
 
 			KeyValuePair<NewDineInformClientGuid, TcpClientInfo> pair = newDineInformClients.FirstOrDefault(p => p.Key.Guid == protocol.Guid);
 			if(pair.Key == null) {
 				log($"{clientInfo.OriginalRemotePoint} NewDineInformClient Guid {protocol.Guid} Not Matched", Log.LogLevel.Warning);
-				clientInfo.Client.Client.Close();
+				clientInfo.Close();
 				return;
 			}
 			else {
 				if(pair.Value != null) {
 					log($"NewDineInformClient Guid {pair.Key.Guid} Repeated", Log.LogLevel.Warning);
-					pair.Value.Client.Client.Close();
-
-					clientCloseMutex.Reset();
-					clientCloseMutex.WaitOne();
+					pair.Value.ReadyToReplaceClient = clientInfo;
+					pair.Value.Close();
 				}
-
-				newDineInformClients[pair.Key] = clientInfo;
+				else {
+					newDineInformClients[pair.Key] = clientInfo;
+				}
 
 				log($"{clientInfo.OriginalRemotePoint} ({pair.Key.Description}) Connected", Log.LogLevel.Success);
 			}
@@ -55,7 +54,7 @@ namespace YummyOnlineTcpServer {
 
 			if(!printerClients.ContainsKey(protocol.HotelId)) {
 				log($"{clientInfo.OriginalRemotePoint} Printer HotelId {protocol.HotelId} Not Matched", Log.LogLevel.Warning);
-				clientInfo.Client.Client.Close();
+				clientInfo.Close();
 				return;
 			}
 
@@ -63,13 +62,12 @@ namespace YummyOnlineTcpServer {
 
 			if(pair.Value != null) {
 				log($"Printer HotelId {pair.Key} Repeated", Log.LogLevel.Warning);
-				pair.Value.Client.Client.Close();
-
-				clientCloseMutex.Reset();
-				clientCloseMutex.WaitOne();
+				pair.Value.ReadyToReplaceClient = clientInfo;
+				pair.Value.Close();
 			}
-
-			printerClients[pair.Key] = clientInfo;
+			else {
+				printerClients[pair.Key] = clientInfo;
+			}
 
 			log($"{clientInfo.OriginalRemotePoint} (Printer of Hotel {protocol.HotelId}) Connected", Log.LogLevel.Success);
 
@@ -90,7 +88,7 @@ namespace YummyOnlineTcpServer {
 
 		private void _clientVerified(TcpClientInfo clientInfo) {
 			lock(waitingForVerificationClients) {
-				TcpClientInfo waitedClientInfo = waitingForVerificationClients.FirstOrDefault(p => p.Client == clientInfo.Client);
+				TcpClientInfo waitedClientInfo = waitingForVerificationClients.FirstOrDefault(p => p == clientInfo);
 				clientInfo.ConnectedTime = waitedClientInfo.ConnectedTime;
 				waitingForVerificationClients.Remove(waitedClientInfo);
 			}

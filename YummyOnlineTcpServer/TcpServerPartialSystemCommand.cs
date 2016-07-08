@@ -12,7 +12,7 @@ namespace YummyOnlineTcpServer {
 		private void systemCommand(TcpClientInfo clientInfo, SystemCommandProtocol protocol) {
 			if(clientInfo.Client != systemClient.Client) {
 				log($"{clientInfo.OriginalRemotePoint} Received SystemCommand From Invalid SystemClient", Log.LogLevel.Error);
-				clientInfo.Client.Close();
+				clientInfo.Close();
 				return;
 			}
 
@@ -40,7 +40,7 @@ namespace YummyOnlineTcpServer {
 				var oldGuid = newDineInformClients.ElementAt(i);
 
 				if(!guids.Exists(p => p.Guid == oldGuid.Key.Guid)) {
-					oldGuid.Value?.Client.Close();
+					oldGuid.Value?.Close();
 					newDineInformClients.Remove(oldGuid.Key);
 				}
 			}

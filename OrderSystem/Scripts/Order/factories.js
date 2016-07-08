@@ -383,11 +383,15 @@ app.factory('cart', [
 					}
 				}
 				price = parseFloat(price.toFixed(2));
+				console.log(this.PayKind)
+				if (this.PayKind.Type != 0) {
+					this.PriceInPoints = 0;
+				}
 				// 如果用户抵扣的金额超过需要支付的金额
 				if (this.PriceInPoints > price) {
 					this.PriceInPoints = price;
 				}
-				// 总价减去积分抵扣的  价格
+				// 总价减去积分抵扣的价格
 				price -= this.PriceInPoints;
 				return price;
 			},

@@ -18,9 +18,6 @@ namespace YummyOnlineTcpServer {
 		private int port;
 		private Action<string, Log.LogLevel> logDelegate;
 
-		// 用于打印机或新订单通知客户端重复连接时, 等待原有客户端断开日志记录完毕再执行下面代码·
-		private ManualResetEvent clientCloseMutex = new ManualResetEvent(true);
-
 		/// <summary>
 		/// 已经链接但是等待身份验证的socket
 		/// </summary>
@@ -85,7 +82,7 @@ namespace YummyOnlineTcpServer {
 						client.HeartAlive++;
 						if(client.HeartAlive > 3) {
 							log($"{client.OriginalRemotePoint} Timeout", Log.LogLevel.Warning);
-							client.Client.Close();
+							client.Close();
 						}
 					}
 				}
@@ -96,7 +93,7 @@ namespace YummyOnlineTcpServer {
 				//	systemClient.HeartAlive++;
 				//	if(systemClient.HeartAlive > 6) {
 				//		log($"System {systemClient.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
-				//		systemClient.Client.Close();
+				//		systemClient.Close();
 				//	}
 				//}
 				//lock(newDineInformClients) {
@@ -105,7 +102,7 @@ namespace YummyOnlineTcpServer {
 				//		pair.Value.HeartAlive++;
 				//		if(pair.Value.HeartAlive > 1) {
 				//			log($"({pair.Key.Description}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Success);
-				//			pair.Value.Client.Close();
+				//			pair.Value.Close();
 				//		}
 				//	}
 				//}
@@ -115,7 +112,7 @@ namespace YummyOnlineTcpServer {
 						pair.Value.HeartAlive++;
 						if(pair.Value.HeartAlive > 6) {
 							log($"Printer (Hotel{pair.Key}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
-							pair.Value.Client.Close();
+							pair.Value.Close();
 						}
 					}
 				}
@@ -182,9 +179,8 @@ namespace YummyOnlineTcpServer {
 			lock(newDineInformClients) {
 				foreach(var pair in newDineInformClients) {
 					if(pair.Value?.Client == client) {
-						newDineInformClients[pair.Key] = null;
+						newDineInformClients[pair.Key] = newDineInformClients[pair.Key].ReadyToReplaceClient;
 						log($"NewDineInformClient ({pair.Key.Description}) {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
-						clientCloseMutex.Set();
 						return;
 					}
 				}
@@ -193,9 +189,8 @@ namespace YummyOnlineTcpServer {
 			lock(printerClients) {
 				foreach(var pair in printerClients) {
 					if(pair.Value?.Client == client) {
-						printerClients[pair.Key] = null;
+						printerClients[pair.Key] = printerClients[pair.Key].ReadyToReplaceClient;
 						log($"Printer (Hotel{pair.Key}) {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
-						clientCloseMutex.Set();
 						return;
 					}
 				}

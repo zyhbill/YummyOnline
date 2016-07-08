@@ -40,7 +40,8 @@ namespace Management.Controllers
                 t.Name,
                 t.Description,
                 t.Usable,
-                Discount = t.Discount * 100
+                Discount = t.Discount * 100,
+                t.Type
             }).ToListAsync();
             return Json(paykinds.ToList());
         }

@@ -1151,7 +1151,7 @@ namespace Management.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> FileUpLoader()
+        public  JsonResult FileUpLoader()
         {
             if (Request.Files.Count != 0)
             {

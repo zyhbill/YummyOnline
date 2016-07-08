@@ -6,22 +6,21 @@ using System.Net.Sockets;
 using YummyOnlineDAO.Models;
 
 namespace YummyOnlineTcpServer {
+	/// <summary>
+	/// 新订单通知客户端
+	/// </summary>
 	public class NewDineInformClients : BaseClients {
-		public NewDineInformClients(Action<string, Log.LogLevel> log, Action<TcpClient, object> send)
-			: base(log, send) { }
-
-		public Dictionary<NewDineInformClientGuid, TcpClientInfo> Clients {
-			get;
-			private set;
-		} = new Dictionary<NewDineInformClientGuid, TcpClientInfo>();
-
-		public void Add(List<NewDineInformClientGuid> guids) {
+		public NewDineInformClients(Action<string, Log.LogLevel> log, Action<TcpClient, object> send,
+			List<NewDineInformClientGuid> guids)
+			: base(log, send) {
 			lock(this) {
 				guids.ForEach(g => {
 					Clients.Add(g, null);
 				});
 			}
 		}
+
+		public Dictionary<NewDineInformClientGuid, TcpClientInfo> Clients { get; } = new Dictionary<NewDineInformClientGuid, TcpClientInfo>();
 
 		public override void HandleTimeOut() {
 			lock(this) {

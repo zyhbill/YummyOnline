@@ -7,6 +7,9 @@ using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
 
 namespace YummyOnlineTcpServer {
+	/// <summary>
+	/// 总控系统客户端
+	/// </summary>
 	public class SystemClient : BaseClients {
 		public SystemClient(Action<string, Log.LogLevel> log, Action<TcpClient, object> send, Func<TcpServerStatusProtocol> getTcpServerStatus)
 			: base(log, send) {

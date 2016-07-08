@@ -92,7 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Clients\BaseClients.cs" />
-    <Compile Include="PrinterClients.cs" />
+    <Compile Include="Clients\PrinterClients.cs" />
     <Compile Include="Clients\NewDineInformClients.cs" />
     <Compile Include="Clients\SystemClient.cs" />
     <Compile Include="Clients\WaitingForVerifictionClients.cs" />

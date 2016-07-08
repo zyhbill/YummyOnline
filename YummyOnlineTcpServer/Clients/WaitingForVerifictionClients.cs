@@ -5,14 +5,14 @@ using System.Net.Sockets;
 using YummyOnlineDAO.Models;
 
 namespace YummyOnlineTcpServer {
+	/// <summary>
+	/// 等待验证客户端
+	/// </summary>
 	public class WaitingForVerificationClients : BaseClients {
 		public WaitingForVerificationClients(Action<string, Log.LogLevel> log, Action<TcpClient, object> send)
 			: base(log, send) { }
 
-		public List<TcpClientInfo> Clients {
-			get;
-			private set;
-		} = new List<TcpClientInfo>();
+		public List<TcpClientInfo> Clients { get; } = new List<TcpClientInfo>();
 
 
 		public void Add(TcpClientInfo clientInfo) {

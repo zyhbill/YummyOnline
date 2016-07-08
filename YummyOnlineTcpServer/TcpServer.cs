@@ -37,16 +37,14 @@ namespace YummyOnlineTcpServer {
 			tcp.MessageReceivedEvent += Tcp_MessageReceivedEvent;
 			tcp.ErrorEvent += Tcp_ErrorEvent;
 
-			waitingForVerificationClients = new WaitingForVerificationClients(log, send);
-			systemClient = new SystemClient(log, send, GetTcpServerStatus);
-			newDineInformClients = new NewDineInformClients(log, send);
-			printerClients = new PrinterClients(log, send);
 		}
 		public async Task Initialize() {
 			YummyOnlineManager manager = new YummyOnlineManager();
 
-			newDineInformClients.Add(await manager.GetGuids());
-			printerClients.Add(await manager.GetHotels());
+			waitingForVerificationClients = new WaitingForVerificationClients(log, send);
+			systemClient = new SystemClient(log, send, GetTcpServerStatus);
+			newDineInformClients = new NewDineInformClients(log, send, await manager.GetGuids());
+			printerClients = new PrinterClients(log, send, await manager.GetHotels());
 
 			log($"Binding {ip}:{port}", Log.LogLevel.Info);
 
@@ -153,7 +151,7 @@ namespace YummyOnlineTcpServer {
 			foreach(var pair in printerClients.Clients) {
 				protocol.PrinterClients.Add(new PrinterClientStatus {
 					HotelId = pair.Key,
-					WaitedCount = printerClients.PrinterWaitedQueue[pair.Key].Count,
+					WaitedCount = printerClients.WaitedQueue[pair.Key].Count,
 					Status = getClientStatus(pair.Value)
 				});
 			}

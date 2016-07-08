@@ -7,33 +7,29 @@ using System.Text;
 using YummyOnlineDAO.Models;
 
 namespace YummyOnlineTcpServer {
+	/// <summary>
+	/// 打印机客户端
+	/// </summary>
 	public class PrinterClients : BaseClients {
-		public PrinterClients(Action<string, Log.LogLevel> log, Action<TcpClient, object> send)
-			: base(log, send) { }
-
-		/// <summary>
-		/// 打印机socket
-		/// </summary>
-		public Dictionary<int, TcpClientInfo> Clients {
-			get;
-			private set;
-		} = new Dictionary<int, TcpClientInfo>();
-		/// <summary>
-		/// 打印等待队列
-		/// </summary>
-		public Dictionary<int, Queue<BaseTcpProtocol>> PrinterWaitedQueue {
-			get;
-			private set;
-		} = new Dictionary<int, Queue<BaseTcpProtocol>>();
-
-		public void Add(List<Hotel> hotels) {
+		public PrinterClients(Action<string, Log.LogLevel> log, Action<TcpClient, object> send,
+			List<Hotel> hotels)
+			: base(log, send) {
 			lock(this) {
 				hotels.ForEach(h => {
 					Clients.Add(h.Id, null);
-					PrinterWaitedQueue.Add(h.Id, new Queue<BaseTcpProtocol>());
+					WaitedQueue.Add(h.Id, new Queue<BaseTcpProtocol>());
 				});
 			}
 		}
+
+		public Dictionary<int, TcpClientInfo> Clients { get; } = new Dictionary<int, TcpClientInfo>();
+		/// <summary>
+		/// 打印等待队列
+		/// </summary>
+		public Dictionary<int, Queue<BaseTcpProtocol>> WaitedQueue {
+			get;
+			private set;
+		} = new Dictionary<int, Queue<BaseTcpProtocol>>();
 
 		public override void HandleTimeOut() {
 			lock(this) {
@@ -83,8 +79,8 @@ namespace YummyOnlineTcpServer {
 				log($"{clientInfo.OriginalRemotePoint} (Printer of Hotel {protocol.HotelId}) Connected", Log.LogLevel.Success);
 
 				// 打印存储在打印等待队列中的所有请求
-				while(PrinterWaitedQueue[pair.Key].Count > 0) {
-					BaseTcpProtocol printProtocol = PrinterWaitedQueue[pair.Key].Dequeue();
+				while(WaitedQueue[pair.Key].Count > 0) {
+					BaseTcpProtocol printProtocol = WaitedQueue[pair.Key].Dequeue();
 					if(printProtocol.Type == TcpProtocolType.PrintDine) {
 						sendPrintDineProtocol(pair.Key, (PrintDineProtocol)printProtocol);
 					}
@@ -107,6 +103,9 @@ namespace YummyOnlineTcpServer {
 			}
 		}
 
+		/// <summary>
+		/// 请求打印订单
+		/// </summary>
 		public void RequestPrintDine(TcpClientInfo clientInfo, RequestPrintDineProtocol protocol, NewDineInformClientGuid sender) {
 			lock(this) {
 				if(sender == null) {
@@ -135,21 +134,23 @@ namespace YummyOnlineTcpServer {
 
 				PrintDineProtocol p = new PrintDineProtocol(protocol.DineId, protocol.DineMenuIds, protocol.PrintTypes);
 				if(Clients[protocol.HotelId] == null) {
-					PrinterWaitedQueue[protocol.HotelId].Enqueue(p);
+					WaitedQueue[protocol.HotelId].Enqueue(p);
 					log($"Printer of Hotel {protocol.HotelId} is not connected", Log.LogLevel.Error);
 					return;
 				}
 				sendPrintDineProtocol(protocol.HotelId, p);
 			}
 		}
-
 		/// <summary>
-		/// 向饭店打印机发送打印协议
+		/// 向饭店打印机发送打印订单协议
 		/// </summary>
 		private void sendPrintDineProtocol(int hotelId, PrintDineProtocol protocol) {
 			send(Clients[hotelId].Client, protocol);
 		}
 
+		/// <summary>
+		/// 请求打印交接班
+		/// </summary>
 		public void RequestPrintShifts(TcpClientInfo clientInfo, RequestPrintShiftsProtocol protocol, NewDineInformClientGuid sender) {
 			lock(this) {
 				if(sender == null) {
@@ -170,13 +171,16 @@ namespace YummyOnlineTcpServer {
 
 				PrintShiftsProtocol p = new PrintShiftsProtocol(protocol.Ids, protocol.DateTime);
 				if(Clients[protocol.HotelId] == null) {
-					PrinterWaitedQueue[protocol.HotelId].Enqueue(p);
+					WaitedQueue[protocol.HotelId].Enqueue(p);
 					log($"Printer of Hotel {protocol.HotelId} is not connected", Log.LogLevel.Error);
 					return;
 				}
 				sendPrintShiftsProtocol(protocol.HotelId, p);
 			}
 		}
+		/// <summary>
+		/// 向饭店打印机发送打印交接班协议
+		/// </summary>
 		private void sendPrintShiftsProtocol(int hotelId, PrintShiftsProtocol protocol) {
 			send(Clients[hotelId].Client, protocol);
 		}

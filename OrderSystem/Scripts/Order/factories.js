@@ -383,7 +383,6 @@ app.factory('cart', [
 					}
 				}
 				price = parseFloat(price.toFixed(2));
-				console.log(this.PayKind)
 				if (this.PayKind.Type != 0) {
 					this.PriceInPoints = 0;
 				}

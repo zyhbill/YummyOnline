@@ -4,7 +4,7 @@
 <div class="col-md-6">
     <div class="dd dd-draghandle" nestable>
         <ol class="dd-list" ng-init="Initialize()">
-            <li class="dd-item dd2-item" ng-repeat="menu in ClassElement.FirstMenuClasses">
+            <li class="dd-item dd2-item" ng-repeat="menu in ClassElement.FirstMenuClasses track by $index">
                 <div class="dd-handle dd2-handle">
                     <i class="normal-icon icon-reorder blue bigger-130"></i>
                     <i class="drag-icon icon-move bigger-125"></i>
@@ -60,7 +60,7 @@
                             </div>
                         </div>
                     </li>
-                    <li class="dd-item dd2-item" ng-repeat="submenu in ClassElement.SecondMenuClasses|filter:{ParentMenuClassId:menu.Id}">
+                    <li class="dd-item dd2-item" ng-repeat="submenu in ClassElement.SecondMenuClasses|menu:menu.Id">
                         <div class="dd-handle dd2-handle">
                             <i class="normal-icon icon-leaf red bigger-130"></i>
 
@@ -115,7 +115,7 @@
                                     </div>
                                 </div>
                             </li>
-                            <li class="dd-item dd2-item" ng-repeat="subsubmenu in ClassElement.ThirdMenuClasses|filter:{ParentMenuClassId:submenu.Id}">
+                            <li class="dd-item dd2-item" ng-repeat="subsubmenu in ClassElement.ThirdMenuClasses|menu:submenu.Id">
                                 <div class="dd-handle dd2-handle">
                                     <i class="normal-icon icon-leaf red bigger-130"></i>
 

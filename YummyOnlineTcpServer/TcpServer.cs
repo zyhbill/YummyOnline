@@ -18,24 +18,10 @@ namespace YummyOnlineTcpServer {
 		private int port;
 		private Action<string, Log.LogLevel> logDelegate;
 
-		/// <summary>
-		/// 已经链接但是等待身份验证的socket
-		/// </summary>
-		private List<TcpClientInfo> waitingForVerificationClients = new List<TcpClientInfo>();
-
-		private TcpClientInfo systemClient = null;
-		/// <summary>
-		/// 接收新订单的socket
-		/// </summary>
-		private Dictionary<NewDineInformClientGuid, TcpClientInfo> newDineInformClients = new Dictionary<NewDineInformClientGuid, TcpClientInfo>();
-		/// <summary>
-		/// 打印机socket
-		/// </summary>
-		private Dictionary<int, TcpClientInfo> printerClients = new Dictionary<int, TcpClientInfo>();
-		/// <summary>
-		/// 打印等待队列
-		/// </summary>
-		private Dictionary<int, Queue<BaseTcpProtocol>> printerWaitedQueue = new Dictionary<int, Queue<BaseTcpProtocol>>();
+		private WaitingForVerificationClients waitingForVerificationClients;
+		private SystemClient systemClient;
+		private NewDineInformClients newDineInformClients;
+		private PrinterClients printerClients;
 
 		/// <summary>
 		/// 构造函数
@@ -46,82 +32,44 @@ namespace YummyOnlineTcpServer {
 			tcp = new TcpManager();
 			this.ip = ip;
 			this.port = port;
+			this.logDelegate = logDelegate;
+
 			tcp.MessageReceivedEvent += Tcp_MessageReceivedEvent;
 			tcp.ErrorEvent += Tcp_ErrorEvent;
-			this.logDelegate = logDelegate;
+
+			waitingForVerificationClients = new WaitingForVerificationClients(log, send);
+			systemClient = new SystemClient(log, send, GetTcpServerStatus);
+			newDineInformClients = new NewDineInformClients(log, send);
+			printerClients = new PrinterClients(log, send);
 		}
 		public async Task Initialize() {
 			YummyOnlineManager manager = new YummyOnlineManager();
 
-			List<Hotel> hotels = await manager.GetHotels();
-			hotels.ForEach(h => {
-				printerClients.Add(h.Id, null);
-				printerWaitedQueue.Add(h.Id, new Queue<BaseTcpProtocol>());
-			});
-			List<NewDineInformClientGuid> guids = await manager.GetGuids();
-			guids.ForEach(g => {
-				newDineInformClients.Add(g, null);
-			});
+			newDineInformClients.Add(await manager.GetGuids());
+			printerClients.Add(await manager.GetHotels());
 
 			log($"Binding {ip}:{port}", Log.LogLevel.Info);
 
 			tcp.StartListening(IPAddress.Parse(ip), port, client => {
 				TcpClientInfo clientInfo = new TcpClientInfo(client);
-				lock(waitingForVerificationClients) {
-					waitingForVerificationClients.Add(clientInfo);
-				}
+				waitingForVerificationClients.Add(clientInfo);
+
 				log($"{clientInfo.OriginalRemotePoint} Connected, Waiting for verification", Log.LogLevel.Info);
 			});
-
-
+			
 			System.Timers.Timer timer = new System.Timers.Timer(10 * 1000);
 			timer.Elapsed += (e, o) => {
 				// 30秒之内已连接但是未发送身份信息的socket断开
-				lock(waitingForVerificationClients) {
-					foreach(var client in waitingForVerificationClients) {
-						client.HeartAlive++;
-						if(client.HeartAlive > 3) {
-							log($"{client.OriginalRemotePoint} Timeout", Log.LogLevel.Warning);
-							client.Close();
-						}
-					}
-				}
+				waitingForVerificationClients.HandleTimeOut();
 
 				//60秒之内没有接收到心跳包的socket断开, 或发送心跳包失败的socket断开
-				//if(systemClient != null) {
-				//	sendHeartBeat(systemClient);
-				//	systemClient.HeartAlive++;
-				//	if(systemClient.HeartAlive > 6) {
-				//		log($"System {systemClient.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
-				//		systemClient.Close();
-				//	}
-				//}
-				//lock(newDineInformClients) {
-				//	foreach(var pair in newDineInformClients.Where(p => p.Value != null)) {
-				//		sendHeartBeat(pair.Value);
-				//		pair.Value.HeartAlive++;
-				//		if(pair.Value.HeartAlive > 1) {
-				//			log($"({pair.Key.Description}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Success);
-				//			pair.Value.Close();
-				//		}
-				//	}
-				//}
-				lock(printerClients) {
-					foreach(var pair in printerClients.Where(p => p.Value != null)) {
-						sendHeartBeat(pair.Value);
-						pair.Value.HeartAlive++;
-						if(pair.Value.HeartAlive > 6) {
-							log($"Printer (Hotel{pair.Key}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
-							pair.Value.Close();
-						}
-					}
-				}
-
+				//systemClient.HandleTimeOut();
+				//newDineInformClients.HandleTimeOut();
+				printerClients.HandleTimeOut();
 			};
 			timer.Start();
 		}
-
-
+		
 		private void Tcp_MessageReceivedEvent(TcpClient client, string content) {
 			try {
 				BaseTcpProtocol baseProtocol = JsonConvert.DeserializeObject<BaseTcpProtocol>(content);
@@ -129,28 +77,40 @@ namespace YummyOnlineTcpServer {
 
 				switch(baseProtocol.Type) {
 					case TcpProtocolType.HeartBeat:
-						heartBeat(clientInfo);
+						systemClient.HeartBeat(clientInfo);
+						newDineInformClients.HeartBeat(clientInfo);
+						printerClients.HeartBeat(clientInfo);
 						break;
 					case TcpProtocolType.SystemConnect:
-						systemConnect(clientInfo);
+						systemClient.ClientConnected(clientInfo);
+						waitingForVerificationClients.ClientConnected(clientInfo);
 						break;
 					case TcpProtocolType.SystemCommand:
-						systemCommand(clientInfo, JsonConvert.DeserializeObject<SystemCommandProtocol>(content));
+						systemClient.SystemCommand(clientInfo, JsonConvert.DeserializeObject<SystemCommandProtocol>(content),
+							newDineInformClients);
 						break;
 					case TcpProtocolType.NewDineInformClientConnect:
-						newDineInfromClientConnected(clientInfo, JsonConvert.DeserializeObject<NewDineInformClientConnectProtocol>(content));
+						newDineInformClients.ClientConnected(clientInfo,
+							JsonConvert.DeserializeObject<NewDineInformClientConnectProtocol>(content));
+						waitingForVerificationClients.ClientConnected(clientInfo);
 						break;
 					case TcpProtocolType.PrintDineClientConnect:
-						printDineClientConnected(clientInfo, JsonConvert.DeserializeObject<PrintDineClientConnectProtocol>(content));
+						printerClients.ClientConnected(clientInfo,
+							 JsonConvert.DeserializeObject<PrintDineClientConnectProtocol>(content));
+						waitingForVerificationClients.ClientConnected(clientInfo);
 						break;
 					case TcpProtocolType.NewDineInform:
-						newDineInform(clientInfo, JsonConvert.DeserializeObject<NewDineInformProtocol>(content));
+						newDineInformClients.NewDineInform(clientInfo, JsonConvert.DeserializeObject<NewDineInformProtocol>(content));
 						break;
 					case TcpProtocolType.RequestPrintDine:
-						requestPrintDine(clientInfo, JsonConvert.DeserializeObject<RequestPrintDineProtocol>(content));
+						printerClients.RequestPrintDine(clientInfo,
+							JsonConvert.DeserializeObject<RequestPrintDineProtocol>(content),
+							newDineInformClients.GetSender(clientInfo));
 						break;
 					case TcpProtocolType.RequestPrintShifts:
-						requestPrintShifts(clientInfo, JsonConvert.DeserializeObject<RequestPrintShiftsProtocol>(content));
+						printerClients.RequestPrintShifts(clientInfo,
+							JsonConvert.DeserializeObject<RequestPrintShiftsProtocol>(content),
+							newDineInformClients.GetSender(clientInfo));
 						break;
 				}
 			}
@@ -161,63 +121,39 @@ namespace YummyOnlineTcpServer {
 		}
 
 		private void Tcp_ErrorEvent(TcpClient client, Exception e) {
-			lock(waitingForVerificationClients) {
-				TcpClientInfo clientInfo = waitingForVerificationClients.FirstOrDefault(p => p.Client == client);
-				if(clientInfo != null) {
-					waitingForVerificationClients.Remove(clientInfo);
-					log($"WaitingForVerificationClient {clientInfo.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
-					return;
-				}
-			}
-
-			if(systemClient?.Client == client) {
-				systemClient = null;
-				log($"System {systemClient.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
-				return;
-			}
-
-			lock(newDineInformClients) {
-				foreach(var pair in newDineInformClients) {
-					if(pair.Value?.Client == client) {
-						newDineInformClients[pair.Key] = newDineInformClients[pair.Key].ReadyToReplaceClient;
-						log($"NewDineInformClient ({pair.Key.Description}) {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
-						return;
-					}
-				}
-			}
-
-			lock(printerClients) {
-				foreach(var pair in printerClients) {
-					if(pair.Value?.Client == client) {
-						printerClients[pair.Key] = printerClients[pair.Key].ReadyToReplaceClient;
-						log($"Printer (Hotel{pair.Key}) {pair.Value.OriginalRemotePoint} Disconnected", Log.LogLevel.Error);
-						return;
-					}
-				}
-			}
+			waitingForVerificationClients.HandleError(client, e);
+			systemClient.HandleError(client, e);
+			newDineInformClients.HandleError(client, e);
 		}
 
 		private void log(string log, Log.LogLevel level) {
 			logDelegate(log, level);
 		}
+
+		private void send(TcpClient client, object protocol) {
+			var _ = tcp.Send(client, JsonConvert.SerializeObject(protocol, new JsonSerializerSettings {
+				ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+			}), null);
+		}
+
 		public TcpServerStatusProtocol GetTcpServerStatus() {
 			TcpServerStatusProtocol protocol = new TcpServerStatusProtocol();
 
-			foreach(var p in waitingForVerificationClients) {
+			foreach(var p in waitingForVerificationClients.Clients) {
 				protocol.WaitingForVerificationClients.Add(getClientStatus(p));
 			}
-			protocol.SystemClient = getClientStatus(systemClient);
-			foreach(var pair in newDineInformClients) {
+			protocol.SystemClient = getClientStatus(systemClient.ClientInfo);
+			foreach(var pair in newDineInformClients.Clients) {
 				protocol.NewDineInformClients.Add(new NewDineInformClientStatus {
 					Guid = pair.Key.Guid,
 					Description = pair.Key.Description,
 					Status = getClientStatus(pair.Value)
 				});
 			}
-			foreach(var pair in printerClients) {
+			foreach(var pair in printerClients.Clients) {
 				protocol.PrinterClients.Add(new PrinterClientStatus {
 					HotelId = pair.Key,
-					WaitedCount = printerWaitedQueue[pair.Key].Count,
+					WaitedCount = printerClients.PrinterWaitedQueue[pair.Key].Count,
 					Status = getClientStatus(pair.Value)
 				});
 			}

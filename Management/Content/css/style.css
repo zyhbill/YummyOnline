@@ -239,6 +239,11 @@ span.money{
 #logo,#button,#complete{
     display:inline-block;
 }
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus
+{
+    color:#000;
+}
 /************************************退菜************************************************/
 .ReeturnShow{
     max-height:180px;

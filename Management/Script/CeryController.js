@@ -325,7 +325,10 @@
             console.log(data);
         })
     }
-    $scope.CheckOut = function () { HandOut.CheckOut(); }
+    $scope.CheckOut = function () {
+        HandOut.CheckOut();
+        $rootScope.Logout();
+    }
     $scope.rePrint = function () {
         var modalInstance = $uibModal.open({//打开支付
             animation: $scope.animationsEnabled,

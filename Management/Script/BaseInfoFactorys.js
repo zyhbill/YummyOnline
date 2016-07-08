@@ -948,21 +948,21 @@
                         _this.ClassElement.NewClass.IsLeaf = true;
                         _this.ClassElement.NewClass.ParentMenuClassId = ParentId;
                         if (level == 0) {
-                            _this.ClassElement.FirstMenuClasses.push(_this.ClassElement.NewClass);
+                            _this.ClassElement.FirstMenuClasses.push(angular.copy(_this.ClassElement.NewClass));
                         } else if (level == 1) {
                             _this.ClassElement.FirstMenuClasses.forEach(function (x) {
                                 if (x.Id == ParentId) {
                                     x.IsLeaf = false;
                                 }
                             })
-                            _this.ClassElement.SecondMenuClasses.push(_this.ClassElement.NewClass);
+                            _this.ClassElement.SecondMenuClasses.push(angular.copy(_this.ClassElement.NewClass));
                         } else if (level == 2) {
                             _this.ClassElement.SecondMenuClasses.forEach(function (x) {
                                 if (x.Id == ParentId) {
                                     x.IsLeaf = false;
                                 }
                             })
-                            _this.ClassElement.ThirdMenuClasses.push(_this.ClassElement.NewClass);
+                            _this.ClassElement.ThirdMenuClasses.push(angular.copy(_this.ClassElement.NewClass));
                         }
                         _this.ClassElement.NewClass = {};
                     } else {

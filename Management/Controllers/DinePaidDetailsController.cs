@@ -175,7 +175,7 @@ namespace Management.Controllers
                 endtime = new DateTime(enddate.Value.Year, enddate.Value.Month, enddate.Value.Day, endtime.Value.Hour, endtime.Value.Minute, 0);
             }
 
-
+            if(payKindIds==null) return Json(new { succeeded = false });
             var Dines = db.Dines
                 .Include(d => d.Remarks)
                 .Include(d => d.Desk)

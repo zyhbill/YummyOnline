@@ -325,7 +325,10 @@
             console.log(data);
         })
     }
-    $scope.CheckOut = function () { HandOut.CheckOut(); }
+    $scope.CheckOut = function () {
+        HandOut.CheckOut();
+        $rootScope.Logout();
+    }
     $scope.rePrint = function () {
         var modalInstance = $uibModal.open({//打开支付
             animation: $scope.animationsEnabled,
@@ -591,17 +594,8 @@
         option.method.CheckAddNum(menu);
     }
 })
-.filter('day', function () {
-    return function (input, formart) {
-        input = input || '';
-        var out = "";
-        var temp = input.split(" ");
-        if (temp.length < 3) {
-            out = input;
-        }
-        else {
-            out = temp[2] + formart + temp[0] + formart + temp[1];
-        }
-        return out;
+.filter('menu', function () {
+    return function (input, MenuId) {
+        return input.filter(function (x) { return x.ParentMenuClassId == MenuId });
     };
 })

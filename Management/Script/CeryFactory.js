@@ -188,9 +188,9 @@
             this.getUser();
             this.PayElements.Discounts.splice(temp, (this.PayElements.Discounts.length - temp));
             //输入框清空 自定义 折扣率设为 不打折 重新计算价钱 输入框自动聚焦
-            this.Login();
             this.PayClean();
             this.DiscountClean();
+            this.Login();
             if (this.PayElements.CurrentDine.Discount == 100) { this.reCalc(); }
             this.AutoFocus();
         },
@@ -409,7 +409,7 @@
         },
         DiscountClean: function () {
             this.PayElements.CurrentDiscount = this.PayElements.Discounts[0];
-            this.PayElements.CurrentDiscount.Discount = 100;
+            this.PayElements.CurrentDiscount.Discount = this.PayElements.CurrentDine.Discount;
         },
         Login: function () {
             var _this = this;

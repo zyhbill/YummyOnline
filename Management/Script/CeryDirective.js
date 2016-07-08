@@ -448,3 +448,19 @@
         }
     }
 })
+.directive('nav', function () {
+    return {
+        scope: {
+        },
+        link: function (scope, element, attributes) {
+            element.find('.submenu>li>a').each(function () {
+                $(this).click(function () {
+                    $('.nav-list>li').removeClass('active');
+                    $('.submenu>li').removeClass('active');
+                    $(this).parent().addClass('active');
+                    $(this).parent().parent().parent().addClass('active');
+                })
+            })
+        }
+    }
+})

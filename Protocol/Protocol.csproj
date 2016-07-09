@@ -56,7 +56,7 @@
     <Compile Include="JsonFunctionProtocols.cs" />
     <Compile Include="TcpProtocol.cs" />
     <Compile Include="TcpServerStatusProtocol.cs" />
-    <Compile Include="WebSocketProtocol.cs" />
+    <Compile Include="ServerInfoWebSocketProtocol.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HotelDAOModels\HotelDAOModels.csproj">

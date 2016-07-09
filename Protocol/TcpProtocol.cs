@@ -7,8 +7,17 @@ namespace Protocol {
 		/// 心跳包
 		/// </summary>
 		public const string HeartBeat = "{F3E101EA-F55D-40DD-9747-BF0DB29C98AF}";
+		/// <summary>
+		/// 总控系统连接
+		/// </summary>
 		public const string SystemConnect = "{9DA2754A-B3E5-408A-A8C5-524AEA61D2B3}";
+		/// <summary>
+		/// 总控系统发送指令
+		/// </summary>
 		public const string SystemCommand = "{8B0B5D6B-963B-4164-AB4D-9A37042057DC}";
+		/// <summary>
+		/// TcpServer状态通知
+		/// </summary>
 		public const string TcpServerStatusInform = "{DCF7434E-2A3E-4296-BED7-EFB528EA317A}";
 		/// <summary>
 		/// 需要及时收到新订单消息的客户端连接

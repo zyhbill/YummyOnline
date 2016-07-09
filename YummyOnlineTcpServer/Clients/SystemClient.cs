@@ -41,9 +41,11 @@ namespace YummyOnlineTcpServer {
 			}
 		}
 
-		public void ClientConnected(TcpClientInfo clientInfo) {
+		public void ClientConnected(TcpClientInfo clientInfo,
+				WaitingForVerificationClients waitingForVerificationClients) {
 			log($"{clientInfo.OriginalRemotePoint} (System) Connected", Log.LogLevel.Success);
 			ClientInfo = clientInfo;
+			waitingForVerificationClients.ClientConnected(clientInfo);
 		}
 
 		public void HeartBeat(TcpClientInfo clientInfo) {

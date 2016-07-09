@@ -55,7 +55,8 @@ namespace YummyOnlineTcpServer {
 			}
 		}
 
-		public void ClientConnected(TcpClientInfo clientInfo, PrintDineClientConnectProtocol protocol) {
+		public void ClientConnected(TcpClientInfo clientInfo, PrintDineClientConnectProtocol protocol,
+				WaitingForVerificationClients waitingForVerificationClients) {
 			lock(this) {
 				log($"{clientInfo.OriginalRemotePoint} (Printer): HotelId: {protocol.HotelId} Request Connection", Log.LogLevel.Info);
 
@@ -89,6 +90,8 @@ namespace YummyOnlineTcpServer {
 					}
 					log($"Send Waited Dine of Hotel {pair.Key}", Log.LogLevel.Success);
 				}
+
+				waitingForVerificationClients.ClientConnected(clientInfo);
 			}
 		}
 

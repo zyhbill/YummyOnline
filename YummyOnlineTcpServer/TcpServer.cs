@@ -79,27 +79,30 @@ namespace YummyOnlineTcpServer {
 						newDineInformClients.HeartBeat(clientInfo);
 						printerClients.HeartBeat(clientInfo);
 						break;
+
 					case TcpProtocolType.SystemConnect:
-						systemClient.ClientConnected(clientInfo);
-						waitingForVerificationClients.ClientConnected(clientInfo);
+						systemClient.ClientConnected(clientInfo, waitingForVerificationClients);
 						break;
 					case TcpProtocolType.SystemCommand:
 						systemClient.SystemCommand(clientInfo, JsonConvert.DeserializeObject<SystemCommandProtocol>(content),
 							newDineInformClients);
 						break;
+
 					case TcpProtocolType.NewDineInformClientConnect:
 						newDineInformClients.ClientConnected(clientInfo,
-							JsonConvert.DeserializeObject<NewDineInformClientConnectProtocol>(content));
-						waitingForVerificationClients.ClientConnected(clientInfo);
-						break;
-					case TcpProtocolType.PrintDineClientConnect:
-						printerClients.ClientConnected(clientInfo,
-							 JsonConvert.DeserializeObject<PrintDineClientConnectProtocol>(content));
-						waitingForVerificationClients.ClientConnected(clientInfo);
+							JsonConvert.DeserializeObject<NewDineInformClientConnectProtocol>(content),
+							waitingForVerificationClients);
 						break;
 					case TcpProtocolType.NewDineInform:
 						newDineInformClients.NewDineInform(clientInfo, JsonConvert.DeserializeObject<NewDineInformProtocol>(content));
 						break;
+
+					case TcpProtocolType.PrintDineClientConnect:
+						printerClients.ClientConnected(clientInfo,
+							 JsonConvert.DeserializeObject<PrintDineClientConnectProtocol>(content),
+							 waitingForVerificationClients);
+						break;
+					
 					case TcpProtocolType.RequestPrintDine:
 						printerClients.RequestPrintDine(clientInfo,
 							JsonConvert.DeserializeObject<RequestPrintDineProtocol>(content),

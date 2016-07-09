@@ -46,7 +46,8 @@ namespace YummyOnlineTcpServer {
 			}
 		}
 
-		public void ClientConnected(TcpClientInfo clientInfo, NewDineInformClientConnectProtocol protocol) {
+		public void ClientConnected(TcpClientInfo clientInfo, NewDineInformClientConnectProtocol protocol,
+				WaitingForVerificationClients waitingForVerificationClients) {
 			lock(this) {
 				log($"{clientInfo.OriginalRemotePoint} (NewDineInformClient): Guid: {protocol.Guid} Request Connection", Log.LogLevel.Info);
 
@@ -74,6 +75,8 @@ namespace YummyOnlineTcpServer {
 
 					log($"{clientInfo.OriginalRemotePoint} ({pair.Key.Description}) Connected", Log.LogLevel.Success);
 				}
+
+				waitingForVerificationClients.ClientConnected(clientInfo);
 			}
 		}
 

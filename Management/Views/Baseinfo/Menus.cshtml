@@ -22,7 +22,7 @@
                 <tbody>
                     <tr ng-repeat="menu in MenuElement.Menus|filter:{Id:MenuElement.IdFilter.Id}">
                         <td>{{menu.Id}}</td>
-                        <td>{{menu.Name}}</td>
+                        <td>{{menu.EnglishName}}{{menu.Name}}</td>
                         <td><span class="label label-info arrowed-in-right arrowed" ng-repeat="remark  in menu.Remarks">{{remark.Name}}</span></td>
                         <td class="text-right">{{menu.MenuPrice.Price|currency:'￥'}}</td>
                         <td>

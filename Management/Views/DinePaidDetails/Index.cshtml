@@ -3,16 +3,13 @@
     Layout = null;
 }
 
-
 <script src="../FrameWorks/moment.js"></script>
 <script src="../FrameWorks/daterangepicker.js"></script>
 <link href="../Content/css/daterangepicker.css" rel="stylesheet" />
 <link href="../Content/css/Reporter.css" rel="stylesheet" />
 <link href="../Content/css/style.css" rel="stylesheet" />
 
-
 <div ng-controller="DinePaidDetailsCtrl">
-
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
          aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -34,7 +31,8 @@
                     <span>收银员姓名：</span><span>{{nowDine.Clerk.Name}}</span><br />
                     <span>服务员姓名：</span><span>{{nowDine.Waiter.Name}}</span><br />
                     <span>顾客人数：</span><span>{{nowDine.HeadCount}}</span><br />
-                    <span>已支付:
+                    <span>
+                        已支付:
                         <span ng-if="dine.IsPaid">是</span>
                         <span ng-if="!dine.IsPaid">否</span>
                     </span><br />
@@ -45,26 +43,24 @@
                     <span>退菜金额：</span><span>{{Back |currency: '￥'}}</span><br />
                     <span>折扣率：</span><span>{{nowDine.Discount*100}}%</span><br />
                     <span>支付方式：</span><span ng-repeat="paykindnamec in paykindnameb">{{paykindnamec.Name}},{{paykindnamec.Price|currency: '￥'}}</span><br />
-                   
+
                     @*<div>
-                        <p ng-repeat="dinepaiddetail in nowdine.DinePaidDetails">
-                            {{dinepaiddetail.PayKind.Name}}hh
+                            <p ng-repeat="dinepaiddetail in nowdine.DinePaidDetails">
+                                {{dinepaiddetail.PayKind.Name}}hh
 
 
-                        </p>
+                            </p>
 
-                    
-                   
-                        <p ng-repeat="dinepaiddetail in nowdine.DinePaidDetails">
-                            {{dinepaiddetail.Price|currency : '￥'}}
-                        </p>
-                    </div>*@
-                      
-                   
+
+
+                            <p ng-repeat="dinepaiddetail in nowdine.DinePaidDetails">
+                                {{dinepaiddetail.Price|currency : '￥'}}
+                            </p>
+                        </div>*@
+
 
                     <table class="table table-bordered table-hover table-striped table-responsive">
                         <thead><tr><th>菜品编号</th><th>菜品名称</th><th>菜品数量</th><th>菜品价格</th><th>菜品原价格</th><th>折扣率(%)</th></tr></thead>
-
                         <tr ng-repeat="dinedetail in dinedetails">
                             <td>
                                 <span>{{dinedetail.MenuId}}</span>
@@ -87,7 +83,6 @@
                         </tr>
                     </table>
 
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default"
@@ -98,7 +93,88 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
     </div>
+    <div class="modal fade" id="myModal1" tabindex="-1" role="dialog"
+         aria-labelledby="myModal1Label" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close"
+                            data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModal1Label">
+                        订单详情
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <span>订单编号：</span><span>{{nowDine.Id}}</span><br />
+                    <span>开始时间：</span><span>{{nowDine.BeginTime | date:'yyyy-MM-dd HH:mm:ss '}}</span><br />
+                    <span>桌台编号：</span><span>{{nowDine.DeskId}}</span><br />
+                    <span>房间号：</span><span>{{nowDine.Area.Name}}</span><br />
+                    <span>
+                        已支付:
+                        <span ng-if="dine.IsPaid">是</span>
+                        <span ng-if="!dine.IsPaid">否</span>
+                    </span><br />
+                    <span>消费金额：</span><span>{{nowDine.OriPrice |currency: '￥'}}</span><br />
+                    <span>应计金额：</span><span>{{nowDine.Price |currency: '￥'}}</span><br />
+                    <span>优惠金额：</span><span>{{nowDine.discount |currency: '￥'}}</span><br />
+                    <span>赠菜金额：</span><span>{{Gift |currency: '￥'}}</span><br />
+                    <span>退菜金额：</span><span>{{Back |currency: '￥'}}</span><br />
+                    <span>折扣率：</span><span>{{nowDine.Discount*100}}%</span><br />
+                    <span>支付方式：</span><span ng-repeat="paykindnamec in paykindnameb">{{paykindnamec.Name}},{{paykindnamec.Price|currency: '￥'}}</span><br />
 
+                    @*<div>
+                            <p ng-repeat="dinepaiddetail in nowdine.DinePaidDetails">
+                                {{dinepaiddetail.PayKind.Name}}hh
+
+
+                            </p>
+
+
+
+                            <p ng-repeat="dinepaiddetail in nowdine.DinePaidDetails">
+                                {{dinepaiddetail.Price|currency : '￥'}}
+                            </p>
+                        </div>*@
+
+
+                    <table class="table table-bordered table-hover table-striped table-responsive">
+                        <thead><tr><th>菜品编号</th><th>菜品名称</th><th>菜品数量</th><th>菜品价格</th><th>菜品原价格</th><th>折扣率(%)</th></tr></thead>
+                        <tr ng-repeat="dinedetail in dinedetails">
+                            <td>
+                                <span>{{dinedetail.MenuId}}</span>
+                            </td>
+                            <td>
+                                <span>{{dinedetail.Name}}</span>
+                            </td>
+                            <td class=text-right>
+                                <span>{{dinedetail.Count}}</span>
+                            </td>
+                            <td class=text-right>
+                                <span>{{dinedetail.Price |currency: '￥'}}</span>
+                            </td>
+                            <td class=text-right>
+                                <span>{{dinedetail.OriPrice|currency: '￥'}}</span>
+                            </td>
+                            <td class=text-right>
+                                <span>{{(dinedetail.Price/dinedetail.OriPrice)*100}}</span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    修改订单抬头<input type="text" ng-model="nowDine.Invoice" />
+                    <button class="btn btn-success" ng-click="putInvoice()">录入发票信息</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                            data-dismiss="modal">
+                        关闭
+                    </button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
     <div class="row" ng-init="Initialize()">
         <div class="col-md-8 col-xs-12">
             <form class="form-horizontal">
@@ -115,17 +191,14 @@
                 </fieldset>
             </form>
         </div>
-
     </div>
-
     <span>输入开始时间(如无需要请输入00:00)</span>
-    <input type="time" ng-model="begintime"  /><br />
+    <input type="time" ng-model="begintime" /><br />
     <br />
     <span>输入结束时间(如无需要请输入23:59)</span>
-    <input type="time" ng-model="endtime"  /><br />
+    <input type="time" ng-model="endtime" /><br />
     <span>选择服务员</span>
     @*<input type="text" ng-model="waiterid" /><br />*@
-
     @*<input type="text"  ng-model="paykindname"/><br />*@
     <form role="form">
         <div class="form-group">
@@ -133,17 +206,14 @@
                 <option value="">所有</option>
                 <option ng-repeat="staffname in staffnames" value="{{staffname.Id}}">{{staffname.Name}}</option>
 
-
             </select>
         </div>
     </form>
-
 
     <div class="widget-box half">
         <div class="widget-header">
             <h4 class="smaller">选择支付方式</h4>
         </div>
-
         <div class="widget-body menu clearfix">
             <ul class="Class checkbox">
                 <li ng-repeat="paykindnamea in paykindnames">
@@ -155,7 +225,6 @@
             </ul>
         </div>
     </div>
-
     @*<form >
             <label>选择支付方式(按住ctrl键可以多选)</label>
 
@@ -164,16 +233,13 @@
                 <option  ng-repeat="paykindnamea in paykindnames" value="{{paykindnamea.Id}}">{{paykindnamea.Name}}</option>
             </select>
         </form>*@
-
     <button class="btn btn-app btn-primary btn-xs" ng-click="search()">
         查询订单
         <i class="icon-search bigger-230"></i>
     </button>
     @*<span>总金额</span><span>{{sumprice}}</span><br />*@
-
     <table class="table table-bordered table-hover table-striped table-responsive">
         @*<thead><tr><th>顾客数量</th><th>消费金额</th><th>应付金额</th><th>优惠金额</th></tr></thead>*@
-
         @*<tr >
                 <td class=text-right>
                     <span>{{headcount}}</span>
@@ -190,7 +256,6 @@
 
             </tr>*@
     </table>
-
     <table class="table table-bordered table-hover table-striped table-responsive">
         <thead>
             <tr>
@@ -212,7 +277,6 @@
                 <th class=text-center>相关操作</th>
             </tr>
         </thead>
-
         <tr ng-repeat="dine in dines">
             <td class=text-center>
                 <span>{{$index+1}}</span>
@@ -246,34 +310,37 @@
                 <p ng-repeat="dinepaiddetail in dine.DinePaidDetails">
                     {{dinepaiddetail.PayKind.Name}}
                 </p>
-
             </td>
             <td class=text-right>
                 <p ng-repeat="dinepaiddetail in dine.DinePaidDetails">
                     {{dinepaiddetail.Price|currency : '￥'}}
                 </p>
-
                 @*<span>{{dine.Price|currency : '￥'}}</span>*@
             </td>
             <td class=text-right>
                 <span ng-if="dine.IsPaid">{{dine.OriPrice|currency : '￥'}}</span>
-
             </td>
             <td class=text-right>
                 <span ng-if="dine.IsPaid">{{dine.discount|currency : '￥'}}</span>
             </td>
-            <td  class=text-right>
+            <td class=text-right>
                 <span ng-if="dine.IsPaid">{{dine.GiftPrice|currency:'￥'}}</span>
             </td>
-
             <td class=text-right>
                 <span ng-if="dine.IsPaid">{{dine.ReturnPrice|currency:'￥'}}</span>
-</td>
+            </td>
             <td>
-                <button type="button" class="btn btn-minier btn-primary dropdown-toggle" data-toggle="modal" data-target="#myModal" ng-click="setDine(dine)">
-                    @*订单详情*@
-                    <i class="icon-file icon-on-right bigger-110"></i>
-                </button>
+                <nobr>
+                    <button type="button" class="btn btn-minier btn-primary dropdown-toggle" data-toggle="modal" data-target="#myModal" ng-click="setDine(dine)">
+                        @*订单详情*@
+                        <i class="icon-file icon-on-right bigger-110"></i>
+                    </button>
+                    <button type="button" class="btn btn-minier btn-primary dropdown-toggle" data-toggle="modal" data-target="#myModal1" ng-click="setDine(dine)">
+                        @*发票录入*@
+                        <i class="icon-save icon-on-right bigger-110"></i>
+                    </button>
+                </nobr>
+
             </td>
         </tr>
         <tr>
@@ -298,7 +365,6 @@
             <td class=text-right>
                 <span>{{Sum.discount|currency : '￥'}}</span>
             </td>
-
             <td class=text-right>
                 <span>{{Sum.GiftPrice|currency : '￥'}}</span>
             </td>
@@ -308,5 +374,4 @@
             <td></td>
         </tr>
     </table>
-
 </div>

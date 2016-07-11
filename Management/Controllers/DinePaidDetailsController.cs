@@ -288,7 +288,13 @@ namespace Management.Controllers
 
 
         }
-
+        public async Task<JsonResult> putInvoice(string Id, string Invoice)
+        {
+            var dine = await db.Dines.Where(d => d.Id == Id).FirstOrDefaultAsync();
+            dine.Invoice = Invoice;
+            db.SaveChanges();
+            return null;
+        }
 
     }
 }

@@ -468,7 +468,13 @@
         
     }
     
-
+    $scope.putInvoice = function () {
+        var invoice = $scope.nowDine.Invoice;
+        var Id = $scope.nowDine.Id
+        $http.post('/DinePaidDetails/putInvoice', { Id: Id, Invoice: invoice }).then(function (response) {
+            alert('录入成功');
+        });
+    }
 
     $scope.search = function () {
         var temp = $scope.paykindnames.filter(function (x) { return x.IsChoose }).map(function (x) { return x.Id })

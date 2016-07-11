@@ -123,6 +123,9 @@
     }).when('/RePrinter', {
         templateUrl: '/Templates/RePrinter',
         controller: 'RePrinterCtrl'
+    }).when('/Invoice', {
+        templateUrl: '/Templates/Invoice',
+        controller: 'InvoiceCtrl'
     }).otherwise({
         redirectTo: '/404'
     });

@@ -799,7 +799,7 @@
                 _this.OpenElements.OrderMenus = [];
                 deferred.resolve(data);
             }).error(function (data) {
-                data = JSON.parse(data);
+                alert("金额错误");
                 deferred.reject(data);
             })
             return deferred.promise;

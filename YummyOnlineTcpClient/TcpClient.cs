@@ -58,7 +58,7 @@ namespace YummyOnlineTcpClient {
 						case TcpProtocolType.HeartBeat:
 							// 如果接收到心跳包, 则发送心跳包
 							heartAlive = 0;
-							var _ = tcp.Send(client, JsonConvert.SerializeObject(new HeartBeatProtocol()), null);
+							//var _ = tcp.Send(client, JsonConvert.SerializeObject(new HeartBeatProtocol()), null);
 							return;
 						case TcpProtocolType.NewDineInform:
 							obj = JsonConvert.DeserializeObject<NewDineInformProtocol>(content);

@@ -14,7 +14,7 @@
 				</div>
 				<div class="media-body">
 					<p class="meal-title" ng-click="cart.AddMenu(menu)">
-						{{menu.Name}}
+						{{menu.EnglishName}} {{menu.Name}}
 						<span class="meal-on-sale" ng-if="menu.Addition.IsOnSale">特价</span>
 					</p>
 					<p class="meal-point">已有{{menu.Ordered}}个人点过</p>

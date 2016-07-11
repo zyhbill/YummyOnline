@@ -24,6 +24,7 @@ namespace HotelDAO {
 					p.Id,
 					p.Code,
 					p.Name,
+					p.EnglishName,
 					p.NameAbbr,
 					p.PicturePath,
 					p.IsFixed,

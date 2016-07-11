@@ -1,11 +1,35 @@
 ﻿<span ng-init="websocketLocation='@ViewBag.WebSocketLocation'"></span>
 
-<div class="box">
-	<div class="box-header with-border">
-		<h3 class="box-title">系统资源</h3>
+<div class="row">
+	<div class="col-md-4">
+		<div class="box">
+			<div class="box-header with-border">
+				<h3 class="box-title">CPU 使用</h3>
+			</div>
+			<div class="box-body">
+				<div id="cpu-line"></div>
+			</div>
+		</div>
 	</div>
-	<div class="box-body">
-		<div id="system-line"></div>
+	<div class="col-md-4">
+		<div class="box">
+			<div class="box-header with-border">
+				<h3 class="box-title">内存使用</h3>
+			</div>
+			<div class="box-body">
+				<div id="memory-line"></div>
+			</div>
+		</div>
+	</div>
+	<div class="col-md-4">
+		<div class="box">
+			<div class="box-header with-border">
+				<h3 class="box-title">磁盘使用</h3>
+			</div>
+			<div class="box-body">
+				<div id="disk-line"></div>
+			</div>
+		</div>
 	</div>
 </div>
 

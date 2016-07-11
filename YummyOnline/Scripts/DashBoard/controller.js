@@ -182,11 +182,11 @@ app.controller('MonitorCtrl', [
 			$websocket.Initialize(location);
 		});
 
-		var $systemLine = $('#system-line').highcharts({
+		var $cpuLine = $('#cpu-line').highcharts({
 			title: null,
 			chart: {
 				type: 'line',
-				height: 300,
+				height: 200,
 				animation: false,
 			},
 
@@ -199,17 +199,87 @@ app.controller('MonitorCtrl', [
 				max: 100,
 				min: 0
 			},
+			plotOptions: {
+				line: {
+					marker: {
+						enabled: false,
+					}
+				}
+			},
 			tooltip: {
 				enabled: false
 			},
+			legend: {
+				enabled: false
+			},
 			series: [{
-				name: 'CPU使用率',
 				data: []
-			}, {
-				name: '内存使用率',
+			}]
+		});
+		var $memoryLine = $('#memory-line').highcharts({
+			title: null,
+			chart: {
+				type: 'line',
+				height: 200,
+				animation: false,
+			},
+
+			xAxis: {
+				type: 'datetime',
+				tickPixelInterval: 150
+			},
+			yAxis: {
+				title: null,
+				max: 100,
+				min: 0
+			},
+			plotOptions: {
+				line: {
+					marker: {
+						enabled: false,
+					}
+				}
+			},
+			tooltip: {
+				enabled: false
+			},
+			legend: {
+				enabled: false
+			},
+			series: [{
 				data: []
-			}, {
-				name: '磁盘使用率',
+			}]
+		});
+		var $diskLine = $('#disk-line').highcharts({
+			title: null,
+			chart: {
+				type: 'line',
+				height: 200,
+				animation: false,
+			},
+			xAxis: {
+				type: 'datetime',
+				tickPixelInterval: 150
+			},
+			yAxis: {
+				title: null,
+				max: 100,
+				min: 0
+			},
+			plotOptions: {
+				line: {
+					marker: {
+						enabled: false,
+					}
+				}
+			},
+			tooltip: {
+				enabled: false
+			},
+			legend: {
+				enabled: false
+			},
+			series: [{
 				data: []
 			}]
 		});
@@ -236,14 +306,17 @@ app.controller('MonitorCtrl', [
 
 		var isInit = false;
 		$scope.$on('WebSocketMessageReceived', function (event, data) {
-			var systemLine = $systemLine.highcharts();
-			var shift = systemLine.series[0].data.length >= 50;
+			var cpuLine = $cpuLine.highcharts();
+			var memoryLine = $memoryLine.highcharts();
+			var diskLine = $diskLine.highcharts();
+
+			var shift = cpuLine.series[0].data.length >= 50;
 			var dateTime = new Date(data.DateTime).getTime();
 			dateTime += 8 * 60 * 60 * 1000;
 
-			systemLine.series[0].addPoint([dateTime, data.CpuTime], true, shift);
-			systemLine.series[1].addPoint([dateTime, data.MemoryUsage], true, shift);
-			systemLine.series[2].addPoint([dateTime, 100 - data.DiskIdle], true, shift);
+			cpuLine.series[0].addPoint([dateTime, data.CpuTime], true, shift);
+			memoryLine.series[0].addPoint([dateTime, data.MemoryUsage], true, shift);
+			diskLine.series[0].addPoint([dateTime, 100 - data.DiskIdle], true, shift);
 
 
 			var iisLine = $iisLine.highcharts();

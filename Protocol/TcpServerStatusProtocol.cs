@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Protocol {
 	public class ClientStatus {
 		public string IpAddress { get; set; }
 		public int Port { get; set; }
+		public int HeartAlive { get; set; }
 		public DateTime ConnectedTime { get; set; }
 		public bool IsConnected { get; set; }
 	}

@@ -125,6 +125,7 @@ namespace YummyOnlineTcpServer {
 			waitingForVerificationClients.HandleError(client, e);
 			systemClient.HandleError(client, e);
 			newDineInformClients.HandleError(client, e);
+			printerClients.HandleError(client, e);
 		}
 
 		private void log(string log, Log.LogLevel level) {

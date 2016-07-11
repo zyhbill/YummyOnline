@@ -178,8 +178,7 @@ Tcp连接成功回调函数，默认NULL
 4. 等待接收信息(详见`ReceivingProtocol`), 发送信息(详见`SendingProtocol`)
 
 ## Protocols
-### NewDineInform
-#### ConnectionProtocol
+### ConnectionProtocol
 ```json
 {
 	"Type": "{053A168C-D4B8-409A-A058-7E2208B57CDA}",
@@ -188,7 +187,7 @@ Tcp连接成功回调函数，默认NULL
 ```
 >  *特别注意！ Guid请向管理员申请，同一时刻，只能有一个Guid对应的Socket连入*
 
-#### ReceivingProtocol
+### ReceivingProtocol
 心跳包
 ```json
 {

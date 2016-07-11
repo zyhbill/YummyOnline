@@ -209,19 +209,23 @@ app.factory('dataSet', [
 						_this.PayKind = $dataSet.PayKind;
 						_emptyCart = angular.copy(_this);
 						if (!angular.isUndefined($localStorage.carts) && $localStorage.carts.length > 0) {
-							_carts = $localStorage.carts;
+							var tempCarts = $localStorage.carts;
 
-							for (var i in _carts) {
+							for (var i = tempCarts.length - 1; i >= 0; i--) {
+								if (tempCarts[i].Ordered == 0) {
+									continue;
+								}
 								for (var j in $dataSet.Desks) {
-									if (_carts[i].Desk.Id == $dataSet.Desks[j].Id) {
-										$dataSet.Desks[j] = _carts[i].Desk;
+									if (tempCarts[i].Desk.Id == $dataSet.Desks[j].Id) {
+										tempCarts[i].Desk = $dataSet.Desks[j];
+										_this.LoadCart($dataSet.Desks[j]);
+										_this.LoadExistedCart(tempCarts[i]);
 										break;
 									}
 								}
-								_this.LoadCart(_carts[i].Desk);
-								_this.LoadExistedCart(_carts[i]);
 							}
 						}
+
 						$localStorage.carts = _carts;
 
 						if (resolve != null) resolve();
@@ -304,6 +308,7 @@ app.factory('dataSet', [
 					}
 				}
 				this.Desk.Addition.Ordered += min;
+				console.log(this.Desk);
 				this.Desk.Addition.IsSelected = true;
 
 				this._refreshCarts();
@@ -562,7 +567,6 @@ app.factory('dataSet', [
 				if (this._activeMenuClass != null) {
 					this._activeMenuClass.Addition.IsSelected = false;
 				}
-
 				menuClass.Addition.IsSelected = true;
 				this._activeMenuClass = menuClass;
 				this._filterMenu();

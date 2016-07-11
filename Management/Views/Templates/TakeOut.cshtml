@@ -127,11 +127,11 @@
                 </div>
                 <div ng-repeat="kind in PayElements.PayMethods" ng-if="kind.Type!=2">
                     <span class="payLabel text-left">{{kind.Name}}</span>
-                    <input class="payLabel PayInput" type="number" ng-model="kind.Number" ng-change="Change(kind)" ng-keypress="Enter($event)" tabindex="$index" set-Focus max="10000" />
+                    <input class="payLabel PayInput" type="number" ng-model="kind.Number" ng-change="Change(kind)" ng-keypress="Enter($event)" tabindex="$index" set-Focus max="100000" />
                 </div>
                 <div ng-repeat="kind in PayElements.PayMethods" ng-if="kind.Type==2&&Rate!=0">
                     <span class="text-left payLabel">{{kind.Name}}</span>
-                    <input class="payLabel PayInput" type="number" ng-model="kind.Number" ng-change="Change(kind)" ng-keypress="Enter($event)" ng-disabled="!PayElements.CurrentUser.IsLogin" max="10000" />
+                    <input class="payLabel PayInput" type="number" ng-model="kind.Number" ng-change="Change(kind)" ng-keypress="Enter($event)" ng-disabled="!PayElements.CurrentUser.IsLogin" max="100000" />
                 </div>
             </div>
         </div>

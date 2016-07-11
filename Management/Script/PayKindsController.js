@@ -157,6 +157,18 @@
         });
     }
 
+    $scope.DeletePrinter = function (printer) {
+        $http.post('/Printers/DeletePrinters', {
+            id:printer.Id
+        }).then(function (response) {
+            if (response.data.succeeded) {
+                refresh();
+            }
+            else {
+                alert('!!!');
+            }
+        });
+    }
     refresh();
 })
 

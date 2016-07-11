@@ -359,6 +359,14 @@
         option.HandOut.getNumbers();
     }
 })
+.controller('RePrinterCtrl', ['$scope', '$rootScope', '$uibModal', 'RePrinter', function ($scope, $rootScope, $uibModal, RePrinter) {
+    $rootScope.FatherPage = "店小二营业"; $rootScope.ChildPage = "订单补打";
+    $scope.Initialize = function () {
+        RePrinter.Initialize();
+    }
+    $scope.RePrinterElement = RePrinter.RePrinterElement;
+
+}])
 .controller('TakeOutCtrl', ['$scope', '$rootScope', '$uibModal', 'Order', 'Pay', function ($scope, $rootScope, $uibModal, Order, Pay) {
     //点单
     $rootScope.FatherPage = "店小二营业"; $rootScope.FatherPath = "#/CheckOut"; $rootScope.ChildPage = "结账";

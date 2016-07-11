@@ -1336,7 +1336,20 @@
     }
     return service;
 }])
-
+.factory('RePrinter', ['$http', '$q', '$filter', '$rootScope', function ($http, $q, $filter, $rootScope) {
+    var service = {
+        RePrinterElement: {
+            UnShiftDines: [],
+        },
+        Initialize: function () {
+            var _this = this;
+            $http.post('../Templates/getRePrinter').then(function (response) {
+                _this.RePrinterElement.UnShiftDines = response.data.UnShiftDines;
+            })
+        }
+    }
+    return service;
+}])
 
 var GetReason = function (Reasons) {
     var result = '<div class ="control-group"><p>请选择退菜理由</p>';

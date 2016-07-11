@@ -58,6 +58,11 @@ namespace Management.Controllers
         {
             return View("AddMenu");
         }
+
+        public ActionResult RePrinter()
+        {
+            return View("RePrinter");
+        }
         /// <summary>
         /// 获取信息
         /// </summary>
@@ -1038,5 +1043,13 @@ namespace Management.Controllers
             return Json(new SuccessState());
         }
 
+
+        public  async Task<JsonResult> getRePrinter()
+        {
+            var UnShiftDine = await db.Dines
+                .Include(d=>d.DineMenus)
+                .Where(d => d.Status != DineStatus.Shifted).ToListAsync();
+            return Json(new { UnShiftDine = UnShiftDine });
+        }
     }
 }

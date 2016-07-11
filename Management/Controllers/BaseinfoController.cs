@@ -924,6 +924,7 @@ namespace Management.Controllers
             var department = await db.Departments.FirstOrDefaultAsync(d => d.Id == Id);
             if (department == null) return Json(new { Status = false, ErrorMessage = "对不起没有相关部门" });
             department.Usable = false;
+            department.PrinterId = null;
             db.SaveChanges();
             return Json(new { Status = true });
         }

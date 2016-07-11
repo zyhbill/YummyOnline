@@ -100,6 +100,27 @@ namespace Management.Controllers
                 return Json(new { succeeded = true });
             }
         }
+        /// <summary>
+        /// 删除打印机
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<JsonResult> DeletePrinters(int id)
+        {
+
+            Printer printers = await db.Printers.FirstOrDefaultAsync(p => p.Id == id);
+            if (printers == null)
+            {
+                return Json(new { succeeded = false });
+            }
+            else
+            {
+                db.Printers.Remove(printers);
+                db.SaveChanges();
+                return Json(new { succeeded = true });
+            }
+        }
+
 
     }
 }

@@ -295,6 +295,7 @@ namespace Management.Controllers
                 {
                     m.Id,
                     m.Code,
+                    m.EnglishName,
                     m.MenuPrice,
                     m.Remarks,
                     m.Classes,
@@ -367,6 +368,7 @@ namespace Management.Controllers
                 menu.SpicyDegree = Menu.SpicyDegree;
                 menu.Status = Menu.Status;
                 menu.SweetDegree = Menu.SweetDegree;
+                menu.EnglishName = Menu.EnglishName;
                 menu.Unit = Menu.Unit;
                 menu.DepartmentId = Departments.Id;
                 var PriceMenu = await db.MenuPrice.FirstOrDefaultAsync(m => m.Id == Menu.Id);
@@ -426,6 +428,7 @@ namespace Management.Controllers
                     menu.IsFixed = Menu.IsFixed;
                     menu.IsSetMeal = Menu.IsSetMeal;
                     menu.SupplyDate = Menu.SupplyDate;
+                    menu.EnglishName = Menu.EnglishName;
                     menu.MinOrderCount = Menu.MinOrderCount;
                     menu.Code = Menu.Code;
                     menu.SaltyDegree = Menu.SaltyDegree;
@@ -467,6 +470,7 @@ namespace Management.Controllers
                     menu.NameAbbr = Menu.NameAbbr;
                     menu.IsFixed = Menu.IsFixed;
                     menu.IsSetMeal = Menu.IsSetMeal;
+                    menu.EnglishName = Menu.EnglishName;
                     menu.SupplyDate = Menu.SupplyDate;
                     menu.MinOrderCount = Menu.MinOrderCount;
                     menu.Code = Menu.Code;

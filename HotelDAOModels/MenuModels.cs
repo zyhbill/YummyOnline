@@ -54,6 +54,8 @@ namespace HotelDAO.Models {
 
 		[MaxLength(30), Required]
 		public string Name { get; set; }
+		[MaxLength(30), Required]
+		public string EnglishName { get; set; }
 
 		[MaxLength(15), Required]
 		public string NameAbbr { get; set; }

@@ -13,9 +13,9 @@ using HotelDAO.Models;
 namespace TcpClientTest {
 	class Program {
 		// 122.114.96.157
-		static string ip = "122.114.96.157";
+		static string ip = "127.0.0.1";
 		static void Main(string[] args) {
-			TcpClient client = new TcpClient(IPAddress.Parse(ip), 18000, new NewDineInformClientConnectProtocol("ec3ad9d8-1c48-420d-a33e-c2f83b761738"));
+			TcpClient client = new TcpClient(IPAddress.Parse(ip), 18000, new NewDineInformClientConnectProtocol("0365e2fb-67b9-43eb-ac4a-3621bf83ecb9"));
 
 			client.CallBackWhenMessageReceived = (s, o) => {
 				var a = (NewDineInformProtocol)o;

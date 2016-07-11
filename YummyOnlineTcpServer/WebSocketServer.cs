@@ -64,7 +64,7 @@ namespace YummyOnlineTcpServer {
 		}
 
 		private void Timer_Elapsed(object sender, ElapsedEventArgs e) {
-			WebSocketProtocol protocol = new WebSocketProtocol();
+			ServerInfoWebSocketProtocol protocol = new ServerInfoWebSocketProtocol();
 
 			protocol.CpuTime = cputime.NextValue();
 			protocol.DiskIdle = diskIdle.NextValue();

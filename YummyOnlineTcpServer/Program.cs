@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Protocol;
+using System;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using YummyOnlineDAO;
 using YummyOnlineDAO.Models;
-using Newtonsoft.Json;
-using Protocol;
-using System.Threading;
 
 namespace YummyOnlineTcpServer {
 	class Program {
@@ -19,19 +15,30 @@ namespace YummyOnlineTcpServer {
 			}
 
 			SystemConfig config = new YummyOnlineManager().GetSystemConfig().Result;
-			TcpServer tcp = new TcpServer(config.TcpServerIp, config.TcpServerPort, async (log, level) => {
+			TcpServer tcpServer = new TcpServer(config.TcpServerIp, config.TcpServerPort, async (log, level) => {
 				await new YummyOnlineManager().RecordLog(Log.LogProgram.TcpServer, level, log);
 			});
-			Task _ = tcp.Initialize();
+			Task _ = tcpServer.Initialize();
 
 
 			WebSocketServer webSocket = new WebSocketServer(config.TcpServerIp, config.WebSocketPort, async (log, level) => {
 				await new YummyOnlineManager().RecordLog(Log.LogProgram.System, level, log);
 			});
 
+			System.Timers.Timer t = new System.Timers.Timer(500);
+			t.Elapsed += (e, o) => {
+				Console.Clear();
+				displayTcpServerStatus(tcpServer.GetTcpServerStatus());
+			};
+			
+			bool isTimerStarted = false;
 			while(true) {
-				string cmd = Console.ReadLine();
-				displayTcpServerStatus(tcp.GetTcpServerStatus());
+				Console.ReadLine();
+				if(isTimerStarted)
+					t.Close();
+				else
+					t.Start();
+				isTimerStarted = !isTimerStarted;
 			}
 		}
 

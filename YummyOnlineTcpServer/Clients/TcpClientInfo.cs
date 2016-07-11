@@ -3,6 +3,9 @@ using System.Net;
 using System.Net.Sockets;
 
 namespace YummyOnlineTcpServer {
+	/// <summary>
+	/// Tcp客户端详情
+	/// </summary>
 	public class TcpClientInfo {
 		public TcpClientInfo(TcpClient client) {
 			Client = client;

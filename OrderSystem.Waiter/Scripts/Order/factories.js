@@ -482,6 +482,7 @@ app.factory('dataSet', [
 				for (var i in _carts) {
 					var cart = _carts[i];
 					if (cart.Desk.Id == this.Desk.Id) {
+						alert();
 						cart.Desk.Addition.IsSelected = false;
 						_carts.splice(i, 1);
 						break;

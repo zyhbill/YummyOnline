@@ -7,6 +7,7 @@ waiter.yummyonline.net
 
 ### Updates
 - 2016-6-19 增加`交接班`与`切换菜品状态`两个Api, 更改获取订单相关协议中的`Waiter`与`Clerk`
+- 2016-7-11 Menus中增加EnglishName
 
 ### 服务员登录
 #### POST
@@ -71,6 +72,7 @@ waiter.yummyonline.net
 		"Id": <string>,
 		"Code": <string>,
 		"Name": <string>,
+		"EnglishName": <string>,
 		"NameAbbr": <string>,
 		"PicturePath": <string>,
 		"IsFixed": <bool>,

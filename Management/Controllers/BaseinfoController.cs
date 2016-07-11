@@ -503,6 +503,9 @@ namespace Management.Controllers
                     menu.PicturePath = HotelId.ToString() + "/" + Menu.Id + ".jpg";
                     Method.SaveImg(menu.Id, image, BaseUrl);
                     Method.SaveImg(menu.Id, image, Method.MyGetBaseUrl((int)HotelId));
+                }else
+                {
+                    menu.PicturePath = HotelId.ToString() + "/none.jpg";
                 }
                 db.SaveChanges();
                 if (Classes != null)

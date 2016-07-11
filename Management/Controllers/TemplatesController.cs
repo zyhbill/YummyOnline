@@ -350,7 +350,7 @@ namespace Management.Controllers
                 .Include(m => m.Classes)
                 .Include(m => m.Remarks)
                 .Include(m => m.MenuPrice)
-                .Select(m => new { m.Id, m.Name, m.Code, m.MinOrderCount, m.PicturePath, m.Remarks, m.MenuPrice, m.Classes })
+                .Select(m => new { m.Id, m.Name, m.Code, m.MinOrderCount, m.PicturePath, m.Remarks, m.MenuPrice, m.Classes,m.EnglishName })
                 .ToListAsync();
             var specials = await db.MenuOnSales.ToListAsync();
             foreach (var i in menus)
@@ -1047,9 +1047,48 @@ namespace Management.Controllers
         public  async Task<JsonResult> getRePrinter()
         {
             var UnShiftDine = await db.Dines
-                .Include(d=>d.DineMenus)
-                .Where(d => d.Status != DineStatus.Shifted).ToListAsync();
+                    .Include(p => p.DineMenus.Select(pp => pp.Remarks))
+                    .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
+                    .Where(d=>d.Status!=DineStatus.Shifted)
+                    .Select(d => new {
+                        d.Discount,
+                        d.DiscountName,
+                        d.Id,
+                        DineMenus = d.DineMenus.Select(dd => new
+                        {
+                            Count = dd.Count,
+                            DineId = dd.DineId,
+                            Id = dd.Id,
+                            Menu = dd.Menu,
+                            MenuId = dd.MenuId,
+                            OriPrice = dd.OriPrice,
+                            Price = dd.Price,
+                            RemarkPrice = dd.RemarkPrice,
+                            Remarks = dd.Remarks,
+                            ReturnedWaiterId = dd.ReturnedWaiterId,
+                            Status = dd.Status
+                        }),
+                        Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
+                        d.DeskId,
+                        d.UserId,
+                        d.OriPrice,
+                        d.Price,
+                        d.Status,
+                        d.IsPaid
+                    })
+                    .ToListAsync();
             return Json(new { UnShiftDine = UnShiftDine });
+        }
+
+        public async Task<JsonResult> RePrintDine(string Id)
+        {
+
+            var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
+            if (isprint)
+            {
+                MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, Id, new List<int>(), new List<PrintType>() { PrintType.Recipt }));
+            }
+            return null;
         }
     }
 }

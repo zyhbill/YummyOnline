@@ -365,6 +365,9 @@
         RePrinter.Initialize();
     }
     $scope.RePrinterElement = RePrinter.RePrinterElement;
+    $scope.RePrintDine = function (dine) {
+        RePrinter.RePrintDine(dine);
+    }
 
 }])
 .controller('TakeOutCtrl', ['$scope', '$rootScope', '$uibModal', 'Order', 'Pay', function ($scope, $rootScope, $uibModal, Order, Pay) {

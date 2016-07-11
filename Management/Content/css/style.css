@@ -43,7 +43,34 @@
 .Pay-Discount{
     width:60px;
 }
+.waterfall-2 {
+	-moz-column-count: 2;
+	-webkit-column-count: 2;
+	column-count: 2;
+}
 
+.waterfall-3 {
+	-moz-column-count: 3;
+	-webkit-column-count: 3;
+	column-count: 3;
+}
+
+.waterfall-4 {
+	-moz-column-count: 4;
+	-webkit-column-count: 4;
+	column-count: 4;
+}
+
+.waterfall-6 {
+	-moz-column-count: 6;
+	-webkit-column-count: 6;
+	column-count: 6;
+}
+
+.waterfall-item{
+    display:inline-block;
+    width:100%;
+}
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button{
     -webkit-appearance: none !important;

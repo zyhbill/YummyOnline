@@ -97,7 +97,7 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="menu in PayElements.CurrentDine.DineMenus|filter:{Status:0}">
-                                <td>{{menu.Menu.Name}}</td>
+                                <td>{{menu.Menu.EnglishName}}{{menu.Menu.Name}}</td>
                                 <td class="text-right">{{menu.Count}}</td>
                                 <td class="text-right">{{(menu.OriPrice*menu.Count).toFixed(2)}}</td>
                                 <td class="text-right">{{(menu.Price*menu.Count).toFixed(2)}}</td>

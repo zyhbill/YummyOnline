@@ -54,7 +54,7 @@ namespace YummyOnlineTcpServer {
 
 				log($"{clientInfo.OriginalRemotePoint} Connected, Waiting for verification", Log.LogLevel.Info);
 			});
-			
+
 			System.Timers.Timer timer = new System.Timers.Timer(10 * 1000);
 			timer.Elapsed += (e, o) => {
 				// 30秒之内已连接但是未发送身份信息的socket断开
@@ -67,7 +67,7 @@ namespace YummyOnlineTcpServer {
 			};
 			timer.Start();
 		}
-		
+
 		private void Tcp_MessageReceivedEvent(TcpClient client, string content) {
 			try {
 				BaseTcpProtocol baseProtocol = JsonConvert.DeserializeObject<BaseTcpProtocol>(content);
@@ -102,7 +102,7 @@ namespace YummyOnlineTcpServer {
 							 JsonConvert.DeserializeObject<PrintDineClientConnectProtocol>(content),
 							 waitingForVerificationClients);
 						break;
-					
+
 					case TcpProtocolType.RequestPrintDine:
 						printerClients.RequestPrintDine(clientInfo,
 							JsonConvert.DeserializeObject<RequestPrintDineProtocol>(content),
@@ -125,6 +125,7 @@ namespace YummyOnlineTcpServer {
 			waitingForVerificationClients.HandleError(client, e);
 			systemClient.HandleError(client, e);
 			newDineInformClients.HandleError(client, e);
+			printerClients.HandleError(client, e);
 		}
 
 		private void log(string log, Log.LogLevel level) {
@@ -169,6 +170,7 @@ namespace YummyOnlineTcpServer {
 				status.ConnectedTime = info.ConnectedTime;
 				status.IpAddress = info.OriginalRemotePoint.Address.ToString();
 				status.Port = info.OriginalRemotePoint.Port;
+				status.HeartAlive = info.HeartAlive;
 			}
 			else {
 				status.IsConnected = false;

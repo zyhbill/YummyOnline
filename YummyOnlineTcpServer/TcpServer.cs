@@ -61,8 +61,8 @@ namespace YummyOnlineTcpServer {
 				waitingForVerificationClients.HandleTimeOut();
 
 				//60秒之内没有接收到心跳包的socket断开, 或发送心跳包失败的socket断开
-				//systemClient.HandleTimeOut();
-				//newDineInformClients.HandleTimeOut();
+				systemClient.HandleTimeOut();
+				newDineInformClients.HandleTimeOut();
 				printerClients.HandleTimeOut();
 			};
 			timer.Start();

@@ -28,7 +28,7 @@ namespace YummyOnlineTcpServer {
 					send(pair.Value.Client, new HeartBeatProtocol());
 					pair.Value.HeartAlive++;
 					if(pair.Value.HeartAlive > 1) {
-						log($"({pair.Key.Description}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Success);
+						log($"({pair.Key.Description}) {pair.Value.OriginalRemotePoint} HeartAlive Timeout", Log.LogLevel.Error);
 						pair.Value.Close();
 					}
 				}

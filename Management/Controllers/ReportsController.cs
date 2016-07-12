@@ -57,6 +57,11 @@ namespace Management.Controllers
             return View("MenuSaleclass");
         }
 
+        public ActionResult Invoice()
+        {
+            return View("Invoice");
+        }
+
         public async Task<JsonResult> getMenuSales(string Begin, string End ,List<string> Menus ,List<string> Classes,int Type)
         {
             DateTime BeginTime;
@@ -1146,6 +1151,54 @@ namespace Management.Controllers
             Sum.TotalPrice = Datas.Sum(d => d.Price);
             Sum.TotalSaveMoney = Datas.Sum(d => d.SaveMoney);
             return Json(new { Datas = Datas, Sum = Sum });
+        }
+
+        public async Task<JsonResult> GetInvoice()
+        {
+            var Invoices = await db.Dines.Where(d => d.IsInvoiced == true&&SqlFunctions.DateDiff("day",DateTime.Now,d.BeginTime)==0).Select(d => new
+            {
+                d.DeskId,
+                d.Id,
+                d.Price,
+                d.OriPrice,
+                d.Invoice,
+                d.BeginTime
+            }).OrderBy(d=>d.BeginTime).ToListAsync();
+            return Json(new SuccessState(Invoices));
+        }
+
+        public async Task<JsonResult> SearchTimeInvoice(string Begin,string End)
+        {
+            DateTime BeginTime, EndTime;
+            if (Begin == null)
+            {
+                BeginTime = DateTime.Now;
+            }
+            else
+            {
+                BeginTime = Convert.ToDateTime(Begin);
+            }
+            if (End == null)
+            {
+                EndTime = DateTime.Now;
+            }
+            else
+            {
+                EndTime = Convert.ToDateTime(End);
+            }
+            var Invoices = await db.Dines.Where(d => d.IsInvoiced == true &&
+            SqlFunctions.DateDiff("day", BeginTime, d.BeginTime) >= 0&&
+            SqlFunctions.DateDiff("day", EndTime, d.BeginTime) <= 0)
+            .Select(d => new{
+                d.DeskId,
+                d.Id,
+                d.Price,
+                d.OriPrice,
+                d.Invoice,
+                d.BeginTime
+            }).OrderBy(d => d.BeginTime).ToListAsync();
+            return Json(new SuccessState(Invoices));
+
         }
         //最后2个括号
     }

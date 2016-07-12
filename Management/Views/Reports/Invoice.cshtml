@@ -1,0 +1,50 @@
+﻿@{
+    Layout = null;
+}
+<link href="../Content/css/daterangepicker.css" rel="stylesheet" />
+
+<div class="control-group">
+    <label class="control-label">选择开始和结束时间:</label>
+    <div class="controls">
+        <div class="input-prepend input-group">
+            <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+            <input type="text" style="width:600px;" name="reservation" id="reservation" class="form-control" daterange date-start="Elements.Begin" date-end="Elements.End" value="@(DateTime.Now.ToString("yyyy-MM-dd") + "- " + DateTime.Now.ToString("yyyy-MM-dd"))" />
+
+            <button type="button" class="btn btn-purple btn-sm" ng-click="Search()">
+                查找
+                <i class="icon-search icon-on-right bigger-110"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="tabbable tabs-below" ng-init="Initialize()">
+    <div class="tab-content">
+        <div class="tab-pane in active">
+            <p class="table-responsive">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th class="text-center">桌台号</th>
+                            <th class="text-center">订单号</th>
+                            <th class="text-center">发票抬头</th>
+                            <th class="text-center">金额</th>
+                            <th class="text-center">日期</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="invoice in Elements.Invoices">
+                            <td>{{invoice.DeskId}}</td>
+                            <td>{{invoice.Id}}</td>
+                            <td>{{invoice.Invoice}}</td>
+                            <td class="text-right">{{invoice.Price|currency:'￥'}}</td>
+                            <td class="text-right">{{invoice.BeginTime|date:'yyyy-MM-dd'}}</tdclass="text-right">
+                        </tr>
+                    </tbody>
+                </table>
+            </p>
+        </div>
+    </div>
+</div>
+
+<script src="../FrameWorks/moment.js"></script>
+<script src="../FrameWorks/daterangepicker.js"></script>

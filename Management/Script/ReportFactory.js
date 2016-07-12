@@ -1077,3 +1077,28 @@
     }
     return service;
 }])
+.factory('InvoiceInfo', ['$http', '$rootScope', '$q', function ($http, $rootScope, $q) {
+    var service = {
+        Elements: {
+            Invoices: [],
+            Begin: {},
+            End:{}
+        },
+        Initialize: function () {
+            var _this = this;
+            $http.post('../Reports/GetInvoice').then(function (response) {
+                _this.Elements.Invoices = response.data.Data;
+            })
+        },
+        Search: function () {
+            var _this = this;
+            $http.post('../Reports/SearchTimeInvoice', {
+                Begin: _this.Elements.Begin,
+                End: _this.Elements.End
+            }).then(function (response) {
+                _this.Elements.Invoices = response.data.Data;
+            })
+        }
+    }
+    return service;
+}])

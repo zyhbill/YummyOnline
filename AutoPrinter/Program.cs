@@ -87,7 +87,7 @@ namespace AutoPrinter {
 				Console.WriteLine($"正在打印 单号: {dineId}");
 				StringBuilder dineMenuStr = new StringBuilder();
 
-				dinePrinter.Print(dp, printTypes);
+				dinePrinter.Print(dp, printTypes, dineMenuIds == null);
 				Console.WriteLine($"打印成功 单号: {dineId}");
 				printCompleted(dineId);
 			}
@@ -137,7 +137,7 @@ namespace AutoPrinter {
 				}
 				DinePrinter dinePrinter = new DinePrinter();
 				Console.WriteLine($"正在打印测试单");
-				dinePrinter.Print(dp, printTypes);
+				dinePrinter.Print(dp, printTypes, true);
 				Console.WriteLine($"测试单打印成功");
 				printCompleted(dineId);
 			}

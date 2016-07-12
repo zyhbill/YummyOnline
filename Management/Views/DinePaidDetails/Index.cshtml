@@ -274,6 +274,7 @@
                 <th class=text-center>优惠金额</th>
                 <th class=text-center>赠菜金额</th>
                 <th class="text-center">退菜金额</th>
+                <th class="text-center">是否开发票</th>
                 <th class=text-center>相关操作</th>
             </tr>
         </thead>
@@ -329,6 +330,13 @@
             <td class=text-right>
                 <span ng-if="dine.IsPaid">{{dine.ReturnPrice|currency:'￥'}}</span>
             </td>
+            <td class="text-right">
+                <span class="label label-warning" ng-if="dine.IsInvoiced==0">
+                    <i class="icon-warning-sign bigger-120"></i>
+                    未开票
+                </span>
+                <span class="label label-success" ng-if="dine.IsInvoiced==1">已开票</span>
+            </td>
             <td>
                 <nobr>
                     <button type="button" class="btn btn-minier btn-primary dropdown-toggle" data-toggle="modal" data-target="#myModal" ng-click="setDine(dine)">
@@ -371,6 +379,7 @@
             <td class=text-right>
                 <span>{{Sum.ReturnPrice|currency : '￥'}}</span>
             </td>
+            <td></td>
             <td></td>
         </tr>
     </table>

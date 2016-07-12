@@ -124,7 +124,7 @@
         templateUrl: '/Templates/RePrinter',
         controller: 'RePrinterCtrl'
     }).when('/Invoice', {
-        templateUrl: '/Templates/Invoice',
+        templateUrl: '/Reports/Invoice',
         controller: 'InvoiceCtrl'
     }).otherwise({
         redirectTo: '/404'

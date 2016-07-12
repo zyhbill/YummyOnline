@@ -349,6 +349,7 @@ namespace Management.ObjectClasses
     {
         public bool Status { get; set; } = false;
         public string ErrorMessage { get; set; }
+        public ErrorState() { }
         public ErrorState(string Message = "")
         {
             ErrorMessage = Message;
@@ -358,6 +359,12 @@ namespace Management.ObjectClasses
     public class SuccessState
     {
         public bool Status { get; set; } = true;
+        public object Data { get; set; }
+        public SuccessState() { }
+        public SuccessState(object obj)
+        {
+            Data = obj;
+        }
     }
 
     public  class PostData

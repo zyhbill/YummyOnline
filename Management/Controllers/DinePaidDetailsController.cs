@@ -211,7 +211,7 @@ namespace Management.Controllers
             {
                 d.Id,
                 d.DeskId,
-                Area = db.Areas.FirstOrDefault(dd => d.Desk.AreaId == dd.Id),
+                Area = db.Areas.Select(dd=>new { Id=dd.Id,Name=dd.Name}).FirstOrDefault(dd => d.Desk.AreaId == dd.Id),
                 Waiter = db.Staffs.FirstOrDefault(dd => dd.Id == d.WaiterId),
                 Clerk = db.Staffs.FirstOrDefault(dd => dd.Id == d.ClerkId),
                 d.BeginTime,
@@ -224,6 +224,8 @@ namespace Management.Controllers
                 d.HeadCount,
                 discount = d.OriPrice - d.Price,
                 d.DinePaidDetails,
+                d.Invoice,
+                d.IsInvoiced,
                 ReturnPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Returned).Sum(dd => dd.Price * dd.Count),
                 GiftPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Gift).Sum(dd => dd.OriPrice * dd.Count)
             }).ToList();
@@ -292,6 +294,7 @@ namespace Management.Controllers
         {
             var dine = await db.Dines.Where(d => d.Id == Id).FirstOrDefaultAsync();
             dine.Invoice = Invoice;
+            dine.IsInvoiced = true;
             db.SaveChanges();
             return null;
         }

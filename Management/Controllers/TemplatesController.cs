@@ -64,10 +64,7 @@ namespace Management.Controllers
             return View("RePrinter");
         }
 
-        public ActionResult Invoice()
-        {
-            return View("Invoice");
-        }
+        
         /// <summary>
         /// 获取信息
         /// </summary>

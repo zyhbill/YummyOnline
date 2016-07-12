@@ -220,3 +220,13 @@
         })
     }
 }])
+.controller('InvoiceCtrl', ['$scope', '$rootScope', 'InvoiceInfo', function ($scope, $rootScope, InvoiceInfo) {
+    $rootScope.FatherPage = "报表管理"; $rootScope.ChildPage = "发票管理";
+    $scope.Initialize = function () {
+        InvoiceInfo.Initialize();
+    }
+    $scope.Elements = InvoiceInfo.Elements;
+    $scope.Search = function () {
+        InvoiceInfo.Search();
+    }
+}])

@@ -362,6 +362,7 @@
     <Content Include="Views\Baseinfo\Reason.cshtml" />
     <Content Include="Views\Baseinfo\Printer.cshtml" />
     <Content Include="Views\Baseinfo\ReSoldOut.cshtml" />
+    <Content Include="Views\Reports\Invoice.cshtml" />
     <None Include="Views\Templates\Error-500.cshtml" />
     <Content Include="Web.config" />
   </ItemGroup>

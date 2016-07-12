@@ -35,7 +35,9 @@ namespace OrderSystem.Waiter.Controllers {
 			}
 			SigninManager.Signin(staff, true);
 			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Success, $"Staff Signin: {staff.Id} (HotelId {staff.HotelId}), Host: {Request.UserHostAddress}");
-			return Json(new JsonSuccess());
+			return Json(new JsonSuccess {
+				Data = staff.Id
+			});
 		}
 
 		public JsonResult Signout() {

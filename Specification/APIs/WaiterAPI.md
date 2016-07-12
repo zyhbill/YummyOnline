@@ -24,7 +24,8 @@ waiter.yummyonline.net
 ```json
 {
 	"Succeeded": <bool 是否成功(下同)>,
-	"ErrorMessage": <string 错误信息(下同)>
+	"ErrorMessage": <string 错误信息(下同)>,
+	"Data": <string 服务员Id号>
 }
 ```
 成功登录后，服务器会发送Cookie信息，以下所有带 ***AUTHORIZED*** 的API都需要验证该Cookie信息

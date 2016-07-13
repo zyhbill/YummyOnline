@@ -77,6 +77,8 @@ namespace OrderSystem.Waiter.Controllers {
 		}
 
 		public async Task<JsonResult> AddMenus(string dineId, List<MenuExtension> orderedMenus, decimal price) {
+			orderedMenus = orderedMenus ?? new List<MenuExtension>();
+
 			FunctionResult result = await OrderManager.AddMenus(dineId, orderedMenus, price);
 			if(!result.Succeeded) {
 				return Json(new JsonError(result.Message));

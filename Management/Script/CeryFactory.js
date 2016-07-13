@@ -1304,11 +1304,10 @@
                 var profit = this.HandElement.PayKinds.filter(function (x) { return x.Gain }).map(function (x) { return { Id: x.Id, Num: x.Gain } });
                 var nowPrice = profit.map(function(x){return x.Num}).reduce(function (a, b) { return +a + +b; }, 0);
                 if (!_this.HandElement.isAjax) {
-                    _this.HandElement.isAjax = true;
                     if (price * 0.95 >= nowPrice) {
                         swal({
                             title: "确认交接",
-                            text: "金额相差10%，请确认交接!",
+                            text: "金额相差5%以上，请确认交接!",
                             type: "warning",
                             showCancelButton: true,
                             confirmButtonColor: "#D0D0D0",
@@ -1316,7 +1315,6 @@
                             cancelButtonText: "否, 保留!",
                             closeOnConfirm: false
                         }, function () {
-                            _this.HandElement.isAjax = false;
                             $http.post('../Templates/CheckOut', {
                                 Profit: profit
                             }).success(function (data) {
@@ -1335,6 +1333,7 @@
                         }
                       );
                     } else {
+                        _this.HandElement.isAjax = true;
                         $http.post('../Templates/CheckOut', {
                             Profit: profit
                         }).success(function (data) {

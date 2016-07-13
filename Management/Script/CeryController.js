@@ -387,7 +387,7 @@
         }
     });
     $scope.unpaidAll = function () { return Order.unpaidAll(); }
-    $scope.OpenModel = function (desk) {
+    $scope.OpenModel = function (desk, area) {
         var myDesk = {};
         myDesk = { Id: desk.Id, Name: desk.Name };
         if (desk.Status == 1) {

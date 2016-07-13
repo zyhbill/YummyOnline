@@ -15,10 +15,10 @@
             </ul>
             <div class="tab-content">
                 <div ng-repeat="area in SysElements.Areas" id="{{getIdShow($index)}}" class="tab-pane" setfirstfocus index="$index">
-                    <div class="desk" ng-repeat="desk in SysElements.Desks|filter:{AreaId:area.Id}" ng-click="OpenModel(desk)">
+                    <div class="desk" ng-repeat="desk in SysElements.Desks|filter:{AreaId:area.Id}" ng-click="OpenModel(desk,area)">
                         <h4 ng-if="!desk.Status"><img src="~/Content/images/nobody.png" class="img-responsive"></h4>
                         <h4 ng-if="desk.Status"><img src="~/Content/images/eating.png" class="img-responsive"></h4>
-                        <p ng-if="!desk.Status" class="text-success text-center">{{desk.Id}}</p>
+                        <p ng-if="!desk.Status" class="text-success text-center">{{desk.Id}}</p> 
                         <p ng-if="desk.Status" class="text-danger text-center">{{desk.Id}}</p>
                     </div>
                 </div>

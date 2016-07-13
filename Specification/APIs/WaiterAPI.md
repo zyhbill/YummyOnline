@@ -8,6 +8,7 @@ waiter.yummyonline.net
 ### Updates
 - 2016-6-19 增加`交接班`与`切换菜品状态`两个Api, 更改获取订单相关协议中的`Waiter`与`Clerk`
 - 2016-7-11 Menus中增加EnglishName
+- 2016-7-13 增加AddMenus增加菜品接口
 
 ### 服务员登录
 #### POST
@@ -381,6 +382,39 @@ waiter.yummyonline.net
 	"Data": <string 新产生的订单号>
 }
 ```
+
+
+
+### 打印完成通知
+
+#### POST ***AUTHORIZED***
+
+#### URL
+
+`/Payment/AddMenus`
+
+#### Parameters
+
+```json
+{
+	"DineId": <string 现有订单Id>,
+	"OrderedMenus": [{
+		"Id": <string 增加菜品编号>,
+		"Ordered": <int 数量>,
+		"Remarks": [<int 备注编号>, ...]
+	}, ...],
+	"Price": <decimal 增加菜品之后的总价>
+}
+```
+
+#### Results
+
+~~~json
+{
+	"Succeeded": <bool>,
+	"ErrorMessage": <string>
+}
+~~~
 
 
 

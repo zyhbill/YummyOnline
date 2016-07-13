@@ -105,7 +105,11 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\HotelManager.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\YummyOnlineManager.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -124,7 +128,24 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HotelDAOModels\HotelDAOModels.csproj">
+      <Project>{c9f71545-1363-4ad1-b50b-dc903fd66770}</Project>
+      <Name>HotelDAOModels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HotelDAO\HotelDAO.csproj">
+      <Project>{b17fc72a-8690-4072-b49f-ec98ab59f944}</Project>
+      <Name>HotelDAO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\YummyOnlineDAOModels\YummyOnlineDAOModels.csproj">
+      <Project>{3625134d-bf70-4481-a2e8-4150256def32}</Project>
+      <Name>YummyOnlineDAOModels</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\YummyOnlineDAO\YummyOnlineDAO.csproj">
+      <Project>{89c93a27-aed6-4db7-95e0-168c8c6e4531}</Project>
+      <Name>YummyOnlineDAO</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -108,6 +108,7 @@
     <Compile Include="App_Start\HotelManager.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\YummyOnlineManager.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -128,6 +129,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Account\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HotelDAOModels\HotelDAOModels.csproj">
@@ -137,6 +139,10 @@
     <ProjectReference Include="..\HotelDAO\HotelDAO.csproj">
       <Project>{b17fc72a-8690-4072-b49f-ec98ab59f944}</Project>
       <Name>HotelDAO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OrderSystem\OrderSystem.csproj">
+      <Project>{7cb3f434-20fd-41b9-b970-9b96b6450765}</Project>
+      <Name>OrderSystem</Name>
     </ProjectReference>
     <ProjectReference Include="..\YummyOnlineDAOModels\YummyOnlineDAOModels.csproj">
       <Project>{3625134d-bf70-4481-a2e8-4150256def32}</Project>

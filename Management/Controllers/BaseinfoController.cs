@@ -165,7 +165,7 @@ namespace Management.Controllers
                 NewAr.DepartmentServeId = area.DepartmentServeId;
                 db.Areas.Add(NewAr);
                 db.SaveChanges();
-                return Json(new { Status = true });
+                return Json(new { Status = true }); 
             }
             
         }
@@ -699,6 +699,7 @@ namespace Management.Controllers
             staff.WorkTimeFrom = Sfh.WorkTimeFrom;
             staff.WorkTimeTo = Sfh.WorkTimeTo;
             db.SaveChanges();
+            if (sysStaff.IsHotelAdmin) { return Json(new ErrorState("不可删除，饭店总管理身份,其他信息已经更改完毕")); }
             var cleanRoles = await db.Staffs.Where(s => s.Id == Sf.Id).FirstOrDefaultAsync();
             var Cr = cleanRoles.StaffRoles.Select(s => s.Id);
             if (Cr.Count() > 0)

@@ -826,7 +826,7 @@ namespace Management.Controllers
                 db.SaveChanges();
             }
             MvcApplication.client.Send(new RequestPrintShiftsProtocol((int)(Session["User"] as RStatus).HotelId, new List<int>() { Id }, DateTime.Now));
-            return Json(new { Succeeded = true });
+            return Json(new SuccessState());
         }
         /// <summary>
         /// 获取加菜信息

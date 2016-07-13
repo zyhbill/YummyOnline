@@ -61,7 +61,15 @@ namespace Management.Controllers
         {
             return View("Invoice");
         }
-
+        /// <summary>
+        /// 获取菜品销售信息
+        /// </summary>
+        /// <param name="Begin"></param>
+        /// <param name="End"></param>
+        /// <param name="Menus"></param>
+        /// <param name="Classes"></param>
+        /// <param name="Type"></param>
+        /// <returns></returns>
         public async Task<JsonResult> getMenuSales(string Begin, string End ,List<string> Menus ,List<string> Classes,int Type)
         {
             DateTime BeginTime;
@@ -221,7 +229,12 @@ namespace Management.Controllers
                 return Json(new { SalesData = Datas, Sum = Sum });
             }
         }
-
+        /// <summary>
+        /// 支付种类
+        /// </summary>
+        /// <param name="Begin"></param>
+        /// <param name="End"></param>
+        /// <returns></returns>
         public async Task<JsonResult> PaykindType(string Begin, string End)
         {
             var dateBegin = Begin.Split(new char[1] { '-' });
@@ -304,7 +317,15 @@ namespace Management.Controllers
             return Json(new { KindTypeData = pays, Details = DailyDetails, sumPrice = sumPrice });
         }
         
-
+        /// <summary>
+        /// 菜品年报表
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="Fathers"></param>
+        /// <param name="Childs"></param>
+        /// <param name="Menus"></param>
+        /// <param name="Type"></param>
+        /// <returns></returns>
         public async Task<JsonResult> getMenuYears(string year, List<string> Fathers, List<string> Childs, List<string> Menus, int Type)
         {
             if (year == null||year=="")
@@ -520,24 +541,33 @@ namespace Management.Controllers
                 return Json(new { Status = true, YearsData = tempYear.Datas, Sum = Sum , CountAll = CountAll });
             }
         }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="HotelId"></param>
+        ///// <returns></returns>
+        //public async Task<JsonResult> RemoteRepoter(int HotelId)
+        //{
+        //    var Hotel = await sysdb.Hotels.Where(h => h.Id == HotelId).FirstOrDefaultAsync();
+        //    if (Hotel == null) { return Json(new { Succeeded = false, ErrorMessage = "对不起饭店号不正确" }); }
+        //    var RDb = new HotelContext(Hotel.ConnectionString);
+        //    var dines = await RDb.Dines
+        //        .Include(d => d.DineMenus.Select(dd => dd.Menu.MenuPrice))
+        //        .Include(d => d.Remarks)
+        //        .Where(p => SqlFunctions.DateDiff("day", p.BeginTime, DateTime.Now) == 0)
+        //        .ToListAsync();
+        //    var dineIds = dines.Select(d => d.Id).ToList();
+        //    var pays = await RDb.DinePaidDetails
+        //        .Where(d => dineIds.Contains(d.DineId))
+        //        .ToListAsync();
+        //    return Json(new { Succeeded = true, Dines = dines, PayDetails = pays }, JsonRequestBehavior.AllowGet);
+        //}
 
-        public async Task<JsonResult> RemoteRepoter(int HotelId)
-        {
-            var Hotel = await sysdb.Hotels.Where(h => h.Id == HotelId).FirstOrDefaultAsync();
-            if (Hotel == null) { return Json(new { Succeeded = false, ErrorMessage = "对不起饭店号不正确" }); }
-            var RDb = new HotelContext(Hotel.ConnectionString);
-            var dines = await RDb.Dines
-                .Include(d => d.DineMenus.Select(dd => dd.Menu.MenuPrice))
-                .Include(d => d.Remarks)
-                .Where(p => SqlFunctions.DateDiff("day", p.BeginTime, DateTime.Now) == 0)
-                .ToListAsync();
-            var dineIds = dines.Select(d => d.Id).ToList();
-            var pays = await RDb.DinePaidDetails
-                .Where(d => dineIds.Contains(d.DineId))
-                .ToListAsync();
-            return Json(new { Succeeded = true, Dines = dines, PayDetails = pays }, JsonRequestBehavior.AllowGet);
-        }
 
+            /// <summary>
+            /// 菜品销售表
+            /// </summary>
+            /// <returns></returns>
         public async Task<JsonResult> GetClasses()
         {
             var FatherClass = await db.MenuClasses
@@ -571,7 +601,15 @@ namespace Management.Controllers
             var Areas = await db.Areas.Where(a => a.Usable == true).Select(a => new { a.Id, a.Name }).ToListAsync();
             return Json(new { FatherClass = FatherClass, ChildClass = ChildClass, Menus = Menus , Areas = Areas });
         }
-
+        /// <summary>
+        /// 菜品月报表
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="Fathers"></param>
+        /// <param name="Childs"></param>
+        /// <param name="Menus"></param>
+        /// <param name="Type"></param>
+        /// <returns></returns>
         public async Task<JsonResult> GetMonthDatas(string time, List<string> Fathers, List<string> Childs, List<string> Menus, int Type)
         {
             string year;

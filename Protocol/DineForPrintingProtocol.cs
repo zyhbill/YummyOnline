@@ -90,7 +90,7 @@ namespace Protocol.PrintingProtocol {
 		public PayKindType Type { get; set; }
 	}
 	public class TakeOut {
-		
+		public string Address { get; set; }
 	}
 
 	public class Hotel {

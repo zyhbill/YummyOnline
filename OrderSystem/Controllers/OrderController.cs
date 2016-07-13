@@ -141,6 +141,7 @@ namespace OrderSystem.Controllers {
 						QrCode = "111",
 						Name = "测试桌名",
 						Description = "测试桌子备注信息",
+						AreaType = HotelDAO.Models.AreaType.Normal,
 						ReciptPrinter = new Printer {
 							Id = 0,
 							Name = "Microsoft XPS Document Writer",

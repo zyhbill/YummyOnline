@@ -189,20 +189,7 @@ namespace HotelDAO.Models {
 		/// </summary>
 		public string RecordId { get; set; }
 	}
-	/// <summary> 
-	/// 订单外卖，一对一表
-	/// </summary>
-	public class TakeOut {
-		[Key, ForeignKey(nameof(Dine))]
-		public string Id { get; set; }
-		public Dine Dine { get; set; }
-
-		[MaxLength(128)]
-		public string Address { get; set; }
-		[MaxLength(11)]
-		public string PhoneNumber { get; set; }
-	}
-
+	
 	public class ReturnedReason {
 		[Key]
 		public int Id { get; set; }

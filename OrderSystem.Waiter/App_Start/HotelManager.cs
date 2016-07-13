@@ -81,8 +81,6 @@ namespace OrderSystem.Waiter {
 			}
 			await ctx.SaveChangesAsync();
 		}
-
-
 	}
 
 	// 服务员相关

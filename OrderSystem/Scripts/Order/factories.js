@@ -365,7 +365,7 @@ app.factory('cart', [
 			},
 
 			// 获得最终要支付的金额
-			GetSubmitPrice: function () {
+			GetPaymentPrice: function () {
 				if (this.PayKind == null) {
 					return null;
 				}
@@ -401,7 +401,7 @@ app.factory('cart', [
 			_getSendData: function () {
 				var sendData = {
 					HeadCount: this.HeadCount,
-					Price: this.GetSubmitPrice(),
+					Price: this.GetPaymentPrice() + this.PriceInPoints,
 					PriceInPoints: this.PriceInPoints,
 					Invoice: this.Invoice,
 

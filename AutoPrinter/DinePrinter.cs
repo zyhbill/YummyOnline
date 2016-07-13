@@ -63,7 +63,7 @@ namespace AutoPrinter {
 			return printers;
 		}
 
-		public void Print(DineForPrinting protocol, List<PrintType> printTypes) {
+		public void Print(DineForPrinting protocol, List<PrintType> printTypes, bool isFullDineMenus) {
 			this.protocol = protocol;
 			PrinterGraphics.FontName = protocol.PrinterFormat.Font;
 			PrinterGraphics.PaperWidth = protocol.PrinterFormat.PaperSize;
@@ -81,7 +81,7 @@ namespace AutoPrinter {
 						}
 						printer.PrinterSettings.PrinterName = protocol.Dine.Desk.ReciptPrinter.Name;
 						printHandler = (sender, e) => {
-							printRecipt(e.Graphics);
+							printRecipt(e.Graphics, isFullDineMenus);
 						};
 						printer.PrintPage += printHandler;
 						printer.Print();
@@ -133,8 +133,9 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 打印收银条
 		/// </summary>
-		private void printRecipt(Graphics g) {
+		private void printRecipt(Graphics g, bool isFullDineMenus) {
 			PrinterGraphics printer = new PrinterGraphics(g);
+
 
 			printer.DrawStringLine($"欢迎光临{protocol.Hotel.Name}", protocol.PrinterFormat.ReciptBigFontSize, align: StringAlignment.Center);
 			printer.DrawStringLine($"TEL: {protocol.Hotel.Tel}", protocol.PrinterFormat.ReciptSmallFontSize, align: StringAlignment.Center);
@@ -152,6 +153,7 @@ namespace AutoPrinter {
 
 			printHr(printer);
 
+			decimal priceAll = 0m;
 			foreach(DineMenu dineMenu in protocol.Dine.DineMenus.Where(p => p.Status != HotelDAO.Models.DineMenuStatus.Returned)) {
 				// 打印具体菜品信息
 				printGrid5122(printer, new string[] {
@@ -160,6 +162,8 @@ namespace AutoPrinter {
 					dineMenu.OriPrice.ToString(),
 					(dineMenu.Price * dineMenu.Count).ToString()
 				}, protocol.PrinterFormat.ReciptFontSize);
+
+				priceAll += dineMenu.Price * dineMenu.Count;
 
 				// 如果菜品为套餐，则打印套餐包含的具体菜品信息
 				if(dineMenu.Menu.IsSetMeal) {
@@ -190,12 +194,17 @@ namespace AutoPrinter {
 						0 == remarks[i].Price ? null : remarks[i].Price.ToString(),
 						0 == remarks[i].Price ? null : remarks[i].Price.ToString()
 					}, protocol.PrinterFormat.ReciptFontSize);
+
+					priceAll += remarks[i].Price;
 				}
 			};
 
 			printHr(printer);
 
-			printGrid55f(printer, new string[] { "总计", protocol.Dine.Price.ToString() }, protocol.PrinterFormat.ReciptBigFontSize);
+			if(isFullDineMenus) {
+				priceAll = protocol.Dine.Price;
+			}
+			printGrid55f(printer, new string[] { "总计", priceAll.ToString() }, protocol.PrinterFormat.ReciptBigFontSize);
 
 			string paidWay = protocol.Dine.IsOnline ? "线上支付" : "线下支付";
 			printer.DrawStringLine($"支付方式: {paidWay}", protocol.PrinterFormat.ReciptFontSize);

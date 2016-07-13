@@ -76,6 +76,26 @@ namespace OrderSystem.Waiter.Controllers {
 			return Json(new JsonSuccess { Data = paidDetails.DineId });
 		}
 
+		public async Task<JsonResult> AddMenus(string dineId, List<MenuExtension> orderedMenus, decimal price) {
+			orderedMenus = orderedMenus ?? new List<MenuExtension>();
+
+			FunctionResult result = await OrderManager.AddMenus(dineId, orderedMenus, price);
+			if(!result.Succeeded) {
+				return Json(new JsonError(result.Message));
+			}
+
+			List<DineMenu> addedDineMenus = result.Data as List<DineMenu>;
+
+			HotelConfig config = await new HotelManager(CurrHotel.ConnectionString).GetHotelConfig();
+			if(config.HasAutoPrinter) {
+				NewDineInformTcpClient.SendRequestAddedMenus(CurrHotel.Id, dineId,
+				addedDineMenus.Select(p => p.Id).ToList(),
+				new List<PrintType> { PrintType.Recipt, PrintType.ServeOrder, PrintType.KitchenOrder });
+			}
+
+			return Json(new JsonSuccess());
+		}
+
 		public async Task<JsonResult> PrintCompleted(string dineId) {
 			await OrderManager.PrintCompleted(dineId);
 			await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Success, $"PrintCompleted DineId: {dineId}");

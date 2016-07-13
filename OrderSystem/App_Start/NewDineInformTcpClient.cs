@@ -32,5 +32,8 @@ namespace OrderSystem {
 		public static void SendRequestPrintDine(int hotelId, string dineId, List<PrintType> printTypes) {
 			client.Send(new RequestPrintDineProtocol(hotelId, dineId, null, printTypes));
 		}
+		public static void SendRequestAddedMenus(int hotelId, string dineId, List<int> dineMenuIds, List<PrintType> printTypes) {
+			client.Send(new RequestPrintDineProtocol(hotelId, dineId, dineMenuIds, printTypes));
+		}
 	}
 }

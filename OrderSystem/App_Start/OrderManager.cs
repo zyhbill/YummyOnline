@@ -89,6 +89,128 @@ namespace OrderSystem {
 					IsGift = false
 				});
 			}
+			// 处理每个点过的菜品
+			FunctionResult result = await handleDineMenu(menuExtensionWithGifts, dine);
+			if(!result.Succeeded) {
+				return result;
+			}
+			// 处理最后生成的价格并比较前端传输的价格数据
+			result = await handleDinePrice(dine, cart.Price);
+			if(!result.Succeeded) {
+				return result;
+			}
+
+			mainPaidDetail.Price = dine.Price;
+
+			// 如果是线上支付并且使用了积分抵扣
+			if(mainPaidDetail.PayKind.Type == PayKindType.Online && cart.PriceInPoints.HasValue) {
+				result = await handlePoints(cart.PriceInPoints.Value, mainPaidDetail, dine);
+				if(!result.Succeeded) {
+					return result;
+				}
+			}
+
+			// 如果是线上支付，则添加DinePaidDetail信息，否则不添加，交给收银系统处理
+			if(mainPaidDetail.PayKind.Type == PayKindType.Online) {
+				dine.DinePaidDetails.Add(mainPaidDetail);
+			}
+
+			// 订单发票
+			if(cart.Invoice != null) {
+				dine.Invoice = cart.Invoice;
+			}
+
+			ctx.Dines.Add(dine);
+
+			await ctx.SaveChangesAsync();
+
+			return new FunctionResult(true, dine);
+		}
+
+		public async Task<FunctionResult> AddMenus(string dineId, List<MenuExtension> orderedMenus, decimal price) {
+			Dine dine = await ctx.Dines.Include(p => p.DineMenus).FirstOrDefaultAsync(p => p.Id == dineId);
+			if(dine == null) {
+				return new FunctionResult(false, "订单号不存在", $"No DineId {dineId}");
+			}
+
+			List<MenuExtensionWithGift> menuExtensionWithGifts = new List<MenuExtensionWithGift>();
+			foreach(MenuExtension menuExtension in orderedMenus) {
+				menuExtensionWithGifts.Add(new MenuExtensionWithGift {
+					MenuExtension = menuExtension,
+					IsGift = false
+				});
+			}
+
+			// 处理每个点过的菜品
+			FunctionResult result = await handleDineMenu(menuExtensionWithGifts, dine);
+			if(!result.Succeeded) {
+				return result;
+			}
+			List<DineMenu> addedDineMenus = result.Data as List<DineMenu>;
+			// 处理最后生成的价格并比较前端传输的价格数据
+			result = await handleDinePrice(dine, price);
+			if(!result.Succeeded) {
+				return result;
+			}
+
+			await ctx.SaveChangesAsync();
+
+			return new FunctionResult(true, addedDineMenus);
+		}
+
+		/// <summary>
+		/// 整单打折处理
+		/// </summary>
+		/// <param name="payKind"></param>
+		/// <param name="dine"></param>
+		/// <returns></returns>
+		private async Task handleDiscount(PayKind payKind, Dine dine) {
+			double minDiscount = 1;
+			string minDiscountName = null;
+			DiscountType minDiscountType = DiscountType.None;
+
+			if(payKind.Discount < minDiscount) {
+				minDiscount = payKind.Discount;
+				minDiscountName = payKind.Name + "折扣";
+				minDiscountType = DiscountType.PayKind;
+			}
+
+			DayOfWeek week = DateTime.Now.DayOfWeek;
+			List<TimeDiscount> timeDicsounts = await ctx.TimeDiscounts.Where(p => p.Week == week).ToListAsync();
+			TimeSpan now = DateTime.Now.TimeOfDay;
+			foreach(TimeDiscount timeDiscount in timeDicsounts) {
+				if(now >= timeDiscount.From && now <= timeDiscount.To) {
+					if(timeDiscount.Discount < minDiscount) {
+						minDiscount = timeDiscount.Discount;
+						minDiscountName = timeDiscount.Name;
+						minDiscountType = DiscountType.Time;
+					}
+					break;
+				}
+			}
+
+			Customer customer = await ctx.Customers.FirstOrDefaultAsync(p => p.Id == dine.UserId);
+			if(customer != null) {
+				VipDiscount vipDiscounts = await ctx.VipDiscounts.FirstOrDefaultAsync(p => p.Level.Id == customer.VipLevelId);
+				if(vipDiscounts != null) {
+					if(vipDiscounts.Discount < minDiscount) {
+						minDiscount = vipDiscounts.Discount;
+						minDiscountName = vipDiscounts.Name;
+						minDiscountType = DiscountType.Vip;
+					}
+				}
+			}
+
+			dine.Discount = minDiscount;
+			dine.DiscountName = minDiscountName;
+			dine.DiscountType = minDiscountType;
+		}
+
+		/// <summary>
+		/// 处理每个菜品
+		/// </summary>
+		private async Task<FunctionResult> handleDineMenu(List<MenuExtensionWithGift> menuExtensionWithGifts, Dine dine) {
+			List<DineMenu> addedDineMenus = new List<DineMenu>();
 
 			foreach(MenuExtensionWithGift menuExtensionWithGift in menuExtensionWithGifts) {
 				MenuExtension menuExtension = menuExtensionWithGift.MenuExtension;
@@ -162,10 +284,17 @@ namespace OrderSystem {
 				dine.Price += dineMenu.Price * dineMenu.Count + dineMenu.RemarkPrice;
 				dine.OriPrice += dineMenu.OriPrice * dineMenu.Count + dineMenu.RemarkPrice;
 
+				addedDineMenus.Add(dineMenu);
 				dine.DineMenus.Add(dineMenu);
 			}
 
-			// 根据饭店设置进行抹零
+			return new FunctionResult(true, addedDineMenus);
+		}
+
+		/// <summary>
+		/// 处理订单的价格并验证是否与前端的价格相同
+		/// </summary>
+		private async Task<FunctionResult> handleDinePrice(Dine dine, decimal? cartPrice) {
 			HotelConfig hotelConfig = await ctx.HotelConfigs.FirstOrDefaultAsync();
 			int trim = 100;
 			switch(hotelConfig.TrimZero) {
@@ -176,89 +305,18 @@ namespace OrderSystem {
 					trim = 1;
 					break;
 			}
+
 			dine.Price = Math.Floor(dine.Price * trim) / trim;
-			decimal cartPrice = cart.Price ?? 0;
-			cartPrice = Math.Floor(cartPrice * trim) / trim;
-
-			mainPaidDetail.Price = dine.Price;
-
-			// 如果是线上支付并且使用了积分抵扣
-			if(mainPaidDetail.PayKind.Type == PayKindType.Online && cart.PriceInPoints.HasValue) {
-				FunctionResult result = await handlePoints(cart.PriceInPoints.Value, mainPaidDetail, dine);
-				if(!result.Succeeded)
-					return result;
-			}
+			cartPrice = cartPrice ?? 0;
+			cartPrice = Math.Floor(cartPrice.Value * trim) / trim;
 
 			// 检测前端计算的金额与后台计算的金额是否相同，如果前端金额为null则检测
-			if(Math.Abs(mainPaidDetail.Price - cartPrice) > 0.01m) {
-				await ctx.SaveChangesAsync();
+			if(Math.Abs(dine.Price - cartPrice.Value) > 0.01m) {
 				return new FunctionResult(false, "金额有误",
-					$"Price Error, Cart Price: {cart.Price.Value}, Cal Price: {mainPaidDetail.Price}");
+					$"Price Error, Cart Price: {cartPrice.Value}, Cal Price: {dine.Price}");
 			}
 
-			// 如果是线上支付，则添加DinePaidDetail信息，否则不添加，交给收银系统处理
-			if(mainPaidDetail.PayKind.Type == PayKindType.Online) {
-				dine.DinePaidDetails.Add(mainPaidDetail);
-			}
-
-			// 订单发票
-			if(cart.Invoice != null) {
-				dine.Invoice = cart.Invoice;
-			}
-
-			ctx.Dines.Add(dine);
-
-			await ctx.SaveChangesAsync();
-
-			return new FunctionResult(true, dine);
-		}
-
-		/// <summary>
-		/// 整单打折处理
-		/// </summary>
-		/// <param name="payKind"></param>
-		/// <param name="dine"></param>
-		/// <returns></returns>
-		private async Task handleDiscount(PayKind payKind, Dine dine) {
-			double minDiscount = 1;
-			string minDiscountName = null;
-			DiscountType minDiscountType = DiscountType.None;
-
-			if(payKind.Discount < minDiscount) {
-				minDiscount = payKind.Discount;
-				minDiscountName = payKind.Name + "折扣";
-				minDiscountType = DiscountType.PayKind;
-			}
-
-			DayOfWeek week = DateTime.Now.DayOfWeek;
-			List<TimeDiscount> timeDicsounts = await ctx.TimeDiscounts.Where(p => p.Week == week).ToListAsync();
-			TimeSpan now = DateTime.Now.TimeOfDay;
-			foreach(TimeDiscount timeDiscount in timeDicsounts) {
-				if(now >= timeDiscount.From && now <= timeDiscount.To) {
-					if(timeDiscount.Discount < minDiscount) {
-						minDiscount = timeDiscount.Discount;
-						minDiscountName = timeDiscount.Name;
-						minDiscountType = DiscountType.Time;
-					}
-					break;
-				}
-			}
-
-			Customer customer = await ctx.Customers.FirstOrDefaultAsync(p => p.Id == dine.UserId);
-			if(customer != null) {
-				VipDiscount vipDiscounts = await ctx.VipDiscounts.FirstOrDefaultAsync(p => p.Level.Id == customer.VipLevelId);
-				if(vipDiscounts != null) {
-					if(vipDiscounts.Discount < minDiscount) {
-						minDiscount = vipDiscounts.Discount;
-						minDiscountName = vipDiscounts.Name;
-						minDiscountType = DiscountType.Vip;
-					}
-				}
-			}
-
-			dine.Discount = minDiscount;
-			dine.DiscountName = minDiscountName;
-			dine.DiscountType = minDiscountType;
+			return new FunctionResult();
 		}
 
 		/// <summary>

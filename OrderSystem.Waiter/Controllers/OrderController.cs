@@ -97,7 +97,7 @@ namespace OrderSystem.Waiter.Controllers {
 		public async Task<JsonResult> ShiftDines() {
 			await HotelManager.ShiftDines();
 			return Json(new JsonSuccess());
-		}
+		} 
 		public async Task<JsonResult> ToggleMenuStatus(string menuId, MenuStatus status) {
 			if(!await HotelManager.ToggleMenuStatus(menuId, status)) {
 				return Json(new JsonError());

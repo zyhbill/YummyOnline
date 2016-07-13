@@ -9,12 +9,12 @@
     <ProductVersion>
     </ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E7C8F610-DF4E-4C30-A7A3-60C1F7EBCE79}</ProjectGuid>
+    <ProjectGuid>{D9A54414-424A-4EA7-B84B-41A6E9E25453}</ProjectGuid>
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>OrderSystem.Waiter</RootNamespace>
-    <AssemblyName>OrderSystem.Waiter</AssemblyName>
+    <RootNamespace>WeChat</RootNamespace>
+    <AssemblyName>WeChat</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -43,10 +43,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
-      <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
       <Private>True</Private>
@@ -64,7 +60,6 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -74,10 +69,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Web.Optimization, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
@@ -85,10 +76,6 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
-    <Reference Include="WebGrease, Version=1.6.5135.21930, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\WebGrease.1.6.0\lib\WebGrease.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web.Razor">
@@ -114,35 +101,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\css\global.css" />
-    <Content Include="Content\css\lib\animate.min.css" />
-    <Content Include="Content\css\lib\awesome-bootstrap-checkbox.css" />
-    <Content Include="Content\css\lib\toastr.min.css" />
-    <Content Include="Content\css\waiterGlobal.css" />
-    <Content Include="Content\image\logo-index.png" />
-    <Content Include="Content\image\logo.png" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\Account\controllers.js" />
-    <Content Include="Scripts\app.js" />
-    <Content Include="Scripts\directives.js" />
-    <Content Include="Scripts\lib\angular-animate.min.js" />
-    <Content Include="Scripts\lib\angularjs-storage.min.js" />
-    <Content Include="Scripts\lib\toastr.min.js" />
-    <Content Include="Scripts\Order\controllers.js" />
-    <Content Include="Scripts\Order\factories.js" />
-    <Content Include="Scripts\Order\route.js" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\HotelManager.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\AuthController.cs" />
-    <Compile Include="Controllers\BaseWaiterController.cs" />
-    <Compile Include="Controllers\ErrorController.cs" />
-    <Compile Include="Controllers\OrderController.cs" />
-    <Compile Include="Controllers\PaymentController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -151,25 +114,6 @@
   <ItemGroup>
     <Content Include="Views\web.config" />
     <Content Include="packages.config" />
-    <Content Include="Views\Account\Index.cshtml" />
-    <Content Include="Views\Order\Index.cshtml" />
-    <Content Include="Views\Order\_PartialCustomerModal.cshtml" />
-    <Content Include="Views\Order\_PartialOpenDesk.cshtml" />
-    <Content Include="Views\Order\_PartialOpenOption.cshtml" />
-    <Content Include="Views\Order\_ViewCart.cshtml" />
-    <Content Include="Views\Order\_ViewCurrent.cshtml" />
-    <Content Include="Views\Order\_ViewPayment.cshtml" />
-    <Content Include="Views\Shared\_LayoutGlobal.cshtml" />
-    <Content Include="Views\Shared\_PartialLoading.cshtml" />
-    <None Include="Properties\PublishProfiles\CompanyServer.pubxml" />
-    <None Include="Properties\PublishProfiles\LocalRelease.pubxml" />
-    <Content Include="Views\Error\HttpError404.cshtml" />
-    <Content Include="Views\Error\HttpError500.cshtml" />
-    <Content Include="Views\Error\HotelUnavailable.cshtml" />
-    <Content Include="Views\Order\_PartialDine.cshtml" />
-    <None Include="Web.CompanyServer.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </None>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -178,50 +122,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Controllers\" />
     <Folder Include="Models\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\HotelDAOModels\HotelDAOModels.csproj">
-      <Project>{c9f71545-1363-4ad1-b50b-dc903fd66770}</Project>
-      <Name>HotelDAOModels</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\HotelDAO\HotelDAO.csproj">
-      <Project>{b17fc72a-8690-4072-b49f-ec98ab59f944}</Project>
-      <Name>HotelDAO</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\OrderSystem\OrderSystem.csproj">
-      <Project>{7cb3f434-20fd-41b9-b970-9b96b6450765}</Project>
-      <Name>OrderSystem</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Protocol\Protocol.csproj">
-      <Project>{08106e56-c685-4860-af3a-396dd9333299}</Project>
-      <Name>Protocol</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Utility\Utility.csproj">
-      <Project>{8b2af470-27a1-4dc9-b228-0942dc9e85a1}</Project>
-      <Name>Utility</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\YummyOnlineDAOModels\YummyOnlineDAOModels.csproj">
-      <Project>{3625134d-bf70-4481-a2e8-4150256def32}</Project>
-      <Name>YummyOnlineDAOModels</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\YummyOnlineDAO\YummyOnlineDAO.csproj">
-      <Project>{89c93a27-aed6-4db7-95e0-168c8c6e4531}</Project>
-      <Name>YummyOnlineDAO</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CompanyServer|AnyCPU'">
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
@@ -232,9 +139,9 @@
         <WebProjectProperties>
           <UseIIS>True</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>54860</DevelopmentServerPort>
+          <DevelopmentServerPort>62347</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:54860/</IISUrl>
+          <IISUrl>http://localhost:62347/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

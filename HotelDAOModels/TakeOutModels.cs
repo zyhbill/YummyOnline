@@ -12,10 +12,6 @@ namespace HotelDAO.Models {
 		public string DineId { get; set; }
 		public Dine Dine { get; set; }
 
-		[ForeignKey(nameof(Customer))]
-		public string CustomerId { get; set; }
-		public Customer Customer { get; set; }
-
 		[MaxLength(128)]
 		public string Address { get; set; }
 	}

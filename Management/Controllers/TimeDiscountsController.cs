@@ -30,27 +30,28 @@ namespace Management.Controllers
             return Json(timediscounts.ToList());
         }
         //ADD:TimeDiscounts
-        public async Task<JsonResult> AddTimeDiscounts(TimeSpan from, TimeSpan to, DayOfWeek? week, double? discount,string name)
+        public async Task<JsonResult> AddTimeDiscounts(TimeSpan from, TimeSpan to, DayOfWeek? week, double? discount, string name)
         {
-            if(from !=null && to != null  &&discount != null && name != null ) { 
-            db.TimeDiscounts.Add(new TimeDiscount
+            if (from != null && to != null && discount != null && name != null)
             {
-                From = from,
-                To = to,
-                Week = week.Value,
-                Discount = discount.Value/100,
-                Name = name,
-            });
-            await db.SaveChangesAsync();
-            return Json(new { succeeded = true });
-        }
+                db.TimeDiscounts.Add(new TimeDiscount
+                {
+                    From = from,
+                    To = to,
+                    Week = week.Value,
+                    Discount = discount.Value / 100,
+                    Name = name,
+                });
+                await db.SaveChangesAsync();
+                return Json(new { succeeded = true });
+            }
             else
             {
                 return Json(new { succeeded = false });
             }
 
 
-    }
+        }
         //DEL:TimeDiscounts
         public async Task<JsonResult> DelTimeDiscounts(TimeSpan from, TimeSpan to, DayOfWeek week)
         {
@@ -80,7 +81,7 @@ namespace Management.Controllers
             else
             {
                 timediscounts.Name = name;
-                timediscounts.Discount = discount/100;
+                timediscounts.Discount = discount / 100;
                 await db.SaveChangesAsync();
                 return Json(new { succeeded = true });
             }

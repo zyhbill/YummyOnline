@@ -326,8 +326,12 @@
         })
     }
     $scope.CheckOut = function () {
-        HandOut.CheckOut();
-        $rootScope.Logout();
+        var promise = HandOut.CheckOut();
+        promise.then(function (data) {
+            if (data.Status) {
+                $rootScope.Logout();
+            }
+        })
     }
     $scope.rePrint = function () {
         var modalInstance = $uibModal.open({//打开支付

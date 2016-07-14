@@ -13,6 +13,21 @@
 			});
 		}
 	};
+}).directive('ngStaticRealHeight', function () {
+	return function ($scope, $elem, attr) {
+
+		set();
+		$(window).on('resize', function () {
+			set();
+		});
+
+		function set() {
+			$elem.css({
+				'height': $(window).height() - attr.ngStaticHeight + 'px',
+				'overflow-y': 'auto',
+			});
+		}
+	};
 }).directive('routeHref', ['$location', function ($location) {
 	return function ($scope, $elem, attr) {
 		$elem.click(function () {

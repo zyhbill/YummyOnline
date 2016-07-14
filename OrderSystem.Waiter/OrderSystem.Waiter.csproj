@@ -119,6 +119,7 @@
     <Content Include="Content\css\lib\awesome-bootstrap-checkbox.css" />
     <Content Include="Content\css\lib\toastr.min.css" />
     <Content Include="Content\css\waiterGlobal.css" />
+    <Content Include="Content\image\back.jpg" />
     <Content Include="Content\image\logo-index.png" />
     <Content Include="Content\image\logo.png" />
     <Content Include="Global.asax" />

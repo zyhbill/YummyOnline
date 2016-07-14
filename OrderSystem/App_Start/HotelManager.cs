@@ -134,6 +134,7 @@ namespace OrderSystem {
 					QrCode = p.Desk.QrCode,
 					Name = p.Desk.Name,
 					Description = p.Desk.Description,
+					AreaType = p.Desk.Area.Type,
 					ReciptPrinter = new Protocol.PrintingProtocol.Printer {
 						Id = p.Desk.Area.DepartmentRecipt.Printer.Id,
 						Name = p.Desk.Area.DepartmentRecipt.Printer.Name,
@@ -187,7 +188,10 @@ namespace OrderSystem {
 						Name = d.PayKind.Name,
 						Type = d.PayKind.Type
 					}
-				}).ToList()
+				}).ToList(),
+				TakeOut = new Protocol.PrintingProtocol.TakeOut {
+					Address = p.TakeOut.Address
+				}
 			});
 		}
 

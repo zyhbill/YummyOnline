@@ -24,6 +24,8 @@ namespace Protocol.PrintingProtocol {
 		public Desk Desk { get; set; }
 		public List<DineMenu> DineMenus { get; set; } = new List<DineMenu>();
 		public List<DinePaidDetail> DinePaidDetails { get; set; } = new List<DinePaidDetail>();
+
+		public TakeOut TakeOut { get; set; }
 	}
 
 	public class Staff {
@@ -40,6 +42,7 @@ namespace Protocol.PrintingProtocol {
 		public string QrCode { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
+		public AreaType AreaType { get; set; }
 		public Printer ReciptPrinter { get; set; }
 		public Printer ServePrinter { get; set; }
 	}
@@ -86,6 +89,9 @@ namespace Protocol.PrintingProtocol {
 		public string Name { get; set; }
 		public PayKindType Type { get; set; }
 	}
+	public class TakeOut {
+		public string Address { get; set; }
+	}
 
 	public class Hotel {
 		public int Id { get; set; }
@@ -102,7 +108,6 @@ namespace Protocol.PrintingProtocol {
 		public string UserName { get; set; }
 		public string PhoneNumber { get; set; }
 	}
-
 
 	public class PrinterFormat {
 		public int PaperSize { get; set; }
@@ -125,6 +130,8 @@ namespace Protocol.PrintingProtocol {
 		public User User { get; set; }
 		public PrinterFormat PrinterFormat { get; set; }
 	}
+
+
 
 	public class ShiftDetail {
 		public string PayKind { get; set; }

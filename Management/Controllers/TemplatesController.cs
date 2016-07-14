@@ -73,7 +73,8 @@ namespace Management.Controllers
         {
             using (var db = new HotelContext(Session["ConnectString"] as string))
             {
-                var Areas = await db.Areas.Where(area => area.Usable == true).ToListAsync();
+                var Areas = await db.Areas.Where(area => area.Usable == true)
+                    .ToListAsync();
                 var Desks = await db.Desks.Where(d => d.Usable == true)
                     .Select(d => new
                     {

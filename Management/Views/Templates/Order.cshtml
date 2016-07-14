@@ -26,7 +26,14 @@
                                 {{desk.Name}}
                             </span>
                         </p>
-                        <p ng-if="desk.Status" class="text-danger text-center">{{desk.Id}}</p>
+                        <p ng-if="desk.Status" class="text-danger text-center">
+                            <span ng-show="area.Type==0">
+                                {{desk.Id}}
+                            </span>
+                            <span ng-show="area.Type==1">
+                                {{desk.Name}}
+                            </span>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -530,7 +537,7 @@
                                             <span ng-show="!address.IsAlt">
                                                 {{address.Address}}
                                             </span>
-                                            <span ng-show="address.IsAlt" >
+                                            <span ng-show="address.IsAlt">
                                                 <input type="text" ng-model="address.Address" />
                                             </span>
                                         </a>
@@ -566,5 +573,5 @@
             <button class="btn btn-warning" type="button" ng-click="cancel()">取消录入</button>
         </div>
     </form>
-    
+
 </script>

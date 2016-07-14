@@ -1,7 +1,6 @@
 ﻿@{
     Layout = null;
 }
-
 <link href="../Content/css/style.css" rel="stylesheet" />
 <div class="row">
     <div class="col-xm-12">
@@ -15,17 +14,23 @@
                 </li>
             </ul>
             <div class="tab-content">
-                <div  id="Home" class="tab-pane in active">
+                <div id="Home" class="tab-pane in active">
                     <div class="desk" ng-repeat="desk in SysElements.Desks|filter:{Status:1}" ng-click="OpenModel(desk)">
                         <h4 ng-if="desk.Status"><img src="~/Content/images/eating.png" class="img-responsive"></h4>
-                        <p ng-if="desk.Status" class="text-danger text-center">{{desk.Id}}</p>
+                        <p ng-if="desk.Status" class="text-danger text-center">
+                            <span ng-show="area.Type==0">
+                                {{desk.Id}}
+                            </span>
+                            <span ng-show="area.Type==1">
+                                {{desk.Name}}
+                            </span>
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div><!--ROW END-->
-
 
 <script type="text/ng-template" id="ModalPay.html">
     <div class="modal-header" ng-init="initialize()">

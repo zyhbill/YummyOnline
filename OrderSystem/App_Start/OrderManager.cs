@@ -247,6 +247,7 @@ namespace OrderSystem {
 					if(menu.MenuPrice.Discount < 1) {
 						excludePayDiscount = true;
 						dineMenu.Price = menu.MenuPrice.Price * (decimal)menu.MenuPrice.Discount;
+						dineMenu.Type = DineMenuType.MenuDiscount;
 					}
 					// 是否为特价菜
 					DayOfWeek week = DateTime.Now.DayOfWeek;
@@ -254,15 +255,31 @@ namespace OrderSystem {
 					if(menuOnSales != null) {
 						excludePayDiscount = true;
 						dineMenu.Price = menuOnSales.Price;
+						dineMenu.Type = DineMenuType.OnSale;
 					}
 					// 是否为套餐
 					var menuSetMeals = await ctx.MenuSetMeals.FirstOrDefaultAsync(p => p.MenuSetId == menu.Id && p.Menu.IsSetMeal);
 					if(menuSetMeals != null) {
 						excludePayDiscount = true;
+						dineMenu.Type = DineMenuType.SetMeal;
 					}
 
 					if(!excludePayDiscount) {
 						dineMenu.Price = menu.MenuPrice.Price * (decimal)dine.Discount;
+						switch(dine.DiscountType) {
+							case DiscountType.PayKind:
+								dineMenu.Type = DineMenuType.PayKindDiscount;
+								break;
+							case DiscountType.Vip:
+								dineMenu.Type = DineMenuType.VipDiscount;
+								break;
+							case DiscountType.Time:
+								dineMenu.Type = DineMenuType.TimeDiscount;
+								break;
+							case DiscountType.Custom:
+								dineMenu.Type = DineMenuType.CustomDiscount;
+								break;
+						}
 					}
 				}
 

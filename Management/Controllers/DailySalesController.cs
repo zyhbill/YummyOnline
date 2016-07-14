@@ -21,7 +21,6 @@ namespace Management.Controllers
         public async Task<JsonResult> GetDailySales(DateTime begintime, DateTime endtime)
         {
             endtime = endtime.AddDays(1);
-
             var check = db.Dines.Where(dine => dine.BeginTime <= endtime && begintime <= dine.BeginTime).Count();
             if (check == 0)
             {

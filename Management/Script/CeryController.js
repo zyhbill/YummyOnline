@@ -46,34 +46,33 @@
             $scope.$apply();
         }
     });
-    $scope.OpenModel = function (desk) {
+    $scope.OpenModel = function (desk,area) {
         var myDesk = {};
         myDesk = { Id: desk.Id, Name: desk.Name };
-        //if (desk.Status == 1) {
-        //    var modalInstance = $uibModal.open({//打开支付
-        //        animation: $scope.animationsEnabled,
-        //        templateUrl: 'ModalPay.html',
-        //        controller: 'ModalPayCtrl',
-        //        backdrop: 'static',
-        //        size: 'lg',
-        //        resolve: {
-        //            option: {
-        //                desk: myDesk, method: Pay
-        //            }
-        //        }
-        //    });
-        //} else if (desk.Status == 0) {
-        var modalInstance = $uibModal.open({//打开开桌
-            animation: $scope.animationsEnabled,
-            templateUrl: 'ModalOpen.html',
-            controller: 'ModalOpenCtrl',
-            backdrop: 'static',
-            size: 'lg',
-            resolve: {
-                option: { desk: myDesk, method: Open, Pay: Pay }
-            }
-        });
-        //}
+        if(area.){
+            var modalInstance = $uibModal.open({//打开开桌
+                animation: $scope.animationsEnabled,
+                templateUrl: 'ModelReserve.html',
+                controller: 'ModalOpenCtrl',
+                backdrop: 'static',
+                size: 'lg',
+                resolve: {
+                    option: { desk: myDesk, method: Open, Pay: Pay }
+                }
+            });
+        }else{
+            var modalInstance = $uibModal.open({//打开开桌
+                animation: $scope.animationsEnabled,
+                templateUrl: 'ModalOpen.html',
+                controller: 'ModalOpenCtrl',
+                backdrop: 'static',
+                size: 'lg',
+                resolve: {
+                    option: { desk: myDesk, method: Open, Pay: Pay }
+                }
+            });
+        }
+       
     }
 }])
 .controller('ModalPayCtrl', function ($scope, $rootScope, $uibModalInstance, option) {

@@ -917,6 +917,7 @@
             }
             if (!Address) {
                 alert("请选择地址");
+                return;
             }
             $(".fakeloader").fakeLoader({
                 timeToHide: 3000,

@@ -241,6 +241,7 @@
 })
 .controller('ModelReserveCtrl', function ($scope, $rootScope, $uibModal, $uibModalInstance, $q, $timeout, option) {
     $scope.ReserveInfo = option.method.ReserveInfo;
+    $scope.OpenElements = option.method.OpenElements;
     $scope.ok = function () {
         $uibModalInstance.dismiss('cancel');
     }

@@ -330,10 +330,6 @@
                 预定
                 <div class="form-group openDesk">
                     <label>管理员:&nbsp;@((Session["User"] as Management.ObjectClasses.RStatus).Name)</label>
-                    <label>
-                        班次号:
-                        <input type="text" ng-model="OpenElements.ShiftNum" />
-                    </label>
                 </div>
             </div>
         </h3>
@@ -489,7 +485,15 @@
 <script type="text/ng-template" id="ModelReservePhoneInfo.html">
     <form ng-submit="ok()" name="reserve">
         <div class="modal-header">
-            <h3 class="modal-title">外卖信息录入</h3>
+            <h3 class="modal-title">
+                外卖信息录入
+
+                <label>
+                    班次号:
+                    <input type="text" ng-model="OpenElements.ShiftNum" />
+                </label>
+            </h3>
+
         </div>
         <div class="modal-body">
             外卖电话:
@@ -498,7 +502,6 @@
                 <i class="icon-key bigger-110"></i>
                 智能获取
             </button>
-
             <br />
             <div class="widget-box transparent">
                 <div class="widget-header widget-header-small">

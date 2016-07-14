@@ -915,6 +915,9 @@
             } else {
                 Address = this.ReserveInfo.User.UserAddresses.filter(function (x) { return x.IsChoose }).map(function (x) { return x.Address })[0];
             }
+            if (!Address) {
+                alert("请选择地址");
+            }
             $(".fakeloader").fakeLoader({
                 timeToHide: 3000,
                 bgColor: "#34495e",
@@ -961,10 +964,26 @@
         },
         SmartChoose: function () {
             var _this = this;
+            var last_gritter;
             $http.post('../Templates/SmartChoose', {
                 Phone: _this.ReserveInfo.Phone
             }).then(function (response) {
                 _this.ReserveInfo.User = response.data.Data[0];
+                if (_this.ReserveInfo.User.UserAddresses.length==0) {
+                      if (last_gritter) $.gritter.remove(last_gritter);
+                      last_gritter = $.gritter.add({
+                            title: '未找到!',
+                            text: '未找到外卖地址，请新增地址',
+                            class_name: 'gritter-warning gritter-center'
+                        });
+                } else {
+                    if (last_gritter) $.gritter.remove(last_gritter);
+                    last_gritter = $.gritter.add({
+                        title: '找到!',
+                        text: '找到' + _this.ReserveInfo.User.UserAddresses.length+ '项，请选择',
+                        class_name: 'gritter-success gritter-center'
+                    });
+                }
             })
         },
         SetAddress: function (address, type) {

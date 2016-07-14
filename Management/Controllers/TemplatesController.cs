@@ -1165,6 +1165,16 @@ namespace Management.Controllers
                 sysdb.Users.Add(User);
                 await sysdb.SaveChangesAsync();
             }
+            var address = await sysdb.UserAddresses.Where(d => d.UserId == User.Id && d.Address == Address).FirstOrDefaultAsync();
+            if (address == null)
+            {
+                sysdb.UserAddresses.Add(new UserAddress()
+                {
+                    UserId = User.Id,
+                    Address = Address
+                });
+                await sysdb.SaveChangesAsync();
+            }
             var result = await Method.postHttp("http://ordersystem.yummyonline.net/Payment/ManagerPay",
                 new
                 {
@@ -1196,9 +1206,9 @@ namespace Management.Controllers
                 {
                     DineId = pd.Data,
                     Address = Address,
-                    Record = ShiftNum
+                    RecordId= ShiftNum
                 });
-
+                await db.SaveChangesAsync();
                 try
                 {
                     var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();

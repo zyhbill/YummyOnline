@@ -196,7 +196,7 @@
         });
     }
     $scope.OpenReserve = function () {
-        var promise = optione.method.OpenReserve();
+        var promise = option.method.OpenReserve();
         promise.then(function (data) {
             if (data.Status) {
                 $uibModalInstance.dismiss('cancel');

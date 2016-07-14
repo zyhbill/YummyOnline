@@ -8,11 +8,11 @@
             Phone: "",
             PassWord: ""
         },
-        KeyInfo:{
+        KeyInfo: {
             Time: 60,
             Key: null,
             IsReget: true,
-            IsFirst:true
+            IsFirst: true
         },
         GetCookies: function () {
             //获取cookies
@@ -47,7 +47,7 @@
             });
             return deferred.promise;   // 返回承诺，这里返回的不是数据，而是API
         },
-        GetKey: function(){
+        GetKey: function () {
             var _this = this;
             $http.post('../Login/GetKey', {
                 Phone: _this.Hotel.Phone
@@ -77,8 +77,8 @@
             $http.post('../Login/Register', {
                 Name: _this.Hotel.Name,
                 Phone: _this.Hotel.Phone,
-                Password:_this.Hotel.PassWord,
-                Key:_this.KeyInfo.Key
+                Password: _this.Hotel.PassWord,
+                Key: _this.KeyInfo.Key
             }).success(function (data) {
                 deferred.resolve(data);
             }).error(function (data) {
@@ -457,10 +457,10 @@
         },
         Recipt: function () {
             var _this = this;
-            $http.post('../Templates/RePrint',{
-                DineId:_this.PayElements.CurrentDine.Id,
-                Type:0
-            } ).success(function (data) {
+            $http.post('../Templates/RePrint', {
+                DineId: _this.PayElements.CurrentDine.Id,
+                Type: 0
+            }).success(function (data) {
                 $.gritter.add({
                     title: '提醒',
                     text: '收银已打印！',
@@ -474,10 +474,10 @@
         },
         Kitchen: function () {
             var _this = this;
-            $http.post('../Templates/RePrint',{
-                DineId:_this.PayElements.CurrentDine.Id,
-                Type:0
-            } ).success(function (data) {
+            $http.post('../Templates/RePrint', {
+                DineId: _this.PayElements.CurrentDine.Id,
+                Type: 0
+            }).success(function (data) {
                 $.gritter.add({
                     title: '提醒',
                     text: '厨房已打印！',
@@ -499,7 +499,7 @@
             Menus: [],
             CurrentDine: {},
             OrderMenus: [],
-            FilterDesk:""
+            FilterDesk: ""
         },
         Initialize: function () {
             var _this = this;
@@ -518,10 +518,10 @@
     var temp = 0;
     var service = {
         OpenElements: {
-            Type: $cookies.get('Type')||0,
+            Type: $cookies.get('Type') || 0,
             Discounts: [{ Name: "自定义", Discount: 1, IsSet: true }],
             Classes: [],
-            OriMenus:[],
+            OriMenus: [],
             Menus: [],
             CurrentUser: { Number: 1 },
             CurrentDesk: {},
@@ -529,14 +529,22 @@
             OrderMenus: [],
             CurrentMenu: {},
             CurrentMenuRemarks: [],
-            CurrentDine:{},
+            CurrentDine: {},
             FilterInfo: "",
             CurrentFilter: "",
             allchoose: true,
-            CurrentNum:0,
-            isAjax:false
+            CurrentNum: 0,
+            ShiftNum:0,
+            isAjax: false
         },
-        tempRemarks:[],
+        tempRemarks: [],
+        ReserveInfo: {
+            Phone: "",
+            Address: "",
+            User: {},
+            NewAddress: "",
+            IsChoose: false
+        },
         getElements: function () {
             var _this = this;
             var date = new Date();
@@ -610,7 +618,7 @@
             if (this.OpenElements.CurrentMenu.Num < this.OpenElements.CurrentMenu.MinOrderCount) this.OpenElements.CurrentMenu.Num = this.OpenElements.CurrentMenu.MinOrderCount
         },
         SelectChange: function (menu) {
-            this.OpenElements.OriMenus.forEach(function (x) { x.Click = false;})
+            this.OpenElements.OriMenus.forEach(function (x) { x.Click = false; })
             this.OpenElements.Menus.forEach(function (x) { x.Click = false; });
             menu.Click = true;
             this.OpenElements.CurrentMenu = menu;
@@ -635,7 +643,7 @@
             this.OpenElements.FilterInfo = "";
             this.OpenElements.CurrentFilter = "";
         },
-        AddSingle:function(menu){
+        AddSingle: function (menu) {
             var _this = this;
             var temp = angular.copy(menu);
             temp.Remarks = [];
@@ -746,7 +754,7 @@
                 }
             }
         },
-        AddDineMenu:function(){
+        AddDineMenu: function () {
             var _this = this;
             var deferred = $q.defer();
             var temp = {
@@ -814,14 +822,14 @@
             this.OpenElements.Menus = this.OpenElements.OriMenus.filter(function (x) {
                 var flag = false;
                 x.Classes.forEach(function (xx) {
-                    if (xx.Id == ClassId) { flag = true; return;}
+                    if (xx.Id == ClassId) { flag = true; return; }
                 })
                 return flag;
             })
             this.OpenElements.allchoose = false;
             this.OpenElements.Classes.forEach(function (x) {
                 x.Current = false;
-                if (x.Id == ClassId) { x.Current = true;}
+                if (x.Id == ClassId) { x.Current = true; }
             })
         },
         ShiftType: function () {
@@ -835,7 +843,7 @@
         KeepShift: function () {
             var _this = this;
             var expireDate = new Date();
-            if (typeof($cookies.get('Type')) != undefined) {
+            if (typeof ($cookies.get('Type')) != undefined) {
                 if ($cookies.get('Type') != this.OpenElements.Type) {
                     bootbox.confirm({
                         buttons: {
@@ -894,6 +902,109 @@
         },
         CheckAddNum: function (menu) {
             if (menu.Num < menu.MinOrderCount) menu.Num = menu.MinOrderCount;
+        },
+        OpenReserve: function () {
+            var re = /^1\d{10}$/;
+            if (!re.test(this.ReserveInfo.Phone)) {
+                alert("请输入手机");
+                return;
+            }
+            var Address = "";
+            if (this.ReserveInfo.IsChoose) {
+                Address = this.ReserveInfo.NewAddress;
+            } else {
+                Address = this.ReserveInfo.User.UserAddresses.filter(function (x) { return x.IsChoose }).map(function (x) { return x.Address })[0];
+            }
+            $(".fakeloader").fakeLoader({
+                timeToHide: 3000,
+                bgColor: "#34495e",
+                spinner: "spinner3"
+            });
+            var _this = this;
+            var deferred = $q.defer();
+            var tempOrderedMenus = this.OpenElements.OrderMenus.filter(function (x) { return !x.IsSend }).map(function (x) {
+                return { Id: x.Id, Ordered: x.Num, Remarks: x.Remarks.map(function (x) { return x.Id }) }
+            })
+            var tempSendMenus = this.OpenElements.OrderMenus.filter(function (x) { return x.IsSend }).map(function (x) {
+                return { Id: x.Id, Ordered: x.Num, Remarks: x.Remarks.map(function (x) { return x.Id }) }
+            })
+            var OrderInfo = {
+                HeadCount: this.OpenElements.CurrentUser.Number,
+                Price: this.AccountPrice(),
+                Desk: this.OpenElements.CurrentDesk,
+                OrderedMenus: tempOrderedMenus,
+                SendMenus: tempSendMenus
+            };
+            $http.post('../Templates/OpenReserve', {
+                OrderInfo: OrderInfo,
+                OpenDiscount: _this.OpenElements.CurrentDiscount,
+                Address: Address,
+                ShiftNum: _this.OpenElements.ShiftNum,
+                Phone: _this.ReserveInfo.Phone
+            }).success(function (data) {
+                if (data.Status) {
+                    _this.ReserveInfo = {
+                        Phone: "",
+                        Address: "",
+                        User: {},
+                        NewAddress: "",
+                        IsChoose: false
+                    };
+                }
+                deferred.resolve(data);
+            }).error(function (data) {
+                alert("错误");
+                deferred.reject(data);
+            })
+            return deferred.promise;
+
+        },
+        SmartChoose: function () {
+            var _this = this;
+            $http.post('../Templates/SmartChoose', {
+                Phone: _this.ReserveInfo.Phone
+            }).then(function (response) {
+                _this.ReserveInfo.User = response.data.Data[0];
+            })
+        },
+        SetAddress: function (address, type) {
+            if (type == 0) {
+                this.ReserveInfo.IsChoose = false;
+                if (this.ReserveInfo.User.UserAddresses) {
+                    this.ReserveInfo.User.UserAddresses.forEach(function (x) {
+                        x.IsChoose = false;
+                    })
+                }
+                address.IsChoose = true;
+            }
+            else if (type == 1) {
+                this.ReserveInfo.IsChoose = true;
+                if (this.ReserveInfo.User.UserAddresses) {
+                    this.ReserveInfo.User.UserAddresses.forEach(function (x) {
+                        x.IsChoose = false;
+                    })
+                }
+            }
+        },
+        DeleteAddress: function (address) {
+            var _this = this;
+            swal({
+                title: "确定删除"+address.Address+"?",
+                text: "删除后将不能找回",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#D0D0D0",
+                confirmButtonText: "是, 更换!",
+                cancelButtonText: "否, 保留!",
+                closeOnConfirm: true
+            }, function () {
+                $http.post('../Templates/DeleteAddress', {
+                    UserId: _this.ReserveInfo.User.Id,
+                    Address: address.Address
+                }).then(function (response) {
+                    _this.ReserveInfo.User = response.data.Data[0];
+                })
+            });
         }
     }
     return service;
@@ -906,8 +1017,8 @@
             UnpaidDines: [],
             CurrentDine: {},
             CurrentReason: {},
-            isAjax:false,
-            Reasons:[]
+            isAjax: false,
+            Reasons: []
         },
         getElements: function () {
             var _this = this;
@@ -962,31 +1073,31 @@
                     var reason = $('.radio').find('input:checked').attr('data-description');
                     if (result) {
                         swal({
-                           title: "确定删除此菜品?",
-                           text: "你将不可恢复此项删除菜品，请谨慎操作!",
-                           type: "warning",
-                           showCancelButton: true,
-                           confirmButtonColor: "#D0D0D0",
-                           confirmButtonText: "是, 删除!",
-                           cancelButtonText: "否, 保留!",
-                           closeOnConfirm: false
+                            title: "确定删除此菜品?",
+                            text: "你将不可恢复此项删除菜品，请谨慎操作!",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#D0D0D0",
+                            confirmButtonText: "是, 删除!",
+                            cancelButtonText: "否, 保留!",
+                            closeOnConfirm: false
                         }, function () {
-                           $http.post('../Templates/ReturnMenu', {
-                               DineId: _this.ReturnElements.CurrentDine.Id,
-                               Id: menu.Id,
-                               Reason: reason
-                           }).success(function (data) {
-                               if (data.Status) {
-                                   _this.ReturnElements.Desks = data.Desks.filter(function (x) { return x.Status });
-                                   _this.ReturnElements.UnpaidDines = data.Dines;
-                                   swal("删除成功!", "此项菜品已经删除请重新进入支付页面.", "success");
-                               } else {
-                                   console.log("数据错误");
-                               }
-                           }).error(function (data) {
-                               console.log(data);
-                           });
-                       }
+                            $http.post('../Templates/ReturnMenu', {
+                                DineId: _this.ReturnElements.CurrentDine.Id,
+                                Id: menu.Id,
+                                Reason: reason
+                            }).success(function (data) {
+                                if (data.Status) {
+                                    _this.ReturnElements.Desks = data.Desks.filter(function (x) { return x.Status });
+                                    _this.ReturnElements.UnpaidDines = data.Dines;
+                                    swal("删除成功!", "此项菜品已经删除请重新进入支付页面.", "success");
+                                } else {
+                                    console.log("数据错误");
+                                }
+                            }).error(function (data) {
+                                console.log(data);
+                            });
+                        }
                        );
                     }
                 },
@@ -1073,7 +1184,7 @@
                     })
                 }
             });
-           
+
         }
     }
     return service;
@@ -1264,7 +1375,7 @@
             NumberStart: 1,
             NumberBegin: 1,
             Numbers: [],
-            isAjax:false
+            isAjax: false
         },
         getElement: function () {
             var _this = this;
@@ -1287,10 +1398,10 @@
             })
             return deferred.promise;
         },
-        getNumbers:function(){
+        getNumbers: function () {
             var _this = this;
             $http.post('../Templates/GetNumbers', {
-                Time:_this.HandElement.Time
+                Time: _this.HandElement.Time
             }).success(function (data) {
                 data.Numbers.forEach(function (x) { x.IsChoose = true; });
                 _this.HandElement.Numbers = data.Numbers;
@@ -1302,7 +1413,7 @@
             var price = this.HandElement.PayKinds.filter(function (x) { return x.Num }).map(function (x) { return x.Num }).reduce(function (a, b) { return +a + +b }, 0);
             if (price > 0) {
                 var profit = this.HandElement.PayKinds.filter(function (x) { return x.Gain }).map(function (x) { return { Id: x.Id, Num: x.Gain } });
-                var nowPrice = profit.map(function(x){return x.Num}).reduce(function (a, b) { return +a + +b; }, 0);
+                var nowPrice = profit.map(function (x) { return x.Num }).reduce(function (a, b) { return +a + +b; }, 0);
                 if (!_this.HandElement.isAjax) {
                     if (price * 0.95 >= nowPrice) {
                         swal({
@@ -1375,7 +1486,7 @@
     var service = {
         RePrinterElement: {
             UnShiftDines: [],
-            CurrentDeskId:"",
+            CurrentDeskId: "",
         },
         Initialize: function () {
             var _this = this;
@@ -1386,7 +1497,7 @@
         },
         RePrintDine: function (dine) {
             var _this = this;
-            $http.post('../Templates/RePrintDine', {Id:dine.Id}).then(function (response) {
+            $http.post('../Templates/RePrintDine', { Id: dine.Id }).then(function (response) {
 
             })
         }
@@ -1397,12 +1508,12 @@
 var GetReason = function (Reasons) {
     var result = '<div class ="control-group"><p>请选择退菜理由</p>';
     for (var i = 0; i < Reasons.length; i++) {
-         result += '<div class="radio">'
-						+ '<label>'
-						    + '<input name="form-field-radio" type="radio" class="ace" data-description="' + Reasons[i].Description + '" />'
-						    + '<span class="lbl">' + Reasons[i].Description + '</span>'
-						+ '</label>'
-					+ '</div>'
+        result += '<div class="radio">'
+                       + '<label>'
+                           + '<input name="form-field-radio" type="radio" class="ace" data-description="' + Reasons[i].Description + '" />'
+                           + '<span class="lbl">' + Reasons[i].Description + '</span>'
+                       + '</label>'
+                   + '</div>'
     }
     result += '</div>';
     return result;

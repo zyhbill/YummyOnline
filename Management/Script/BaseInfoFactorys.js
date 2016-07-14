@@ -7,6 +7,11 @@
             ServiceDepartment: {},
             ReciptDepartment: {},
             newArea: {},
+            Types: [
+                { Name: '堂吃区域', Value: 0 },
+                { Name: '外卖区域', Value: 1 }
+            ],
+            CurrentType:0,
             isAjax: false
         },
         intialize: function () {
@@ -38,13 +43,14 @@
             this.AreaElement.isAjax = true;
             var _this = this;
             var deferred = $q.defer();
-            $http.post('../Baseinfo/AddArea', { area: _this.AreaElement.newArea }).success(function (data) {
+            $http.post('../Baseinfo/AddArea', { area: _this.AreaElement.newArea, Type:_this.AreaElement.CurrentType}).success(function (data) {
                 _this.AreaElement.isAjax = false;
                 if (data.Status) {
                     _this.AreaElement.newArea.DepartmentServeId = _this.AreaElement.ServiceDepartment.Id;
                     _this.AreaElement.newArea.DepartmentReciptId = _this.AreaElement.ReciptDepartment.Id;
                     _this.AreaElement.newArea.ReciptDepartment = _this.AreaElement.ReciptDepartment.Name;
                     _this.AreaElement.newArea.ServiceDepartment = _this.AreaElement.ServiceDepartment.Name;
+                    _this.AreaElement.newArea.Type = _this.AreaElement.CurrentType;
                     _this.AreaElement.Areas.push(_this.AreaElement.newArea);
                     _this.AreaElement.newArea = {};
                 } else {
@@ -90,7 +96,11 @@
             var _this = this;
             var deferred = $q.defer();
             this.AreaElement.isAjax = true;
-            $http.post('../Baseinfo/EditArea', { Area: area, OriginAreaId: OriId }).success(function (data) {
+            $http.post('../Baseinfo/EditArea', {
+                Area: area
+                , OriginAreaId: OriId
+                ,Type:_this.AreaElement.CurrentType
+            }).success(function (data) {
                 _this.AreaElement.isAjax = false;
                 deferred.resolve(data);
             }).error(function (data) {

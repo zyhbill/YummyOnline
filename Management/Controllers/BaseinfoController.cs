@@ -112,7 +112,7 @@ namespace Management.Controllers
         /// <param name="Area"></param>
         /// <param name="OriginAreaId">原先更改的桌台号码</param>
         /// <returns></returns>
-        public async Task<JsonResult> EditArea(Area Area, string OriginAreaId)
+        public async Task<JsonResult> EditArea(Area Area, string OriginAreaId,int Type)
         {
             if (Area.Id != OriginAreaId)
             {
@@ -120,6 +120,7 @@ namespace Management.Controllers
                 var area = await db.Areas.Where(a => a.Id == OriginAreaId).FirstOrDefaultAsync();
                 db.Areas.Remove(area);
                 db.SaveChanges();
+                Area.Type = (AreaType)Type;
                 db.Areas.Add(Area);
             }
             else
@@ -129,20 +130,21 @@ namespace Management.Controllers
                 area.Description = Area.Description;
                 area.DepartmentServeId = Area.DepartmentServeId;
                 area.DepartmentReciptId = Area.DepartmentReciptId;
+                area.Type = (AreaType)Type;
             }
             db.SaveChanges();
-            return Json(new { Status = true });
+            return Json(new SuccessState());
         }
         /// <summary>
         /// 增加区域
         /// </summary>
         /// <param name="area"></param>
         /// <returns></returns>
-        public async Task<JsonResult> AddArea(newArea area)
+        public async Task<JsonResult> AddArea(newArea area,int Type)
         {
             var Clean = await db.Areas.FirstOrDefaultAsync(a => a.Id == area.Id);
             if (Clean != null) {
-                if(Clean.Usable == true) return Json(new { Status=false,ErrorMessage="已有相同编号"});
+                if(Clean.Usable == true) return Json(new ErrorState("已有相同编号"));
                 else
                 {
                     Clean.Name = area.Name;
@@ -150,8 +152,9 @@ namespace Management.Controllers
                     Clean.Description = area.Description;
                     Clean.DepartmentReciptId = area.DepartmentReciptId;
                     Clean.DepartmentServeId = area.DepartmentServeId;
+                    Clean.Type = (AreaType)Type;
                     db.SaveChanges();
-                    return Json(new { Status = true });
+                    return Json(new SuccessState());
                 }
             }
             else
@@ -163,9 +166,10 @@ namespace Management.Controllers
                 NewAr.Description = area.Description;
                 NewAr.DepartmentReciptId = area.DepartmentReciptId;
                 NewAr.DepartmentServeId = area.DepartmentServeId;
+                NewAr.Type = (AreaType)Type;
                 db.Areas.Add(NewAr);
                 db.SaveChanges();
-                return Json(new { Status = true }); 
+                return Json(new SuccessState()); 
             }
             
         }

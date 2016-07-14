@@ -352,7 +352,7 @@ namespace Management.Controllers
                 .Include(m => m.Classes)
                 .Include(m => m.Remarks)
                 .Include(m => m.MenuPrice)
-                .Select(m => new { m.Id, m.Name, m.Code, m.MinOrderCount, m.PicturePath, m.Remarks, m.MenuPrice, m.Classes,m.EnglishName })
+                .Select(m => new { m.Id, m.Name, m.Code, m.MinOrderCount, m.PicturePath, m.Remarks, m.MenuPrice, m.Classes,m.EnglishName,m.NameAbbr })
                 .ToListAsync();
             var specials = await db.MenuOnSales.ToListAsync();
             foreach (var i in menus)
@@ -1091,6 +1091,125 @@ namespace Management.Controllers
                 MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, Id, new List<int>(), new List<PrintType>() { PrintType.Recipt }));
             }
             return null;
+        }
+        /// <summary>
+        /// 智能获取地址
+        /// </summary>
+        /// <param name="Phone"></param>
+        /// <returns></returns>
+        public async Task<JsonResult> SmartChoose(string Phone)
+        {
+            var User = await sysdb.Users
+                .Include(u=>u.UserAddresses)
+                .Where(u => u.PhoneNumber == Phone)
+                .ToListAsync();
+            if (User == null)
+            {
+                var NUser = new YummyOnlineDAO.Models.User()
+                {
+                    PhoneNumber = Phone
+                };
+                sysdb.Users.Add(NUser);
+                await db.SaveChangesAsync();
+                return Json(new SuccessState(NUser));
+            }
+            else
+            {
+                return Json(new SuccessState(User));
+            }
+        }
+        /// <summary>
+        /// 删除用户地址
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
+        public async Task<JsonResult> DeleteAddress(string UserId, string Address)
+        {
+            var Addresses = await sysdb.UserAddresses.Where(d => d.UserId == UserId && d.Address == Address).FirstOrDefaultAsync();
+            sysdb.UserAddresses.Remove(Addresses);
+            await sysdb.SaveChangesAsync();
+            var User = await sysdb.Users
+               .Include(u => u.UserAddresses)
+               .Where(u => u.Id == UserId)
+               .ToListAsync();
+            return Json(new SuccessState(User));
+        }
+
+        public async Task<JsonResult> OpenReserve(OpenInfo OrderInfo, OpenDiscount OpenDiscount,string Address,string ShiftNum,string Phone)
+        {
+            if (OpenDiscount.Discount > 100 || OpenDiscount.Discount <= 0) { return Json(new { Succeeded = false, ErrorMessage = "别逗了，我哪来那么多钱" }); }
+            int HotelId = (int)(Session["User"] as RStatus).HotelId;
+            string ClerkId = (Session["User"] as RStatus).ClerkId;
+            string Token = await sysdb.SystemConfigs.Select(s => s.Token).FirstOrDefaultAsync();
+            var ht = new HotelContext(Session["ConnectString"] as string);
+            int PayKindId = await ht.PayKinds
+                                .Where(p => p.Usable == true && p.Type == PayKindType.Cash)
+                                .Select(p => p.Id)
+                                .FirstOrDefaultAsync();
+            string DiscountName = null;
+            float? Discount = null;
+            if (OpenDiscount.IsSet != null)
+            {
+                //自定义打折方案
+                Discount = (float)OpenDiscount.Discount / 100;
+                DiscountName = "自定义";
+            }
+            var User = await sysdb.Users.Where(d => d.PhoneNumber == Phone).FirstOrDefaultAsync();
+            if (User == null)
+            {
+                User = new User()
+                {
+                    PhoneNumber = Phone
+                };
+                sysdb.Users.Add(User);
+                await sysdb.SaveChangesAsync();
+            }
+            var result = await Method.postHttp("http://ordersystem.yummyonline.net/Payment/ManagerPay",
+                new
+                {
+                    Cart = new
+                    {
+                        HeadCount = OrderInfo.HeadCount,
+                        Price = OrderInfo.Price,
+                        PriceInPoints = 0,
+                        Invoice = "",
+                        DeskId = OrderInfo.Desk.Id,
+                        PayKind = new { Id = PayKindId },
+                        OrderedMenus = OrderInfo.OrderedMenus
+                    },
+                    CartAddition = new
+                    {
+                        Token = Token,
+                        HotelId = HotelId,
+                        WaiterId = ClerkId,
+                        UserId = User.Id,
+                        Discount = Discount,
+                        DiscountName = DiscountName,
+                        GiftMenus = OrderInfo.SendMenus
+                    }
+                });
+            PostData pd = JsonConvert.DeserializeObject<PostData>(result);
+            if (pd.Succeeded)
+            {
+                db.TakeOuts.Add(new TakeOut()
+                {
+                    DineId = pd.Data,
+                    Address = Address,
+                    Record = ShiftNum
+                });
+
+                try
+                {
+                    var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
+                    if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, pd.Data, new List<int>(), new List<PrintType>() { PrintType.Recipt, PrintType.KitchenOrder, PrintType.ServeOrder }));
+                }
+                catch
+                {
+
+                }
+            }
+            return Json(new SuccessState());
         }
     }
 }

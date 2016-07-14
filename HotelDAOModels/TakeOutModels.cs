@@ -14,5 +14,7 @@ namespace HotelDAO.Models {
 
 		[MaxLength(128)]
 		public string Address { get; set; }
+
+		public string RecordId { get; set; }
 	}
 }

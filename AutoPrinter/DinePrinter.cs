@@ -145,7 +145,16 @@ namespace AutoPrinter {
 
 			printGrid55(printer, new string[] { $"单号: {protocol.Dine.Id}", $"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}" }, protocol.PrinterFormat.ReciptFontSize);
 			printGrid55(printer, new string[] { $"顾客: {protocol.User?.Id}", $"服务员: {protocol.Dine.Waiter.Name}" }, protocol.PrinterFormat.ReciptFontSize);
-			printer.DrawStringLine($"餐桌: {protocol.Dine.Desk.Name}", protocol.PrinterFormat.ReciptFontSize);
+
+			if(protocol.Dine.Desk.AreaType == HotelDAO.Models.AreaType.Normal) {
+				printer.DrawStringLine($"餐桌: {protocol.Dine.Desk.Name}", protocol.PrinterFormat.ReciptFontSize);
+			}
+			else if(protocol.Dine.Desk.AreaType == HotelDAO.Models.AreaType.TakeOut) {
+				printer.DrawStringLine($"外卖: {protocol.Dine.Desk.Name}", protocol.PrinterFormat.ReciptBigFontSize);
+				printer.DrawStringLine($"手机: {protocol.User.PhoneNumber}", protocol.PrinterFormat.ReciptBigFontSize);
+				printer.DrawStringLine($"地址: {protocol.Dine.TakeOut.Address}", protocol.PrinterFormat.ReciptBigFontSize);
+			}
+
 
 			printHr(printer);
 

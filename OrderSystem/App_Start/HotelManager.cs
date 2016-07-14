@@ -188,7 +188,10 @@ namespace OrderSystem {
 						Name = d.PayKind.Name,
 						Type = d.PayKind.Type
 					}
-				}).ToList()
+				}).ToList(),
+				TakeOut = new Protocol.PrintingProtocol.TakeOut {
+					Address = p.TakeOut.Address
+				}
 			});
 		}
 

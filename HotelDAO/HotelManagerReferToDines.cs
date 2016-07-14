@@ -55,7 +55,8 @@ namespace HotelDAO {
 					p.Desk.Id,
 					p.Desk.QrCode,
 					p.Desk.Name,
-					p.Desk.Description
+					p.Desk.Description,
+					AreaType = p.Desk.Area.Type
 				},
 				DineMenus = p.DineMenus.Select(d => new {
 					d.Id,
@@ -91,7 +92,10 @@ namespace HotelDAO {
 						d.PayKind.Name,
 						d.PayKind.Type
 					}
-				})
+				}),
+				TakeOut = new {
+					p.TakeOut.Address
+				}
 			});
 		}
 	}

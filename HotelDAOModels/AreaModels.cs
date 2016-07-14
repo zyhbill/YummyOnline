@@ -4,6 +4,16 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HotelDAO.Models {
+	public enum AreaType {
+		/// <summary>
+		/// 正常营业区域
+		/// </summary>
+		Normal = 0,
+		/// <summary>
+		/// 外卖区域
+		/// </summary>
+		TakeOut = 1
+	}
 	/// <summary>
 	/// 区域
 	/// </summary>
@@ -14,8 +24,9 @@ namespace HotelDAO.Models {
 		public string Name { get; set; }
 		[MaxLength(128)]
 		public string Description { get; set; }
+		public AreaType Type { get; set; }
 		public bool Usable { get; set; }
-		
+
 		/// <summary>
 		/// 收银部门
 		/// </summary>
@@ -26,7 +37,7 @@ namespace HotelDAO.Models {
 		/// 传菜单部门
 		/// </summary>
 		public int? DepartmentServeId { get; set; }
-		public Department DepartmentServe { get; set;}
+		public Department DepartmentServe { get; set; }
 
 		public ICollection<Desk> Desks { get; set; }
 	}
@@ -70,7 +81,7 @@ namespace HotelDAO.Models {
 		/// </summary>
 		public decimal MinPrice { get; set; }
 		public bool Usable { get; set; } = true;
-		
+
 		public string AreaId { get; set; }
 		public Area Area { get; set; }
 	}

@@ -100,6 +100,15 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>Type</td>
+				<td>int</td>
+				<td>区域类型</td>
+				<td>
+					<p>0 普通区域</p>
+					<p>1 外卖</p>
+				</td>
+			</tr>
+			<tr>
 				<td>Usable</td>
 				<td>bit</td>
 				<td>是否可用</td>
@@ -1353,20 +1362,20 @@
 			</tr>
 			<tr class="primary-key">
 				<td>Id</td>
-				<td>varchar(14)</td>
+				<td>nvarchar(14)</td>
 				<td>点单编号</td>
 				<td></td>
 			</tr>
 			<tr>
-				<td>PhoneNumber</td>
-				<td>varchar(11)</td>
-				<td>电话号码</td>
+				<td>Address</td>
+				<td>nvarchar(128)</td>
+				<td>地址</td>
 				<td></td>
 			</tr>
 			<tr>
-				<td>Address</td>
-				<td>varchar(128)</td>
-				<td>地址</td>
+				<td>RecordId</td>
+				<td>nvarchar(MAX)</td>
+				<td>第三方外卖平台编号</td>
 				<td></td>
 			</tr>
 		</table>
@@ -1869,6 +1878,27 @@
 				<td>DefaultAdminConnectionString</td>
 				<td>nvarchar(MAX)</td>
 				<td>默认最高权限连接字符串</td>
+				<td></td>
+			</tr>
+		</table>
+
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>UserAddresses</th>
+				<th></th>
+				<th>用户地址一对多表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>UserId</td>
+				<td>nvarchar(10)</td>
+				<td>用户编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>Address</td>
+				<td>nvarchar(128)</td>
+				<td>地址</td>
 				<td></td>
 			</tr>
 		</table>

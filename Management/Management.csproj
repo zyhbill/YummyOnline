@@ -411,6 +411,7 @@
     <Content Include="Views\Vip\Index.cshtml" />
     <Content Include="Views\Templates\TakeOut.cshtml" />
     <Content Include="Views\Templates\RePrinter.cshtml" />
+    <Content Include="Views\Templates\PayAll.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

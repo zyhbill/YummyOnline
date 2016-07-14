@@ -64,7 +64,10 @@ namespace Management.Controllers
             return View("RePrinter");
         }
 
-        
+        public ActionResult PayAll()
+        {
+            return View("PayAll");
+        }
         /// <summary>
         /// 获取信息
         /// </summary>
@@ -951,6 +954,43 @@ namespace Management.Controllers
                         {
                             temp.Price = menu.MenuPrice.Price * (decimal)dine.Discount;
                         }
+                        var serMenu = await db.MenuOnSales.Where(d => d.Id == menu.Id).FirstOrDefaultAsync();
+                        var SetMeal = await db.MenuSetMeals.Where(d => d.MenuSetId == menu.Id).FirstOrDefaultAsync();
+                        if (dine.DiscountType == DiscountType.None)
+                        {
+                            if (SetMeal != null)
+                            {
+                                temp.Type = DineMenuType.SetMeal;
+                            }
+                            else if (serMenu != null)
+                            {
+                                temp.Type = DineMenuType.OnSale;
+                            }
+                            else
+                            {
+                                temp.Type = DineMenuType.None;
+                            }
+                        }
+                        else
+                        {
+                            if (dine.DiscountType == DiscountType.PayKind)
+                            {
+                                temp.Type = DineMenuType.PayKindDiscount;
+                            }
+                            else if(dine.DiscountType==DiscountType.Custom)
+                            {
+                                temp.Type = DineMenuType.CustomDiscount;
+                            }
+                            else if(dine.DiscountType == DiscountType.Time)
+                            {
+                                temp.Type = DineMenuType.TimeDiscount;
+                            }
+                            else if (dine.DiscountType == DiscountType.Vip)
+                            {
+                                temp.Type = DineMenuType.VipDiscount;
+                            }
+                        }
+                        
                         if (i.Remarks != null)
                         {
                             temp.RemarkPrice = await db.Remarks

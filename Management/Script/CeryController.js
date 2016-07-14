@@ -453,6 +453,9 @@
         }
     }
 }])
+.controller('PayAll', ['$scope', '$rootScope', '$uibModal', 'Pay', function ($scope, $rootScope, $uibModal, Pay) {
+    $rootScope.FatherPage = "订单控制";  $rootScope.ChildPage = "外卖结账";
+}])
 .controller('NotFound', ['$scope', '$rootScope', function ($scope, $rootScope) {
     //未找到页面
     $rootScope.FatherPage = "页面错误"; $rootScope.FatherPath = "#/404"; $rootScope.ChildPage = "未找到页面";

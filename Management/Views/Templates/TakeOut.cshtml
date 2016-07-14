@@ -18,12 +18,7 @@
                     <div class="desk" ng-repeat="desk in SysElements.Desks|filter:{Status:1}" ng-click="OpenModel(desk)">
                         <h4 ng-if="desk.Status"><img src="~/Content/images/eating.png" class="img-responsive"></h4>
                         <p ng-if="desk.Status" class="text-danger text-center">
-                            <span ng-show="area.Type==0">
-                                {{desk.Id}}
-                            </span>
-                            <span ng-show="area.Type==1">
-                                {{desk.Name}}
-                            </span>
+                            {{desk.Id}}
                         </p>
                     </div>
                 </div>

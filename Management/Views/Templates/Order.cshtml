@@ -73,7 +73,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="dine in PayElements.UnpaidDines|filter:{DeskId:PayElements.Desk.Id}" ng-click="SetDine(dine)">
+                            <tr ng-repeat="dine in PayElements.UnpaidDines|filter:{DeskId:PayElements.Desk.Id}" ng-click="SetDine(dine)"  ng-class="{DineChoose:dine.isChoose}"> 
                                 <td>{{dine.Id}}</td>
                                 <td>{{dine.HeadCount}}</td>
                                 <td>{{dine.BeginTime|date:'yyyy-MM-dd HH:mm:ss'}}</td>
@@ -337,6 +337,7 @@
                 预定
                 <div class="form-group openDesk">
                     <label>管理员:&nbsp;@((Session["User"] as Management.ObjectClasses.RStatus).Name)</label>
+                    <label>桌台号:&nbsp;<span>{{OpenElements.CurrentDesk.Id}}</span></label>&nbsp;&nbsp;
                 </div>
             </div>
         </h3>

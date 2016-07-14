@@ -10,9 +10,9 @@ using Protocol;
 using System.Collections.Generic;
 
 namespace OrderSystem.Controllers {
-	public class GlobalAccountController : BaseOrderSystemController {
+	public abstract class BaseAccountController : BaseOrderSystemController {
 		#region 用户注册
-		public async Task<JsonResult> SendSMS(string phoneNumber) {
+		public virtual async Task<JsonResult> SendSMS(string phoneNumber) {
 			if(await UserManager.IsPhoneNumberDuplicated(phoneNumber)) {
 				return Json(new JsonError("此号码已注册"));
 			}
@@ -24,7 +24,7 @@ namespace OrderSystem.Controllers {
 
 			return Json(new JsonSuccess());
 		}
-		public async Task<JsonResult> Signup(SignupViewModel model) {
+		public virtual async Task<JsonResult> Signup(SignupViewModel model) {
 			if((string)Session["SmsCode"] != model.Code) {
 				return Json(new JsonError("验证码不正确", "code"));
 			}
@@ -91,14 +91,14 @@ namespace OrderSystem.Controllers {
 		#endregion
 
 		#region 登出
-		public JsonResult Signout() {
+		public virtual JsonResult Signout() {
 			SigninManager.Signout();
 			return Json(new JsonSuccess());
 		}
 		#endregion
 
 		#region 忘记密码
-		public async Task<ActionResult> SendForgetSMS(string phoneNumber) {
+		public virtual async Task<ActionResult> SendForgetSMS(string phoneNumber) {
 			if(!await UserManager.IsPhoneNumberDuplicated(phoneNumber)) {
 				return Json(new JsonError("此号码未注册"));
 			}
@@ -110,7 +110,7 @@ namespace OrderSystem.Controllers {
 
 			return Json(new JsonSuccess());
 		}
-		public async Task<JsonResult> Forget(ForgetViewModel model) {
+		public virtual async Task<JsonResult> Forget(ForgetViewModel model) {
 			if(Session["SMSForgetCode"] == null || Session["SMSForgetCode"].ToString() != model.Code) {
 				return Json(new JsonError("验证码不正确", "code"));
 			}
@@ -207,7 +207,7 @@ namespace OrderSystem.Controllers {
 
 	[RequireHotel]
 	[HotelAvailable]
-	public class AccountController : GlobalAccountController {
+	public class AccountController : BaseAccountController {
 		// GET: Account
 		public ActionResult Index() {
 			return View();

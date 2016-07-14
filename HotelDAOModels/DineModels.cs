@@ -130,6 +130,16 @@ namespace HotelDAO.Models {
 		public TakeOut TakeOut { get; set; }
 	}
 
+	public enum DineMenuType {
+		None = 0,
+		OnSale = 1,
+		MenuDiscount = 2,
+		PayKindDiscount = 3,
+		TimeDiscount = 4,
+		VipDiscount = 5,
+		CustomDiscount = 6,
+		SetMeal = 7
+	}
 	public enum DineMenuStatus {
 		/// <summary>
 		/// 普通
@@ -157,6 +167,7 @@ namespace HotelDAO.Models {
 		public string MenuId { get; set; }
 		public Menu Menu { get; set; }
 
+		public DineMenuType Type { get; set; } = DineMenuType.None;
 		public DineMenuStatus Status { get; set; } = DineMenuStatus.Normal;
 		public int Count { get; set; }
 		public decimal OriPrice { get; set; }
@@ -189,7 +200,7 @@ namespace HotelDAO.Models {
 		/// </summary>
 		public string RecordId { get; set; }
 	}
-	
+
 	public class ReturnedReason {
 		[Key]
 		public int Id { get; set; }

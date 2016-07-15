@@ -455,7 +455,31 @@
 }])
 .controller('PayAllCtrl', ['$scope', '$rootScope', '$uibModal', 'SpePay', function ($scope, $rootScope, $uibModal, SpePay) {
     $rootScope.FatherPage = "订单控制"; $rootScope.ChildPage = "外卖结账";
-
+    $scope.Initialize = function () {
+        SpePay.Initialize();
+    }
+    $scope.Element = SpePay.Element;
+    $scope.getUnPaidDines = function () {
+        SpePay.getUnPaidDines();
+    }
+    $scope.ChooseDine = function (dine) {
+        SpePay.ChooseDine(dine);
+    }
+    $scope.RemoveDine = function (dine) {
+        SpePay.RemoveDine(dine);
+    }
+    $scope.ChooseAll = function () {
+        SpePay.ChooseAll();
+    }
+    $scope.Account = function () {
+        return SpePay.Account();
+    }
+    $scope.Pay = function () {
+        SpePay.Pay();
+    }
+    $scope.Detail = function () {
+        SpePay.Detail();
+    }
 }])
 .controller('NotFound', ['$scope', '$rootScope', function ($scope, $rootScope) {
     //未找到页面

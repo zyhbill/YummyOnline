@@ -518,13 +518,80 @@
     var service = {
         Element: {
             TakeOutDeskes: [],
-
+            UnPaidDines: [],
+            CurrentDesk: {},
+            ChooseDines:[],
+            UnChooseDines: [],
+            SearchDines:[],
+            Cash:"",
         },
         Initialize: function () {
             var _this = this;
-            $http.post('../Templates/GetAddMenuEle').then(function (response) {
-                _this.Element.TakeOutDeskes =  response.data
+            this.Element.CurrentDesk = {};
+            _this.Element.ChooseDines = [];
+            _this.Element.UnChooseDines = [];
+            _this.Element.SearchDines = [];
+            _this.Element.Cash = "";
+            $http.post('../Templates/getSpePayEle').then(function (response) {
+                _this.Element.TakeOutDeskes = response.data.Data.Desks;
+                _this.Element.UnPaidDines = response.data.Data.Dines;
+            });
+        },
+        getUnPaidDines: function () {
+            var _this = this;
+            this.Element.UnChooseDines = this.Element.UnPaidDines.filter(function (x) { return x.DeskId == _this.Element.CurrentDesk.Id });
+            _this.Element.SearchDines = [];
+        },
+        ChooseDine: function (dine) {
+            var _this = this;
+            this.Element.ChooseDines.push(angular.copy(dine));
+            this.Element.UnChooseDines.forEach(function (x,index) {
+                if (x.Id == dine.Id) _this.Element.UnChooseDines.splice(index, 1);
             })
+        },
+        RemoveDine: function (dine) {
+            var _this = this;
+            this.Element.UnChooseDines.push(angular.copy(dine));
+            this.Element.ChooseDines.forEach(function (x, index) {
+                if (x.Id == dine.Id) _this.Element.ChooseDines.splice(index, 1);
+            })
+        },
+        ChooseAll: function () {
+            var _this = this;
+            this.Element.UnChooseDines.forEach(function (x) {
+                _this.Element.ChooseDines.push(angular.copy(x));
+            })
+            this.Element.UnChooseDines = [];
+        },
+        Pay: function () {
+            var _this = this;
+            var DineIds  = this.Element.ChooseDines.map(function(x){return x.Id});
+            $http.post('../Templates/SpecialPay', {
+                Price: _this.Element.Cash,
+                DineIds: DineIds
+            }).then(function (response) {
+                if (response.data.Status) {
+                    swal("支付已完成!", "原价:" + $filter('currency')(_this.Account(), "￥", 0.00) +
+                     ",已付:" + $filter('currency')(_this.Element.Cash, "￥", 0.00) +
+                     ",找零:" + $filter('currency')(_this.Element.Cash - _this.Account(), "￥", 0.00), "success")
+                    _this.Element.TakeOutDeskes = response.data.Data.Desks;
+                    _this.Element.UnPaidDines = response.data.Data.Dines;
+                    _this.Element.CurrentDesk = {};
+                    _this.Element.ChooseDines = [];
+                    _this.Element.UnChooseDines = [];
+                    _this.Element.SearchDines = [];
+                    _this.Element.Cash = "";
+                }
+                else {
+                    alert(response.data.ErrorMessage);
+                }
+            });
+        },
+        Account: function () {
+            return this.Element.ChooseDines.map(function (x) { return x.Price }).reduce(function (a, b) { return +a + +b }, 0);
+        },
+        Detail: function () {
+            this.Element.SearchDines = angular.copy(this.Element.ChooseDines);
         }
     }
     return service;

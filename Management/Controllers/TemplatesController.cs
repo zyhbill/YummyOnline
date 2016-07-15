@@ -1269,9 +1269,104 @@ namespace Management.Controllers
         /// <returns></returns>
         public async Task<JsonResult> getSpePayEle()
         {
+            var HotelManager = new HotelManager(ConnectingStr);
+            var Desks = await HotelManager.GetTakeOutDeskes();
+            var DeskIds = Desks.Select(d => d.Id);
+            List<Dine> Dines = new List<Dine>();
+            if (DeskIds.Count() > 0)
+            {
 
+                Dines = await db.Dines
+                    .Include(d=>d.DineMenus.Select(dd=>dd.Menu.MenuPrice))
+                    .Include(d=>d.DineMenus.Select(dd=>dd.Remarks))
+                    .Include(d=>d.TakeOut)
+                    .Where(d => DeskIds.Contains(d.DeskId) && d.IsPaid == false).ToListAsync();
+            }
+            return Json(new SuccessState(new { Dines = Dines, Desks = Desks }));
         }
 
+
+        public async Task<JsonResult> SpecialPay(decimal Price,List<string> DineIds)
+        {
+            var HotelManager = new HotelManager(ConnectingStr);
+            var UnPaidDines = await db.Dines.Where(d => DineIds.Contains(d.Id)).ToListAsync();
+            decimal priceAll = 0;
+            var myDesks = await db.Desks.Where(d => d.Usable == true).ToListAsync();
+            var myDines = await db.Dines.Where(d => d.IsPaid == false && d.IsOnline == false).ToListAsync();
+            if (UnPaidDines == null||UnPaidDines.Count==0)
+            {
+                return Json(new ErrorState("未选择订单"));
+            }
+            else
+            {
+                foreach(var  i in UnPaidDines)
+                {
+                    priceAll += i.Price;
+                }
+            }
+            if (priceAll > Price)
+            {
+                return Json(new ErrorState("付款金额不够"));
+            }
+            else
+            {
+                var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
+                var Cash = await HotelManager.GetCashId();
+                for(var i =0;i<UnPaidDines.Count();i++)
+                {
+                    db.DinePaidDetails.Add(new DinePaidDetail
+                    {
+                        DineId = UnPaidDines[i].Id,
+                        PayKindId = Cash,
+                        Price = UnPaidDines[i].Price
+                    });
+                    UnPaidDines[i].IsPaid = true;
+                    MvcApplication.client.Send(new NewDineInformProtocol((int)(Session["User"] as RStatus).HotelId, UnPaidDines[i].Id, true));
+                    await db.SaveChangesAsync();
+                    var CurDesk = UnPaidDines[i].DeskId;
+                    var CleanDeskDine = myDines.Where(d=>d.DeskId == CurDesk).Count();
+                    if (CleanDeskDine == 0)
+                    {
+                        var CleanDesk = myDesks.FirstOrDefault(d => d.Id == CurDesk);
+                        CleanDesk.Status = DeskStatus.StandBy;
+                        await db.SaveChangesAsync();
+                        await MvcApplication.ws.SendToClient((int)(Session["User"] as RStatus).HotelId, "desk");
+                    }
+                    try
+                    {
+                        if (isprint)
+                        {
+                            if (UnPaidDines[i].Status == DineStatus.Printed)
+                            {
+                                MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, UnPaidDines[i].Id, new List<int>(), new List<PrintType>() { PrintType.Recipt }));
+                            }
+                            else
+                            {
+                                MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, UnPaidDines[i].Id, new List<int>(), new List<PrintType>() { PrintType.Recipt, PrintType.KitchenOrder, PrintType.ServeOrder }));
+                            }
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
+                
+            }
+            var Desks = await HotelManager.GetTakeOutDeskes();
+            var DeskIds = Desks.Select(d => d.Id);
+            List<Dine> Dines = new List<Dine>();
+            if (DeskIds.Count() > 0)
+            {
+
+                Dines = await db.Dines
+                    .Include(d => d.DineMenus.Select(dd => dd.Menu.MenuPrice))
+                    .Include(d => d.DineMenus.Select(dd => dd.Remarks))
+                    .Include(d => d.TakeOut)
+                    .Where(d => DeskIds.Contains(d.DeskId) && d.IsPaid == false).ToListAsync();
+            }
+            return Json(new SuccessState(new { Dines = Dines, Desks = Desks }));
+        }
 
     }
 }

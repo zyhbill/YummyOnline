@@ -1262,5 +1262,16 @@ namespace Management.Controllers
             }
             return Json(new SuccessState());
         }
+
+        /// <summary>
+        /// 获取外卖统一支付的信息
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> getSpePayEle()
+        {
+
+        }
+
+
     }
 }

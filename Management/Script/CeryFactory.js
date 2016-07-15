@@ -514,6 +514,21 @@
     }
     return service;
 }])
+.factory('SpePay', ['$http', '$q', '$filter', '$rootScope', function ($http, $q, $filter, $rootScope) {
+    var service = {
+        Element: {
+            TakeOutDeskes: [],
+
+        },
+        Initialize: function () {
+            var _this = this;
+            $http.post('../Templates/GetAddMenuEle').then(function (response) {
+                _this.Element.TakeOutDeskes =  response.data
+            })
+        }
+    }
+    return service;
+}])
 .factory('Open', ['$http', '$q', '$filter', '$rootScope', '$cookies', function ($http, $q, $filter, $rootScope, $cookies) {
     var temp = 0;
     var service = {

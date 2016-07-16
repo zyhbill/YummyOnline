@@ -145,7 +145,7 @@ namespace Protocol.PrintingProtocol {
 	}
 	public class ShiftForPrinting {
 		public List<Shift> Shifts { get; set; }
-		public string PrinterName { get; set; }
+		public string PrinterIpAddress { get; set; }
 		public PrinterFormat PrinterFormat { get; set; }
 	}
 }

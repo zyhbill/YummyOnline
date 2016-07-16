@@ -13,7 +13,7 @@ using Utility;
 using YummyOnlineTcpClient;
 
 namespace AutoPrinter {
-	class Program {
+	partial class Program {
 		private static int hotelId = Convert.ToInt32(ConfigurationManager.AppSettings["HotelId"]);
 		private static string tcpServerIp = ConfigurationManager.AppSettings["TcpServerIp"].ToString();
 		private static int tcpServerPort = Convert.ToInt32(ConfigurationManager.AppSettings["TcpServerPort"]);
@@ -23,7 +23,7 @@ namespace AutoPrinter {
 			Console.WriteLine($"版本: {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
 			Process[] tProcess = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
 			if(tProcess.Length > 1) {
-				Console.WriteLine("打印程序已经打开，请关闭后再打开打印程序。");
+				localLog("打印程序已经打开，请关闭后再打开打印程序。");
 				Console.Read();
 				return;
 			}
@@ -44,32 +44,36 @@ namespace AutoPrinter {
 				}
 			};
 			tcp.CallBackWhenConnected = () => {
-				Console.WriteLine("服务器连接成功");
+				localLog("服务器连接成功");
 				log(Log.LogLevel.Success, "Printer Connected");
 			};
 			tcp.CallBackWhenExceptionOccured = e => {
-				Console.WriteLine(e.Message);
+				localLog(e.Message);
 				log(Log.LogLevel.Error, e.Message, e.ToString());
 			};
 
-			tcp.Start();
+			//tcp.Start();
 
 			while(true) {
 				string cmd = Console.ReadLine();
 				string[] cmds = cmd.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+
 				switch(cmds[0].ToLower()) {
 					case "test":
-						string printerName = "Microsoft XPS Document Writer";
-						if(cmds.Length > 1) {
-							printerName = cmds[1];
+						if(cmds.Length == 1) {
+							Console.WriteLine("缺少IP地址参数");
+							continue;
 						}
-						printTest("00000000000000", new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }, printerName).Wait();
+						string ipAddress = cmds[1];
+						printTest(new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }, ipAddress).Wait();
 						break;
-					case "list":
-						List<string> printers = DinePrinter.ListPrinters();
-						for(int i = 0; i < printers.Count; i++) {
-							Console.WriteLine($"{i + 1} {printers[i]}");
+					case "localtest":
+						if(cmds.Length == 1) {
+							Console.WriteLine("缺少IP地址参数");
+							continue;
 						}
+						ipAddress = cmds[1];
+						printLocalTest(new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }, ipAddress);
 						break;
 				}
 			}
@@ -80,74 +84,100 @@ namespace AutoPrinter {
 			try {
 				dp = await getDineForPrinting(dineId, dineMenuIds);
 				if(dp == null) {
-					Console.WriteLine("获取订单信息失败，请检查网络设置");
+					localLog("获取订单信息失败，请检查网络设置");
 					return;
 				}
-				DinePrinter dinePrinter = new DinePrinter();
-				Console.WriteLine($"正在打印 单号: {dineId}");
-				StringBuilder dineMenuStr = new StringBuilder();
 
+				localLog($"发送打印命令 单号: {dineId}");
+				DinePrinter dinePrinter = new DinePrinter((ip, e) => {
+					localLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}");
+				});
 				dinePrinter.Print(dp, printTypes, dineMenuIds == null);
-				Console.WriteLine($"打印成功 单号: {dineId}");
+				localLog($"发送命令成功 单号: {dineId}");
 				printCompleted(dineId);
 			}
 			catch(Exception e) {
-				Console.WriteLine("无法打印, 请检查打印机设置");
-				Console.WriteLine($"单号: {dineId}, 错误信息: {e}");
+				localLog($"无法打印 单号: {dineId}, 错误信息: {e}");
 				log(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
-				return;
 			}
 		}
+		static async Task printTest(List<PrintType> printTypes, string ipAddress) {
+			DineForPrinting dp = null;
+			try {
+				localLog($"开始测试, 打印机: {ipAddress}");
+				dp = await getDineForPrinting("00000000000000");
+				if(dp == null) {
+					localLog("获取订单信息失败，请检查网络设置");
+					return;
+				}
+				dp.Dine.Desk.ReciptPrinter.IpAddress = ipAddress;
+				dp.Dine.Desk.ServePrinter.IpAddress = ipAddress;
+				foreach(var dineMenu in dp.Dine.DineMenus) {
+					dineMenu.Menu.Printer.IpAddress = ipAddress;
+				}
+
+				localLog($"发送测试单命令");
+				DinePrinter dinePrinter = new DinePrinter((ip, e) => {
+					localLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}");
+				});
+				dinePrinter.Print(dp, printTypes, true);
+				localLog($"发送测试单命令成功");
+				printCompleted("00000000000000");
+			}
+			catch(Exception e) {
+				localLog($"无法打印测试单, 错误信息: {e}");
+				log(Log.LogLevel.Error, $"Online Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
+			}
+		}
+
+		static void printLocalTest(List<PrintType> printTypes, string ipAddress) {
+			DineForPrinting dp = null;
+			try {
+				localLog($"开始本地测试, 打印机: {ipAddress}");
+				dp = generateTestProtocol();
+				dp.Dine.Desk.ReciptPrinter.IpAddress = ipAddress;
+				dp.Dine.Desk.ServePrinter.IpAddress = ipAddress;
+				foreach(var dineMenu in dp.Dine.DineMenus) {
+					dineMenu.Menu.Printer.IpAddress = ipAddress;
+				}
+
+				localLog($"发送本地测试单命令");
+				DinePrinter dinePrinter = new DinePrinter((ip, e) => {
+					localLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}");
+				});
+
+				dinePrinter.Print(dp, printTypes, true);
+				localLog($"发送本地测试单命令成功");
+			}
+			catch(Exception e) {
+				localLog($"无法打印本地测试单, 错误信息: {e}");
+				log(Log.LogLevel.Error, $"Local Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
+			}
+		}
+
 		static async Task printShifts(List<int> Ids, DateTime dateTime) {
 			ShiftForPrinting sp = null;
 			try {
 				sp = await getShiftsForPrinting(Ids, dateTime);
 				if(sp == null) {
-					Console.WriteLine("获取交接班信息失败，请检查网络设置");
+					localLog("获取交接班信息失败，请检查网络设置");
 					return;
 				}
-				ShiftPrinter dinePrinter = new ShiftPrinter();
-				Console.WriteLine($"正在打印 交接班");
+				ShiftPrinter shiftPrinter = new ShiftPrinter((ip, e) => {
+					localLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}");
+				});
+				localLog($"发送打印命令 交接班");
 
-				dinePrinter.Print(sp);
+				shiftPrinter.Print(sp);
 
-				Console.WriteLine($"打印成功 交接班");
+				localLog($"发送命令成功 交接班");
 			}
 			catch(Exception e) {
-				Console.WriteLine("无法打印, 请检查打印机设置");
-				Console.WriteLine($"交接班, 错误信息: {e}");
+				localLog($"无法打印 交接班, 错误信息: {e}");
 				log(Log.LogLevel.Error, $"ShiftInfos, {e.Message}", $"Data: {JsonConvert.SerializeObject(sp)}, Error: {e}");
-				return;
 			}
 		}
 
-		static async Task printTest(string dineId, List<PrintType> printTypes, string printerName) {
-			DineForPrinting dp = null;
-			try {
-				Console.WriteLine($"开始测试, 打印机: {printerName}");
-				dp = await getDineForPrinting(dineId);
-				if(dp == null) {
-					Console.WriteLine("获取订单信息失败，请检查网络设置");
-					return;
-				}
-				dp.Dine.Desk.ReciptPrinter.Name = printerName;
-				dp.Dine.Desk.ServePrinter.Name = printerName;
-				foreach(var dineMenu in dp.Dine.DineMenus) {
-					dineMenu.Menu.Printer.Name = printerName;
-				}
-				DinePrinter dinePrinter = new DinePrinter();
-				Console.WriteLine($"正在打印测试单");
-				dinePrinter.Print(dp, printTypes, true);
-				Console.WriteLine($"测试单打印成功");
-				printCompleted(dineId);
-			}
-			catch(Exception e) {
-				Console.WriteLine("无法打印测试单, 请检查打印机设置");
-				Console.WriteLine($"错误信息: {e}");
-				log(Log.LogLevel.Error, $"DineId: (test){dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
-				return;
-			}
-		}
 		static async Task<DineForPrinting> getDineForPrinting(string dineId, List<int> dineMenuIds = null) {
 			object postData = new {
 				HotelId = hotelId,
@@ -185,7 +215,9 @@ namespace AutoPrinter {
 			};
 			var _ = HttpPost.PostAsync(ConfigurationManager.AppSettings["RemotePrintCompletedUrl"].ToString(), postData);
 		}
-
+		static void localLog(string message) {
+			Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] {message}");
+		}
 		static void log(Log.LogLevel level, string message, string detail = null) {
 			object postData = new {
 				HotelId = hotelId,

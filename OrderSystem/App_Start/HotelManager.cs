@@ -196,8 +196,8 @@ namespace OrderSystem {
 		}
 
 
-		public async Task<string> GetShiftPrinterName() {
-			return await ctx.HotelConfigs.Select(p => p.ShiftPrinter.Name).FirstOrDefaultAsync();
+		public async Task<string> GetShiftPrinterIpAddress() {
+			return await ctx.HotelConfigs.Select(p => p.ShiftPrinter.IpAddress).FirstOrDefaultAsync();
 		}
 		public async Task<List<Protocol.PrintingProtocol.Shift>> GetShiftsForPrinting(List<int> ids, DateTime dateTime) {
 			var dbShifts = await ctx.Shifts.Where(p => ids.Contains(p.Id) && SqlFunctions.DateDiff("day", p.DateTime, dateTime) == 0)

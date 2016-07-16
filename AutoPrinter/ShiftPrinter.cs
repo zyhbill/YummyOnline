@@ -1,53 +1,55 @@
 ﻿using Protocol.PrintingProtocol;
+using System;
 using System.Drawing;
 using System.Drawing.Printing;
+using System.Net;
 
 namespace AutoPrinter {
 	public class ShiftPrinter : BasePrinter {
-		private ShiftForPrinting protocol;
+		public ShiftPrinter(Action<IPEndPoint, Exception> errorDelegate) : base(errorDelegate) { }
 
 		public void Print(ShiftForPrinting protocol) {
-			this.protocol = protocol;
+			PrinterGraphics.FontName = protocol.PrinterFormat.Font;
+			PrinterGraphics.PaperWidth = protocol.PrinterFormat.PaperSize;
 
-			PrinterGraphics.FontName = "宋体";
-			PrinterGraphics.PaperWidth = 278;
+			IPAddress ip = IPAddress.Parse(protocol.PrinterIpAddress);
+			IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
 
-			PrintDocument printer = new PrintDocument();
-			printer.DefaultPageSettings.PaperSize = new PaperSize("Custom", PrinterGraphics.PaperWidth, 1000);
-			PrintPageEventHandler printHandler = (sender, e) => {
-				printShifts(e.Graphics);
-			};
-
-			printer.PrinterSettings.PrinterName = protocol.PrinterName;
-			printer.PrintPage += printHandler;
-			printer.Print();
-			printer.PrintPage -= printHandler;
+			Bitmap bmp = generateShiftsBmp(protocol);
+			printer.Print(bmp);
 		}
 
-		private void printShifts(Graphics g) {
-			PrinterGraphics printer = new PrinterGraphics(g);
+		private Bitmap generateShiftsBmp(ShiftForPrinting protocol) {
+			Bitmap bmp = new Bitmap(556, 1000);
+			Graphics g = Graphics.FromImage(bmp);
+
+			PrinterGraphics printerG = new PrinterGraphics(g);
 			decimal receivablePriceAll = 0, realPriceAll = 0;
 
-			printer.DrawStringLine($"交接班", protocol.PrinterFormat.ShiftBigFontSize, align: StringAlignment.Center);
+			printerG.DrawStringLine($"交接班", protocol.PrinterFormat.ShiftBigFontSize, align: StringAlignment.Center);
 			foreach(Shift shift in protocol.Shifts) {
-				printer.DrawStringLine($"班次: {shift.Id}", protocol.PrinterFormat.ShiftFontSize);
-				printer.DrawStringLine($"时间: {shift.DateTime.ToString("yyyy-MM-dd HH:mm:ss")}", protocol.PrinterFormat.ShiftFontSize);
+				printerG.DrawStringLine($"班次: {shift.Id}", protocol.PrinterFormat.ShiftFontSize);
+				printerG.DrawStringLine($"时间: {shift.DateTime.ToString("yyyy-MM-dd HH:mm:ss")}", protocol.PrinterFormat.ShiftFontSize);
 
-				printGrid433(printer, new string[] { "支付名称", "应收", "实收" }, protocol.PrinterFormat.ShiftSmallFontSize);
+				printGrid433(printerG, new string[] { "支付名称", "应收", "实收" }, protocol.PrinterFormat.ShiftSmallFontSize);
 				foreach(ShiftDetail detail in shift.ShiftDetails) {
 					receivablePriceAll += detail.ReceivablePrice;
 					realPriceAll += detail.RealPrice;
-					printGrid433(printer, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}", $"￥{detail.RealPrice}" }, protocol.PrinterFormat.ShiftFontSize);
+					printGrid433(printerG, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}", $"￥{detail.RealPrice}" }, protocol.PrinterFormat.ShiftFontSize);
 				}
-				printHr(printer);
+				printHr(printerG);
 			}
 
-			printer.DrawStringLine("总计:", protocol.PrinterFormat.ShiftSmallFontSize);
-			printGrid55f(printer, new string[] { "应收", $"￥{receivablePriceAll}" }, protocol.PrinterFormat.ShiftFontSize);
-			printGrid55f(printer, new string[] { "实收", $"￥{realPriceAll}" }, protocol.PrinterFormat.ShiftFontSize);
-			printGrid55f(printer, new string[] { "盈亏", $"￥{(realPriceAll - receivablePriceAll)}" }, protocol.PrinterFormat.ShiftFontSize);
+			printerG.DrawStringLine("总计:", protocol.PrinterFormat.ShiftSmallFontSize);
+			printGrid55f(printerG, new string[] { "应收", $"￥{receivablePriceAll}" }, protocol.PrinterFormat.ShiftFontSize);
+			printGrid55f(printerG, new string[] { "实收", $"￥{realPriceAll}" }, protocol.PrinterFormat.ShiftFontSize);
+			printGrid55f(printerG, new string[] { "盈亏", $"￥{(realPriceAll - receivablePriceAll)}" }, protocol.PrinterFormat.ShiftFontSize);
 
-			printEnd(printer);
+			printEnd(printerG);
+
+			g.Dispose();
+
+			return cutBmp(bmp, printerG.GetHeight());
 		}
 	}
 }

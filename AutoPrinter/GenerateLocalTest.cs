@@ -1,102 +1,13 @@
-﻿using System;
+﻿using Protocol.PrintingProtocol;
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
-using System.Web.Mvc;
-using Utility;
 
-namespace OrderSystem.Controllers {
-	using HotelDAO.Models;
-	using YummyOnlineDAO.Identity;
-
-	[RequireHotel]
-	[HotelAvailable]
-	public class OrderController : BaseOrderSystemController {
-		// GET: Order
-		public ActionResult Index() {
-			return View();
-		}
-
-		public async Task<ActionResult> _ViewMenu() {
-			ViewBag.OrderSystemStyle = (await YummyOnlineManager.GetHotelById(CurrHotel.Id)).OrderSystemStyle;
-			return View();
-		}
-		public ActionResult _ViewCart() {
-			return View();
-		}
-		public ActionResult _ViewPayment() {
-			return View();
-		}
-		public ActionResult _ViewHistory() {
-			return View();
-		}
-
-		public JsonResult GetCurrentDesk() {
-			return Json(Session["CurrentDesk"]);
-		}
-
-		public async Task<JsonResult> GetMenuInfos() {
-			var t1 = new HotelManager(CurrHotel.ConnectionString).GetFormatedMenuClasses();
-			var t2 = new HotelManager(CurrHotel.ConnectionString).GetFormatedMenus();
-			var t3 = new HotelManager(CurrHotel.ConnectionString).GetFormatedMenuOnSales();
-			var t4 = new HotelManager(CurrHotel.ConnectionString).GetFormatedMenuSetMeals();
-			var t5 = new HotelManager(CurrHotel.ConnectionString).GetFormatedPayKinds(new List<PayKindType> { PayKindType.Online, PayKindType.Other });
-			var t6 = new HotelManager(CurrHotel.ConnectionString).GetHotelConfig();
-			var t7 = new HotelManager(CurrHotel.ConnectionString).GetTimeDiscounts();
-			var t8 = new HotelManager(CurrHotel.ConnectionString).GetVipDiscounts();
-			var currHotel = await new YummyOnlineManager().GetHotelById(CurrHotel.Id);
-
-			var result = new {
-				MenuClasses = await t1,
-				Menus = await t2,
-				MenuOnSales = await t3,
-				MenuSetMeals = await t4,
-				PayKinds = await t5,
-				DiscountMethods = new {
-					TimeDiscounts = await t7,
-					VipDiscounts = await t8
-				},
-				Hotel = DynamicsCombination.CombineDynamics(await t6, new {
-					currHotel.Name,
-					currHotel.Address,
-					currHotel.Tel,
-					currHotel.OpenTime,
-					currHotel.CloseTime
-				})
-			};
-			return Json(result);
-		}
-
-		public async Task<JsonResult> GetHistoryDines() {
-			return Json(await HotelManager.GetFormatedHistoryDines(User.Identity.GetUserId()));
-		}
-	}
-}
-
-namespace OrderSystem.Controllers {
-	using Protocol.PrintingProtocol;
-
-	public class OrderForPrintingController : BaseOrderSystemController {
-		public async Task<JsonResult> GetDineForPrinting(int hotelId, string dineId, List<int> dineMenuIds) {
-			if(dineId == "00000000000000") {
-				return Json(generateTestProtocol());
-			}
-
-			string connStr = await YummyOnlineManager.GetHotelConnectionStringById(hotelId);
-
-			var tHotel = new YummyOnlineManager().GetHotelForPrintingById(hotelId);
-			var tDine = new HotelManager(connStr).GetDineForPrintingById(dineId, dineMenuIds);
-			var tPrinterFormat = new HotelManager(connStr).GetPrinterFormatForPrinting();
-			var tUser = new YummyOnlineManager().GetUserForPrintingById((await tDine).UserId);
-
-			return Json(new DineForPrinting {
-				Hotel = await tHotel,
-				Dine = await tDine,
-				User = await tUser,
-				PrinterFormat = await tPrinterFormat
-			});
-		}
-
-		private DineForPrinting generateTestProtocol() {
+namespace AutoPrinter {
+	public partial class Program {
+		private static DineForPrinting generateTestProtocol() {
 			DineForPrinting p = new DineForPrinting {
 				Hotel = new Hotel {
 					Id = 1,
@@ -281,22 +192,6 @@ namespace OrderSystem.Controllers {
 			}
 
 			return p;
-		}
-
-		public async Task<JsonResult> GetShiftsForPrinting(int hotelId, List<int> ids, DateTime dateTime) {
-			string connStr = await YummyOnlineManager.GetHotelConnectionStringById(hotelId);
-			var manager = new HotelManager(connStr);
-
-			var tShifts = new HotelManager(connStr).GetShiftsForPrinting(ids, dateTime);
-			var tPrinterName = new HotelManager(connStr).GetShiftPrinterIpAddress();
-			var tPrinterFormat = new HotelManager(connStr).GetPrinterFormatForPrinting();
-
-
-			return Json(new ShiftForPrinting {
-				Shifts = await tShifts,
-				PrinterIpAddress = await tPrinterName,
-				PrinterFormat = await tPrinterFormat
-			});
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Text;
 
 namespace AutoPrinter {
@@ -13,6 +14,9 @@ namespace AutoPrinter {
 
 		public PrinterGraphics(Graphics graphics) {
 			g = graphics;
+		}
+		public int GetHeight() {
+			return Convert.ToInt32(currY);
 		}
 		public void TrimX(float x) {
 			currX += x;
@@ -54,10 +58,6 @@ namespace AutoPrinter {
 		public void DrawStringLineLoop(string text, float fontSize) {
 			Font font = new Font(FontName, fontSize);
 			DrawStringLineLoop(text, fontSize, 100);
-		}
-
-		public void DrawSpacing(float height) {
-			currY += height;
 		}
 
 		public void DrawGrid(float[] ratios, string[] texts, float fontSize, Brush brush, StringAlignment[] aligns) {

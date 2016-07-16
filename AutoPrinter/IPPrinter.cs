@@ -19,6 +19,8 @@ namespace AutoPrinter {
 		private byte colorDeep;
 
 		private IPEndPoint ipEndPoint;
+		private int timeOut = 3;
+		private Guid guid = Guid.NewGuid();
 
 		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate, byte colorDeep = 125) {
 			this.ipEndPoint = ipEndPoint;
@@ -27,6 +29,11 @@ namespace AutoPrinter {
 		}
 
 		public void Print(Bitmap bmp) {
+#if DEBUG
+			if(timeOut == 3) {
+				bmp.Save($@"{Environment.CurrentDirectory}\{DateTime.Now.ToString("yyyyMMddHHmmssffff")}.png", System.Drawing.Imaging.ImageFormat.Png);
+			}
+#endif
 			Task.Run(async () => {
 				TcpClient client = new TcpClient();
 				NetworkStream stream = null;
@@ -47,9 +54,15 @@ namespace AutoPrinter {
 					stream.Write(data.ToArray(), 0, data.Count);
 				}
 				catch(Exception e) {
-					errorDelegate(ipEndPoint, e);
-					await Task.Delay(1000);
-					Print(bmp);
+					errorDelegate(ipEndPoint, new Exception($"打印编号 {guid} {e.Message}", e));
+					timeOut--;
+					if(timeOut > 0) {
+						await Task.Delay(1000);
+						Print(bmp);
+					}
+					else {
+						errorDelegate(ipEndPoint, new Exception($"打印编号 {guid} 已达重试次数上限, 打印失败"));
+					}
 				}
 				finally {
 					stream?.Close();
@@ -60,7 +73,9 @@ namespace AutoPrinter {
 		}
 
 		private void printImg(List<byte> sendData, Bitmap bmp) {
-			byte[] escBmp = new byte[] { 0x1B, 0x2A, 33, 44, 2 };
+			byte[] escBmp = new byte[] { 0x1B, 0x2A, 33, 0, 0 };
+			escBmp[3] = (byte)(bmp.Width % 256);
+			escBmp[4] = (byte)(bmp.Width / 256);
 
 			//循环图片像素打印图片  
 			//循环高  
@@ -76,7 +91,7 @@ namespace AutoPrinter {
 						int yPos = i * 24 + k;
 						if(yPos < bmp.Height) {
 							Color pixelColor = bmp.GetPixel(j, yPos);
-							if(pixelColor.A > 125) {
+							if(pixelColor.R <= colorDeep) {
 								imgData[k / 8] += (byte)(128 >> (k % 8));
 							}
 						}

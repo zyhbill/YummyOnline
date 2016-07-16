@@ -8,12 +8,16 @@ namespace AutoPrinter {
 		private float currY = 0;
 		private Graphics g;
 
-		public static int PaperWidth { get; set; }
-		public static string FontName { get; set; }
-		public static float Spacing { get; set; } = 0;
+		private int paperWidth { get; set; }
+		private string fontName { get; set; }
+		private float spacing { get; set; } = 0;
 
-		public PrinterGraphics(Graphics graphics) {
-			g = graphics;
+		public PrinterGraphics(Graphics g, int paperWidth, int paperHeight, string fontName) {
+			this.g = g;
+			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+			g.FillRectangle(Brushes.White, 0, 0, paperWidth, paperHeight);
+			this.paperWidth = paperWidth;
+			this.fontName = fontName;
 		}
 		public int GetHeight() {
 			return Convert.ToInt32(currY);
@@ -26,8 +30,8 @@ namespace AutoPrinter {
 		}
 
 		public void DrawStringLine(string text, float fontSize, Brush brush, bool wrapper = true, StringAlignment align = StringAlignment.Near) {
-			RectangleF areaRec = new RectangleF(currX, currY, PaperWidth + fontSize, 100);
-			Font font = new Font(FontName, fontSize);
+			RectangleF areaRec = new RectangleF(currX, currY, paperWidth + fontSize, 100);
+			Font font = new Font(fontName, fontSize);
 			StringFormat format = new StringFormat {
 				Alignment = align,
 				FormatFlags = wrapper ? 0 : StringFormatFlags.NoWrap
@@ -38,10 +42,10 @@ namespace AutoPrinter {
 			currX = 0;
 			// 如果换行就统计一行的font高度
 			if(wrapper) {
-				currY += Spacing + g.MeasureString(text, font, areaRec.Size).Height;
+				currY += spacing + g.MeasureString(text, font, areaRec.Size).Height;
 			}
 			else {
-				currY += Spacing + g.MeasureString(text, font).Height;
+				currY += spacing + g.MeasureString(text, font).Height;
 			}
 		}
 		public void DrawStringLine(string text, float fontSize, bool wrapper = true, StringAlignment align = StringAlignment.Near) {
@@ -56,15 +60,15 @@ namespace AutoPrinter {
 			DrawStringLine(sb.ToString(), fontSize, false);
 		}
 		public void DrawStringLineLoop(string text, float fontSize) {
-			Font font = new Font(FontName, fontSize);
+			Font font = new Font(fontName, fontSize);
 			DrawStringLineLoop(text, fontSize, 100);
 		}
 
 		public void DrawGrid(float[] ratios, string[] texts, float fontSize, Brush brush, StringAlignment[] aligns) {
-			Font font = new Font(FontName, fontSize);
+			Font font = new Font(fontName, fontSize);
 			float maxHeight = 0;
 			for(int i = 0; i < ratios.Length; i++) {
-				float width = PaperWidth * ratios[i];
+				float width = paperWidth * ratios[i];
 				RectangleF areaRec = new RectangleF(currX, currY, width, 100);
 				StringFormat format = new StringFormat { Alignment = aligns[i] };
 				g.DrawString(texts[i], font, brush, areaRec, format);
@@ -75,7 +79,7 @@ namespace AutoPrinter {
 				}
 			}
 			currX = 0;
-			currY += Spacing + maxHeight;
+			currY += spacing + maxHeight;
 		}
 		public void DrawGrid(float[] ratios, string[] texts, float fontSize, StringAlignment[] aligns) {
 			DrawGrid(ratios, texts, fontSize, Brushes.Black, aligns);

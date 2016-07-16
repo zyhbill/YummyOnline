@@ -1,9 +1,6 @@
 ﻿using Protocol.PrintingProtocol;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoPrinter {
 	public partial class Program {
@@ -149,15 +146,15 @@ namespace AutoPrinter {
 					PhoneNumber = "12345678900"
 				},
 				PrinterFormat = new PrinterFormat {
-					PaperSize = 278,
+					PaperSize = 556,
 					Font = "宋体",
-					ReciptBigFontSize = 12,
-					ReciptFontSize = 8,
-					ReciptSmallFontSize = 7,
-					ServeOrderFontSize = 9,
-					ServeOrderSmallFontSize = 9,
-					KitchenOrderFontSize = 9,
-					KitchenOrderSmallFontSize = 9
+					ReciptBigFontSize = 24,
+					ReciptFontSize = 16,
+					ReciptSmallFontSize = 14,
+					ServeOrderFontSize = 18,
+					ServeOrderSmallFontSize = 18,
+					KitchenOrderFontSize = 18,
+					KitchenOrderSmallFontSize = 18
 				}
 			};
 

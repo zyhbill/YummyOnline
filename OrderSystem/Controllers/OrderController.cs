@@ -238,7 +238,7 @@ namespace OrderSystem.Controllers {
 					PhoneNumber = "12345678900"
 				},
 				PrinterFormat = new PrinterFormat {
-					PaperSize = 278,
+					PaperSize = 556,
 					Font = "宋体",
 					ReciptBigFontSize = 12,
 					ReciptFontSize = 8,

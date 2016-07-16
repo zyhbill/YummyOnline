@@ -8,12 +8,11 @@ using System.Net;
 
 namespace AutoPrinter {
 	public class DinePrinter : BasePrinter {
+		private int maxHeight = 2000;
+
 		public DinePrinter(Action<IPEndPoint, Exception> errorDelegate) : base(errorDelegate) { }
 
 		public void Print(DineForPrinting protocol, List<PrintType> printTypes, bool isFullDineMenus) {
-			PrinterGraphics.FontName = protocol.PrinterFormat.Font;
-			PrinterGraphics.PaperWidth = protocol.PrinterFormat.PaperSize;
-
 			foreach(PrintType type in printTypes) {
 				if(type == PrintType.Recipt) {
 					if(protocol.Dine.Desk.ReciptPrinter == null) {
@@ -41,16 +40,17 @@ namespace AutoPrinter {
 							continue;
 						}
 
-						IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
-						IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
-
 						if(!dineMenu.Menu.IsSetMeal) {
 							Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, null);
+							IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
+							IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
 							printer.Print(bmp);
 						}
 						else {
 							foreach(SetMealMenu setMealMenu in dineMenu.Menu.SetMealMenus) {
 								Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, setMealMenu);
+								IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
+								IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
 								printer.Print(bmp);
 							}
 						}
@@ -63,10 +63,10 @@ namespace AutoPrinter {
 		/// 打印收银条
 		/// </summary>
 		private Bitmap generateReciptBmp(DineForPrinting protocol, bool isFullDineMenus) {
-			Bitmap bmp = new Bitmap(556, 1000);
+			Bitmap bmp = new Bitmap(protocol.PrinterFormat.PaperSize, maxHeight);
 			Graphics g = Graphics.FromImage(bmp);
 
-			PrinterGraphics printerG = new PrinterGraphics(g);
+			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, maxHeight, protocol.PrinterFormat.Font);
 
 			printerG.DrawStringLine($"欢迎光临{protocol.Hotel.Name}", protocol.PrinterFormat.ReciptBigFontSize, align: StringAlignment.Center);
 			printerG.DrawStringLine($"TEL: {protocol.Hotel.Tel}", protocol.PrinterFormat.ReciptSmallFontSize, align: StringAlignment.Center);
@@ -172,10 +172,10 @@ namespace AutoPrinter {
 		/// 打印传菜单
 		/// </summary>
 		private Bitmap generateServeOrderBmp(DineForPrinting protocol) {
-			Bitmap bmp = new Bitmap(556, 1000);
+			Bitmap bmp = new Bitmap(protocol.PrinterFormat.PaperSize, maxHeight);
 			Graphics g = Graphics.FromImage(bmp);
 
-			PrinterGraphics printerG = new PrinterGraphics(g);
+			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, maxHeight, protocol.PrinterFormat.Font);
 
 			printGrid55(printerG, new string[] { $"单号: {protocol.Dine.Id}", $"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}" }, protocol.PrinterFormat.ServeOrderSmallFontSize);
 			printGrid55(printerG, new string[] { $"顾客: {protocol.User?.Id}", $"服务员: {protocol.Dine.Waiter.Name}" }, protocol.PrinterFormat.ServeOrderSmallFontSize);
@@ -222,10 +222,10 @@ namespace AutoPrinter {
 		/// 打印厨房单
 		/// </summary>
 		private Bitmap generateKitchenOrderBmp(DineForPrinting protocol, DineMenu dineMenu, SetMealMenu setMealMenu) {
-			Bitmap bmp = new Bitmap(556, 1000);
+			Bitmap bmp = new Bitmap(protocol.PrinterFormat.PaperSize, maxHeight);
 			Graphics g = Graphics.FromImage(bmp);
 
-			PrinterGraphics printerG = new PrinterGraphics(g);
+			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, maxHeight, protocol.PrinterFormat.Font);
 
 			printGrid55(printerG, new string[] { $"单号: {protocol.Dine.Id}", $"时间: {((DateTime)protocol.Dine.BeginTime).ToString("M-d HH:mm")}" }, protocol.PrinterFormat.KitchenOrderSmallFontSize);
 

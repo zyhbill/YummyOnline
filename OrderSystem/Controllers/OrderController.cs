@@ -298,5 +298,14 @@ namespace OrderSystem.Controllers {
 				PrinterFormat = await tPrinterFormat
 			});
 		}
+
+		public async Task<JsonResult> GetPrintersForPrinting(int hotelId) {
+			string connStr = await YummyOnlineManager.GetHotelConnectionStringById(hotelId);
+			var manager = new HotelManager(connStr);
+
+			return Json(new PrintersForPrinting {
+				Printers = await manager.GetPrinters()
+			});
+		}
 	}
 }

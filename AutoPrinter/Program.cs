@@ -18,6 +18,12 @@ namespace AutoPrinter {
 		private static string tcpServerIp = ConfigurationManager.AppSettings["TcpServerIp"].ToString();
 		private static int tcpServerPort = Convert.ToInt32(ConfigurationManager.AppSettings["TcpServerPort"]);
 
+		private static string remoteLogUrl = ConfigurationManager.AppSettings["RemoteLogUrl"];
+		private static string remotePrintCompletedUrl = ConfigurationManager.AppSettings["RemotePrintCompletedUrl"];
+		private static string remoteGetDineForPrintingUrl = ConfigurationManager.AppSettings["RemoteGetDineForPrintingUrl"];
+		private static string remoteGetShiftsForPrintingUrl = ConfigurationManager.AppSettings["RemoteGetShiftsForPrintingUrl"];
+		private static string remoteGetPrintersForPrintingUrl = ConfigurationManager.AppSettings["RemoteGetPrintersForPrintingUrl"];
+
 		static void Main(string[] args) {
 			Console.Title = "YummyOnline自助打印";
 			Console.WriteLine($"版本: {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
@@ -74,6 +80,9 @@ namespace AutoPrinter {
 						}
 						ipAddress = cmds[1];
 						printLocalTest(new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }, ipAddress);
+						break;
+					case "testprinters":
+						testPrinters().Wait();
 						break;
 				}
 			}
@@ -178,13 +187,38 @@ namespace AutoPrinter {
 			}
 		}
 
+		static async Task testPrinters() {
+			PrintersForPrinting pp = null;
+			try {
+				pp = await getPrintersForPrinting();
+				if(pp == null) {
+					localLog("获取打印机数据失败，请检查网络设置");
+					return;
+				}
+				foreach(var printer in pp.Printers) {
+					localLog($"正在测试{printer.Name} {printer.IpAddress}");
+					IPPrinter ipPrinter = new IPPrinter(new IPEndPoint(IPAddress.Parse(printer.IpAddress), 9100), null);
+					if(ipPrinter.Test()) {
+						localLog($"{printer.Name} {printer.IpAddress} 测试成功");
+					}
+					else {
+						localLog($"{printer.Name} {printer.IpAddress} 测试失败");
+					}
+				}
+				localLog($"测试完成");
+			}
+			catch(Exception e) {
+				localLog($"无法测试, 错误信息: {e}");
+			}
+		}
+
 		static async Task<DineForPrinting> getDineForPrinting(string dineId, List<int> dineMenuIds = null) {
 			object postData = new {
 				HotelId = hotelId,
 				DineId = dineId,
 				DineMenuIds = dineMenuIds
 			};
-			string response = await HttpPost.PostAsync(ConfigurationManager.AppSettings["RemoteGetDineForPrintingUrl"].ToString(), postData);
+			string response = await HttpPost.PostAsync(remoteGetDineForPrintingUrl, postData);
 			if(response == null)
 				return null;
 
@@ -199,11 +233,22 @@ namespace AutoPrinter {
 				Ids = ids,
 				DateTime = dateTime
 			};
-			string response = await HttpPost.PostAsync(ConfigurationManager.AppSettings["RemoteGetShiftsForPrintingUrl"].ToString(), postData);
+			string response = await HttpPost.PostAsync(remoteGetShiftsForPrintingUrl, postData);
 			if(response == null)
 				return null;
 
 			ShiftForPrinting protocol = JsonConvert.DeserializeObject<ShiftForPrinting>(response);
+
+			return protocol;
+		}
+		static async Task<PrintersForPrinting> getPrintersForPrinting() {
+			string response = await HttpPost.PostAsync(remoteGetPrintersForPrintingUrl, new {
+				HotelId = hotelId,
+			});
+			if(response == null)
+				return null;
+
+			PrintersForPrinting protocol = JsonConvert.DeserializeObject<PrintersForPrinting>(response);
 
 			return protocol;
 		}
@@ -213,7 +258,7 @@ namespace AutoPrinter {
 				HotelId = hotelId,
 				DineId = dineId
 			};
-			var _ = HttpPost.PostAsync(ConfigurationManager.AppSettings["RemotePrintCompletedUrl"].ToString(), postData);
+			var _ = HttpPost.PostAsync(remotePrintCompletedUrl, postData);
 		}
 		static void localLog(string message) {
 			Console.WriteLine($"[{DateTime.Now.ToString("HH:mm:ss")}] {message}");
@@ -225,7 +270,7 @@ namespace AutoPrinter {
 				Message = message,
 				Detail = detail
 			};
-			var _ = HttpPost.PostAsync(ConfigurationManager.AppSettings["RemoteLogUrl"].ToString(), postData);
+			var _ = HttpPost.PostAsync(remoteLogUrl, postData);
 		}
 	}
 }

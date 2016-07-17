@@ -28,6 +28,31 @@ namespace AutoPrinter {
 			this.colorDeep = colorDeep;
 		}
 
+		public bool Test() {
+			TcpClient client = new TcpClient();
+			NetworkStream stream = null;
+
+			try {
+				client.Connect(ipEndPoint);
+				stream = client.GetStream();
+				if(!stream.CanWrite) {
+					return false;
+				}
+
+				stream.Write(init, 0, init.Length);
+			}
+			catch {
+				return false;
+			}
+			finally {
+				stream?.Close();
+				stream?.Dispose();
+				client.Close();
+			}
+
+			return true;
+		}
+
 		public void Print(Bitmap bmp) {
 #if DEBUG
 			if(timeOut == 3) {
@@ -54,14 +79,14 @@ namespace AutoPrinter {
 					stream.Write(data.ToArray(), 0, data.Count);
 				}
 				catch(Exception e) {
-					errorDelegate(ipEndPoint, new Exception($"打印编号 {guid} {e.Message}", e));
+					errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} {e.Message}", e));
 					timeOut--;
 					if(timeOut > 0) {
 						await Task.Delay(1000);
 						Print(bmp);
 					}
 					else {
-						errorDelegate(ipEndPoint, new Exception($"打印编号 {guid} 已达重试次数上限, 打印失败"));
+						errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} 已达重试次数上限, 打印失败"));
 					}
 				}
 				finally {

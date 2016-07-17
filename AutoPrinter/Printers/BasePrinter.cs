@@ -9,6 +9,11 @@ namespace AutoPrinter {
 		}
 		protected Action<IPEndPoint, Exception> errorDelegate;
 
+		/// <summary>
+		/// 裁剪bmp至高度
+		/// </summary>
+		/// <param name="oriBmp">源BMP</param>
+		/// <param name="height">需要裁剪的高度</param>
 		protected Bitmap cutBmp(Bitmap oriBmp, int height) {
 			Bitmap bmpOut = new Bitmap(oriBmp.Width, height);
 			Graphics g = Graphics.FromImage(bmpOut);

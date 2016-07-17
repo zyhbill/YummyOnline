@@ -77,16 +77,18 @@ namespace AutoPrinter {
 			printGrid55(printerG, new string[] { $"单号: {protocol.Dine.Id}", $"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}" }, protocol.PrinterFormat.ReciptFontSize);
 			printGrid55(printerG, new string[] { $"顾客: {protocol.User?.Id}", $"服务员: {protocol.Dine.Waiter.Name}" }, protocol.PrinterFormat.ReciptFontSize);
 
-			if(protocol.Dine.Desk.AreaType == HotelDAO.Models.AreaType.Normal) {
+			if(protocol.Dine.Type == HotelDAO.Models.DineType.ToStay) {
 				printerG.DrawStringLine($"餐桌: {protocol.Dine.Desk.Name}", protocol.PrinterFormat.ReciptFontSize);
 			}
-			else if(protocol.Dine.Desk.AreaType == HotelDAO.Models.AreaType.TakeOut) {
+			else if(protocol.Dine.Type == HotelDAO.Models.DineType.ToGo) {
 				printerG.DrawStringLine($"外卖: {protocol.Dine.Desk.Name}", protocol.PrinterFormat.ReciptBigFontSize);
+				if(protocol.Dine.TakeOut.RecordId != null) {
+					printerG.DrawStringLine($"外卖平台编号: {protocol.Dine.TakeOut.RecordId}", protocol.PrinterFormat.ReciptBigFontSize);
+				}
 				printerG.DrawStringLine($"手机: {protocol.User.PhoneNumber}", protocol.PrinterFormat.ReciptBigFontSize);
 				printerG.DrawStringLine($"地址: {protocol.Dine.TakeOut.Address}", protocol.PrinterFormat.ReciptBigFontSize);
 			}
-
-
+			
 			printHr(printerG);
 
 			printGrid5122(printerG, new string[] { "名称", "数量", "单价", "折后小计" }, protocol.PrinterFormat.ReciptFontSize);

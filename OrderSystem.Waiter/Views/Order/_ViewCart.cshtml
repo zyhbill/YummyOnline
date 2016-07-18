@@ -37,46 +37,48 @@
 	</div>
 </section>
 
-<section ng-hide="cart.Desk==null" class="menu" ng-static-height="96">
-	<!-- ngRepeat menu -->
-	<div class="menu-btn" ng-repeat="menu in menuFilter.FilteredMenus"
-		 ng-class="{active:menu.Addition.Ordered>0}"
-		 ng-click="cart.AddMenu(menu)">
-		<div class="row">
-			<div class="col-xs-10">
-				{{menu.NameAbbr}}
-			</div>
-			<div class="col-xs-2 text-left"
-				 ng-if="menu.Addition.Ordered>0">
-				{{menu.Addition.Ordered}}
-			</div>
-		</div>
-
-		<div ng-if="menu.Addition.Ordered">
-			<span ng-repeat="remark in menu.Addition.Remarks">
-				{{remark.Name | limitTo:4}}
-			</span>
-			<div class="row menu-control">
-				<div class="col-xs-6">
-					<button class="btn btn-primary btn-sm"
-							ng-if="menu.IsShowRemark()"
-							ng-click="openRemarkModal(menu)"
-							stop-event>
-						备注
-					</button>
+<div class="menu-back" ng-static-height="96">
+	<section ng-hide="cart.Desk==null">
+		<!-- ngRepeat menu -->
+		<div class="menu-btn" ng-repeat="menu in menuFilter.FilteredMenus"
+			 ng-class="{active:menu.Addition.Ordered>0}"
+			 ng-click="cart.AddMenu(menu)">
+			<div class="row">
+				<div class="col-xs-10">
+					{{menu.NameAbbr}}
 				</div>
-				<div class="col-xs-6 text-right">
-					<button class="btn btn-default btn-sm"
-							ng-click="cart.RemoveMenu(menu)"
-							stop-event>
-						<i class="fa fa-minus"></i>
-					</button>
+				<div class="col-xs-2 text-left"
+					 ng-if="menu.Addition.Ordered>0">
+					{{menu.Addition.Ordered}}
 				</div>
 			</div>
 
+			<div ng-if="menu.Addition.Ordered">
+				<span ng-repeat="remark in menu.Addition.Remarks">
+					{{remark.Name | limitTo:4}}
+				</span>
+				<div class="row menu-control">
+					<div class="col-xs-6">
+						<button class="btn btn-primary btn-sm"
+								ng-if="menu.IsShowRemark()"
+								ng-click="openRemarkModal(menu)"
+								stop-event>
+							备注
+						</button>
+					</div>
+					<div class="col-xs-6 text-right">
+						<button class="btn btn-default btn-sm"
+								ng-click="cart.RemoveMenu(menu)"
+								stop-event>
+							<i class="fa fa-minus"></i>
+						</button>
+					</div>
+				</div>
+
+			</div>
 		</div>
-	</div>
-</section>
+	</section>
+</div>
 
 <section>
 	<ul class="control" ng-show="cart.Desk==null">
@@ -149,3 +151,5 @@
 		</li>
 	</ul>
 </section>
+
+

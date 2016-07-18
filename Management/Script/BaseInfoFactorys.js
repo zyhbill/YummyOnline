@@ -1219,7 +1219,7 @@
                         ShiftBigFontSize: data.font.ShiftBigFontSize,
                         ShiftFontSize: data.font.ShiftFontSize,
                         ShiftSmallFontSize: data.font.ShiftSmallFontSize,
-
+                        ColorDepth: data.font.ColorDepth
                     }
                 }
                 if (data.Style == "default.css") {

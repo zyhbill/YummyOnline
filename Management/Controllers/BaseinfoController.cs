@@ -1314,13 +1314,16 @@ namespace Management.Controllers
             font.ShiftBigFontSize = Format.ShiftBigFontSize;
             font.ShiftFontSize = Format.ShiftFontSize;
             font.ShiftSmallFontSize = Format.ShiftSmallFontSize;
+            font.ColorDepth = Format.ColorDepth;
             db.SaveChanges();
             var hotel = sysdb.Hotels.Where(h => h.Id == HotelId).FirstOrDefault();
             if (Style == 0)
             {
                 hotel.CssThemePath = "default.css";
+                hotel.OrderSystemStyle = OrderSystemStyle.Simple;
             }else if(Style == 1)
             {
+                hotel.OrderSystemStyle = OrderSystemStyle.Fashion;
                 hotel.CssThemePath = "cafe.css";
             }
             sysdb.SaveChanges();

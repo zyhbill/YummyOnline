@@ -1282,11 +1282,12 @@ namespace Management.Controllers
                     .Include(d=>d.TakeOut)
                     .Where(d => DeskIds.Contains(d.DeskId) && d.IsPaid == false).ToListAsync();
             }
-            return Json(new SuccessState(new { Dines = Dines, Desks = Desks }));
+            var PayKinds = await HotelManager.GetOfflinePayKinds();
+            return Json(new SuccessState(new { Dines = Dines, Desks = Desks, PayKinds = PayKinds }));
         }
 
 
-        public async Task<JsonResult> SpecialPay(decimal Price,List<string> DineIds)
+        public async Task<JsonResult> SpecialPay(decimal Price,List<string> DineIds,int Id)
         {
             var HotelManager = new HotelManager(ConnectingStr);
             var UnPaidDines = await db.Dines.Where(d => DineIds.Contains(d.Id)).ToListAsync();
@@ -1311,20 +1312,20 @@ namespace Management.Controllers
             else
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                var Cash = await HotelManager.GetCashId();
                 for(var i =0;i<UnPaidDines.Count();i++)
                 {
                     db.DinePaidDetails.Add(new DinePaidDetail
                     {
                         DineId = UnPaidDines[i].Id,
-                        PayKindId = Cash,
+                        PayKindId = Id,
                         Price = UnPaidDines[i].Price
                     });
+
                     UnPaidDines[i].IsPaid = true;
                     MvcApplication.client.Send(new NewDineInformProtocol((int)(Session["User"] as RStatus).HotelId, UnPaidDines[i].Id, true));
                     await db.SaveChangesAsync();
                     var CurDesk = UnPaidDines[i].DeskId;
-                    var CleanDeskDine = myDines.Where(d=>d.DeskId == CurDesk).Count();
+                    var CleanDeskDine = myDines.Where(d=>d.DeskId == CurDesk&&d.IsPaid==false).Count();
                     if (CleanDeskDine == 0)
                     {
                         var CleanDesk = myDesks.FirstOrDefault(d => d.Id == CurDesk);

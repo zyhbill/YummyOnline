@@ -30,7 +30,10 @@ namespace Management
                 return  null;
             }
         }
-
+        public async Task<List<PayKind>> GetOfflinePayKinds()
+        {
+            return await ctx.PayKinds.Where(d => (d.Type == PayKindType.Cash || d.Type == PayKindType.Offline)&&d.Usable==true).ToListAsync();
+        }
         public async Task<int> GetCashId()
         {
             return await ctx.PayKinds.Where(d => d.Type == PayKindType.Cash).Select(d => d.Id).FirstOrDefaultAsync();

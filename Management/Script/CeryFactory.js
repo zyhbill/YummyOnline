@@ -522,7 +522,9 @@
             CurrentDesk: {},
             ChooseDines:[],
             UnChooseDines: [],
-            SearchDines:[],
+            SearchDines: [],
+            PayKinds: [],
+            CurrentPay:{},
             Cash:"",
         },
         Initialize: function () {
@@ -531,10 +533,13 @@
             _this.Element.ChooseDines = [];
             _this.Element.UnChooseDines = [];
             _this.Element.SearchDines = [];
+            this.Element.CurrentPay = {};
             _this.Element.Cash = "";
             $http.post('../Templates/getSpePayEle').then(function (response) {
                 _this.Element.TakeOutDeskes = response.data.Data.Desks;
+                _this.Element.PayKinds = response.data.Data.PayKinds;
                 _this.Element.UnPaidDines = response.data.Data.Dines;
+                _this.Element.CurrentPay = _this.Element.PayKinds[0];
             });
         },
         getUnPaidDines: function () {
@@ -568,7 +573,8 @@
             var DineIds  = this.Element.ChooseDines.map(function(x){return x.Id});
             $http.post('../Templates/SpecialPay', {
                 Price: _this.Element.Cash,
-                DineIds: DineIds
+                DineIds: DineIds,
+                Id:_this.Element.CurrentPay.Id
             }).then(function (response) {
                 if (response.data.Status) {
                     swal("支付已完成!", "原价:" + $filter('currency')(_this.Account(), "￥", 0.00) +
@@ -580,6 +586,7 @@
                     _this.Element.ChooseDines = [];
                     _this.Element.UnChooseDines = [];
                     _this.Element.SearchDines = [];
+                    _this.Element.CurrentPay = _this.Element.PayKinds[0];
                     _this.Element.Cash = "";
                 }
                 else {

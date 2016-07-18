@@ -48,7 +48,10 @@
     </span>
 </h5>
 
-收取现金:<input type="text" ng-model="Element.Cash" />
+选择支付方式
+<select ng-options="pay.Name for pay in Element.PayKinds" ng-model="Element.CurrentPay">
+</select>
+:<input type="text" ng-model="Element.Cash" />
 
 <button type="button" class="btn btn-info btn-sm" ng-click="Pay()">
     <i class="icon-cash bigger-110"></i>

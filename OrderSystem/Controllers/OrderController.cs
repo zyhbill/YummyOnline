@@ -240,13 +240,13 @@ namespace OrderSystem.Controllers {
 				PrinterFormat = new PrinterFormat {
 					PaperSize = 556,
 					Font = "宋体",
-					ReciptBigFontSize = 12,
-					ReciptFontSize = 8,
-					ReciptSmallFontSize = 7,
-					ServeOrderFontSize = 9,
-					ServeOrderSmallFontSize = 9,
-					KitchenOrderFontSize = 9,
-					KitchenOrderSmallFontSize = 9
+					ReciptBigFontSize = 25,
+					ReciptFontSize = 17,
+					ReciptSmallFontSize = 15,
+					ServeOrderFontSize = 19,
+					ServeOrderSmallFontSize = 19,
+					KitchenOrderFontSize = 19,
+					KitchenOrderSmallFontSize = 19
 				}
 			};
 

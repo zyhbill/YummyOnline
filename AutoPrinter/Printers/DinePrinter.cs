@@ -8,7 +8,7 @@ using System.Net;
 
 namespace AutoPrinter {
 	public class DinePrinter : BasePrinter {
-		private int maxHeight = 2000;
+		private const int maxHeight = 2000;
 
 		public DinePrinter(Action<IPEndPoint, Exception> errorDelegate) : base(errorDelegate) { }
 

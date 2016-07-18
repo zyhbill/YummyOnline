@@ -16,16 +16,16 @@ namespace AutoPrinter {
 		private readonly byte[] lf = new byte[] { 0x0A };
 
 		private Action<IPEndPoint, Exception> errorDelegate;
-		private byte colorDeep;
+		private byte colorDepth;
 
 		private IPEndPoint ipEndPoint;
 		private int timeOut = 3;
 		private Guid guid = Guid.NewGuid();
 
-		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate, byte colorDeep = 200) {
+		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate, byte colorDepth = 200) {
 			this.ipEndPoint = ipEndPoint;
 			this.errorDelegate = errorDelegate;
-			this.colorDeep = colorDeep;
+			this.colorDepth = colorDepth;
 		}
 
 		public bool Test() {
@@ -112,7 +112,7 @@ namespace AutoPrinter {
 						int yPos = i * 24 + k;
 						if(yPos < bmp.Height) {
 							Color pixelColor = bmp.GetPixel(j, yPos);
-							if(pixelColor.R <= colorDeep) {
+							if(pixelColor.R <= colorDepth) {
 								imgData[k / 8] += (byte)(128 >> (k % 8));
 							}
 						}

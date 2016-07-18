@@ -40,7 +40,7 @@ namespace OrderSystem {
 			}
 
 			Dine dine = new Dine {
-				Type = DineType.ToStay,
+				Type = addition.DineType,
 				HeadCount = cart.HeadCount,
 				IsOnline = mainPaidDetail.PayKind.Type == PayKindType.Online,
 				IsPaid = false,

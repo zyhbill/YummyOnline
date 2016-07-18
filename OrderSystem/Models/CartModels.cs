@@ -29,6 +29,7 @@ namespace OrderSystem.Models {
 	public class CartAddition {
 		public string UserId { get; set; }
 		public string WaiterId { get; set; }
+		public DineType DineType { get; set; }
 		public double? Discount { get; set; }
 		public string DiscountName { get; set; }
 		public List<MenuExtension> GiftMenus { get; set; } = new List<MenuExtension>();
@@ -44,6 +45,7 @@ namespace OrderSystem.Models {
 	public class ManagerCartAddition {
 		public string Token { get; set; }
 		public int HotelId { get; set; }
+		public DineType DineType { get; set; } = DineType.ToStay;
 		public string WaiterId { get; set; }
 		public string UserId { get; set; }
 		public double? Discount { get; set; }

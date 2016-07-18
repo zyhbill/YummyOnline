@@ -11,7 +11,7 @@ namespace AutoPrinter {
 
 		public void Print(ShiftForPrinting protocol) {
 			IPAddress ip = IPAddress.Parse(protocol.PrinterIpAddress);
-			IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
+			IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate, protocol.PrinterFormat.ColorDepth);
 
 			Bitmap bmp = generateShiftsBmp(protocol);
 			printer.Print(bmp);

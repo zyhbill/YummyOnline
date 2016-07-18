@@ -16,13 +16,13 @@ namespace AutoPrinter {
 		private readonly byte[] lf = new byte[] { 0x0A };
 
 		private Action<IPEndPoint, Exception> errorDelegate;
-		private byte colorDepth;
+		private int colorDepth;
 
 		private IPEndPoint ipEndPoint;
 		private int timeOut = 3;
 		private Guid guid = Guid.NewGuid();
 
-		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate, byte colorDepth = 200) {
+		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate, int colorDepth) {
 			this.ipEndPoint = ipEndPoint;
 			this.errorDelegate = errorDelegate;
 			this.colorDepth = colorDepth;

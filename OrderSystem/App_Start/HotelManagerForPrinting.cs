@@ -11,8 +11,9 @@ namespace OrderSystem {
 	public partial class HotelManager {
 		public async Task<Protocol.PrintingProtocol.PrinterFormat> GetPrinterFormatForPrinting() {
 			return await ctx.PrinterFormats.Select(p => new Protocol.PrintingProtocol.PrinterFormat {
-				Font = p.Font,
 				PaperSize = p.PaperSize,
+				Font = p.Font,
+				ColorDepth = p.ColorDepth,
 				ReciptBigFontSize = p.ReciptBigFontSize,
 				ReciptFontSize = p.ReciptFontSize,
 				ReciptSmallFontSize = p.ReciptSmallFontSize,

@@ -19,7 +19,7 @@ namespace AutoPrinter {
 						continue;
 					}
 					IPAddress ip = IPAddress.Parse(protocol.Dine.Desk.ReciptPrinter.IpAddress);
-					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
+					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate, protocol.PrinterFormat.ColorDepth);
 
 					Bitmap bmp = generateReciptBmp(protocol, isFullDineMenus);
 					printer.Print(bmp);
@@ -29,7 +29,7 @@ namespace AutoPrinter {
 						continue;
 					}
 					IPAddress ip = IPAddress.Parse(protocol.Dine.Desk.ServePrinter.IpAddress);
-					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
+					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate, protocol.PrinterFormat.ColorDepth);
 
 					Bitmap bmp = generateServeOrderBmp(protocol);
 					printer.Print(bmp);
@@ -43,14 +43,14 @@ namespace AutoPrinter {
 						if(!dineMenu.Menu.IsSetMeal) {
 							Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, null);
 							IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
-							IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
+							IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate, protocol.PrinterFormat.ColorDepth);
 							printer.Print(bmp);
 						}
 						else {
 							foreach(SetMealMenu setMealMenu in dineMenu.Menu.SetMealMenus) {
 								Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, setMealMenu);
 								IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
-								IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
+								IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate, protocol.PrinterFormat.ColorDepth);
 								printer.Print(bmp);
 							}
 						}
@@ -88,7 +88,7 @@ namespace AutoPrinter {
 				printerG.DrawStringLine($"手机: {protocol.User.PhoneNumber}", protocol.PrinterFormat.ReciptBigFontSize);
 				printerG.DrawStringLine($"地址: {protocol.Dine.TakeOut.Address}", protocol.PrinterFormat.ReciptBigFontSize);
 			}
-			
+
 			printHr(printerG);
 
 			printGrid5122(printerG, new string[] { "名称", "数量", "单价", "折后小计" }, protocol.PrinterFormat.ReciptFontSize);

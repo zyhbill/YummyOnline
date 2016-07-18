@@ -46,7 +46,7 @@ namespace Protocol.PrintingProtocol {
 		public Printer ReciptPrinter { get; set; }
 		public Printer ServePrinter { get; set; }
 	}
-	
+
 	public class DineMenu {
 		public int Id { get; set; }
 		public DineMenuStatus Status { get; set; }
@@ -108,6 +108,7 @@ namespace Protocol.PrintingProtocol {
 	public class PrinterFormat {
 		public int PaperSize { get; set; }
 		public string Font { get; set; }
+		public int ColorDepth { get; set; }
 		public int ReciptBigFontSize { get; set; }
 		public int ReciptFontSize { get; set; }
 		public int ReciptSmallFontSize { get; set; }

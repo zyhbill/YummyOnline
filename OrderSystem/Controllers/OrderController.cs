@@ -240,6 +240,7 @@ namespace OrderSystem.Controllers {
 				PrinterFormat = new PrinterFormat {
 					PaperSize = 556,
 					Font = "宋体",
+					ColorDepth = 200,
 					ReciptBigFontSize = 25,
 					ReciptFontSize = 17,
 					ReciptSmallFontSize = 15,

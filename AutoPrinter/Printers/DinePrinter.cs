@@ -19,20 +19,20 @@ namespace AutoPrinter {
 						continue;
 					}
 					IPAddress ip = IPAddress.Parse(protocol.Dine.Desk.ReciptPrinter.IpAddress);
-					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate, protocol.PrinterFormat.ColorDepth);
+					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
 
 					Bitmap bmp = generateReciptBmp(protocol, isFullDineMenus);
-					printer.Print(bmp);
+					printer.Print(bmp, protocol.PrinterFormat.ColorDepth);
 				}
 				else if(type == PrintType.ServeOrder) {
 					if(protocol.Dine.Desk.ServePrinter == null) {
 						continue;
 					}
 					IPAddress ip = IPAddress.Parse(protocol.Dine.Desk.ServePrinter.IpAddress);
-					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate, protocol.PrinterFormat.ColorDepth);
+					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
 
 					Bitmap bmp = generateServeOrderBmp(protocol);
-					printer.Print(bmp);
+					printer.Print(bmp, protocol.PrinterFormat.ColorDepth);
 				}
 				else if(type == PrintType.KitchenOrder) {
 					foreach(DineMenu dineMenu in protocol.Dine.DineMenus.Where(p => p.Status != HotelDAO.Models.DineMenuStatus.Returned)) {
@@ -43,15 +43,15 @@ namespace AutoPrinter {
 						if(!dineMenu.Menu.IsSetMeal) {
 							Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, null);
 							IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
-							IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate, protocol.PrinterFormat.ColorDepth);
-							printer.Print(bmp);
+							IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
+							printer.Print(bmp, protocol.PrinterFormat.ColorDepth);
 						}
 						else {
 							foreach(SetMealMenu setMealMenu in dineMenu.Menu.SetMealMenus) {
 								Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, setMealMenu);
 								IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
-								IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate, protocol.PrinterFormat.ColorDepth);
-								printer.Print(bmp);
+								IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
+								printer.Print(bmp, protocol.PrinterFormat.ColorDepth);
 							}
 						}
 					}

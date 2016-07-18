@@ -133,7 +133,11 @@ namespace Management.Controllers
             db.SaveChanges();
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 增加区域
+        /// </summary>
+        /// <param name="area"></param>
+        /// <returns></returns>
         public async Task<JsonResult> AddArea(newArea area)
         {
             var Clean = await db.Areas.FirstOrDefaultAsync(a => a.Id == area.Id);
@@ -161,11 +165,14 @@ namespace Management.Controllers
                 NewAr.DepartmentServeId = area.DepartmentServeId;
                 db.Areas.Add(NewAr);
                 db.SaveChanges();
-                return Json(new { Status = true });
+                return Json(new { Status = true }); 
             }
             
         }
-
+        /// <summary>
+        /// 获取桌台
+        /// </summary>
+        /// <returns></returns>
         public async Task<JsonResult> getDesk()
         {
             var Desks = await db.Desks.Where(d => d.Usable == true)
@@ -271,7 +278,11 @@ namespace Management.Controllers
             db.SaveChanges();
             return Json(new { Status = true});
         }
-
+        /// <summary>
+        /// 删除桌台
+        /// </summary>
+        /// <param name="DeskId"></param>
+        /// <returns></returns>
         public async Task<JsonResult> DeleteDesk(string DeskId)
         {
             var desk = await db.Desks.FirstOrDefaultAsync(d => d.Id == DeskId);
@@ -284,7 +295,10 @@ namespace Management.Controllers
             return Json(new { Status = true });
         }
 
-
+        /// <summary>
+        /// 获取菜品
+        /// </summary>
+        /// <returns></returns>
         public async Task<JsonResult> getMenu()
         {
             var Menus = await db.Menus.Where(m => m.Usable == true)
@@ -295,6 +309,7 @@ namespace Management.Controllers
                 {
                     m.Id,
                     m.Code,
+                    m.EnglishName,
                     m.MenuPrice,
                     m.Remarks,
                     m.Classes,
@@ -319,7 +334,16 @@ namespace Management.Controllers
             var Departments = await db.Departments.Where(d => d.Usable == true).ToListAsync();
             return Json(new { Menus = Menus, Remarks = Remarks, Classes = Classes, Departments = Departments });
         }
-
+        /// <summary>
+        /// 修改菜品
+        /// </summary>
+        /// <param name="Menu"></param>
+        /// <param name="PicFile"></param>
+        /// <param name="Departments"></param>
+        /// <param name="Classes"></param>
+        /// <param name="Remarks"></param>
+        /// <param name="OriId"></param>
+        /// <returns></returns>
         public async Task<JsonResult> EditMenu(EditMenu Menu, string PicFile, Department Departments, List<MenuClass> Classes, List<Remark> Remarks, string OriId)
         {
             var HotelId = (Session["User"] as RStatus).HotelId;
@@ -367,6 +391,7 @@ namespace Management.Controllers
                 menu.SpicyDegree = Menu.SpicyDegree;
                 menu.Status = Menu.Status;
                 menu.SweetDegree = Menu.SweetDegree;
+                menu.EnglishName = Menu.EnglishName;
                 menu.Unit = Menu.Unit;
                 menu.DepartmentId = Departments.Id;
                 var PriceMenu = await db.MenuPrice.FirstOrDefaultAsync(m => m.Id == Menu.Id);
@@ -404,7 +429,15 @@ namespace Management.Controllers
 
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 添加单一菜品
+        /// </summary>
+        /// <param name="Menu"></param>
+        /// <param name="PicFile"></param>
+        /// <param name="Remarks"></param>
+        /// <param name="Classes"></param>
+        /// <param name="Department"></param>
+        /// <returns></returns>
         public async Task<JsonResult> AddSingleMenu(AddMenu Menu, string PicFile, List<Remark> Remarks, List<MenuClass> Classes, Department Department)
         {
             var menu = await db.Menus.FirstOrDefaultAsync(m => m.Id == Menu.Id && m.Usable == true);
@@ -426,6 +459,7 @@ namespace Management.Controllers
                     menu.IsFixed = Menu.IsFixed;
                     menu.IsSetMeal = Menu.IsSetMeal;
                     menu.SupplyDate = Menu.SupplyDate;
+                    menu.EnglishName = Menu.EnglishName;
                     menu.MinOrderCount = Menu.MinOrderCount;
                     menu.Code = Menu.Code;
                     menu.SaltyDegree = Menu.SaltyDegree;
@@ -467,6 +501,7 @@ namespace Management.Controllers
                     menu.NameAbbr = Menu.NameAbbr;
                     menu.IsFixed = Menu.IsFixed;
                     menu.IsSetMeal = Menu.IsSetMeal;
+                    menu.EnglishName = Menu.EnglishName;
                     menu.SupplyDate = Menu.SupplyDate;
                     menu.MinOrderCount = Menu.MinOrderCount;
                     menu.Code = Menu.Code;
@@ -499,6 +534,9 @@ namespace Management.Controllers
                     menu.PicturePath = HotelId.ToString() + "/" + Menu.Id + ".jpg";
                     Method.SaveImg(menu.Id, image, BaseUrl);
                     Method.SaveImg(menu.Id, image, Method.MyGetBaseUrl((int)HotelId));
+                }else
+                {
+                    menu.PicturePath = HotelId.ToString() + "/none.jpg";
                 }
                 db.SaveChanges();
                 if (Classes != null)
@@ -526,7 +564,11 @@ namespace Management.Controllers
             }
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 删除菜品
+        /// </summary>
+        /// <param name="MenuId"></param>
+        /// <returns></returns>
         public async Task<JsonResult> DeleteMenu(string MenuId)
         {
             var menu = await db.Menus.FirstOrDefaultAsync(m => m.Id == MenuId);
@@ -534,7 +576,10 @@ namespace Management.Controllers
             db.SaveChanges();
             return null;
         }
-
+        /// <summary>
+        /// 获取角色信息
+        /// </summary>
+        /// <returns></returns>
         public async Task<JsonResult> getRoles()
         {
             var Roles = await db.StaffRoles
@@ -543,7 +588,12 @@ namespace Management.Controllers
                 .ToListAsync();
             return Json(new { Roles = Roles });
         }
-
+        /// <summary>
+        /// 编辑角色信息
+        /// </summary>
+        /// <param name="RoleId"></param>
+        /// <param name="Schemas"></param>
+        /// <returns></returns>
         public async Task<JsonResult> EditRoles(int RoleId, List<int> Schemas)
         {
             var role = await db.StaffRoles.FirstOrDefaultAsync(d => d.Id == RoleId);
@@ -568,7 +618,11 @@ namespace Management.Controllers
             return Json(new { Status = true });
 
         }
-
+        /// <summary>
+        /// 删除角色信息
+        /// </summary>
+        /// <param name="roleId"></param>
+        /// <returns></returns>
         public async Task<JsonResult> DeleteRoles(int roleId)
         {
             var role = await db.StaffRoles.FirstOrDefaultAsync(d => d.Id == roleId);
@@ -576,7 +630,12 @@ namespace Management.Controllers
             db.SaveChanges();
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 添加角色信息
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <param name="Schemas"></param>
+        /// <returns></returns>
         public async Task<int> AddRole(string Name, List<int> Schemas)
         {
             StaffRole sr = new StaffRole();
@@ -593,7 +652,10 @@ namespace Management.Controllers
             }
             return sr.Id;
         }
-
+        /// <summary>
+        /// 获取职员信息
+        /// </summary>
+        /// <returns></returns>
         public async Task<JsonResult> GetStaffs()
         {
             int HotelId = (int)(Session["User"] as RStatus).HotelId;
@@ -613,7 +675,13 @@ namespace Management.Controllers
             var Roles = await db.StaffRoles.ToListAsync();
             return Json(new { Staffs = StaffAllInfo, Roles = Roles });
         }
-
+        /// <summary>
+        /// 编辑职员信息
+        /// </summary>
+        /// <param name="Sf"></param>
+        /// <param name="Sfh"></param>
+        /// <param name="roles"></param>
+        /// <returns></returns>
         public async Task<JsonResult> EditStaffs(EditStaff Sf, EditStaffHotel Sfh, List<int> roles)
         {
             var sysStaff = await sysdb.Staffs.FirstOrDefaultAsync(s => s.Id == Sf.Id);
@@ -631,6 +699,7 @@ namespace Management.Controllers
             staff.WorkTimeFrom = Sfh.WorkTimeFrom;
             staff.WorkTimeTo = Sfh.WorkTimeTo;
             db.SaveChanges();
+            if (sysStaff.IsHotelAdmin) { return Json(new ErrorState("不可删除，饭店总管理身份,其他信息已经更改完毕")); }
             var cleanRoles = await db.Staffs.Where(s => s.Id == Sf.Id).FirstOrDefaultAsync();
             var Cr = cleanRoles.StaffRoles.Select(s => s.Id);
             if (Cr.Count() > 0)
@@ -653,7 +722,11 @@ namespace Management.Controllers
             }
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 删除职员信息
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         public async Task<JsonResult> DeleteStaff(string Id)
         {
             var staff = await sysdb.Staffs.Where(s => s.Id == Id).FirstOrDefaultAsync();
@@ -672,6 +745,13 @@ namespace Management.Controllers
             db.SaveChanges();
             return Json(new { Status = true });
         }
+        /// <summary>
+        /// 添加职员信息
+        /// </summary>
+        /// <param name="Sf"></param>
+        /// <param name="Sfh"></param>
+        /// <param name="roles"></param>
+        /// <returns></returns>
         public async Task<JsonResult> AddStaff(EditStaff Sf, EditStaffHotel Sfh, List<int> roles)
         {
             var scount = await sysdb.Staffs.Where(s => s.SigninName == Sf.SigninName).FirstOrDefaultAsync();
@@ -709,13 +789,22 @@ namespace Management.Controllers
             return Json(new { Status = true ,Id = staff.Id});
 
         }
-
+        /// <summary>
+        /// 获取备注信息
+        /// </summary>
+        /// <returns></returns>
         public async Task<JsonResult> getRemarks()
         {
             var Remarks = await db.Remarks.ToListAsync();
             return Json(new { Remarks = Remarks });
         }
-
+        /// <summary>
+        /// 修改备注信息
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="Name"></param>
+        /// <param name="Price"></param>
+        /// <returns></returns>
         public async Task<JsonResult> editRemarks(int Id, string Name, decimal? Price)
         {
             var remark = await db.Remarks.Where(r => r.Id == Id).FirstOrDefaultAsync();
@@ -725,7 +814,11 @@ namespace Management.Controllers
             db.SaveChanges();
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 删除备注信息
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         public async Task<JsonResult> DeleteRemark(int Id)
         {
             var remark = await db.Remarks.Where(r => r.Id == Id).FirstOrDefaultAsync();
@@ -734,7 +827,12 @@ namespace Management.Controllers
             db.SaveChanges();
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 增加备注信息
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <param name="Price"></param>
+        /// <returns></returns>
         public async Task<JsonResult> AddRemark(string Name, decimal? Price)
         {
             var remark = new Remark();
@@ -744,7 +842,10 @@ namespace Management.Controllers
             await db.SaveChangesAsync();
             return Json(new { Id = remark.Id});
         }
-
+        /// <summary>
+        /// 批量导入
+        /// </summary>
+        /// <returns></returns>
         [HttpPost]
         public async Task<JsonResult> FileTrs()
         {
@@ -888,7 +989,10 @@ namespace Management.Controllers
                 }).ToListAsync();
             return Json(new { Menus = Menus});
         }
-
+        /// <summary>
+        /// 获取区域信息
+        /// </summary>
+        /// <returns></returns>
         public async Task<JsonResult> getDepartment()
         {
             var Departments = await db.Departments
@@ -907,7 +1011,14 @@ namespace Management.Controllers
                 .ToListAsync();
             return Json(new { Departments = Departments, Prints = Prints });
         }
-
+        /// <summary>
+        /// 编辑区域信息
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="Name"></param>
+        /// <param name="Description"></param>
+        /// <param name="PrintId"></param>
+        /// <returns></returns>
         public async Task<JsonResult> EditDepartment(int Id, string Name, string Description, int? PrintId)
         {
             var Deparment = await db.Departments.FirstOrDefaultAsync(d => d.Id == Id);
@@ -918,16 +1029,27 @@ namespace Management.Controllers
             db.SaveChanges();
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 删除区域信息
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         public async Task<JsonResult> DeleteDepartment(int Id)
         {
             var department = await db.Departments.FirstOrDefaultAsync(d => d.Id == Id);
             if (department == null) return Json(new { Status = false, ErrorMessage = "对不起没有相关部门" });
             department.Usable = false;
+            department.PrinterId = null;
             db.SaveChanges();
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 增加部门信息
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <param name="Description"></param>
+        /// <param name="PrintId"></param>
+        /// <returns></returns>
         public async Task<JsonResult> AddDepartment(string Name, string Description, int? PrintId)
         {
             var department = new Department();
@@ -939,7 +1061,10 @@ namespace Management.Controllers
             await db.SaveChangesAsync();
             return Json(new { Status = true ,Id = department.Id});
         }
-
+        /// <summary>
+        /// 获取类别信息
+        /// </summary>
+        /// <returns></returns>
         public async Task<JsonResult> GetMenuclasses()
         {
             var FirstClasses = await db.MenuClasses.Where(m => m.Usable == true && m.Level == 0).ToListAsync();
@@ -947,7 +1072,12 @@ namespace Management.Controllers
             var ThirdClasses = await db.MenuClasses.Where(m => m.Usable == true && m.Level == 2).ToListAsync();
             return Json(new { FirstMenuClasses = FirstClasses, SecondMenuClasses = SecondClasses, ThirdMenuClasses = ThirdClasses });
         }
-
+        /// <summary>
+        /// 修改类别信息
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="Name"></param>
+        /// <returns></returns>
         public async Task<JsonResult> EditMenuClass(string Id, string Name)
         {
             var menuClass = await db.MenuClasses.Where(m => m.Id == Id).FirstOrDefaultAsync();
@@ -956,7 +1086,11 @@ namespace Management.Controllers
             db.SaveChanges();
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 删除类别信息
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
         public async Task<JsonResult> DeleteMenuClass(string Id)
         {
             var menuclass = await db.MenuClasses.Where(m => m.Id == Id).FirstOrDefaultAsync();
@@ -984,7 +1118,14 @@ namespace Management.Controllers
             }
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 增加类别信息
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="Name"></param>
+        /// <param name="Description"></param>
+        /// <param name="ParentId"></param>
+        /// <returns></returns>
         public async Task<JsonResult> AddMenuClass(string Id, string Name, string Description,string ParentId)
         {
             var menuclass = await db.MenuClasses.Where(m => m.Id == Id).FirstOrDefaultAsync();
@@ -1014,7 +1155,10 @@ namespace Management.Controllers
             }
             return Json(new { Status = true});
         }
-
+        /// <summary>
+        /// 获取套餐信息
+        /// </summary>
+        /// <returns></returns>
         public async Task<JsonResult> getSetMeal()
         {
             var MenuSetIds = await db.Menus.Where(m => m.Usable == true && m.IsSetMeal == true)
@@ -1051,7 +1195,12 @@ namespace Management.Controllers
                 .ToListAsync();
             return Json(new { Meals= Meals, Menus= Menus });
         }
-
+        /// <summary>
+        /// 删除套餐信息
+        /// </summary>
+        /// <param name="MealId"></param>
+        /// <param name="MenuId"></param>
+        /// <returns></returns>
         public async Task<JsonResult> deleteMealMenu(string MealId,string MenuId)
         {
             var meal = await db.MenuSetMeals.Where(m => m.MenuSetId == MealId && m.MenuId == MenuId)
@@ -1061,7 +1210,14 @@ namespace Management.Controllers
             db.SaveChanges();
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 修改套餐菜品
+        /// </summary>
+        /// <param name="MealId"></param>
+        /// <param name="Menus"></param>
+        /// <param name="Name"></param>
+        /// <param name="Price"></param>
+        /// <returns></returns>
         public async Task<JsonResult> EditMenusInMeal(string MealId,List<MenuInMeal> Menus,string Name,decimal Price)
         {
             var curmeal = await db.Menus.Where(m => m.Id == MealId)
@@ -1093,7 +1249,11 @@ namespace Management.Controllers
             }
             return Json(new { Status = true });
         }
-
+        /// <summary>
+        /// 删除套餐
+        /// </summary>
+        /// <param name="MealId"></param>
+        /// <returns></returns>
         public async Task<JsonResult> DeleteMeal(string MealId)
         {
             var meal = await db.Menus.Where(m => m.Id == MealId).FirstOrDefaultAsync();
@@ -1102,7 +1262,10 @@ namespace Management.Controllers
             return Json(new { Status = true });
         }
 
-
+        /// <summary>
+        /// 获取打印信息
+        /// </summary>
+        /// <returns></returns>
         public async Task<JsonResult> getPrint()
         {
             var rate = await db.HotelConfigs.Select(d => d.PointsRatio).FirstOrDefaultAsync();
@@ -1112,11 +1275,24 @@ namespace Management.Controllers
             var font = await db.PrinterFormats.FirstOrDefaultAsync();
             var IsUsePrinter = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
             var IsPayFirst = await db.HotelConfigs.Select(h => h.IsPayFirst).FirstOrDefaultAsync();
-            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst });
+            int HotelId = (int)(Session["User"] as RStatus).HotelId;
+            var Style = await sysdb.Hotels.Where(d => d.Id == HotelId).Select(d => d.CssThemePath).FirstOrDefaultAsync();
+            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst , Style = Style });
         }
-
-        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int ShiftPrintId,bool IsPayFirst)
+        /// <summary>
+        /// 修改打印模式
+        /// </summary>
+        /// <param name="Format"></param>
+        /// <param name="Font"></param>
+        /// <param name="Rate"></param>
+        /// <param name="IsUsePrint"></param>
+        /// <param name="ShiftPrintId"></param>
+        /// <param name="IsPayFirst"></param>
+        /// <param name="Style"></param>
+        /// <returns></returns>
+        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int ShiftPrintId,bool IsPayFirst,int Style)
         {
+            int HotelId = (int)(Session["User"] as RStatus).HotelId;
             var config = await db.HotelConfigs.FirstOrDefaultAsync();
             config.PointsRatio = Rate;
             config.ShiftPrinterId = ShiftPrintId;
@@ -1135,7 +1311,54 @@ namespace Management.Controllers
             font.ShiftFontSize = Format.ShiftFontSize;
             font.ShiftSmallFontSize = Format.ShiftSmallFontSize;
             db.SaveChanges();
+            var hotel = sysdb.Hotels.Where(h => h.Id == HotelId).FirstOrDefault();
+            if (Style == 0)
+            {
+                hotel.CssThemePath = "default.css";
+            }else if(Style == 1)
+            {
+                hotel.CssThemePath = "cafe.css";
+            }
+            sysdb.SaveChanges();
             return null;
+        }
+
+        [HttpPost]
+        public  JsonResult FileUpLoader()
+        {
+            if (Request.Files.Count != 0)
+            {
+                HttpPostedFileBase logo = Request.Files["logo"];
+                HttpPostedFileBase button = Request.Files["button"];
+                HttpPostedFileBase complete = Request.Files["complete"];
+                string baseUrl = Method.MyGetBaseUrl((int)(Session["User"] as RStatus).HotelId);
+                string OrderUrl = Method.GetBaseUrl((int)(Session["User"] as RStatus).HotelId);
+                if (!Directory.Exists(baseUrl))
+                {
+                    Directory.CreateDirectory(baseUrl);
+                }
+                if (!Directory.Exists(OrderUrl))
+                {
+                    Directory.CreateDirectory(OrderUrl);
+                }
+                if (logo != null)
+                {
+                    logo.SaveAs(baseUrl + "index.png");
+                    logo.SaveAs(OrderUrl + "index.png");
+                }
+                if (button != null)
+                {
+                    button.SaveAs(baseUrl + "btn-cart.png");
+                    button.SaveAs(OrderUrl + "btn-cart.png");
+                }
+                if (complete != null)
+                {
+                    complete.SaveAs(baseUrl + "completed.gif");
+                    complete.SaveAs(OrderUrl + "completed.gif");
+                }
+                return Json(new SuccessState());
+            }
+            return Json(new ErrorState("请选择文件"));
         }
     }
 }

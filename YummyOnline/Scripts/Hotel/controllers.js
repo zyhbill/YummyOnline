@@ -71,6 +71,26 @@
 			$scope.hotelId = $scope.hotels[0].Id;
 		});
 
+		$scope.dateTime = new Date();
+		$scope.refreshDineIds = function () {
+			$http.post('/Hotel/GetAllDineIds', {
+				HotelId: $scope.hotelId,
+				DateTime: $scope.dateTime
+			}).then(function (response) {
+				$scope.allDineIds = response.data;
+			});
+		}
+
+		$scope.dineIds = '';
+		$scope.addDineId = function (dineId) {
+			$scope.dineIds += dineId + ' ';
+		}
+		$scope.addAllDineIds = function () {
+			for (var i in $scope.allDineIds) {
+				$scope.dineIds += $scope.allDineIds[i] + ' ';
+			}
+		}
+
 		$scope.search = function () {
 			$scope.isLoading = true;
 			var dineIds = $scope.dineIds.split(/\s+/);

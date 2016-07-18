@@ -141,6 +141,7 @@ namespace OrderSystem.Controllers {
 						QrCode = "111",
 						Name = "测试桌名",
 						Description = "测试桌子备注信息",
+						AreaType = HotelDAO.Models.AreaType.Normal,
 						ReciptPrinter = new Printer {
 							Id = 0,
 							Name = "Microsoft XPS Document Writer",
@@ -237,7 +238,7 @@ namespace OrderSystem.Controllers {
 					PhoneNumber = "12345678900"
 				},
 				PrinterFormat = new PrinterFormat {
-					PaperSize = 278,
+					PaperSize = 556,
 					Font = "宋体",
 					ReciptBigFontSize = 12,
 					ReciptFontSize = 8,
@@ -287,14 +288,23 @@ namespace OrderSystem.Controllers {
 			var manager = new HotelManager(connStr);
 
 			var tShifts = new HotelManager(connStr).GetShiftsForPrinting(ids, dateTime);
-			var tPrinterName = new HotelManager(connStr).GetShiftPrinterName();
+			var tPrinterName = new HotelManager(connStr).GetShiftPrinterIpAddress();
 			var tPrinterFormat = new HotelManager(connStr).GetPrinterFormatForPrinting();
 
 
 			return Json(new ShiftForPrinting {
 				Shifts = await tShifts,
-				PrinterName = await tPrinterName,
+				PrinterIpAddress = await tPrinterName,
 				PrinterFormat = await tPrinterFormat
+			});
+		}
+
+		public async Task<JsonResult> GetPrintersForPrinting(int hotelId) {
+			string connStr = await YummyOnlineManager.GetHotelConnectionStringById(hotelId);
+			var manager = new HotelManager(connStr);
+
+			return Json(new PrintersForPrinting {
+				Printers = await manager.GetPrinters()
 			});
 		}
 	}

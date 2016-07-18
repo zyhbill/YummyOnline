@@ -14,7 +14,6 @@
             }
         });
     }
-
     function refresh() {
         $http.post('/PayKinds/GetPayKinds').then(function (response) {
             $scope.payKinds = response.data;
@@ -24,6 +23,32 @@
         name: null,
         description: null,
         discount: null
+    }
+    $scope.deletePay = function (payKind) {
+        swal({
+            title: "确定删除此项?",
+            text: "你将不可恢复此项，请谨慎操作!",
+            type: "warning",
+            showCancelButton: true,
+
+            confirmButtonText: "是, 删除!",
+            cancelButtonText: "否, 保留!",
+            closeOnConfirm: false
+        }, function () {
+            $http.post('/PayKinds/DeletePayKind', {
+                Id: payKind.Id
+            }).then(function (response) {
+                if (response.data.succeeded) {
+                    refresh();
+                    swal("删除成功!", "此项已经删除请重新进入页面.", "success");
+                }
+                else {
+                    alert('失败了!!!');
+                    swal("删除失败!", "此项已经删除请重新进入页面.", "error");
+                }
+            })
+        });
+       
     }
 
     $scope.addPayKind = function () {
@@ -84,7 +109,6 @@
             }
         });
     }
-
     function refresh() {
         $http.post('/Printers/GetPrinters').then(function (response) {
             $scope.printers = response.data;
@@ -133,6 +157,18 @@
         });
     }
 
+    $scope.DeletePrinter = function (printer) {
+        $http.post('/Printers/DeletePrinters', {
+            id:printer.Id
+        }).then(function (response) {
+            if (response.data.succeeded) {
+                refresh();
+            }
+            else {
+                alert('!!!');
+            }
+        });
+    }
     refresh();
 })
 
@@ -432,7 +468,13 @@
         
     }
     
-
+    $scope.putInvoice = function () {
+        var invoice = $scope.nowDine.Invoice;
+        var Id = $scope.nowDine.Id
+        $http.post('/DinePaidDetails/putInvoice', { Id: Id, Invoice: invoice }).then(function (response) {
+            alert('录入成功');
+        });
+    }
 
     $scope.search = function () {
         var temp = $scope.paykindnames.filter(function (x) { return x.IsChoose }).map(function (x) { return x.Id })

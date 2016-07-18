@@ -1,0 +1,44 @@
+﻿@{
+    Layout = null;
+}
+<link href="../Content/css/style.css" rel="stylesheet" />
+匹配桌台号<input type="number"  ng-model="RePrinterElement.CurrentDeskId"/>
+
+<div class="row waterfall-4" ng-init="Initialize()">
+    <div class="pricing-box waterfall-item" ng-repeat="dine in RePrinterElement.UnShiftDines|filter:{DeskId:RePrinterElement.CurrentDeskId}">
+        <div class="widget-box">
+            <div class="widget-header header-color-dark">
+                <h5 class="bigger lighter">{{dine.Id}}<span ng-show="dine.IsPaid==0" class="red">[未支付]</span><span ng-show="dine.IsPaid==1" class="green">[已支付]</span></h5>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main">
+                    <ul class="list-unstyled spaced2">
+                        <li ng-repeat="menu in dine.DineMenus">
+                            {{menu.Menu.English}}{{menu.Menu.Name}}
+                        </li>
+                    </ul>
+
+                    <hr>
+                    <div class="price">
+                        <span ng-show="dine.OriPrice!=dine.Price">
+                            原价:<s>{{dine.OriPrice|currency:'￥'}}</s>
+                            现价:{{dine.Price|currency:'￥'}}
+                        </span>
+
+                        <span ng-show="dine.OriPrice==dine.Price">
+                            {{dine.Price|currency:'￥'}}
+                        </span>
+                    </div>
+                </div>
+
+                <div>
+                    <a href="javascript:;" class="btn btn-block btn-inverse" ng-click="RePrintDine(dine)">
+                        <i class="icon-print bigger-110"></i>
+                        补打印
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

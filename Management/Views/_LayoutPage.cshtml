@@ -172,14 +172,14 @@
                     </div>
                 </div><!-- #sidebar-shortcuts -->
 
-                <ul class="nav nav-list">
-                    <li class="active">
+                <ul class="nav nav-list" nav>
+                    <li class="active open">
                         <a href="javascript:;" class="dropdown-toggle">
                             <i class="icon-dashboard"></i>
                             <span class="menu-text">店小二营业</span>
                         </a>
                         <ul class="submenu">
-                            <li>
+                            <li class="active">
                                 <a href="#/CheckOut">
                                     <i class="icon-double-angle-right"></i>
                                     点菜
@@ -189,6 +189,12 @@
                                 <a href="#/TakeOut">
                                     <i class="icon-double-angle-right"></i>
                                     结账
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/RePrinter">
+                                    <i class="icon-double-angle-right"></i>
+                                    订单补打
                                 </a>
                             </li>
                             <li>
@@ -209,12 +215,6 @@
                                     禁用商务套餐
                                 </a>
                             </li>
-                            @*<li>
-                                <a href="#/">
-                                    <i class="icon-double-angle-right"></i>
-                                    取消沽清
-                                </a>
-                            </li>*@
                         </ul>
                     </li>
                     <li>
@@ -344,6 +344,12 @@
                                 <a href="#/DailyOrder">
                                     <i class="icon-double-angle-right"></i>
                                     订单查询
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#/Invoice">
+                                    <i class="icon-double-angle-right"></i>
+                                    发票查询
                                 </a>
                             </li>
                             <li>

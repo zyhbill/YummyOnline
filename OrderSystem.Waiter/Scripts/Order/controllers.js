@@ -93,18 +93,13 @@ app.controller('PaymentCtrl', [
 
 
 		$scope.canSubmit = function () {
-			var result = $cart.CanSubmit() && !$scope.isSubmitting && $cart.PayKind != null;
-			if ($cart.Customer != null && $dataSet.Hotel.PointsRatio > 0) {
-				result = result && $cart.Customer.Points / $dataSet.Hotel.PointsRatio >= $cart.PriceInPoints;
-			}
-			return result;
+			return $cart.CanSubmit() && !$scope.isSubmitting && $cart.PayKind != null;
 		}
 
 		$scope.isSubmitting = false;
 
 		$scope.pay = function () {
 			if (!$scope.canSubmit()) return;
-
 			if ($scope.isSubmitting) return;
 			$scope.isSubmitting = true;
 

@@ -119,6 +119,7 @@ namespace Management.Models
             string Url = path + Name + ".jpg";
             image.Save(Url, ImageFormat.Jpeg);
         }
+
         /// <summary>
         /// 二维码解析
         /// </summary>

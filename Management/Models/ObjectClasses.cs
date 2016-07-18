@@ -110,6 +110,7 @@ namespace Management.ObjectClasses
     {
         public string Id { get; set; }
         public string Code { get; set; }
+        public string EnglishName { get; set; }
         public List<Remark> Remarks { get; set; }
         public List<MenuClass> Classes { get; set; }
         public MenuPrice MenuPrice { get; set; }
@@ -133,6 +134,7 @@ namespace Management.ObjectClasses
     {
         public string Id { get; set; }
         public string Name { get; set; }
+        public string EnglishName { get; set; }
         public string Code { get; set; }
         public string NameAbbr { get; set; }
         public int DepartmentId { get; set; }
@@ -347,6 +349,7 @@ namespace Management.ObjectClasses
     {
         public bool Status { get; set; } = false;
         public string ErrorMessage { get; set; }
+        public ErrorState() { }
         public ErrorState(string Message = "")
         {
             ErrorMessage = Message;
@@ -356,6 +359,12 @@ namespace Management.ObjectClasses
     public class SuccessState
     {
         public bool Status { get; set; } = true;
+        public object Data { get; set; }
+        public SuccessState() { }
+        public SuccessState(object obj)
+        {
+            Data = obj;
+        }
     }
 
     public  class PostData

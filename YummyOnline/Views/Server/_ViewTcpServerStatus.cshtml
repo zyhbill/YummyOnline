@@ -4,7 +4,7 @@
 		<b><i class="fa fa-spinner fa-pulse fa-fw"></i> Loading...</b>
 	</div>
 
-	<div class="col-md-12" ng-if="!isLoading && tcpServerInfo==null">
+	<div class="col-md-12" ng-if="!isLoading && !tcpServerInfo.IsStarted">
 		<div class="alert alert-danger">
 			<h4><i class="icon fa fa-warning"></i> 服务器未在运行!</h4>
 			<button class="btn btn-default"
@@ -18,7 +18,7 @@
 		</div>
 	</div>
 
-	<div ng-if="!isLoading && tcpServerInfo!=null">
+	<div ng-if="!isLoading && tcpServerInfo.IsStarted">
 		<div class="col-md-3">
 			<div class="info-box bg-green">
 				<span class="info-box-icon"><i class="fa fa-calendar-o"></i></span>
@@ -72,14 +72,35 @@
 				<div class="table-responsive">
 					<table class="table no-margin">
 						<tr>
-							<th class="col-md-4">IP</th>
-							<th class="col-md-3">端口</th>
-							<th class="col-md-5">连接时间</th>
+							<th>IP</th>
+							<th>连接时间</th>
 						</tr>
 						<tr ng-repeat="c in tcpServerInfo.Status.WaitingForVerificationClients">
-							<td>{{c.IpAddress}}</td>
-							<td>{{c.Port}}</td>
-							<td>{{c.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+							<td class="shrink">{{c.IpAddress}} : {{c.Port}}</td>
+							<td class="shrink">{{c.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<div class="box box-default">
+				<div class="box-header">
+					<h3 class="box-title">System 客户端</h3>
+				</div>
+				<div class="table-responsive">
+					<table class="table no-margin">
+						<tr>
+							<th>IP</th>
+							<th>心跳数</th>
+							<th>连接时间</th>
+						</tr>
+						<tr>
+							<td colspan="3" class="danger" ng-hide="tcpServerInfo.Status.SystemClient.IsConnected">Disconnected</td>
+							<td class="shrink" ng-show="tcpServerInfo.Status.SystemClient.IsConnected">
+								{{tcpServerInfo.Status.SystemClient.IpAddress}} : {{tcpServerInfo.Status.SystemClient.Port}}
+							</td>
+							<td ng-show="tcpServerInfo.Status.SystemClient.IsConnected">{{tcpServerInfo.Status.SystemClient.HeartAlive}}</td>
+							<td class="shrink" ng-show="tcpServerInfo.Status.SystemClient.IsConnected">{{tcpServerInfo.Status.SystemClient.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
 						</tr>
 					</table>
 				</div>
@@ -92,17 +113,17 @@
 				<div class="table-responsive">
 					<table class="table no-margin">
 						<tr>
-							<th class="col-md-2">饭店号</th>
-							<th class="col-md-3">IP</th>
-							<th class="col-md-2">端口</th>
-							<th class="col-md-3">连接时间</th>
-							<th class="col-md-2">等待</th>
+							<th class="shrink">饭店号</th>
+							<th>IP</th>
+							<th>心跳数</th>
+							<th>连接时间</th>
+							<th>等待</th>
 						</tr>
 						<tr ng-repeat="c in tcpServerInfo.Status.PrinterClients">
 							<td>{{c.HotelId}}</td>
 							<td colspan="3" class="danger" ng-hide="c.Status.IsConnected">Disconnected</td>
-							<td ng-show="c.Status.IsConnected">{{c.Status.IpAddress}}</td>
-							<td ng-show="c.Status.IsConnected">{{c.Status.Port}}</td>
+							<td class="shrink" ng-show="c.Status.IsConnected">{{c.Status.IpAddress}} : {{c.Status.Port}}</td>
+							<td ng-show="c.Status.IsConnected">{{c.Status.HeartAlive}}</td>
 							<td class="shrink" ng-show="c.Status.IsConnected">{{c.Status.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
 							<td>{{c.WaitedCount}}</td>
 						</tr>
@@ -119,19 +140,19 @@
 				<div class="table-responsive">
 					<table class="table no-margin">
 						<tr>
-							<th class="col-md-2">GUID</th>
-							<th class="col-md-3">描述</th>
-							<th class="col-md-3">IP</th>
-							<th class="col-md-1">端口</th>
-							<th class="col-md-3">连接时间</th>
+							<th>GUID</th>
+							<th>描述</th>
+							<th>IP</th>
+							<th>心跳数</th>
+							<th>连接时间</th>
 						</tr>
 						<tr ng-repeat="c in tcpServerInfo.Status.NewDineInformClients">
-							<td>{{c.Guid.substr(0,4)}}...{{c.Guid.substr(c.Guid.length-4,4)}}</td>
+							<td class="shrink">{{c.Guid.substr(0,4)}}...{{c.Guid.substr(c.Guid.length-4,4)}}</td>
 							<td>{{c.Description}}</td>
 							<td colspan="3" class="danger" ng-hide="c.Status.IsConnected">Disconnected</td>
-							<td ng-show="c.Status.IsConnected">{{c.Status.IpAddress}}</td>
-							<td ng-show="c.Status.IsConnected">{{c.Status.Port}}</td>
-							<td ng-show="c.Status.IsConnected">{{c.Status.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+							<td class="shrink" ng-show="c.Status.IsConnected">{{c.Status.IpAddress}} : {{c.Status.Port}}</td>
+							<td ng-show="c.Status.IsConnected">{{c.Status.HeartAlive}}</td>
+							<td class="shrink" ng-show="c.Status.IsConnected">{{c.Status.ConnectedTime | date:'yyyy/M/d HH:mm:ss'}}</td>
 						</tr>
 					</table>
 				</div>

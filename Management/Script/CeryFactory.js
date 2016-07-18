@@ -183,15 +183,14 @@
                 x.isChoose = false;
             })
             this.PayElements.CurrentDine.isChoose = true;
-            console.log(this.PayElements.CurrentDine.isChoose);
             //当前用户注销  打折方案为自定义  获取订单用户登录
             this.PayElements.CurrentUser.Id = this.PayElements.CurrentDine.UserId;
             this.getUser();
             this.PayElements.Discounts.splice(temp, (this.PayElements.Discounts.length - temp));
             //输入框清空 自定义 折扣率设为 不打折 重新计算价钱 输入框自动聚焦
-            this.Login();
             this.PayClean();
             this.DiscountClean();
+            this.Login();
             if (this.PayElements.CurrentDine.Discount == 100) { this.reCalc(); }
             this.AutoFocus();
         },
@@ -269,7 +268,6 @@
                 if (this.PayElements.CurrentDine.Id == '当前桌台没有点单') {//当前是空单，默认是找到
                     this.PayElements.CurrentDine = $filter('filter')(this.PayElements.UnpaidDines, { DeskId: this.PayElements.Desk.Id })[0];
                     this.PayElements.CurrentDine.isChoose = true;
-                    console.log(this.PayElements.CurrentDine.isChoose);
                     this.PayElements.CurrentUser.Id = this.PayElements.CurrentDine.UserId;
                     this.Login();
                 } else if (this.PayElements.CurrentDine.DeskId != this.PayElements.Desk.Id) {//换桌之后默认自动匹配
@@ -306,8 +304,14 @@
                 }
             }
             else if (kind.Type != 4) {
-                if (kind.Number > this.PriceAll()) {
-                    kind.Number = this.PriceAll();
+                var nowPrice = this.PayElements.PayMethods.filter(function (x) { return x.Number }).map(function (x) { return x.Number }).reduce(function (a, b) { return +a + +b; }, 0);
+                var cash = this.PayElements.PayMethods.filter(function (x) { return x.Type == 4 }).map(function (x) { return x.Number }).reduce(function (a, b) { return +a + +b; }, 0);
+                nowPrice -= kind.Number;
+                nowPrice -= cash;
+                var UnpaidPrice = this.PriceAll() - nowPrice;//出现金外未支付的金额
+                console.log(UnpaidPrice);
+                if (kind.Number >= UnpaidPrice) {
+                    kind.Number = UnpaidPrice;
                 }
                 if (kind.Number < 0) kind.Number = 0;
             }
@@ -387,6 +391,7 @@
                     _this.PayElements.CurrentDine = {};
                     _this.PayElements.CurrentUser = {};
                     _this.getNowDine();
+                    _this.PayElements.CurrentDine.isChoose = true;
                     _this.getUser();
                     _this.PayClean();
                     _this.DiscountClean();
@@ -404,7 +409,7 @@
         },
         DiscountClean: function () {
             this.PayElements.CurrentDiscount = this.PayElements.Discounts[0];
-            this.PayElements.CurrentDiscount.Discount = 100;
+            this.PayElements.CurrentDiscount.Discount = this.PayElements.CurrentDine.Discount;
         },
         Login: function () {
             var _this = this;
@@ -794,7 +799,7 @@
                 _this.OpenElements.OrderMenus = [];
                 deferred.resolve(data);
             }).error(function (data) {
-                data = JSON.parse(data);
+                alert("金额错误");
                 deferred.reject(data);
             })
             return deferred.promise;
@@ -1162,7 +1167,6 @@
                $http.post('../Templates/ConbineDine', { ConbineDines: temp }).success(function (data) {
                    _this.ConbineElements.UnpaidDesk = data.Desks;
                    _this.ConbineElements.UnpaidDines = data.Dines;
-                   _this.getFirstDesk();
                    _this.ConbineElements.ConbineDines = [];
                    _this.ConbineElements.SelectDines = [];
                    swal("合并成功!", "已经成功合并订单.", "success");
@@ -1227,8 +1231,6 @@
                       _this.RepalceElements.UnpaidDesk = data.Desks;
                       _this.RepalceElements.UnpaidDines = data.Dines;
                       _this.RepalceElements.TotalDesks = data.TotalDesk;
-                      _this.getFirstDesk();
-                      _this.getFirstDine();
                       _this.RepalceElements.TagetDesk = {};
                       swal("更换成功!", "此项订单已经更换至目标页面.", "success");
                   } else {
@@ -1296,29 +1298,65 @@
         },
         CheckOut: function () {
             var _this = this;
+            var deferred = $q.defer();
             var price = this.HandElement.PayKinds.filter(function (x) { return x.Num }).map(function (x) { return x.Num }).reduce(function (a, b) { return +a + +b }, 0);
             if (price > 0) {
                 var profit = this.HandElement.PayKinds.filter(function (x) { return x.Gain }).map(function (x) { return { Id: x.Id, Num: x.Gain } });
+                var nowPrice = profit.map(function(x){return x.Num}).reduce(function (a, b) { return +a + +b; }, 0);
                 if (!_this.HandElement.isAjax) {
                     _this.HandElement.isAjax = true;
-                    $http.post('../Templates/CheckOut', {
-                        Profit: profit
-                    }).success(function (data) {
-                        _this.HandElement.isAjax = false;
-                        _this.HandElement.PayKinds.forEach(function (x) {
-                            x.Num = 0;
-                            x.Gain = 0;
+                    if (price * 0.95 >= nowPrice) {
+                        swal({
+                            title: "确认交接",
+                            text: "金额相差10%，请确认交接!",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#D0D0D0",
+                            confirmButtonText: "是, 交接!",
+                            cancelButtonText: "否, 保留!",
+                            closeOnConfirm: false
+                        }, function () {
+                            _this.HandElement.isAjax = false;
+                            $http.post('../Templates/CheckOut', {
+                                Profit: profit
+                            }).success(function (data) {
+                                _this.HandElement.isAjax = false;
+                                _this.HandElement.PayKinds.forEach(function (x) {
+                                    x.Num = 0;
+                                    x.Gain = 0;
+                                })
+                                deferred.resolve(data);
+                                alert("交接成功");
+                            }).error(function (data) {
+                                _this.HandElement.isAjax = false;
+                                deferred.reject(data);
+                                console.log(data);
+                            })
+                        }
+                      );
+                    } else {
+                        $http.post('../Templates/CheckOut', {
+                            Profit: profit
+                        }).success(function (data) {
+                            _this.HandElement.isAjax = false;
+                            _this.HandElement.PayKinds.forEach(function (x) {
+                                x.Num = 0;
+                                x.Gain = 0;
+                            })
+                            deferred.resolve(data);
+                            alert("交接成功");
+                        }).error(function (data) {
+                            _this.HandElement.isAjax = false;
+                            deferred.reject(data);
+                            console.log(data);
                         })
-                        alert("交接成功");
-                    }).error(function (data) {
-                        _this.HandElement.isAjax = false;
-                        console.log(data);
-                    })
+                    }
                 }
             }
             else {
                 alert("金额为0不用交接");
             }
+            return deferred.promise;
         },
         Print: function () {
             var _this = this;
@@ -1334,7 +1372,28 @@
     }
     return service;
 }])
+.factory('RePrinter', ['$http', '$q', '$filter', '$rootScope', function ($http, $q, $filter, $rootScope) {
+    var service = {
+        RePrinterElement: {
+            UnShiftDines: [],
+            CurrentDeskId:"",
+        },
+        Initialize: function () {
+            var _this = this;
+            $http.post('../Templates/getRePrinter').then(function (response) {
+                console.log(response);
+                _this.RePrinterElement.UnShiftDines = response.data.UnShiftDine;
+            })
+        },
+        RePrintDine: function (dine) {
+            var _this = this;
+            $http.post('../Templates/RePrintDine', {Id:dine.Id}).then(function (response) {
 
+            })
+        }
+    }
+    return service;
+}])
 
 var GetReason = function (Reasons) {
     var result = '<div class ="control-group"><p>请选择退菜理由</p>';

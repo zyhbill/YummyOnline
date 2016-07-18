@@ -69,7 +69,10 @@ namespace Management.Controllers
         //        .Select(p => p.Name).ToListAsync();
         //    return Json(linq.ToList());
         //}
-        
+
+       
+
+
     }
 
 

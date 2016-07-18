@@ -82,7 +82,7 @@
 				</div>
 			</div>
 		</li>
-		<li class="list-group-item" ng-if="cart.Customer!=null && dataSet.Hotel.PointsRatio!=0">
+		<li class="list-group-item" ng-if="cart.PayKind.Type == 0 && cart.Customer!=null && dataSet.Hotel.PointsRatio!=0">
 			抵扣 <input class="form-control input-sm from-control-inline" style="width: 60px" type="number" ng-model="cart.PriceInPoints" /> 元
 			<small>
 				( 可用
@@ -101,7 +101,7 @@
 					总计支付：
 				</div>
 				<div class="col-xs-6 text-danger text-right">
-					{{cart.GetSubmitPrice() | currency : "￥"}}
+					{{cart.GetPaymentPrice() | currency : "￥"}}
 				</div>
 			</div>
 		</li>

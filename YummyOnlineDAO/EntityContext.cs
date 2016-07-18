@@ -17,6 +17,7 @@ namespace YummyOnlineDAO.Models {
 
 		public DbSet<User> Users { get; set; }
 		public DbSet<UserRole> UserRoles { get; set; }
+		public DbSet<UserAddress> UserAddresses { get; set; }
 		public DbSet<Staff> Staffs { get; set; }
 
 		public DbSet<MenuGather> MenuGathers { get; set; }

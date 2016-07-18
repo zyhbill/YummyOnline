@@ -12,9 +12,10 @@ using HotelDAO.Models;
 
 namespace TcpClientTest {
 	class Program {
-		static string ip = "122.114.96.157";
+		// 122.114.96.157
+		static string ip = "127.0.0.1";
 		static void Main(string[] args) {
-			TcpClient client = new TcpClient(IPAddress.Parse(ip), 18000, new NewDineInformClientConnectProtocol("ec3ad9d8-1c48-420d-a33e-c2f83b761738"));
+			TcpClient client = new TcpClient(IPAddress.Parse(ip), 18000, new NewDineInformClientConnectProtocol("0465E2FB-67B9-43EB-AC4A-3621BF83ECB9"));
 
 			client.CallBackWhenMessageReceived = (s, o) => {
 				var a = (NewDineInformProtocol)o;
@@ -30,10 +31,10 @@ namespace TcpClientTest {
 			client.Start();
 
 			Console.Read();
-			client.Send(new RequestPrintShiftsProtocol(1, new List<int> { 1, 2 }, DateTime.Now), () => {
-				Console.WriteLine("@");
+			client.Send(new RequestPrintDineProtocol(1, "16071400000001", null, new List<PrintType> { PrintType.Recipt }), () => {
+				Console.WriteLine("发送成功");
 			});
-			Console.WriteLine("1");
+			Console.WriteLine("点击发送");
 			while(true) {
 				Console.Read();
 			}

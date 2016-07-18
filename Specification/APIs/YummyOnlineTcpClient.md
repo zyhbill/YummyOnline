@@ -138,6 +138,24 @@ Tcp连接成功回调函数，默认NULL
 #### `ServeOrder = 2`
 传菜单
 
+------
+
+### *class RequestPrintShiftsProtocol*
+
+打印交接班请求协议
+
+#### `List<int> Ids {get; set; }`
+
+交接班号
+
+#### `int HotelId { get; set; }`
+
+饭店Id
+
+#### `DateTime DateTime {get; set; }`
+
+交接班时间
+
 ## Updates
 - 2016-3-6: 优化`TcpClient`类，改进构造函数，增加`Start`启动函数
 - 2016-2-22: 更改底层tcp协议
@@ -160,8 +178,7 @@ Tcp连接成功回调函数，默认NULL
 4. 等待接收信息(详见`ReceivingProtocol`), 发送信息(详见`SendingProtocol`)
 
 ## Protocols
-### NewDineInform
-#### ConnectionProtocol
+### ConnectionProtocol
 ```json
 {
 	"Type": "{053A168C-D4B8-409A-A058-7E2208B57CDA}",
@@ -170,7 +187,7 @@ Tcp连接成功回调函数，默认NULL
 ```
 >  *特别注意！ Guid请向管理员申请，同一时刻，只能有一个Guid对应的Socket连入*
 
-#### ReceivingProtocol
+### ReceivingProtocol
 心跳包
 ```json
 {
@@ -206,7 +223,19 @@ Tcp连接成功回调函数，默认NULL
 	"PrintTypes": [<int>, ...]
 }
 ```
+请求打印交接班
+
+```json
+{
+	"Type": "{4E6D44F1-9FD6-4DAD-BAE6-545577701149}",
+	"HotelId": <int>,
+	"Ids": [<int>, ...],
+	"DateTime": <string>
+}
+```
+
 新订单通知
+
 ```json
 {
 	"Type": "{6309155D-B9D9-4417-B1BF-C985F2EA6630}",
@@ -228,3 +257,18 @@ Tcp连接成功回调函数，默认NULL
 | 11 - ... | 需要传输的字节数组                                |
 
 * 发送传输字节数组
+
+### What is `little-endian`
+
+即低位字节排放在低地址端, 高位字节排放在高地址端
+
+如:
+
+`int num = 3435;`
+
+`num` 的十六进制为`00 00 0D 6B`, 则存储在大小为6e的字节数组中的顺序应为:
+
+`6B 0D 00 00 00 00`
+
+C#中`BitConverter.GetBytes(int value)` 可以直接把 `int` 类型的变量转换成 `little-endian` 形式的字节数组, 大小为 `int` 类型的字节长度***4***
+

@@ -77,7 +77,7 @@
                     </span>
                 </div>
                 <div class="DineInfo" ng-if="PayElements.CurrentUser.IsLogin&&Rate!=0">
-                    可用积分:&nbsp;&nbsp;&nbsp;&nbsp; {{PayElements.CurrentUser.Points/Rate}}
+                    积分可抵:&nbsp;&nbsp;&nbsp;&nbsp; {{PayElements.CurrentUser.Points/Rate}}
                 </div>
                 <div class="DineInfo" ng-if="!PayElements.CurrentUser.IsLogin">
                     <input placeholder="手机号" class="form-control login" type="text" ng-model="PayElements.CurrentUser.PhoneNumber">
@@ -97,7 +97,7 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="menu in PayElements.CurrentDine.DineMenus|filter:{Status:0}">
-                                <td>{{menu.Menu.Name}}</td>
+                                <td>{{menu.Menu.EnglishName}}{{menu.Menu.Name}}</td>
                                 <td class="text-right">{{menu.Count}}</td>
                                 <td class="text-right">{{(menu.OriPrice*menu.Count).toFixed(2)}}</td>
                                 <td class="text-right">{{(menu.Price*menu.Count).toFixed(2)}}</td>
@@ -127,11 +127,11 @@
                 </div>
                 <div ng-repeat="kind in PayElements.PayMethods" ng-if="kind.Type!=2">
                     <span class="payLabel text-left">{{kind.Name}}</span>
-                    <input class="payLabel PayInput" type="number" ng-model="kind.Number" ng-change="Change(kind)" ng-keypress="Enter($event)" tabindex="$index" set-Focus max="10000" />
+                    <input class="payLabel PayInput" type="number" ng-model="kind.Number" ng-change="Change(kind)" ng-keypress="Enter($event)" tabindex="$index" set-Focus max="100000" />
                 </div>
                 <div ng-repeat="kind in PayElements.PayMethods" ng-if="kind.Type==2&&Rate!=0">
                     <span class="text-left payLabel">{{kind.Name}}</span>
-                    <input class="payLabel PayInput" type="number" ng-model="kind.Number" ng-change="Change(kind)" ng-keypress="Enter($event)" ng-disabled="!PayElements.CurrentUser.IsLogin" max="10000" />
+                    <input class="payLabel PayInput" type="number" ng-model="kind.Number" ng-change="Change(kind)" ng-keypress="Enter($event)" ng-disabled="!PayElements.CurrentUser.IsLogin" max="100000" />
                 </div>
             </div>
         </div>

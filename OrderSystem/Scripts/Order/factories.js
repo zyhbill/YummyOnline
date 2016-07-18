@@ -110,7 +110,7 @@
 							}
 						}
 						for (var j in menuSetMeals) {
-							if (menuSetMeals[j].MenuSetId == menu.Id) {
+							if (menuSetMeals[j].MenuSetId == menu.Id && menu.IsSetMeal) {
 								menuSetMeals[j].Menu = _filterSetMenu(menuSetMeals[j].Menu);
 								menuSetMeals[j].Menu.Addition.Ordered = menuSetMeals[j].Count;
 								menu.Addition.SetMeals.push(menuSetMeals[j].Menu);
@@ -365,7 +365,7 @@ app.factory('cart', [
 			},
 
 			// 获得最终要支付的金额
-			GetSubmitPrice: function () {
+			GetPaymentPrice: function () {
 				if (this.PayKind == null) {
 					return null;
 				}
@@ -383,11 +383,14 @@ app.factory('cart', [
 					}
 				}
 				price = parseFloat(price.toFixed(2));
+				if (this.PayKind.Type != 0) {
+					this.PriceInPoints = 0;
+				}
 				// 如果用户抵扣的金额超过需要支付的金额
 				if (this.PriceInPoints > price) {
 					this.PriceInPoints = price;
 				}
-				// 总价减去积分抵扣的  价格
+				// 总价减去积分抵扣的价格
 				price -= this.PriceInPoints;
 				return price;
 			},
@@ -398,7 +401,7 @@ app.factory('cart', [
 			_getSendData: function () {
 				var sendData = {
 					HeadCount: this.HeadCount,
-					Price: this.GetSubmitPrice(),
+					Price: this.GetPaymentPrice() + this.PriceInPoints,
 					PriceInPoints: this.PriceInPoints,
 					Invoice: this.Invoice,
 

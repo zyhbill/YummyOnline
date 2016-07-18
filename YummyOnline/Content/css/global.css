@@ -100,6 +100,12 @@ h6,
 	column-count: 4;
 }
 
+.waterfall-6 {
+	-moz-column-count: 6;
+	-webkit-column-count: 6;
+	column-count: 6;
+}
+
 .waterfall-item {
 	display: inline-block;
 	width: 100%;
@@ -111,7 +117,8 @@ h6,
 }
 
 @media (max-width: 1200px) {
-	.waterfall-4 {
+	.waterfall-4,
+	.waterfall-6 {
 		-moz-column-count: 2;
 		-webkit-column-count: 2;
 		column-count: 2;
@@ -130,7 +137,7 @@ h6,
 
 	.waterfall-2,
 	.waterfall-3,
-	.waterfall-4 {
+	.waterfall-4 .waterfall-6 {
 		-moz-column-count: auto;
 		-webkit-column-count: auto;
 		column-count: auto;

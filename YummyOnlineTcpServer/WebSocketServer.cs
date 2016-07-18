@@ -48,9 +48,14 @@ namespace YummyOnlineTcpServer {
 		private List<PerformanceCounter> siteCurrentConnections = new List<PerformanceCounter>();
 		private long memorySize;
 
+		private Queue<ServerInfoWebSocketProtocol> historyProtocols = new Queue<ServerInfoWebSocketProtocol>();
+
 		private void serverConnected(IWebSocketConnection socket) {
 			socket.OnOpen = () => {
 				logDelegate($"{socket.ConnectionInfo.ClientIpAddress}:{socket.ConnectionInfo.ClientPort} WebSocket Open", Log.LogLevel.Success);
+				foreach(var p in historyProtocols) {
+					socket.Send(JsonConvert.SerializeObject(p));
+				}
 				AllSockets.Add(socket);
 			};
 			socket.OnClose = () => {
@@ -62,9 +67,9 @@ namespace YummyOnlineTcpServer {
 				AllSockets.Remove(socket);
 			};
 		}
-
+		
 		private void Timer_Elapsed(object sender, ElapsedEventArgs e) {
-			WebSocketProtocol protocol = new WebSocketProtocol();
+			ServerInfoWebSocketProtocol protocol = new ServerInfoWebSocketProtocol();
 
 			protocol.CpuTime = cputime.NextValue();
 			protocol.DiskIdle = diskIdle.NextValue();
@@ -76,6 +81,11 @@ namespace YummyOnlineTcpServer {
 					CurrentConnections = s.NextValue()
 				});
 			});
+
+			if(historyProtocols.Count >= 50) {
+				historyProtocols.Dequeue();
+			}
+			historyProtocols.Enqueue(protocol);
 
 			AllSockets.ForEach(s => {
 				s.Send(JsonConvert.SerializeObject(protocol));

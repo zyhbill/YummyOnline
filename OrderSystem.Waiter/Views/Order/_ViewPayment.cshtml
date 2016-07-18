@@ -64,19 +64,6 @@
 				</div>
 			</div>
 		</li>
-		<li class="list-group-item" ng-if="cart.Customer!=null && dataSet.Hotel.PointsRatio!=0">
-			抵扣 <input class="form-control input-sm form-control-inline" style="width: 60px" type="number" ng-model="cart.PriceInPoints" /> 元
-			<small>
-				( 可用
-				<span class="text-success">
-					[{{cart.Customer.Points}}]
-				</span>
-				积分 =
-				<span class="text-success">
-					[{{cart.Customer.Points / dataSet.Hotel.PointsRatio | currency : "￥"}}]
-				</span>)
-			</small>
-		</li>
 
 		<li class="list-group-item">
 			<div class="row">

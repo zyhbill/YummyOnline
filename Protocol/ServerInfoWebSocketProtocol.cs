@@ -9,7 +9,7 @@ namespace Protocol {
 		public string Name { get; set; }
 		public float CurrentConnections { get; set; }
 	}
-	public class WebSocketProtocol {
+	public class ServerInfoWebSocketProtocol {
 		public DateTime DateTime { get; set; } = DateTime.Now;
 		public float CpuTime { get; set; }
 		public float DiskIdle { get; set; }

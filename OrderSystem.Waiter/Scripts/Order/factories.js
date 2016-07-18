@@ -111,7 +111,7 @@
 							}
 						}
 						for (var j in menuSetMeals) {
-							if (menuSetMeals[j].MenuSetId == menu.Id) {
+							if (menuSetMeals[j].MenuSetId == menu.Id && menu.IsSetMeal) {
 								menuSetMeals[j].Menu = _filterSetMenu(menuSetMeals[j].Menu);
 								menuSetMeals[j].Menu.Addition.Ordered = menuSetMeals[j].Count;
 								menu.Addition.SetMeals.push(menuSetMeals[j].Menu);
@@ -174,7 +174,6 @@ app.factory('dataSet', [
 			/* Cart Data */
 			HeadCount: 1, // 总人数
 			Price: 0, // 总价
-			PriceInPoints: 0, // 通过积分支付的价格
 			Invoice: null, // 发票抬头
 			Desk: null,
 			PayKind: null,
@@ -198,6 +197,7 @@ app.factory('dataSet', [
 				this.Invoice = '';
 				this.OrderedMenus = [];
 				this.Desk = null;
+				this.Customer = null;
 				$dataSet.Reset();
 			},
 			Initialize: function (resolve) {
@@ -210,19 +210,23 @@ app.factory('dataSet', [
 						_this.PayKind = $dataSet.PayKind;
 						_emptyCart = angular.copy(_this);
 						if (!angular.isUndefined($localStorage.carts) && $localStorage.carts.length > 0) {
-							_carts = $localStorage.carts;
+							var tempCarts = $localStorage.carts;
 
-							for (var i in _carts) {
+							for (var i = tempCarts.length - 1; i >= 0; i--) {
+								if (tempCarts[i].Ordered == 0) {
+									continue;
+								}
 								for (var j in $dataSet.Desks) {
-									if (_carts[i].Desk.Id == $dataSet.Desks[j].Id) {
-										$dataSet.Desks[j] = _carts[i].Desk;
+									if (tempCarts[i].Desk.Id == $dataSet.Desks[j].Id) {
+										tempCarts[i].Desk = $dataSet.Desks[j];
+										_this.LoadCart($dataSet.Desks[j]);
+										_this.LoadExistedCart(tempCarts[i]);
 										break;
 									}
 								}
-								_this.LoadCart(_carts[i].Desk);
-								_this.LoadExistedCart(_carts[i]);
 							}
 						}
+
 						$localStorage.carts = _carts;
 
 						if (resolve != null) resolve();
@@ -305,6 +309,7 @@ app.factory('dataSet', [
 					}
 				}
 				this.Desk.Addition.Ordered += min;
+				console.log(this.Desk);
 				this.Desk.Addition.IsSelected = true;
 
 				this._refreshCarts();
@@ -431,24 +436,17 @@ app.factory('dataSet', [
 					}
 				}
 				price = parseFloat(price.toFixed(2));
-				// 如果用户抵扣的金额超过需要支付的金额
-				if (this.PriceInPoints > price) {
-					this.PriceInPoints = price;
-				}
-				// 总价减去积分抵扣的  价格
-				price -= this.PriceInPoints;
+
 				return price;
 			},
 			CanSubmit: function () {
-				return this.Price > 0 &&
-					this.Price - this.PriceInPoints >= 0 && this.PriceInPoints >= 0
+				return this.Price > 0;
 			},
 			_getSendData: function () {
 				var sendData = {
 					Cart: {
 						HeadCount: this.HeadCount,
 						Price: this.GetSubmitPrice(),
-						PriceInPoints: this.PriceInPoints,
 						Invoice: this.Invoice,
 
 						DeskId: this.Desk.Id,
@@ -570,7 +568,6 @@ app.factory('dataSet', [
 				if (this._activeMenuClass != null) {
 					this._activeMenuClass.Addition.IsSelected = false;
 				}
-
 				menuClass.Addition.IsSelected = true;
 				this._activeMenuClass = menuClass;
 				this._filterMenu();

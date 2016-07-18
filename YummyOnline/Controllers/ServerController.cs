@@ -49,8 +49,8 @@ namespace YummyOnline.Controllers {
 			return Json(new JsonError("无法停止"));
 		}
 
-		public async Task<JsonResult> GetTcpServerInfo() {
-			return Json(await TcpServerProcess.GetTcpServerInfo());
+		public JsonResult GetTcpServerInfo() {
+			return Json(TcpServerProcess.GetTcpServerInfo());
 		}
 		[Authorize(Roles = nameof(Role.SuperAdmin))]
 		public async Task<JsonResult> StartTcpServer() {
@@ -91,6 +91,7 @@ namespace YummyOnline.Controllers {
 			})) {
 				return Json(new JsonError());
 			}
+			SystemTcpClient.SendSystemCommand(SystemCommandType.RefreshNewDineClients);
 			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"Guid {guid} ({description}) Added");
 			return Json(new JsonSuccess());
 		}
@@ -99,6 +100,7 @@ namespace YummyOnline.Controllers {
 			if(!await YummyOnlineManager.DeleteGuid(guid)) {
 				return Json(new JsonError());
 			}
+			SystemTcpClient.SendSystemCommand(SystemCommandType.RefreshNewDineClients);
 			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Warning, $"Guid {guid} Removed");
 			return Json(new JsonSuccess());
 		}

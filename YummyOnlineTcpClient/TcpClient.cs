@@ -69,6 +69,9 @@ namespace YummyOnlineTcpClient {
 						case TcpProtocolType.PrintShifts:
 							obj = JsonConvert.DeserializeObject<PrintShiftsProtocol>(content);
 							break;
+						case TcpProtocolType.TcpServerStatusInform:
+							obj = JsonConvert.DeserializeObject<TcpServerStatusInformProtocol>(content);
+							break;
 					}
 
 					CallBackWhenMessageReceived?.Invoke(p.Type, obj);
@@ -87,7 +90,7 @@ namespace YummyOnlineTcpClient {
 
 			Timer timer = new Timer(10 * 1000);
 			timer.Elapsed += Timer_Elapsed;
-			//timer.Start();
+			timer.Start();
 		}
 
 		private void Timer_Elapsed(object sender, ElapsedEventArgs e) {

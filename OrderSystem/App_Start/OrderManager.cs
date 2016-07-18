@@ -40,7 +40,7 @@ namespace OrderSystem {
 			}
 
 			Dine dine = new Dine {
-				Type = DineType.ToStay,
+				Type = addition.DineType,
 				HeadCount = cart.HeadCount,
 				IsOnline = mainPaidDetail.PayKind.Type == PayKindType.Online,
 				IsPaid = false,
@@ -89,94 +89,25 @@ namespace OrderSystem {
 					IsGift = false
 				});
 			}
-
-			foreach(MenuExtensionWithGift menuExtensionWithGift in menuExtensionWithGifts) {
-				MenuExtension menuExtension = menuExtensionWithGift.MenuExtension;
-				Menu menu = await ctx.Menus
-					.Include(p => p.MenuPrice)
-					.FirstOrDefaultAsync(p => p.Id == menuExtension.Id);
-				// 菜品判断
-				if(menu == null) {
-					return new FunctionResult(false, "未找到菜品", $"No Menu {menuExtension.Id}");
-				}
-				if(!menu.Usable) {
-					return new FunctionResult(false, $"{menu.Name} 不可用", $"Menu Disabled {menu.Id}: {menu.Name}");
-				}
-				if(menu.Status == MenuStatus.SellOut) {
-					return new FunctionResult(false, $"{menu.Name} 已售完", $"Menu SellOut {menu.Id}: {menu.Name}");
-				}
-
-				DineMenu dineMenu = new DineMenu {
-					Count = menuExtension.Ordered,
-					OriPrice = menu.MenuPrice.Price,
-					Price = menuExtensionWithGift.IsGift ? 0 : menu.MenuPrice.Price,
-					RemarkPrice = 0,
-
-					Menu = menu,
-					Remarks = new List<Remark>(),
-					Status = menuExtensionWithGift.IsGift ? DineMenuStatus.Gift : DineMenuStatus.Normal
-				};
-
-				if(!menuExtensionWithGift.IsGift) {
-					// 是否排除在总单打折之外
-					bool excludePayDiscount = menu.MenuPrice.ExcludePayDiscount;
-
-					// 是否打折
-					if(menu.MenuPrice.Discount < 1) {
-						excludePayDiscount = true;
-						dineMenu.Price = menu.MenuPrice.Price * (decimal)menu.MenuPrice.Discount;
-					}
-					// 是否为特价菜
-					DayOfWeek week = DateTime.Now.DayOfWeek;
-					MenuOnSale menuOnSales = await ctx.MenuOnSales.FirstOrDefaultAsync(p => p.Id == menu.Id && p.OnSaleWeek == week);
-					if(menuOnSales != null) {
-						excludePayDiscount = true;
-						dineMenu.Price = menuOnSales.Price;
-					}
-					// 是否为套餐
-					var menuSetMeals = await ctx.MenuSetMeals.FirstOrDefaultAsync(p => p.MenuSetId == menu.Id);
-					if(menuSetMeals != null) {
-						excludePayDiscount = true;
-					}
-
-					if(!excludePayDiscount) {
-						dineMenu.Price = menu.MenuPrice.Price * (decimal)dine.Discount;
-					}
-				}
-
-				// 菜品备注处理
-				foreach(int remarkId in menuExtension.Remarks) {
-					Remark remark = await ctx.Remarks.FirstOrDefaultAsync(p => p.Id == remarkId);
-
-					if(remark == null) {
-						return new FunctionResult(false, "未找到备注信息", $"No Remark {remarkId}");
-					}
-
-					if(!menuExtensionWithGift.IsGift) {
-						dineMenu.RemarkPrice += remark.Price;
-					}
-
-					dineMenu.Remarks.Add(remark);
-				}
-
-				dine.Price += dineMenu.Price * dineMenu.Count + dineMenu.RemarkPrice;
-				dine.OriPrice += dineMenu.OriPrice * dineMenu.Count + dineMenu.RemarkPrice;
-
-				dine.DineMenus.Add(dineMenu);
+			// 处理每个点过的菜品
+			FunctionResult result = await handleDineMenu(menuExtensionWithGifts, dine);
+			if(!result.Succeeded) {
+				return result;
 			}
+			// 处理最后生成的价格并比较前端传输的价格数据
+			result = await handleDinePrice(dine, cart.Price);
+			if(!result.Succeeded) {
+				return result;
+			}
+
 			mainPaidDetail.Price = dine.Price;
 
-			if(cart.PriceInPoints.HasValue) {
-				FunctionResult result = await handlePoints(cart.PriceInPoints.Value, mainPaidDetail, dine);
-				if(!result.Succeeded)
+			// 如果是线上支付并且使用了积分抵扣
+			if(mainPaidDetail.PayKind.Type == PayKindType.Online && cart.PriceInPoints.HasValue) {
+				result = await handlePoints(cart.PriceInPoints.Value, mainPaidDetail, dine);
+				if(!result.Succeeded) {
 					return result;
-			}
-
-			// 检测前端计算的金额与后台计算的金额是否相同，如果前端金额为null则检测
-			if(cart.Price.HasValue && Math.Abs(mainPaidDetail.Price - cart.Price.Value) > 0.01m) {
-				await ctx.SaveChangesAsync();
-				return new FunctionResult(false, "金额有误",
-					$"Price Error, Cart Price: {cart.Price.Value}, Cal Price: {mainPaidDetail.Price}");
+				}
 			}
 
 			// 如果是线上支付，则添加DinePaidDetail信息，否则不添加，交给收银系统处理
@@ -194,6 +125,37 @@ namespace OrderSystem {
 			await ctx.SaveChangesAsync();
 
 			return new FunctionResult(true, dine);
+		}
+
+		public async Task<FunctionResult> AddMenus(string dineId, List<MenuExtension> orderedMenus, decimal price) {
+			Dine dine = await ctx.Dines.Include(p => p.DineMenus).FirstOrDefaultAsync(p => p.Id == dineId);
+			if(dine == null) {
+				return new FunctionResult(false, "订单号不存在", $"No DineId {dineId}");
+			}
+
+			List<MenuExtensionWithGift> menuExtensionWithGifts = new List<MenuExtensionWithGift>();
+			foreach(MenuExtension menuExtension in orderedMenus) {
+				menuExtensionWithGifts.Add(new MenuExtensionWithGift {
+					MenuExtension = menuExtension,
+					IsGift = false
+				});
+			}
+
+			// 处理每个点过的菜品
+			FunctionResult result = await handleDineMenu(menuExtensionWithGifts, dine);
+			if(!result.Succeeded) {
+				return result;
+			}
+			List<DineMenu> addedDineMenus = result.Data as List<DineMenu>;
+			// 处理最后生成的价格并比较前端传输的价格数据
+			result = await handleDinePrice(dine, price);
+			if(!result.Succeeded) {
+				return result;
+			}
+
+			await ctx.SaveChangesAsync();
+
+			return new FunctionResult(true, addedDineMenus);
 		}
 
 		/// <summary>
@@ -242,6 +204,136 @@ namespace OrderSystem {
 			dine.Discount = minDiscount;
 			dine.DiscountName = minDiscountName;
 			dine.DiscountType = minDiscountType;
+		}
+
+		/// <summary>
+		/// 处理每个菜品
+		/// </summary>
+		private async Task<FunctionResult> handleDineMenu(List<MenuExtensionWithGift> menuExtensionWithGifts, Dine dine) {
+			List<DineMenu> addedDineMenus = new List<DineMenu>();
+
+			foreach(MenuExtensionWithGift menuExtensionWithGift in menuExtensionWithGifts) {
+				MenuExtension menuExtension = menuExtensionWithGift.MenuExtension;
+				Menu menu = await ctx.Menus
+					.Include(p => p.MenuPrice)
+					.FirstOrDefaultAsync(p => p.Id == menuExtension.Id);
+				// 菜品判断
+				if(menu == null) {
+					return new FunctionResult(false, "未找到菜品", $"No Menu {menuExtension.Id}");
+				}
+				if(!menu.Usable) {
+					return new FunctionResult(false, $"{menu.Name} 不可用", $"Menu Disabled {menu.Id}: {menu.Name}");
+				}
+				if(menu.Status == MenuStatus.SellOut) {
+					return new FunctionResult(false, $"{menu.Name} 已售完", $"Menu SellOut {menu.Id}: {menu.Name}");
+				}
+
+				DineMenu dineMenu = new DineMenu {
+					Count = menuExtension.Ordered,
+					OriPrice = menu.MenuPrice.Price,
+					Price = menuExtensionWithGift.IsGift ? 0 : menu.MenuPrice.Price,
+					RemarkPrice = 0,
+
+					Menu = menu,
+					Remarks = new List<Remark>(),
+					Status = menuExtensionWithGift.IsGift ? DineMenuStatus.Gift : DineMenuStatus.Normal
+				};
+
+				if(!menuExtensionWithGift.IsGift) {
+					// 是否排除在总单打折之外
+					bool excludePayDiscount = menu.MenuPrice.ExcludePayDiscount;
+
+					// 是否打折
+					if(menu.MenuPrice.Discount < 1) {
+						excludePayDiscount = true;
+						dineMenu.Price = menu.MenuPrice.Price * (decimal)menu.MenuPrice.Discount;
+						dineMenu.Type = DineMenuType.MenuDiscount;
+					}
+					// 是否为特价菜
+					DayOfWeek week = DateTime.Now.DayOfWeek;
+					MenuOnSale menuOnSales = await ctx.MenuOnSales.FirstOrDefaultAsync(p => p.Id == menu.Id && p.OnSaleWeek == week);
+					if(menuOnSales != null) {
+						excludePayDiscount = true;
+						dineMenu.Price = menuOnSales.Price;
+						dineMenu.Type = DineMenuType.OnSale;
+					}
+					// 是否为套餐
+					var menuSetMeals = await ctx.MenuSetMeals.FirstOrDefaultAsync(p => p.MenuSetId == menu.Id && p.Menu.IsSetMeal);
+					if(menuSetMeals != null) {
+						excludePayDiscount = true;
+						dineMenu.Type = DineMenuType.SetMeal;
+					}
+
+					if(!excludePayDiscount) {
+						dineMenu.Price = menu.MenuPrice.Price * (decimal)dine.Discount;
+						switch(dine.DiscountType) {
+							case DiscountType.PayKind:
+								dineMenu.Type = DineMenuType.PayKindDiscount;
+								break;
+							case DiscountType.Vip:
+								dineMenu.Type = DineMenuType.VipDiscount;
+								break;
+							case DiscountType.Time:
+								dineMenu.Type = DineMenuType.TimeDiscount;
+								break;
+							case DiscountType.Custom:
+								dineMenu.Type = DineMenuType.CustomDiscount;
+								break;
+						}
+					}
+				}
+
+				// 菜品备注处理
+				foreach(int remarkId in menuExtension.Remarks) {
+					Remark remark = await ctx.Remarks.FirstOrDefaultAsync(p => p.Id == remarkId);
+
+					if(remark == null) {
+						return new FunctionResult(false, "未找到备注信息", $"No Remark {remarkId}");
+					}
+
+					if(!menuExtensionWithGift.IsGift) {
+						dineMenu.RemarkPrice += remark.Price;
+					}
+
+					dineMenu.Remarks.Add(remark);
+				}
+
+				dine.Price += dineMenu.Price * dineMenu.Count + dineMenu.RemarkPrice;
+				dine.OriPrice += dineMenu.OriPrice * dineMenu.Count + dineMenu.RemarkPrice;
+
+				addedDineMenus.Add(dineMenu);
+				dine.DineMenus.Add(dineMenu);
+			}
+
+			return new FunctionResult(true, addedDineMenus);
+		}
+
+		/// <summary>
+		/// 处理订单的价格并验证是否与前端的价格相同
+		/// </summary>
+		private async Task<FunctionResult> handleDinePrice(Dine dine, decimal? cartPrice) {
+			HotelConfig hotelConfig = await ctx.HotelConfigs.FirstOrDefaultAsync();
+			int trim = 100;
+			switch(hotelConfig.TrimZero) {
+				case TrimZero.Jiao:
+					trim = 10;
+					break;
+				case TrimZero.Yuan:
+					trim = 1;
+					break;
+			}
+
+			dine.Price = Math.Floor(dine.Price * trim) / trim;
+			cartPrice = cartPrice ?? 0;
+			cartPrice = Math.Floor(cartPrice.Value * trim) / trim;
+
+			// 检测前端计算的金额与后台计算的金额是否相同，如果前端金额为null则检测
+			if(Math.Abs(dine.Price - cartPrice.Value) > 0.01m) {
+				return new FunctionResult(false, "金额有误",
+					$"Price Error, Cart Price: {cartPrice.Value}, Cal Price: {dine.Price}");
+			}
+
+			return new FunctionResult();
 		}
 
 		/// <summary>

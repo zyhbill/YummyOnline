@@ -1,0 +1,46 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="~/node_modules/weui/dist/style/weui.css" />
+    <link rel="stylesheet" href="~/node_modules/weui/dist/style/weui.min.css" />
+</head>
+<body>
+    <div>
+        <div class="weui_cells weui_form">
+            <div class="weui_cell">
+                <div class="weui_cell_hd">
+                    <label class="weui_label">手机</label>
+                </div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input id="phonenumber" class="weui_input" placeholder="phonenumber" />
+                </div>
+            </div>
+        </div>
+        <div class="weui_cells weui_vcode">
+            <div class="weui_cell weui_form">
+                <div class="weui_cell_hd">
+                    <label class="weui_label">密码</label>
+                </div>
+                <div class="weui_cell_bd weui_cell_primary">
+                    <input id="psd" class="weui_input" type="password" placeholder="password" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <br />
+    <div >
+        <button type="button" id="btn" class="weui_btn weui_btn_primary">登陆</button>
+    </div>
+            <script src="~/node_modules/jquery/dist/jquery.js"></script>
+            <script src="~/Script/Main.js"></script>
+</body>
+</html>

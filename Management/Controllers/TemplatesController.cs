@@ -1237,7 +1237,8 @@ namespace Management.Controllers
                         UserId = User.Id,
                         Discount = Discount,
                         DiscountName = DiscountName,
-                        GiftMenus = OrderInfo.SendMenus
+                        GiftMenus = OrderInfo.SendMenus,
+                        DineType = 1
                     }
                 });
             PostData pd = JsonConvert.DeserializeObject<PostData>(result);

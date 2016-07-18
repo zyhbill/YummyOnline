@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace AutoPrinter {
@@ -16,16 +15,14 @@ namespace AutoPrinter {
 		private readonly byte[] lf = new byte[] { 0x0A };
 
 		private Action<IPEndPoint, Exception> errorDelegate;
-		private int colorDepth;
 
 		private IPEndPoint ipEndPoint;
 		private int timeOut = 3;
 		private Guid guid = Guid.NewGuid();
 
-		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate, int colorDepth) {
+		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate) {
 			this.ipEndPoint = ipEndPoint;
 			this.errorDelegate = errorDelegate;
-			this.colorDepth = colorDepth;
 		}
 
 		public bool Test() {
@@ -53,7 +50,7 @@ namespace AutoPrinter {
 			return true;
 		}
 
-		public void Print(Bitmap bmp) {
+		public void Print(Bitmap bmp, int colorDepth) {
 			Task.Run(async () => {
 				TcpClient client = new TcpClient();
 				NetworkStream stream = null;
@@ -68,7 +65,7 @@ namespace AutoPrinter {
 					List<byte> data = new List<byte>();
 
 					data.AddRange(init);
-					printImg(data, bmp);
+					printImg(data, bmp, colorDepth);
 					data.AddRange(cut);
 
 					await stream.WriteAsync(data.ToArray(), 0, data.Count);
@@ -78,7 +75,7 @@ namespace AutoPrinter {
 					timeOut--;
 					if(timeOut > 0) {
 						await Task.Delay(1000);
-						Print(bmp);
+						Print(bmp, colorDepth);
 					}
 					else {
 						bmp.Save($@"{Environment.CurrentDirectory}\failedImgs\{guid}.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
@@ -93,7 +90,7 @@ namespace AutoPrinter {
 			});
 		}
 
-		private void printImg(List<byte> sendData, Bitmap bmp) {
+		private void printImg(List<byte> sendData, Bitmap bmp, int colorDepth) {
 			byte[] escBmp = new byte[] { 0x1B, 0x2A, 33, 0, 0 };
 			escBmp[3] = (byte)(bmp.Width % 256);
 			escBmp[4] = (byte)(bmp.Width / 256);

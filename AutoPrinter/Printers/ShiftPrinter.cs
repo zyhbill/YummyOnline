@@ -11,10 +11,10 @@ namespace AutoPrinter {
 
 		public void Print(ShiftForPrinting protocol) {
 			IPAddress ip = IPAddress.Parse(protocol.PrinterIpAddress);
-			IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate, protocol.PrinterFormat.ColorDepth);
+			IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
 
 			Bitmap bmp = generateShiftsBmp(protocol);
-			printer.Print(bmp);
+			printer.Print(bmp, protocol.PrinterFormat.ColorDepth);
 		}
 
 		private Bitmap generateShiftsBmp(ShiftForPrinting protocol) {

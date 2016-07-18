@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderSystem", "OrderSystem\OrderSystem.csproj", "{7CB3F434-20FD-41B9-B970-9B96B6450765}"
 EndProject
@@ -12,8 +12,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsynchronousTcp", "AsynchronousTcp\AsynchronousTcp.csproj", "{C7DF2C8C-8EDB-4CB0-A384-412EC7B8B14F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YummyOnlineTcpClient", "YummyOnlineTcpClient\YummyOnlineTcpClient.csproj", "{EC57DD19-5FAE-4217-AD83-6914E2718C71}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoPrinter", "AutoPrinter\AutoPrinter.csproj", "{5F642D99-C4A1-4DA6-9C19-1FA8CE0B4740}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol", "Protocol\Protocol.csproj", "{08106E56-C685-4860-AF3A-396DD9333299}"
 EndProject
@@ -44,6 +42,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Management", "Management\Management.csproj", "{D10A4090-C626-418E-82CD-5A49983C5660}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeChat", "WeChat\WeChat.csproj", "{D9A54414-424A-4EA7-B84B-41A6E9E25453}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoPrinter", "AutoPrinter\AutoPrinter.csproj", "{D246CC78-C90A-474B-B428-8FEAB1E51658}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -83,12 +83,6 @@ Global
 		{EC57DD19-5FAE-4217-AD83-6914E2718C71}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EC57DD19-5FAE-4217-AD83-6914E2718C71}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EC57DD19-5FAE-4217-AD83-6914E2718C71}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F642D99-C4A1-4DA6-9C19-1FA8CE0B4740}.CompanyServer|Any CPU.ActiveCfg = CompanyServer|Any CPU
-		{5F642D99-C4A1-4DA6-9C19-1FA8CE0B4740}.CompanyServer|Any CPU.Build.0 = CompanyServer|Any CPU
-		{5F642D99-C4A1-4DA6-9C19-1FA8CE0B4740}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F642D99-C4A1-4DA6-9C19-1FA8CE0B4740}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F642D99-C4A1-4DA6-9C19-1FA8CE0B4740}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F642D99-C4A1-4DA6-9C19-1FA8CE0B4740}.Release|Any CPU.Build.0 = Release|Any CPU
 		{08106E56-C685-4860-AF3A-396DD9333299}.CompanyServer|Any CPU.ActiveCfg = CompanyServer|Any CPU
 		{08106E56-C685-4860-AF3A-396DD9333299}.CompanyServer|Any CPU.Build.0 = CompanyServer|Any CPU
 		{08106E56-C685-4860-AF3A-396DD9333299}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -161,6 +155,12 @@ Global
 		{D9A54414-424A-4EA7-B84B-41A6E9E25453}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D9A54414-424A-4EA7-B84B-41A6E9E25453}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D9A54414-424A-4EA7-B84B-41A6E9E25453}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D246CC78-C90A-474B-B428-8FEAB1E51658}.CompanyServer|Any CPU.ActiveCfg = Release|Any CPU
+		{D246CC78-C90A-474B-B428-8FEAB1E51658}.CompanyServer|Any CPU.Build.0 = Release|Any CPU
+		{D246CC78-C90A-474B-B428-8FEAB1E51658}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D246CC78-C90A-474B-B428-8FEAB1E51658}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D246CC78-C90A-474B-B428-8FEAB1E51658}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D246CC78-C90A-474B-B428-8FEAB1E51658}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

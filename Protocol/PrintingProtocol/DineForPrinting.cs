@@ -46,12 +46,7 @@ namespace Protocol.PrintingProtocol {
 		public Printer ReciptPrinter { get; set; }
 		public Printer ServePrinter { get; set; }
 	}
-	public class Printer {
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public string IpAddress { get; set; }
-		public bool Usable { get; set; }
-	}
+	
 	public class DineMenu {
 		public int Id { get; set; }
 		public DineMenuStatus Status { get; set; }
@@ -91,6 +86,7 @@ namespace Protocol.PrintingProtocol {
 	}
 	public class TakeOut {
 		public string Address { get; set; }
+		public string RecordId { get; set; }
 	}
 
 	public class Hotel {
@@ -128,24 +124,6 @@ namespace Protocol.PrintingProtocol {
 		public Hotel Hotel { get; set; }
 		public Dine Dine { get; set; }
 		public User User { get; set; }
-		public PrinterFormat PrinterFormat { get; set; }
-	}
-
-
-
-	public class ShiftDetail {
-		public string PayKind { get; set; }
-		public decimal ReceivablePrice { get; set; }
-		public decimal RealPrice { get; set; }
-	}
-	public class Shift {
-		public List<ShiftDetail> ShiftDetails { get; set; }
-		public DateTime DateTime { get; set; }
-		public int Id { get; set; }
-	}
-	public class ShiftForPrinting {
-		public List<Shift> Shifts { get; set; }
-		public string PrinterName { get; set; }
 		public PrinterFormat PrinterFormat { get; set; }
 	}
 }

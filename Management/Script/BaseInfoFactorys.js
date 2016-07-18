@@ -1218,7 +1218,8 @@
                         ServeOrderSmallFontSize: data.font.ServeOrderSmallFontSize,
                         ShiftBigFontSize: data.font.ShiftBigFontSize,
                         ShiftFontSize: data.font.ShiftFontSize,
-                        ShiftSmallFontSize: data.font.ShiftSmallFontSize
+                        ShiftSmallFontSize: data.font.ShiftSmallFontSize,
+
                     }
                 }
                 if (data.Style == "default.css") {

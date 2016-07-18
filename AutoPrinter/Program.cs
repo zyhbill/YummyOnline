@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,10 @@ namespace AutoPrinter {
 				return;
 			}
 
+			if(!Directory.Exists($@"{Environment.CurrentDirectory}\failedImgs")) {
+				Directory.CreateDirectory($@"{Environment.CurrentDirectory}\failedImgs");
+			}
+
 			TcpClient tcp = new TcpClient(
 				IPAddress.Parse(tcpServerIp),
 				tcpServerPort,
@@ -58,12 +63,17 @@ namespace AutoPrinter {
 				log(Log.LogLevel.Error, e.Message, e.ToString());
 			};
 
-			//tcp.Start();
+			tcp.Start();
 
 			while(true) {
 				string cmd = Console.ReadLine();
 				string[] cmds = cmd.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-
+				if(cmds.Length == 0) {
+					Console.WriteLine("test ip");
+					Console.WriteLine("localtest ip");
+					Console.WriteLine("testprinters");
+					continue;
+				}
 				switch(cmds[0].ToLower()) {
 					case "test":
 						if(cmds.Length == 1) {
@@ -79,7 +89,7 @@ namespace AutoPrinter {
 							continue;
 						}
 						ipAddress = cmds[1];
-						printLocalTest(new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }, ipAddress);
+						printLocalTest(new List<PrintType> { PrintType.Recipt }, ipAddress);
 						break;
 					case "testprinters":
 						testPrinters().Wait();

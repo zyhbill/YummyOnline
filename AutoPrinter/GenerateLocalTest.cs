@@ -148,13 +148,13 @@ namespace AutoPrinter {
 				PrinterFormat = new PrinterFormat {
 					PaperSize = 556,
 					Font = "宋体",
-					ReciptBigFontSize = 24,
-					ReciptFontSize = 16,
-					ReciptSmallFontSize = 14,
-					ServeOrderFontSize = 18,
-					ServeOrderSmallFontSize = 18,
-					KitchenOrderFontSize = 18,
-					KitchenOrderSmallFontSize = 18
+					ReciptBigFontSize = 25,
+					ReciptFontSize = 17,
+					ReciptSmallFontSize = 15,
+					ServeOrderFontSize = 19,
+					ServeOrderSmallFontSize = 19,
+					KitchenOrderFontSize = 19,
+					KitchenOrderSmallFontSize = 19
 				}
 			};
 

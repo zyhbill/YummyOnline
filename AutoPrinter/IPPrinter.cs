@@ -22,7 +22,7 @@ namespace AutoPrinter {
 		private int timeOut = 3;
 		private Guid guid = Guid.NewGuid();
 
-		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate, byte colorDeep = 125) {
+		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate, byte colorDeep = 200) {
 			this.ipEndPoint = ipEndPoint;
 			this.errorDelegate = errorDelegate;
 			this.colorDeep = colorDeep;
@@ -54,11 +54,6 @@ namespace AutoPrinter {
 		}
 
 		public void Print(Bitmap bmp) {
-#if DEBUG
-			if(timeOut == 3) {
-				bmp.Save($@"{Environment.CurrentDirectory}\{DateTime.Now.ToString("yyyyMMddHHmmssffff")}.png", System.Drawing.Imaging.ImageFormat.Png);
-			}
-#endif
 			Task.Run(async () => {
 				TcpClient client = new TcpClient();
 				NetworkStream stream = null;
@@ -76,7 +71,7 @@ namespace AutoPrinter {
 					printImg(data, bmp);
 					data.AddRange(cut);
 
-					stream.Write(data.ToArray(), 0, data.Count);
+					await stream.WriteAsync(data.ToArray(), 0, data.Count);
 				}
 				catch(Exception e) {
 					errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} {e.Message}", e));
@@ -86,7 +81,8 @@ namespace AutoPrinter {
 						Print(bmp);
 					}
 					else {
-						errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} 已达重试次数上限, 打印失败"));
+						bmp.Save($@"{Environment.CurrentDirectory}\failedImgs\{guid}.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+						errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} 已达重试次数上限, 打印失败, 打印图片请至 failedImgs 文件夹下查看"));
 					}
 				}
 				finally {

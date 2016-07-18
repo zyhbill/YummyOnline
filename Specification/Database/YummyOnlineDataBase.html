@@ -51,10 +51,10 @@
 		<h2>YummyOnline Database Specification</h2>
 
 		<div class="alert alert-danger">
-			<p>Staffs表中增加IsHotelAdmin字段</p>
-			<p>HotelConfigs表中增加IsPayFirst字段</p>
+			<p>PrinterFormats中增加ColorDepth</p>
+			<p>Users中增加Price</p>
 			<p class="text-right">
-				<small>2016-7-1 张朕煜</small>
+				<small>2016-7-8 张朕煜</small>
 			</p>
 		</div>
 
@@ -1041,6 +1041,12 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>ColorDepth</td>
+				<td>int</td>
+				<td>颜色深度</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>ReciptBigFontSize</td>
 				<td>bit</td>
 				<td>收银条大字号</td>
@@ -1964,6 +1970,12 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>Price</td>
+				<td>decimal(11, 2)</td>
+				<td>总金额</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>Confirmed</td>
 				<td>bit</td>
 				<td>是否已确认</td>
@@ -1984,7 +1996,13 @@
 		</table>
 
 
-
+		<div class="alert alert-danger">
+			<p>Staffs表中增加IsHotelAdmin字段</p>
+			<p>HotelConfigs表中增加IsPayFirst字段</p>
+			<p class="text-right">
+				<small>2016-7-1 张朕煜</small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>Hotels表中增加OrderSystemStyle字段</p>
 			<p class="text-right">

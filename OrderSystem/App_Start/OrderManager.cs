@@ -418,7 +418,14 @@ namespace OrderSystem {
 			await ctx.SaveChangesAsync();
 		}
 		private async Task changeCustomerPoints(Dine dine) {
-			DinePaidDetail pointsPaidDetail = await ctx.DinePaidDetails.FirstOrDefaultAsync(p => p.Dine.Id == dine.Id && p.PayKind.Type == PayKindType.Points);
+			// 用户总平台消费金额
+			var yummyonlineCtx = new YummyOnlineContext();
+			User user = await yummyonlineCtx.Users.FirstOrDefaultAsync(p => p.Id == dine.UserId);
+			if(user == null) {
+				return;
+			}
+			user.Price += dine.Price;
+			await yummyonlineCtx.SaveChangesAsync();
 
 			Customer customer = await ctx.Customers.FirstOrDefaultAsync(p => p.Id == dine.UserId);
 			// 如果用户不存在或者是匿名用户
@@ -426,6 +433,7 @@ namespace OrderSystem {
 				return;
 			}
 			// 如果使用的积分支付
+			DinePaidDetail pointsPaidDetail = await ctx.DinePaidDetails.FirstOrDefaultAsync(p => p.Dine.Id == dine.Id && p.PayKind.Type == PayKindType.Points);
 			if(pointsPaidDetail != null) {
 				HotelConfig config = await ctx.HotelConfigs.FirstOrDefaultAsync();
 				customer.Points -= Convert.ToInt32((double)pointsPaidDetail.Price / config.PointsRatio);

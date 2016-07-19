@@ -238,6 +238,12 @@ namespace Management.Controllers
                     customer.Points -= (int)Point;
                     customer.Points += (int)(PayExceptPoint);
                 }
+                var SysCustomer = await sysdb.Users.FirstOrDefaultAsync(d => d.Id == UserId);
+                if (SysCustomer != null)
+                {
+                    SysCustomer.Price += totalPrcie;
+                    await sysdb.SaveChangesAsync();
+                }
 
             }
             else
@@ -270,6 +276,12 @@ namespace Management.Controllers
                         {
                             customer.Points += (int)(totalPrcie - Point);
                         }
+                    }
+                    var SysCustomer = await sysdb.Users.FirstOrDefaultAsync(d => d.Id == UserId);
+                    if (SysCustomer != null)
+                    {
+                        SysCustomer.Price += totalPrcie;
+                        await sysdb.SaveChangesAsync();
                     }
                     dine.Change = charge;
                 }

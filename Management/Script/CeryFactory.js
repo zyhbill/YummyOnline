@@ -1201,6 +1201,14 @@
                                 if (data.Status) {
                                     _this.ReturnElements.Desks = data.Desks.filter(function (x) { return x.Status });
                                     _this.ReturnElements.UnpaidDines = data.Dines;
+                                    var Id = _this.ReturnElements.CurrentDine.Id;
+                                    _this.ReturnElements.CurrentDine = {};
+                                    if (_this.ReturnElements.UnpaidDines.length > 0) {
+                                        _this.ReturnElements.UnpaidDines.forEach(function (x) {
+                                            if (x.Id == Id) _this.ReturnElements.CurrentDine = x;
+                                        })
+                                    }
+                                    console.log(_this.ReturnElements.UnpaidDines);
                                     swal("删除成功!", "此项菜品已经删除请重新进入支付页面.", "success");
                                 } else {
                                     console.log("数据错误");

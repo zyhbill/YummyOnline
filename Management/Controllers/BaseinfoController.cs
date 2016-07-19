@@ -575,8 +575,14 @@ namespace Management.Controllers
         /// <returns></returns>
         public async Task<JsonResult> DeleteMenu(string MenuId)
         {
-            var menu = await db.Menus.FirstOrDefaultAsync(m => m.Id == MenuId);
+            var menu = await db.Menus
+                .Include(m=>m.Classes)
+                .FirstOrDefaultAsync(m => m.Id == MenuId);
             menu.Usable = false;
+            foreach(var i in menu.Classes)
+            {
+                menu.Classes.Remove(i);
+            }
             db.SaveChanges();
             return null;
         }
@@ -1104,7 +1110,7 @@ namespace Management.Controllers
                 var menu = await db.Menus.Where(m => m.Classes.Select(mm => mm.Id).FirstOrDefault() == Id).FirstOrDefaultAsync();
                 if (menu != null)
                 {
-                    return Json(new { Status = false, ErrorMessage = "当前分类内还有菜品请删除后添加" });
+                    return Json(new { Status = false, ErrorMessage = "当前分类内还有菜品，请删除本类的所有菜品，再删除" });
                 }
                 else
                 {

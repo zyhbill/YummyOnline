@@ -484,7 +484,17 @@ namespace Management.Controllers
                         d.Discount,
                         d.DiscountName,
                         d.Id,
-                        d.DineMenus,
+                        DineMenus = d.DineMenus.Select(dd => new {
+                            dd.Id,
+                            dd.Menu.Name,
+                            dd.OriPrice,
+                            dd.Price,
+                            dd.RemarkPrice,
+                            dd.Count,
+                            dd.Status,
+                            dd.Type,
+                            Remarks = dd.Remarks
+                        }),
                         Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
                         d.BeginTime,
                         d.DeskId,
@@ -590,7 +600,7 @@ namespace Management.Controllers
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>() { Id }, new List<PrintType>() { PrintType.KitchenOrder }));
+                if (isprint&&dn.Status==DineStatus.Printed) MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>() { Id }, new List<PrintType>() { PrintType.KitchenOrder }));
             }
             catch
             {
@@ -598,24 +608,34 @@ namespace Management.Controllers
             }
             var Desk = await db.Desks.Where(d => d.Usable).Select(d => new { d.Id, d.Name, d.Status }).ToListAsync();
             var UnpaidDines = await db.Dines
-                   .Include(p => p.DineMenus.Select(pp => pp.Remarks))
-                   .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
-                   .Where(order => order.IsPaid == false && order.IsOnline == false)
-                   .Select(d => new
-                   {
-                       d.Discount,
-                       d.DiscountName,
-                       d.Id,
-                       d.DineMenus,
-                       Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
-                       d.BeginTime,
-                       d.DeskId,
-                       d.Remarks,
-                       d.HeadCount,
-                       d.UserId,
-                       d.OriPrice,
-                       d.Price
-                   }).ToListAsync();
+                    .Include(p => p.DineMenus.Select(pp => pp.Remarks))
+                    .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
+                    .Where(order => order.IsPaid == false && order.IsOnline == false)
+                    .Select(d => new
+                    {
+                        d.Discount,
+                        d.DiscountName,
+                        d.Id,
+                        DineMenus = d.DineMenus.Select(dd => new {
+                            dd.Id,
+                            dd.Menu.Name,
+                            dd.OriPrice,
+                            dd.Price,
+                            dd.RemarkPrice,
+                            dd.Count,
+                            dd.Status,
+                            dd.Type,
+                            Remarks = dd.Remarks
+                        }),
+                        Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
+                        d.BeginTime,
+                        d.DeskId,
+                        d.Remarks,
+                        d.HeadCount,
+                        d.UserId,
+                        d.OriPrice,
+                        d.Price
+                    }).ToListAsync();
             return Json(new { Status = true, Dines = UnpaidDines, Desks = Desk });
         }
         /// <summary>

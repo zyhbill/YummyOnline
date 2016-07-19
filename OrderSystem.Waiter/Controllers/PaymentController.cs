@@ -121,6 +121,7 @@ namespace OrderSystem.Waiter.Controllers {
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
 			if(!result.Succeeded) {
 				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}, Host:{Request.UserHostAddress}", HttpPost.GetPostData(Request));
+				return result;
 			}
 
 			Dine dine = ((Dine)result.Data);

@@ -7,19 +7,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Utility;
 using YummyOnlineTcpClient;
 
@@ -69,11 +59,11 @@ namespace AutoPrinter {
 			};
 			tcp.CallBackWhenConnected = () => {
 				localLog("服务器连接成功");
-				log(Log.LogLevel.Success, "Printer Connected");
+				remoteLog(Log.LogLevel.Success, "Printer Connected");
 			};
 			tcp.CallBackWhenExceptionOccured = e => {
 				localLog(e.Message);
-				log(Log.LogLevel.Error, e.Message, e.ToString());
+				remoteLog(Log.LogLevel.Error, e.Message, e.ToString());
 			};
 
 			tcp.Start();
@@ -89,8 +79,8 @@ namespace AutoPrinter {
 				}
 
 				localLog($"发送打印命令 单号: {dineId}");
-				DinePrinter dinePrinter = new DinePrinter((ip, guid, e) => {
-					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}", guid);
+				DinePrinter dinePrinter = new DinePrinter((ip, guid, m) => {
+					ipPrinterLog(m, ip.ToString(), guid);
 				});
 				await dinePrinter.Print(dp, printTypes, dineMenuIds == null);
 				localLog($"发送命令成功 单号: {dineId}");
@@ -98,7 +88,7 @@ namespace AutoPrinter {
 			}
 			catch(Exception e) {
 				localLog($"无法打印 单号: {dineId}, 错误信息: {e}");
-				log(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
+				remoteLog(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 			}
 		}
 		async Task printRemoteTest(List<PrintType> printTypes, string ipAddress) {
@@ -117,8 +107,8 @@ namespace AutoPrinter {
 				}
 
 				localLog($"发送测试单命令");
-				DinePrinter dinePrinter = new DinePrinter((ip, guid, e) => {
-					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}", guid);
+				DinePrinter dinePrinter = new DinePrinter((ip, guid, m) => {
+					ipPrinterLog(m, ip.ToString(), guid);
 				});
 				await dinePrinter.Print(dp, printTypes, true);
 				localLog($"发送测试单命令成功");
@@ -126,7 +116,7 @@ namespace AutoPrinter {
 			}
 			catch(Exception e) {
 				localLog($"无法打印测试单, 错误信息: {e}");
-				log(Log.LogLevel.Error, $"Online Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
+				remoteLog(Log.LogLevel.Error, $"Online Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 			}
 		}
 
@@ -142,8 +132,8 @@ namespace AutoPrinter {
 				}
 
 				localLog($"发送本地测试单命令");
-				DinePrinter dinePrinter = new DinePrinter((ip, guid, e) => {
-					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}", guid);
+				DinePrinter dinePrinter = new DinePrinter((ip, guid, m) => {
+					ipPrinterLog(m, ip.ToString(), guid);
 				});
 
 				await dinePrinter.Print(dp, printTypes, true);
@@ -151,7 +141,7 @@ namespace AutoPrinter {
 			}
 			catch(Exception e) {
 				localLog($"无法打印本地测试单, 错误信息: {e}");
-				log(Log.LogLevel.Error, $"Local Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
+				remoteLog(Log.LogLevel.Error, $"Local Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 			}
 		}
 
@@ -163,8 +153,8 @@ namespace AutoPrinter {
 					localLog("获取交接班信息失败，请检查网络设置");
 					return;
 				}
-				ShiftPrinter shiftPrinter = new ShiftPrinter((ip, guid, e) => {
-					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}", guid);
+				ShiftPrinter shiftPrinter = new ShiftPrinter((ip, guid, m) => {
+					ipPrinterLog(m, ip.ToString(), guid);
 				});
 				localLog($"发送打印命令 交接班");
 
@@ -174,18 +164,18 @@ namespace AutoPrinter {
 			}
 			catch(Exception e) {
 				localLog($"无法打印 交接班, 错误信息: {e}");
-				log(Log.LogLevel.Error, $"ShiftInfos, {e.Message}", $"Data: {JsonConvert.SerializeObject(sp)}, Error: {e}");
+				remoteLog(Log.LogLevel.Error, $"ShiftInfos, {e.Message}", $"Data: {JsonConvert.SerializeObject(sp)}, Error: {e}");
 			}
 		}
 
 		async Task testPrinter(string ip) {
-			ipPrinterLog($"正在测试 {ip}");
+			ipPrinterLog($"正在测试", ip);
 			IPPrinter ipPrinter = new IPPrinter(new IPEndPoint(IPAddress.Parse(ip), 9100), null);
 			if(await ipPrinter.Test()) {
-				ipPrinterLog($"{ip} 测试成功");
+				ipPrinterLog($"测试成功", ip);
 			}
 			else {
-				ipPrinterLog($"{ip} 测试失败");
+				ipPrinterLog($"测试失败", ip);
 			}
 		}
 		async Task testPrinters() {
@@ -197,13 +187,13 @@ namespace AutoPrinter {
 					return;
 				}
 				foreach(var printer in pp.Printers) {
-					ipPrinterLog($"正在测试{printer.Name} {printer.IpAddress}");
+					ipPrinterLog($"正在测试{printer.Name}", printer.IpAddress);
 					IPPrinter ipPrinter = new IPPrinter(new IPEndPoint(IPAddress.Parse(printer.IpAddress), 9100), null);
 					if(await ipPrinter.Test()) {
-						ipPrinterLog($"{printer.Name} {printer.IpAddress} 测试成功");
+						ipPrinterLog($"{printer.Name} 测试成功", printer.IpAddress);
 					}
 					else {
-						ipPrinterLog($"{printer.Name} {printer.IpAddress} 测试失败");
+						ipPrinterLog($"{printer.Name} 测试失败", printer.IpAddress);
 					}
 				}
 				ipPrinterLog($"测试完成");
@@ -270,20 +260,21 @@ namespace AutoPrinter {
 				});
 			});
 			listViewLog.SelectedIndex = listViewLog.Items.Count - 1;
-			listViewLog.ScrollIntoView(listViewLog.SelectedIndex);
+			listViewLog.ScrollIntoView(listViewLog.SelectedItem);
 		}
-		void ipPrinterLog(string message, Guid? guid = null) {
+		void ipPrinterLog(string message, string ip = null, Guid? guid = null) {
 			listViewIpPrinter.Dispatcher.Invoke(() => {
 				listViewIpPrinter.Items.Add(new {
 					DateTime = DateTime.Now.ToString("HH:mm:ss"),
 					Message = message,
+					Ip = ip,
 					Guid = guid
 				});
 			});
 			listViewIpPrinter.SelectedIndex = listViewIpPrinter.Items.Count - 1;
-			listViewIpPrinter.ScrollIntoView(listViewIpPrinter.SelectedIndex);
+			listViewIpPrinter.ScrollIntoView(listViewIpPrinter.SelectedItem);
 		}
-		void log(Log.LogLevel level, string message, string detail = null) {
+		void remoteLog(Log.LogLevel level, string message, string detail = null) {
 			object postData = new {
 				HotelId = hotelId,
 				Level = level,

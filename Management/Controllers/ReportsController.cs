@@ -1193,15 +1193,7 @@ namespace Management.Controllers
 
         public async Task<JsonResult> GetInvoice()
         {
-            var Invoices = await db.Dines.Where(d => d.IsInvoiced == true&&SqlFunctions.DateDiff("day",DateTime.Now,d.BeginTime)==0).Select(d => new
-            {
-                d.DeskId,
-                d.Id,
-                d.Price,
-                d.OriPrice,
-                d.Invoice,
-                d.BeginTime
-            }).OrderBy(d=>d.BeginTime).ToListAsync();
+            var Invoices = await db.
             return Json(new SuccessState(Invoices));
         }
 

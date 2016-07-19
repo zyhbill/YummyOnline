@@ -113,7 +113,10 @@ namespace AutoPrinter {
 				});
 				dinePrinter.Print(dp, printTypes, dineMenuIds == null);
 				localLog($"发送命令成功 单号: {dineId}");
-				printCompleted(dineId);
+				// 厨房打印过订单再发送成功打印信息
+				if(printTypes.Contains(PrintType.KitchenOrder)) {
+					printCompleted(dineId);
+				}
 			}
 			catch(Exception e) {
 				localLog($"无法打印 单号: {dineId}, 错误信息: {e}");

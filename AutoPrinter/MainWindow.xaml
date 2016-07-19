@@ -34,12 +34,13 @@
 			</ListView.View>
 		</ListView>
 		<TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="打印机日志:" VerticalAlignment="Top" Grid.Column="1"/>
-		
+
 		<ListView x:Name="listViewIpPrinter"  Grid.Column="1" Margin="10,30,10,0">
 			<ListView.View>
 				<GridView>
 					<GridViewColumn Header="日期" DisplayMemberBinding="{Binding Path=DateTime}" />
 					<GridViewColumn Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
+					<GridViewColumn Header="编号" DisplayMemberBinding="{Binding Path=Guid}" />
 				</GridView>
 			</ListView.View>
 		</ListView>

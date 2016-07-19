@@ -15,14 +15,14 @@ namespace AutoPrinter {
 		// 换行
 		private readonly byte[] lf = new byte[] { 0x0A };
 
-		private Action<IPEndPoint, Exception> errorDelegate;
+		private Action<IPEndPoint, Guid, Exception> errorDelegate;
 		private byte colorDeep;
 
 		private IPEndPoint ipEndPoint;
 		private int timeOut = 3;
 		private Guid guid = Guid.NewGuid();
 
-		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate, byte colorDeep = 200) {
+		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Guid, Exception> errorDelegate, byte colorDeep = 200) {
 			this.ipEndPoint = ipEndPoint;
 			this.errorDelegate = errorDelegate;
 			this.colorDeep = colorDeep;
@@ -71,9 +71,10 @@ namespace AutoPrinter {
 				data.AddRange(cut);
 
 				await stream.WriteAsync(data.ToArray(), 0, data.Count);
+				//errorDelegate?.Invoke(ipEndPoint, guid, new Exception($"打印编号 {guid} {e.Message}", e));
 			}
 			catch(Exception e) {
-				errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} {e.Message}", e));
+				errorDelegate?.Invoke(ipEndPoint, guid, new Exception($"{e.Message}", e));
 				timeOut--;
 				if(timeOut > 0) {
 					await Task.Delay(1000);
@@ -81,7 +82,7 @@ namespace AutoPrinter {
 				}
 				else {
 					bmp.Save($@"{Environment.CurrentDirectory}\failedImgs\{guid}.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-					errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} 已达重试次数上限, 打印失败, 打印图片请至 failedImgs 文件夹下查看"));
+					errorDelegate?.Invoke(ipEndPoint, guid, new Exception($"已达重试次数上限, 打印失败"));
 				}
 			}
 			finally {

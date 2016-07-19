@@ -8,7 +8,7 @@ namespace AutoPrinter {
 	public class ShiftPrinter : BasePrinter {
 		private int maxHeight = 2000;
 
-		public ShiftPrinter(Action<IPEndPoint, Exception> errorDelegate) : base(errorDelegate) { }
+		public ShiftPrinter(Action<IPEndPoint, Guid, Exception> errorDelegate) : base(errorDelegate) { }
 
 		public async Task Print(ShiftForPrinting protocol) {
 			IPAddress ip = IPAddress.Parse(protocol.PrinterIpAddress);

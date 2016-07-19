@@ -11,9 +11,10 @@ namespace AutoPrinter {
 	public class DinePrinter : BasePrinter {
 		private int maxHeight = 2000;
 
-		public DinePrinter(Action<IPEndPoint, Exception> errorDelegate) : base(errorDelegate) { }
+		public DinePrinter(Action<IPEndPoint, Guid, Exception> errorDelegate) : base(errorDelegate) { }
 
 		public async Task Print(DineForPrinting protocol, List<PrintType> printTypes, bool isFullDineMenus) {
+			List<Task> allTasks = new List<Task>();
 			foreach(PrintType type in printTypes) {
 				if(type == PrintType.Recipt) {
 					if(protocol.Dine.Desk.ReciptPrinter == null) {
@@ -23,7 +24,7 @@ namespace AutoPrinter {
 					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
 
 					Bitmap bmp = generateReciptBmp(protocol, isFullDineMenus);
-					await printer.Print(bmp);
+					allTasks.Add(printer.Print(bmp));
 				}
 				else if(type == PrintType.ServeOrder) {
 					if(protocol.Dine.Desk.ServePrinter == null) {
@@ -33,7 +34,7 @@ namespace AutoPrinter {
 					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
 
 					Bitmap bmp = generateServeOrderBmp(protocol);
-					await printer.Print(bmp);
+					allTasks.Add(printer.Print(bmp));
 				}
 				else if(type == PrintType.KitchenOrder) {
 					foreach(DineMenu dineMenu in protocol.Dine.DineMenus.Where(p => p.Status != HotelDAO.Models.DineMenuStatus.Returned)) {
@@ -45,18 +46,22 @@ namespace AutoPrinter {
 							Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, null);
 							IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
 							IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
-							await printer.Print(bmp);
+							allTasks.Add(printer.Print(bmp));
 						}
 						else {
 							foreach(SetMealMenu setMealMenu in dineMenu.Menu.SetMealMenus) {
 								Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, setMealMenu);
 								IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
 								IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
-								await printer.Print(bmp);
+								allTasks.Add(printer.Print(bmp));
 							}
 						}
 					}
 				}
+			}
+
+			foreach(Task t in allTasks) {
+				await t;
 			}
 		}
 
@@ -89,7 +94,7 @@ namespace AutoPrinter {
 				printerG.DrawStringLine($"手机: {protocol.User.PhoneNumber}", protocol.PrinterFormat.ReciptBigFontSize);
 				printerG.DrawStringLine($"地址: {protocol.Dine.TakeOut.Address}", protocol.PrinterFormat.ReciptBigFontSize);
 			}
-			
+
 			printHr(printerG);
 
 			printGrid5122(printerG, new string[] { "名称", "数量", "单价", "折后小计" }, protocol.PrinterFormat.ReciptFontSize);

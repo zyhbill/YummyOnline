@@ -89,8 +89,8 @@ namespace AutoPrinter {
 				}
 
 				localLog($"发送打印命令 单号: {dineId}");
-				DinePrinter dinePrinter = new DinePrinter((ip, e) => {
-					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}");
+				DinePrinter dinePrinter = new DinePrinter((ip, guid, e) => {
+					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}", guid);
 				});
 				await dinePrinter.Print(dp, printTypes, dineMenuIds == null);
 				localLog($"发送命令成功 单号: {dineId}");
@@ -117,8 +117,8 @@ namespace AutoPrinter {
 				}
 
 				localLog($"发送测试单命令");
-				DinePrinter dinePrinter = new DinePrinter((ip, e) => {
-					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}");
+				DinePrinter dinePrinter = new DinePrinter((ip, guid, e) => {
+					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}", guid);
 				});
 				await dinePrinter.Print(dp, printTypes, true);
 				localLog($"发送测试单命令成功");
@@ -142,8 +142,8 @@ namespace AutoPrinter {
 				}
 
 				localLog($"发送本地测试单命令");
-				DinePrinter dinePrinter = new DinePrinter((ip, e) => {
-					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}");
+				DinePrinter dinePrinter = new DinePrinter((ip, guid, e) => {
+					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}", guid);
 				});
 
 				await dinePrinter.Print(dp, printTypes, true);
@@ -163,8 +163,8 @@ namespace AutoPrinter {
 					localLog("获取交接班信息失败，请检查网络设置");
 					return;
 				}
-				ShiftPrinter shiftPrinter = new ShiftPrinter((ip, e) => {
-					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}");
+				ShiftPrinter shiftPrinter = new ShiftPrinter((ip, guid, e) => {
+					ipPrinterLog($"打印机错误, 请检查打印机设置, {ip} {e.Message}", guid);
 				});
 				localLog($"发送打印命令 交接班");
 
@@ -269,16 +269,19 @@ namespace AutoPrinter {
 					Message = message
 				});
 			});
-			listViewLog.ScrollIntoView(listViewLog.Items.Count - 1);
+			listViewLog.SelectedIndex = listViewLog.Items.Count - 1;
+			listViewLog.ScrollIntoView(listViewLog.SelectedIndex);
 		}
-		void ipPrinterLog(string message) {
+		void ipPrinterLog(string message, Guid? guid = null) {
 			listViewIpPrinter.Dispatcher.Invoke(() => {
 				listViewIpPrinter.Items.Add(new {
 					DateTime = DateTime.Now.ToString("HH:mm:ss"),
-					Message = message
+					Message = message,
+					Guid = guid
 				});
 			});
-			listViewIpPrinter.ScrollIntoView(listViewIpPrinter.Items.Count - 1);
+			listViewIpPrinter.SelectedIndex = listViewIpPrinter.Items.Count - 1;
+			listViewIpPrinter.ScrollIntoView(listViewIpPrinter.SelectedIndex);
 		}
 		void log(Log.LogLevel level, string message, string detail = null) {
 			object postData = new {

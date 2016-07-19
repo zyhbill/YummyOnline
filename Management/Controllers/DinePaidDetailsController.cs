@@ -50,6 +50,7 @@ namespace Management.Controllers
                 d.IsPaid,
                 d.Discount,
                 d.IsOnline,
+                d.IsInvoiced,
                 d.HeadCount,
                 discount = d.OriPrice - d.Price,
                 d.DinePaidDetails,
@@ -224,7 +225,6 @@ namespace Management.Controllers
                 d.HeadCount,
                 discount = d.OriPrice - d.Price,
                 d.DinePaidDetails,
-                d.Invoice,
                 d.IsInvoiced,
                 ReturnPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Returned).Sum(dd => dd.Price * dd.Count),
                 GiftPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Gift).Sum(dd => dd.OriPrice * dd.Count)
@@ -290,11 +290,16 @@ namespace Management.Controllers
 
 
         }
-        public async Task<JsonResult> putInvoice(string Id, string Invoice)
+        public async Task<JsonResult> putInvoice(string Id, string Invoice,decimal Price)
         {
-            var dine = await db.Dines.Where(d => d.Id == Id).FirstOrDefaultAsync();
-            dine.Invoice = Invoice;
-            dine.IsInvoiced = true;
+            var Dine = await db.Dines.Where(d => d.Id == Id).FirstOrDefaultAsync();
+            Dine.IsPaid = true;
+            db.Invoices.Add(new Invoice
+            {
+                DineId = Id,
+                Title = Invoice,
+                Price = Price,
+            });
             db.SaveChanges();
             return null;
         }

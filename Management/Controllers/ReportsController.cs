@@ -1193,7 +1193,12 @@ namespace Management.Controllers
 
         public async Task<JsonResult> GetInvoice()
         {
-            var Invoices = await db.
+            var Invoices = await db.Invoices
+                .Include(d => d.Dine)
+                .Where(d => d.Dine.IsInvoiced == true&&
+                (SqlFunctions.DateDiff("day", DateTime.Now, d.Dine.BeginTime) >= 0 )&&
+                (SqlFunctions.DateDiff("day", DateTime.Now, d.Dine.BeginTime) <= 0))
+                .ToListAsync();
             return Json(new SuccessState(Invoices));
         }
 
@@ -1216,17 +1221,13 @@ namespace Management.Controllers
             {
                 EndTime = Convert.ToDateTime(End);
             }
-            var Invoices = await db.Dines.Where(d => d.IsInvoiced == true &&
-            SqlFunctions.DateDiff("day", BeginTime, d.BeginTime) >= 0&&
-            SqlFunctions.DateDiff("day", EndTime, d.BeginTime) <= 0)
-            .Select(d => new{
-                d.DeskId,
-                d.Id,
-                d.Price,
-                d.OriPrice,
-                d.Invoice,
-                d.BeginTime
-            }).OrderBy(d => d.BeginTime).ToListAsync();
+            var Invoices =
+                await db.Invoices
+                .Include(d => d.Dine)
+                .Where(d => d.Dine.IsInvoiced == true &&
+                  SqlFunctions.DateDiff("day", BeginTime, d.Dine.BeginTime) >= 0 &&
+                  SqlFunctions.DateDiff("day", EndTime, d.Dine.BeginTime) <= 0)
+                .ToListAsync();
             return Json(new SuccessState(Invoices));
 
         }

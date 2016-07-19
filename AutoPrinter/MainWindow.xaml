@@ -15,7 +15,7 @@
 			<ColumnDefinition/>
 			<ColumnDefinition/>
 		</Grid.ColumnDefinitions>
-		<ListBox x:Name="listBoxIpPrinter" Grid.Column="1" Margin="10,30,10,0"/>
+
 		<Grid Grid.Row="1" Grid.ColumnSpan="3">
 			<Button x:Name="buttonTestPrinters" Content="所有打印机测试" Margin="0,17,10,0" VerticalAlignment="Top" Height="23" HorizontalAlignment="Right" Width="120"/>
 			<TextBox x:Name="textBoxIp" HorizontalAlignment="Left" Height="23" Margin="10,17,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
@@ -28,11 +28,20 @@
 		<ListView x:Name="listViewLog" Margin="10,30,10,0">
 			<ListView.View>
 				<GridView>
-					<GridViewColumn Header="日期" />
-					<GridViewColumn Header="日志"/>
+					<GridViewColumn Header="日期" DisplayMemberBinding="{Binding Path=DateTime}" />
+					<GridViewColumn Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
 				</GridView>
 			</ListView.View>
 		</ListView>
-
+		<TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="打印机日志:" VerticalAlignment="Top" Grid.Column="1"/>
+		
+		<ListView x:Name="listViewIpPrinter"  Grid.Column="1" Margin="10,30,10,0">
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Header="日期" DisplayMemberBinding="{Binding Path=DateTime}" />
+					<GridViewColumn Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
+				</GridView>
+			</ListView.View>
+		</ListView>
 	</Grid>
 </Window>

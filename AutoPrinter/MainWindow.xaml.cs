@@ -79,6 +79,7 @@ namespace AutoPrinter {
 
 		void localLog(string message) {
 			listViewLog.Dispatcher.Invoke(() => {
+				
 				listViewLog.Items.Add(new {
 					DateTime = DateTime.Now.ToString("HH:mm:ss"),
 					Message = message

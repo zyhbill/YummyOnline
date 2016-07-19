@@ -27,7 +27,7 @@ namespace AutoPrinter {
 
 		static void Main(string[] args) {
 			Console.Title = "YummyOnline自助打印";
-			Console.WriteLine($"版本: {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}");
+			Console.WriteLine($"版本: ");
 			Process[] tProcess = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
 			if(tProcess.Length > 1) {
 				localLog("打印程序已经打开，请关闭后再打开打印程序。");

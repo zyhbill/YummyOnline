@@ -117,7 +117,10 @@ namespace OrderSystem {
 
 			// 订单发票
 			if(cart.Invoice != null) {
-				dine.Invoice = cart.Invoice;
+				dine.Invoices.Add(new Invoice {
+					Price = dine.Price,
+					Title = cart.Invoice
+				});
 			}
 
 			ctx.Dines.Add(dine);

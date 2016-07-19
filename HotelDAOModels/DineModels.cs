@@ -90,10 +90,6 @@ namespace HotelDAO.Models {
 		/// 是否已经打印发票
 		/// </summary>
 		public bool IsInvoiced { get; set; }
-		[MaxLength(20)]
-		public string Invoice { get; set; }
-		[MaxLength(20)]
-		public string Footer { get; set; }
 
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public DateTime BeginTime { get; set; }
@@ -127,6 +123,7 @@ namespace HotelDAO.Models {
 		public ICollection<Remark> Remarks { get; set; }
 		public ICollection<DineMenu> DineMenus { get; set; }
 		public ICollection<DinePaidDetail> DinePaidDetails { get; set; }
+		public ICollection<Invoice> Invoices { get; set; }
 		public TakeOut TakeOut { get; set; }
 	}
 

@@ -99,6 +99,10 @@ namespace YummyOnline {
 			ctx.PrinterFormats.Add(new PrinterFormat {
 				PaperSize = 556,
 				Font = "宋体",
+				ColorDepth = 200,
+				ShiftBigFontSize = 25,
+				ShiftFontSize = 17,
+				ShiftSmallFontSize = 15,
 				ReciptBigFontSize = 25,
 				ReciptFontSize = 17,
 				ReciptSmallFontSize = 15,

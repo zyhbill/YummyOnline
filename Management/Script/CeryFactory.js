@@ -268,6 +268,7 @@
                 if (this.PayElements.CurrentDine.Id == '当前桌台没有点单') {//当前是空单，默认是找到
                     this.PayElements.CurrentDine = $filter('filter')(this.PayElements.UnpaidDines, { DeskId: this.PayElements.Desk.Id })[0];
                     this.PayElements.CurrentDine.isChoose = true;
+                    this.PayElements.CurrentDiscount.Discount = this.PayElements.CurrentDine.Discount;
                     this.PayElements.CurrentUser.Id = this.PayElements.CurrentDine.UserId;
                     this.Login();
                 } else if (this.PayElements.CurrentDine.DeskId != this.PayElements.Desk.Id) {//换桌之后默认自动匹配

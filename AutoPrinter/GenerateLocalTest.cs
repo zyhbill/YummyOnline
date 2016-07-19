@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 namespace AutoPrinter {
-	public partial class Program {
+	public partial class MainWindow {
 		private static DineForPrinting generateTestProtocol() {
 			DineForPrinting p = new DineForPrinting {
 				Hotel = new Hotel {

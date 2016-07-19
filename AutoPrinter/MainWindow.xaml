@@ -17,11 +17,11 @@
 		</Grid.ColumnDefinitions>
 
 		<Grid Grid.Row="1" Grid.ColumnSpan="3">
-			<Button x:Name="buttonTestPrinters" Content="所有打印机测试" Margin="0,17,10,0" VerticalAlignment="Top" Height="23" HorizontalAlignment="Right" Width="120"/>
-			<TextBox x:Name="textBoxIp" HorizontalAlignment="Left" Height="23" Margin="10,17,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-			<Button x:Name="buttonTestRemoteDines" Content="远程订单测试" HorizontalAlignment="Left" Margin="135,17,0,0" VerticalAlignment="Top" Width="101" Height="23"/>
-			<Button x:Name="buttonTestLocalDines" Content="本地订单测试" HorizontalAlignment="Left" Margin="241,17,0,0" VerticalAlignment="Top" Width="101" Height="23"/>
-			<Button x:Name="buttonTestPrinter" Content="打印机测试" HorizontalAlignment="Left" Margin="347,17,0,0" VerticalAlignment="Top" Width="101" Height="23"/>
+			<Button x:Name="buttonTestPrinters" Content="所有打印机测试" Margin="0,17,10,0" VerticalAlignment="Top" Height="23" HorizontalAlignment="Right" Width="101" Click="buttonTestPrinters_Click"/>
+			<TextBox x:Name="textBoxIp" HorizontalAlignment="Left" Height="23" Margin="10,17,0,0" Text="192.168.0.252" VerticalAlignment="Top" Width="120"/>
+			<Button x:Name="buttonTestRemoteDines" Content="远程订单测试" HorizontalAlignment="Left" Margin="135,17,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestRemoteDines_Click"/>
+			<Button x:Name="buttonTestLocalDines" Content="本地订单测试" HorizontalAlignment="Left" Margin="241,17,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestLocalDines_Click"/>
+			<Button x:Name="buttonTestPrinter" Content="打印机测试" HorizontalAlignment="Left" Margin="347,17,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestPrinter_Click"/>
 		</Grid>
 
 		<TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="日志:" VerticalAlignment="Top"/>

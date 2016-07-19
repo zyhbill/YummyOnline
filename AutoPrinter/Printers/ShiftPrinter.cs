@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace AutoPrinter {
 	public class ShiftPrinter : BasePrinter {
@@ -9,12 +10,12 @@ namespace AutoPrinter {
 
 		public ShiftPrinter(Action<IPEndPoint, Exception> errorDelegate) : base(errorDelegate) { }
 
-		public void Print(ShiftForPrinting protocol) {
+		public async Task Print(ShiftForPrinting protocol) {
 			IPAddress ip = IPAddress.Parse(protocol.PrinterIpAddress);
 			IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
 
 			Bitmap bmp = generateShiftsBmp(protocol);
-			printer.Print(bmp);
+			await printer.Print(bmp);
 		}
 
 		private Bitmap generateShiftsBmp(ShiftForPrinting protocol) {

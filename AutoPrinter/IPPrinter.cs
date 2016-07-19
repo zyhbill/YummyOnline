@@ -28,18 +28,18 @@ namespace AutoPrinter {
 			this.colorDeep = colorDeep;
 		}
 
-		public bool Test() {
+		public async Task<bool> Test() {
 			TcpClient client = new TcpClient();
 			NetworkStream stream = null;
 
 			try {
-				client.Connect(ipEndPoint);
+				await client.ConnectAsync(ipEndPoint.Address, ipEndPoint.Port);
 				stream = client.GetStream();
 				if(!stream.CanWrite) {
 					return false;
 				}
 
-				stream.Write(init, 0, init.Length);
+				await stream.WriteAsync(init, 0, init.Length);
 			}
 			catch {
 				return false;
@@ -53,44 +53,42 @@ namespace AutoPrinter {
 			return true;
 		}
 
-		public void Print(Bitmap bmp) {
-			Task.Run(async () => {
-				TcpClient client = new TcpClient();
-				NetworkStream stream = null;
+		public async Task Print(Bitmap bmp) {
+			TcpClient client = new TcpClient();
+			NetworkStream stream = null;
 
-				try {
-					client.Connect(ipEndPoint);
-					stream = client.GetStream();
-					if(!stream.CanWrite) {
-						throw new Exception("不支持写入");
-					}
-
-					List<byte> data = new List<byte>();
-
-					data.AddRange(init);
-					printImg(data, bmp);
-					data.AddRange(cut);
-
-					await stream.WriteAsync(data.ToArray(), 0, data.Count);
+			try {
+				await client.ConnectAsync(ipEndPoint.Address, ipEndPoint.Port);
+				stream = client.GetStream();
+				if(!stream.CanWrite) {
+					throw new Exception("不支持写入");
 				}
-				catch(Exception e) {
-					errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} {e.Message}", e));
-					timeOut--;
-					if(timeOut > 0) {
-						await Task.Delay(1000);
-						Print(bmp);
-					}
-					else {
-						bmp.Save($@"{Environment.CurrentDirectory}\failedImgs\{guid}.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-						errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} 已达重试次数上限, 打印失败, 打印图片请至 failedImgs 文件夹下查看"));
-					}
+
+				List<byte> data = new List<byte>();
+
+				data.AddRange(init);
+				printImg(data, bmp);
+				data.AddRange(cut);
+
+				await stream.WriteAsync(data.ToArray(), 0, data.Count);
+			}
+			catch(Exception e) {
+				errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} {e.Message}", e));
+				timeOut--;
+				if(timeOut > 0) {
+					await Task.Delay(1000);
+					await Print(bmp);
 				}
-				finally {
-					stream?.Close();
-					stream?.Dispose();
-					client.Close();
+				else {
+					bmp.Save($@"{Environment.CurrentDirectory}\failedImgs\{guid}.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+					errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} 已达重试次数上限, 打印失败, 打印图片请至 failedImgs 文件夹下查看"));
 				}
-			});
+			}
+			finally {
+				stream?.Close();
+				stream?.Dispose();
+				client.Close();
+			}
 		}
 
 		private void printImg(List<byte> sendData, Bitmap bmp) {

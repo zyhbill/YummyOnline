@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace AutoPrinter {
 	public class DinePrinter : BasePrinter {
@@ -12,7 +13,7 @@ namespace AutoPrinter {
 
 		public DinePrinter(Action<IPEndPoint, Exception> errorDelegate) : base(errorDelegate) { }
 
-		public void Print(DineForPrinting protocol, List<PrintType> printTypes, bool isFullDineMenus) {
+		public async Task Print(DineForPrinting protocol, List<PrintType> printTypes, bool isFullDineMenus) {
 			foreach(PrintType type in printTypes) {
 				if(type == PrintType.Recipt) {
 					if(protocol.Dine.Desk.ReciptPrinter == null) {
@@ -22,7 +23,7 @@ namespace AutoPrinter {
 					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
 
 					Bitmap bmp = generateReciptBmp(protocol, isFullDineMenus);
-					printer.Print(bmp);
+					await printer.Print(bmp);
 				}
 				else if(type == PrintType.ServeOrder) {
 					if(protocol.Dine.Desk.ServePrinter == null) {
@@ -32,7 +33,7 @@ namespace AutoPrinter {
 					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
 
 					Bitmap bmp = generateServeOrderBmp(protocol);
-					printer.Print(bmp);
+					await printer.Print(bmp);
 				}
 				else if(type == PrintType.KitchenOrder) {
 					foreach(DineMenu dineMenu in protocol.Dine.DineMenus.Where(p => p.Status != HotelDAO.Models.DineMenuStatus.Returned)) {
@@ -44,14 +45,14 @@ namespace AutoPrinter {
 							Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, null);
 							IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
 							IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
-							printer.Print(bmp);
+							await printer.Print(bmp);
 						}
 						else {
 							foreach(SetMealMenu setMealMenu in dineMenu.Menu.SetMealMenus) {
 								Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, setMealMenu);
 								IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
 								IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
-								printer.Print(bmp);
+								await printer.Print(bmp);
 							}
 						}
 					}

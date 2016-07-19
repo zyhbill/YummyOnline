@@ -15,31 +15,31 @@ namespace AutoPrinter {
 		// 换行
 		private readonly byte[] lf = new byte[] { 0x0A };
 
-		private Action<IPEndPoint, Guid, string> callBack;
+		private Action<IPEndPoint, Exception> errorDelegate;
 		private byte colorDeep;
 
 		private IPEndPoint ipEndPoint;
 		private int timeOut = 3;
 		private Guid guid = Guid.NewGuid();
 
-		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Guid, string> callBack, byte colorDeep = 200) {
+		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate, byte colorDeep = 200) {
 			this.ipEndPoint = ipEndPoint;
-			this.callBack = callBack;
+			this.errorDelegate = errorDelegate;
 			this.colorDeep = colorDeep;
 		}
 
-		public async Task<bool> Test() {
+		public bool Test() {
 			TcpClient client = new TcpClient();
 			NetworkStream stream = null;
 
 			try {
-				await client.ConnectAsync(ipEndPoint.Address, ipEndPoint.Port);
+				client.Connect(ipEndPoint);
 				stream = client.GetStream();
 				if(!stream.CanWrite) {
 					return false;
 				}
 
-				await stream.WriteAsync(init, 0, init.Length);
+				stream.Write(init, 0, init.Length);
 			}
 			catch {
 				return false;
@@ -53,43 +53,44 @@ namespace AutoPrinter {
 			return true;
 		}
 
-		public async Task Print(Bitmap bmp) {
-			TcpClient client = new TcpClient();
-			NetworkStream stream = null;
+		public void Print(Bitmap bmp) {
+			Task.Run(async () => {
+				TcpClient client = new TcpClient();
+				NetworkStream stream = null;
 
-			try {
-				await client.ConnectAsync(ipEndPoint.Address, ipEndPoint.Port);
-				stream = client.GetStream();
-				if(!stream.CanWrite) {
-					throw new Exception("不支持写入");
+				try {
+					client.Connect(ipEndPoint);
+					stream = client.GetStream();
+					if(!stream.CanWrite) {
+						throw new Exception("不支持写入");
+					}
+
+					List<byte> data = new List<byte>();
+
+					data.AddRange(init);
+					printImg(data, bmp);
+					data.AddRange(cut);
+
+					await stream.WriteAsync(data.ToArray(), 0, data.Count);
 				}
-
-				List<byte> data = new List<byte>();
-
-				data.AddRange(init);
-				printImg(data, bmp);
-				data.AddRange(cut);
-
-				await stream.WriteAsync(data.ToArray(), 0, data.Count);
-				callBack?.Invoke(ipEndPoint, guid, "打印成功");
-			}
-			catch(Exception e) {
-				callBack?.Invoke(ipEndPoint, guid, $"第{4 - timeOut}次尝试失败 {e.Message}");
-				timeOut--;
-				if(timeOut > 0) {
-					await Task.Delay(1000);
-					await Print(bmp);
+				catch(Exception e) {
+					errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} {e.Message}", e));
+					timeOut--;
+					if(timeOut > 0) {
+						await Task.Delay(1000);
+						Print(bmp);
+					}
+					else {
+						bmp.Save($@"{Environment.CurrentDirectory}\failedImgs\{guid}.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+						errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} 已达重试次数上限, 打印失败, 打印图片请至 failedImgs 文件夹下查看"));
+					}
 				}
-				else {
-					bmp.Save($@"{Environment.CurrentDirectory}\failedImgs\{guid}.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-					callBack?.Invoke(ipEndPoint, guid, "已达重试次数上限, 打印失败");
+				finally {
+					stream?.Close();
+					stream?.Dispose();
+					client.Close();
 				}
-			}
-			finally {
-				stream?.Close();
-				stream?.Dispose();
-				client.Close();
-			}
+			});
 		}
 
 		private void printImg(List<byte> sendData, Bitmap bmp) {

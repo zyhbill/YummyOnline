@@ -4,10 +4,10 @@ using System.Drawing;
 
 namespace AutoPrinter {
 	public abstract class BasePrinter {
-		public BasePrinter(Action<IPEndPoint, Guid, string> callBack) {
-			this.callBack = callBack;
+		public BasePrinter(Action<IPEndPoint, Exception> errorDelegate) {
+			this.errorDelegate = errorDelegate;
 		}
-		protected Action<IPEndPoint, Guid, string> callBack;
+		protected Action<IPEndPoint, Exception> errorDelegate;
 
 		/// <summary>
 		/// 裁剪bmp至高度

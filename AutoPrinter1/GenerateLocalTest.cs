@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 
 namespace AutoPrinter {
-	public partial class MainWindow {
+	public partial class Program {
 		private static DineForPrinting generateTestProtocol() {
 			DineForPrinting p = new DineForPrinting {
 				Hotel = new Hotel {
@@ -148,7 +148,6 @@ namespace AutoPrinter {
 				PrinterFormat = new PrinterFormat {
 					PaperSize = 556,
 					Font = "宋体",
-					ColorDepth = 200,
 					ReciptBigFontSize = 25,
 					ReciptFontSize = 17,
 					ReciptSmallFontSize = 15,

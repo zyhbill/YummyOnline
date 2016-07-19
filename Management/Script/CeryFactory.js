@@ -307,6 +307,7 @@
             else if (kind.Type != 4) {
                 var nowPrice = this.PayElements.PayMethods.filter(function (x) { return x.Number }).map(function (x) { return x.Number }).reduce(function (a, b) { return +a + +b; }, 0);
                 var cash = this.PayElements.PayMethods.filter(function (x) { return x.Type == 4 }).map(function (x) { return x.Number }).reduce(function (a, b) { return +a + +b; }, 0);
+                if (!cash) cash = 0;
                 nowPrice -= kind.Number;
                 nowPrice -= cash;
                 var UnpaidPrice = this.PriceAll() - nowPrice;//出现金外未支付的金额

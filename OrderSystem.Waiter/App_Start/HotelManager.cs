@@ -66,11 +66,16 @@ namespace OrderSystem.Waiter {
 			return true;
 		}
 
-		public async Task<List<dynamic>> GetHistoryDines(string waiterId, string deskId = null) {
+		public async Task<List<dynamic>> GetHistoryDines() {
+			IQueryable<Dine> linq = ctx.Dines.Where(p => p.Status != DineStatus.Shifted);
+			return await formatDine(linq.OrderByDescending(p => p.Id)).ToListAsync();
+		}
+		public async Task<List<dynamic>> GetHistoryDines(string waiterId) {
 			IQueryable<Dine> linq = ctx.Dines.Where(p => p.WaiterId == waiterId && p.Status != DineStatus.Shifted);
-			if(deskId != null) {
-				linq = linq.Where(p => p.DeskId == deskId);
-			}
+			return await formatDine(linq.OrderByDescending(p => p.Id)).ToListAsync();
+		}
+		public async Task<List<dynamic>> GetHistoryDines(string waiterId, string deskId) {
+			IQueryable<Dine> linq = ctx.Dines.Where(p => p.WaiterId == waiterId && p.DeskId == deskId && p.Status != DineStatus.Shifted);
 			return await formatDine(linq.OrderByDescending(p => p.Id)).ToListAsync();
 		}
 

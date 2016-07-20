@@ -89,6 +89,9 @@ namespace OrderSystem.Waiter.Controllers {
 		public async Task<JsonResult> GetHistoryDines() {
 			return Json(await HotelManager.GetHistoryDines(User.Identity.GetUserId()));
 		}
+		public async Task<JsonResult> GetAllHistoryDines() {
+			return Json(await HotelManager.GetHistoryDines());
+		}
 
 		public async Task<JsonResult> GetDineById(string dineId) {
 			return Json(await HotelManager.GetFormatedDineById(dineId));
@@ -97,7 +100,7 @@ namespace OrderSystem.Waiter.Controllers {
 		public async Task<JsonResult> ShiftDines() {
 			await HotelManager.ShiftDines();
 			return Json(new JsonSuccess());
-		} 
+		}
 		public async Task<JsonResult> ToggleMenuStatus(string menuId, MenuStatus status) {
 			if(!await HotelManager.ToggleMenuStatus(menuId, status)) {
 				return Json(new JsonError());

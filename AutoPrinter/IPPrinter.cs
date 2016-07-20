@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AutoPrinter {
@@ -14,29 +15,31 @@ namespace AutoPrinter {
 		// 换行
 		private readonly byte[] lf = new byte[] { 0x0A };
 
-		private Action<IPEndPoint, Exception> errorDelegate;
+		private Action<IPEndPoint, Guid, string> callBack;
+		private byte colorDeep;
 
 		private IPEndPoint ipEndPoint;
 		private int timeOut = 3;
 		private Guid guid = Guid.NewGuid();
 
-		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Exception> errorDelegate) {
+		public IPPrinter(IPEndPoint ipEndPoint, Action<IPEndPoint, Guid, string> callBack, byte colorDeep = 200) {
 			this.ipEndPoint = ipEndPoint;
-			this.errorDelegate = errorDelegate;
+			this.callBack = callBack;
+			this.colorDeep = colorDeep;
 		}
 
-		public bool Test() {
+		public async Task<bool> Test() {
 			TcpClient client = new TcpClient();
 			NetworkStream stream = null;
 
 			try {
-				client.Connect(ipEndPoint);
+				await client.ConnectAsync(ipEndPoint.Address, ipEndPoint.Port);
 				stream = client.GetStream();
 				if(!stream.CanWrite) {
 					return false;
 				}
 
-				stream.Write(init, 0, init.Length);
+				await stream.WriteAsync(init, 0, init.Length);
 			}
 			catch {
 				return false;
@@ -50,47 +53,46 @@ namespace AutoPrinter {
 			return true;
 		}
 
-		public void Print(Bitmap bmp, int colorDepth) {
-			Task.Run(async () => {
-				TcpClient client = new TcpClient();
-				NetworkStream stream = null;
+		public async Task Print(Bitmap bmp) {
+			TcpClient client = new TcpClient();
+			NetworkStream stream = null;
 
-				try {
-					client.Connect(ipEndPoint);
-					stream = client.GetStream();
-					if(!stream.CanWrite) {
-						throw new Exception("不支持写入");
-					}
-
-					List<byte> data = new List<byte>();
-
-					data.AddRange(init);
-					printImg(data, bmp, colorDepth);
-					data.AddRange(cut);
-
-					await stream.WriteAsync(data.ToArray(), 0, data.Count);
+			try {
+				await client.ConnectAsync(ipEndPoint.Address, ipEndPoint.Port);
+				stream = client.GetStream();
+				if(!stream.CanWrite) {
+					throw new Exception("不支持写入");
 				}
-				catch(Exception e) {
-					errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} {e.Message}", e));
-					timeOut--;
-					if(timeOut > 0) {
-						await Task.Delay(1000);
-						Print(bmp, colorDepth);
-					}
-					else {
-						bmp.Save($@"{Environment.CurrentDirectory}\failedImgs\{guid}.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
-						errorDelegate?.Invoke(ipEndPoint, new Exception($"打印编号 {guid} 已达重试次数上限, 打印失败, 打印图片请至 failedImgs 文件夹下查看"));
-					}
+
+				List<byte> data = new List<byte>();
+
+				data.AddRange(init);
+				printImg(data, bmp);
+				data.AddRange(cut);
+
+				await stream.WriteAsync(data.ToArray(), 0, data.Count);
+				callBack?.Invoke(ipEndPoint, guid, "打印成功");
+			}
+			catch(Exception e) {
+				callBack?.Invoke(ipEndPoint, guid, $"第{4 - timeOut}次尝试失败 {e.Message}");
+				timeOut--;
+				if(timeOut > 0) {
+					await Task.Delay(1000);
+					await Print(bmp);
 				}
-				finally {
-					stream?.Close();
-					stream?.Dispose();
-					client.Close();
+				else {
+					bmp.Save($@"{Environment.CurrentDirectory}\failedImgs\{guid}.jpg", System.Drawing.Imaging.ImageFormat.Jpeg);
+					callBack?.Invoke(ipEndPoint, guid, "已达重试次数上限, 打印失败");
 				}
-			});
+			}
+			finally {
+				stream?.Close();
+				stream?.Dispose();
+				client.Close();
+			}
 		}
 
-		private void printImg(List<byte> sendData, Bitmap bmp, int colorDepth) {
+		private void printImg(List<byte> sendData, Bitmap bmp) {
 			byte[] escBmp = new byte[] { 0x1B, 0x2A, 33, 0, 0 };
 			escBmp[3] = (byte)(bmp.Width % 256);
 			escBmp[4] = (byte)(bmp.Width / 256);
@@ -109,7 +111,7 @@ namespace AutoPrinter {
 						int yPos = i * 24 + k;
 						if(yPos < bmp.Height) {
 							Color pixelColor = bmp.GetPixel(j, yPos);
-							if(pixelColor.R <= colorDepth) {
+							if(pixelColor.R <= colorDeep) {
 								imgData[k / 8] += (byte)(128 >> (k % 8));
 							}
 						}

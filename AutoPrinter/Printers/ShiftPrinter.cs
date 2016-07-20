@@ -2,19 +2,20 @@
 using System;
 using System.Drawing;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace AutoPrinter {
 	public class ShiftPrinter : BasePrinter {
 		private int maxHeight = 2000;
 
-		public ShiftPrinter(Action<IPEndPoint, Exception> errorDelegate) : base(errorDelegate) { }
+		public ShiftPrinter(Action<IPEndPoint, Guid, string> callBack) : base(callBack) { }
 
-		public void Print(ShiftForPrinting protocol) {
+		public async Task Print(ShiftForPrinting protocol) {
 			IPAddress ip = IPAddress.Parse(protocol.PrinterIpAddress);
-			IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), errorDelegate);
+			IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), callBack);
 
 			Bitmap bmp = generateShiftsBmp(protocol);
-			printer.Print(bmp, protocol.PrinterFormat.ColorDepth);
+			await printer.Print(bmp);
 		}
 
 		private Bitmap generateShiftsBmp(ShiftForPrinting protocol) {

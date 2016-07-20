@@ -446,7 +446,7 @@ waiter.yummyonline.net
 
 
 
-### 获取当前用户当前桌台的未交接班点单
+### 获取当前服务员当前桌台的未交接班点单
 #### POST ***AUTHORIZED***
 #### URL
 	/Order/GetCurrentDines
@@ -469,7 +469,7 @@ waiter.yummyonline.net
 
 
 
-### 获取当前用户的未交接班点单
+### 获取当前服务员的未交接班点单
 
 #### POST ***AUTHORIZED***
 

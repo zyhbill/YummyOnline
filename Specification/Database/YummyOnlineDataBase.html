@@ -49,7 +49,13 @@
 <body>
 	<div class="container-fluid">
 		<h2>YummyOnline Database Specification</h2>
-
+		
+		<div class="alert alert-danger">
+			<p>发票功能修改</p>
+			<p class="text-right">
+				<small>2016-7-20 张朕煜</small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>Users中增加WeChatOpenId</p>
 			<p class="text-right">
@@ -507,18 +513,6 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td>Invoice</td>
-				<td>nvarchar(20)</td>
-				<td>发票抬头</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Footer</td>
-				<td>nvarchar(15)</td>
-				<td>发票语句模板</td>
-				<td></td>
-			</tr>
-			<tr>
 				<td>BeginTime</td>
 				<td>datetime</td>
 				<td>开始时间</td>
@@ -601,6 +595,38 @@
 				<td>HasAutoPrinter</td>
 				<td>bit</td>
 				<td>是否需要AutoPrinter打印机</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Invoices</th>
+				<th></th>
+				<th>发票信息表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>DineId</td>
+				<td>nvarchar(14)</td>
+				<td>点单编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Title</td>
+				<td>int</td>
+				<td>发票抬头</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Price</td>
+				<td>int</td>
+				<td>开票金额</td>
 				<td></td>
 			</tr>
 		</table>

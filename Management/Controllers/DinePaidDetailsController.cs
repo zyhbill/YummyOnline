@@ -293,7 +293,7 @@ namespace Management.Controllers
         public async Task<JsonResult> putInvoice(string Id, string Invoice,decimal Price)
         {
             var Dine = await db.Dines.Where(d => d.Id == Id).FirstOrDefaultAsync();
-            Dine.IsPaid = true;
+            Dine.IsInvoiced = true;
             db.Invoices.Add(new Invoice
             {
                 DineId = Id,

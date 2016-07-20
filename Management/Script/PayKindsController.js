@@ -476,6 +476,7 @@
         console.log(price);
         $http.post('/DinePaidDetails/putInvoice', { Id: Id, Invoice: invoice,Price:price }).then(function (response) {
             alert('录入成功');
+            refresh();
         });
     }
 

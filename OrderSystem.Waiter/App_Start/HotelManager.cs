@@ -80,9 +80,13 @@ namespace OrderSystem.Waiter {
 		}
 
 		public async Task ShiftDines() {
-			var dines = ctx.Dines.Where(d => d.IsPaid == true && d.Status != DineStatus.Shifted);
+			var dines = ctx.Dines.Where(d => d.Status != DineStatus.Shifted);
 			foreach(var dine in dines) {
 				dine.Status = DineStatus.Shifted;
+			}
+			var desks = ctx.Desks;
+			foreach(var desk in desks) {
+				desk.Status = DeskStatus.StandBy;
 			}
 			await ctx.SaveChangesAsync();
 		}

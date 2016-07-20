@@ -11,8 +11,6 @@ namespace AutoPrinter {
 	public class DinePrinter : BasePrinter {
 		private int maxHeight = 2000;
 
-		public DinePrinter(Action<IPEndPoint, Guid, string> callBack) : base(callBack) { }
-
 		public async Task Print(DineForPrinting protocol, List<PrintType> printTypes, bool isFullDineMenus) {
 			List<Task> allTasks = new List<Task>();
 			foreach(PrintType type in printTypes) {
@@ -21,20 +19,16 @@ namespace AutoPrinter {
 						continue;
 					}
 					IPAddress ip = IPAddress.Parse(protocol.Dine.Desk.ReciptPrinter.IpAddress);
-					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), callBack);
-
 					Bitmap bmp = generateReciptBmp(protocol, isFullDineMenus);
-					allTasks.Add(printer.Print(bmp));
+					allTasks.Add(IPPrinter.GetInstance().Print(ip, bmp, protocol.PrinterFormat.ColorDepth));
 				}
 				else if(type == PrintType.ServeOrder) {
 					if(protocol.Dine.Desk.ServePrinter == null) {
 						continue;
 					}
 					IPAddress ip = IPAddress.Parse(protocol.Dine.Desk.ServePrinter.IpAddress);
-					IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), callBack);
-
 					Bitmap bmp = generateServeOrderBmp(protocol);
-					allTasks.Add(printer.Print(bmp));
+					allTasks.Add(IPPrinter.GetInstance().Print(ip, bmp, protocol.PrinterFormat.ColorDepth));
 				}
 				else if(type == PrintType.KitchenOrder) {
 					foreach(DineMenu dineMenu in protocol.Dine.DineMenus.Where(p => p.Status != HotelDAO.Models.DineMenuStatus.Returned)) {
@@ -43,17 +37,15 @@ namespace AutoPrinter {
 						}
 
 						if(!dineMenu.Menu.IsSetMeal) {
-							Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, null);
 							IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
-							IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), callBack);
-							allTasks.Add(printer.Print(bmp));
+							Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, null);
+							allTasks.Add(IPPrinter.GetInstance().Print(ip, bmp, protocol.PrinterFormat.ColorDepth));
 						}
 						else {
 							foreach(SetMealMenu setMealMenu in dineMenu.Menu.SetMealMenus) {
-								Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, setMealMenu);
 								IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
-								IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), callBack);
-								allTasks.Add(printer.Print(bmp));
+								Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, setMealMenu);
+								allTasks.Add(IPPrinter.GetInstance().Print(ip, bmp, protocol.PrinterFormat.ColorDepth));
 							}
 						}
 					}

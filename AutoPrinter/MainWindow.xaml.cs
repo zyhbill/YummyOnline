@@ -38,8 +38,7 @@ namespace AutoPrinter {
 
 			Process[] tProcess = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
 			if(tProcess.Length > 1) {
-				localLog("打印程序已经打开，请关闭后再打开打印程序。");
-				return;
+				Application.Current.Shutdown();
 			}
 
 			TcpClient tcp = new TcpClient(
@@ -66,7 +65,11 @@ namespace AutoPrinter {
 				remoteLog(Log.LogLevel.Error, e.Message, e.ToString());
 			};
 
-			tcp.Start();
+			//tcp.Start();
+
+			IPPrinter.GetInstance((ip, bmp, message) => {
+				ipPrinterLog(message, ip.ToString(), bmp?.GetHashCode());
+			});
 		}
 
 		async Task printDine(string dineId, List<int> dineMenuIds, List<PrintType> printTypes) {
@@ -79,9 +82,7 @@ namespace AutoPrinter {
 				}
 
 				localLog($"发送打印命令 单号: {dineId}");
-				DinePrinter dinePrinter = new DinePrinter((ip, guid, m) => {
-					ipPrinterLog(m, ip.ToString(), guid);
-				});
+				DinePrinter dinePrinter = new DinePrinter();
 				await dinePrinter.Print(dp, printTypes, dineMenuIds == null);
 				localLog($"发送命令成功 单号: {dineId}");
 				printCompleted(dineId);
@@ -107,9 +108,7 @@ namespace AutoPrinter {
 				}
 
 				localLog($"发送测试单命令");
-				DinePrinter dinePrinter = new DinePrinter((ip, guid, m) => {
-					ipPrinterLog(m, ip.ToString(), guid);
-				});
+				DinePrinter dinePrinter = new DinePrinter();
 				await dinePrinter.Print(dp, printTypes, true);
 				localLog($"发送测试单命令成功");
 				printCompleted("00000000000000");
@@ -132,9 +131,7 @@ namespace AutoPrinter {
 				}
 
 				localLog($"发送本地测试单命令");
-				DinePrinter dinePrinter = new DinePrinter((ip, guid, m) => {
-					ipPrinterLog(m, ip.ToString(), guid);
-				});
+				DinePrinter dinePrinter = new DinePrinter();
 
 				await dinePrinter.Print(dp, printTypes, true);
 				localLog($"发送本地测试单命令成功");
@@ -153,9 +150,7 @@ namespace AutoPrinter {
 					localLog("获取交接班信息失败，请检查网络设置");
 					return;
 				}
-				ShiftPrinter shiftPrinter = new ShiftPrinter((ip, guid, m) => {
-					ipPrinterLog(m, ip.ToString(), guid);
-				});
+				ShiftPrinter shiftPrinter = new ShiftPrinter();
 				localLog($"发送打印命令 交接班");
 
 				await shiftPrinter.Print(sp);
@@ -168,40 +163,40 @@ namespace AutoPrinter {
 			}
 		}
 
-		async Task testPrinter(string ip) {
-			ipPrinterLog($"正在测试", ip);
-			IPPrinter ipPrinter = new IPPrinter(new IPEndPoint(IPAddress.Parse(ip), 9100), null);
-			if(await ipPrinter.Test()) {
-				ipPrinterLog($"测试成功", ip);
-			}
-			else {
-				ipPrinterLog($"测试失败", ip);
-			}
-		}
-		async Task testPrinters() {
-			PrintersForPrinting pp = null;
-			try {
-				pp = await getPrintersForPrinting();
-				if(pp == null) {
-					localLog("获取打印机数据失败，请检查网络设置");
-					return;
-				}
-				foreach(var printer in pp.Printers) {
-					ipPrinterLog($"正在测试{printer.Name}", printer.IpAddress);
-					IPPrinter ipPrinter = new IPPrinter(new IPEndPoint(IPAddress.Parse(printer.IpAddress), 9100), null);
-					if(await ipPrinter.Test()) {
-						ipPrinterLog($"{printer.Name} 测试成功", printer.IpAddress);
-					}
-					else {
-						ipPrinterLog($"{printer.Name} 测试失败", printer.IpAddress);
-					}
-				}
-				ipPrinterLog($"测试完成");
-			}
-			catch(Exception e) {
-				localLog($"无法测试, 错误信息: {e}");
-			}
-		}
+		//async Task testPrinter(string ip) {
+		//	ipPrinterLog($"正在测试", ip);
+		//	IPPrinter ipPrinter = new IPPrinter(new IPEndPoint(IPAddress.Parse(ip), 9100), null);
+		//	if(await ipPrinter.Test()) {
+		//		ipPrinterLog($"测试成功", ip);
+		//	}
+		//	else {
+		//		ipPrinterLog($"测试失败", ip);
+		//	}
+		//}
+		//async Task testPrinters() {
+		//	PrintersForPrinting pp = null;
+		//	try {
+		//		pp = await getPrintersForPrinting();
+		//		if(pp == null) {
+		//			localLog("获取打印机数据失败，请检查网络设置");
+		//			return;
+		//		}
+		//		foreach(var printer in pp.Printers) {
+		//			ipPrinterLog($"正在测试{printer.Name}", printer.IpAddress);
+		//			IPPrinter ipPrinter = new IPPrinter(new IPEndPoint(IPAddress.Parse(printer.IpAddress), 9100), null);
+		//			if(await ipPrinter.Test()) {
+		//				ipPrinterLog($"{printer.Name} 测试成功", printer.IpAddress);
+		//			}
+		//			else {
+		//				ipPrinterLog($"{printer.Name} 测试失败", printer.IpAddress);
+		//			}
+		//		}
+		//		ipPrinterLog($"测试完成");
+		//	}
+		//	catch(Exception e) {
+		//		localLog($"无法测试, 错误信息: {e}");
+		//	}
+		//}
 
 		async Task<DineForPrinting> getDineForPrinting(string dineId, List<int> dineMenuIds = null) {
 			object postData = new {
@@ -255,24 +250,26 @@ namespace AutoPrinter {
 		void localLog(string message) {
 			listViewLog.Dispatcher.Invoke(() => {
 				listViewLog.Items.Add(new {
-					DateTime = DateTime.Now.ToString("HH:mm:ss"),
+					DateTime = DateTime.Now,
 					Message = message
 				});
+
+				listViewLog.SelectedIndex = listViewLog.Items.Count - 1;
+				listViewLog.ScrollIntoView(listViewLog.SelectedItem);
 			});
-			listViewLog.SelectedIndex = listViewLog.Items.Count - 1;
-			listViewLog.ScrollIntoView(listViewLog.SelectedItem);
 		}
-		void ipPrinterLog(string message, string ip = null, Guid? guid = null) {
+		void ipPrinterLog(string message, string ip, int? hashCode) {
 			listViewIpPrinter.Dispatcher.Invoke(() => {
 				listViewIpPrinter.Items.Add(new {
-					DateTime = DateTime.Now.ToString("HH:mm:ss"),
+					DateTime = DateTime.Now,
 					Message = message,
 					Ip = ip,
-					Guid = guid
+					HashCode = hashCode
 				});
+
+				listViewIpPrinter.SelectedIndex = listViewIpPrinter.Items.Count - 1;
+				listViewIpPrinter.ScrollIntoView(listViewIpPrinter.SelectedItem);
 			});
-			listViewIpPrinter.SelectedIndex = listViewIpPrinter.Items.Count - 1;
-			listViewIpPrinter.ScrollIntoView(listViewIpPrinter.SelectedItem);
 		}
 		void remoteLog(Log.LogLevel level, string message, string detail = null) {
 			object postData = new {
@@ -284,22 +281,37 @@ namespace AutoPrinter {
 			var _ = HttpPost.PostAsync(remoteLogUrl, postData);
 		}
 
-		private async void buttonTestPrinter_Click(object sender, RoutedEventArgs e) {
-			await testPrinter(textBoxIp.Text);
+		private void buttonTestPrinter_Click(object sender, RoutedEventArgs e) {
+			//await testPrinter(textBoxIp.Text);
 		}
 
 		private async void buttonTestRemoteDines_Click(object sender, RoutedEventArgs e) {
 			string ipAddress = textBoxIp.Text;
-			await printRemoteTest(new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }, ipAddress);
+
+			await printRemoteTest(getCheckedPrintTypes(), ipAddress);
 		}
 
 		private async void buttonTestLocalDines_Click(object sender, RoutedEventArgs e) {
 			string ipAddress = textBoxIp.Text;
-			await printLocalTest(new List<PrintType> { PrintType.KitchenOrder, PrintType.Recipt, PrintType.ServeOrder }, ipAddress);
+			await printLocalTest(getCheckedPrintTypes(), ipAddress);
 		}
 
-		private async void buttonTestPrinters_Click(object sender, RoutedEventArgs e) {
-			await testPrinters();
+		private void buttonTestPrinters_Click(object sender, RoutedEventArgs e) {
+			//await testPrinters();
+		}
+
+		private List<PrintType> getCheckedPrintTypes() {
+			List<PrintType> types = new List<PrintType>();
+			if(checkBoxRecipt.IsChecked.Value) {
+				types.Add(PrintType.Recipt);
+			}
+			if(checkBoxServeOrder.IsChecked.Value) {
+				types.Add(PrintType.ServeOrder);
+			}
+			if(checkBoxKitchenOrder.IsChecked.Value) {
+				types.Add(PrintType.KitchenOrder);
+			}
+			return types;
 		}
 	}
 }

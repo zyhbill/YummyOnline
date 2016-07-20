@@ -5,20 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoPrinter"
         mc:Ignorable="d"
-        Title="YummyOnline自助打印" Height="698.814" Width="1260.954">
+        Title="YummyOnline自助打印" Height="793.619" Width="1260.954">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition/>
 			<RowDefinition/>
-			<RowDefinition Height="50"/>
+			<RowDefinition Height="180"/>
 		</Grid.RowDefinitions>
 
 		<TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="日志:" VerticalAlignment="Top"/>
 		<ListView x:Name="listViewLog" Margin="10,30,10,0">
 			<ListView.View>
 				<GridView>
-					<GridViewColumn Header="日期" DisplayMemberBinding="{Binding Path=DateTime}" />
-					<GridViewColumn Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
+					<GridViewColumn Width="200" Header="日期" DisplayMemberBinding="{Binding Path=DateTime,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" />
+					<GridViewColumn Width="1000" Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
 				</GridView>
 			</ListView.View>
 		</ListView>
@@ -27,20 +27,29 @@
 		<ListView x:Name="listViewIpPrinter" Grid.Row="1" Margin="10,30,10,0">
 			<ListView.View>
 				<GridView>
-					<GridViewColumn Header="日期" DisplayMemberBinding="{Binding Path=DateTime}" />
-					<GridViewColumn Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
-					<GridViewColumn Header="IP" DisplayMemberBinding="{Binding Path=Ip}" />
-					<GridViewColumn Header="编号" DisplayMemberBinding="{Binding Path=Guid}" />
+					<GridViewColumn Width="200" Header="日期" DisplayMemberBinding="{Binding Path=DateTime,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" />
+					<GridViewColumn Width="500" Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
+					<GridViewColumn Width="100" Header="IP" DisplayMemberBinding="{Binding Path=Ip}" />
+					<GridViewColumn Width="400" Header="编号" DisplayMemberBinding="{Binding Path=HashCode}" />
 				</GridView>
 			</ListView.View>
 		</ListView>
 
-		<Grid Grid.Row="2" Grid.ColumnSpan="3">
-			<Button x:Name="buttonTestPrinters" Content="所有打印机测试" Margin="0,17,10,0" VerticalAlignment="Top" Height="23" HorizontalAlignment="Right" Width="101" Click="buttonTestPrinters_Click"/>
-			<TextBox x:Name="textBoxIp" HorizontalAlignment="Left" Height="23" Margin="10,17,0,0" Text="192.168.0.252" VerticalAlignment="Top" Width="120"/>
-			<Button x:Name="buttonTestRemoteDines" Content="远程订单测试" HorizontalAlignment="Left" Margin="135,17,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestRemoteDines_Click"/>
-			<Button x:Name="buttonTestLocalDines" Content="本地订单测试" HorizontalAlignment="Left" Margin="241,17,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestLocalDines_Click"/>
-			<Button x:Name="buttonTestPrinter" Content="打印机测试" HorizontalAlignment="Left" Margin="347,17,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestPrinter_Click"/>
+		<Grid Grid.Row="2" Margin="0,5,0,0">
+			<Button x:Name="buttonTestPrinters" Content="所有打印机测试" Margin="0,137,10,0" VerticalAlignment="Top" Height="23" HorizontalAlignment="Right" Width="101" Click="buttonTestPrinters_Click" />
+			<Button x:Name="buttonTestRemoteDines" Content="远程订单测试" HorizontalAlignment="Left" Margin="10,137,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestRemoteDines_Click"/>
+			<Button x:Name="buttonTestLocalDines" Content="本地订单测试" HorizontalAlignment="Left" Margin="116,137,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestLocalDines_Click"/>
+			<Button x:Name="buttonTestPrinter" Content="打印机测试" HorizontalAlignment="Left" Margin="222,137,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestPrinter_Click" />
+			<GroupBox x:Name="groupBox" Header="测试设置" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="122" Width="370">
+				<Grid>
+					<TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,11,0,0" TextWrapping="Wrap" Text="IP:" VerticalAlignment="Top"/>
+					<TextBox x:Name="textBoxIp" HorizontalAlignment="Left" Height="23" Text="127.0.0.1" VerticalAlignment="Top" Width="120" Margin="29,10,0,0" />
+					<CheckBox x:Name="checkBoxRecipt" Content="收银条" HorizontalAlignment="Left" Margin="10,38,0,0" VerticalAlignment="Top" IsChecked="True"/>
+					<CheckBox x:Name="checkBoxServeOrder" Content="传菜单" HorizontalAlignment="Left" Margin="10,58,0,0" VerticalAlignment="Top" />
+					<CheckBox x:Name="checkBoxKitchenOrder" Content="厨房" HorizontalAlignment="Left" Margin="10,78,0,0" VerticalAlignment="Top" />
+				</Grid>
+			</GroupBox>
+
 		</Grid>
 	</Grid>
 </Window>

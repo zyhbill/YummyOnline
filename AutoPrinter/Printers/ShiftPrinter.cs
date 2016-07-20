@@ -8,14 +8,10 @@ namespace AutoPrinter {
 	public class ShiftPrinter : BasePrinter {
 		private int maxHeight = 2000;
 
-		public ShiftPrinter(Action<IPEndPoint, Guid, string> callBack) : base(callBack) { }
-
 		public async Task Print(ShiftForPrinting protocol) {
 			IPAddress ip = IPAddress.Parse(protocol.PrinterIpAddress);
-			IPPrinter printer = new IPPrinter(new IPEndPoint(ip, 9100), callBack);
-
 			Bitmap bmp = generateShiftsBmp(protocol);
-			await printer.Print(bmp);
+			await IPPrinter.GetInstance().Print(ip, bmp, protocol.PrinterFormat.ColorDepth);
 		}
 
 		private Bitmap generateShiftsBmp(ShiftForPrinting protocol) {

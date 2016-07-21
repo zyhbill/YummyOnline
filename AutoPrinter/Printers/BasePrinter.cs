@@ -55,7 +55,7 @@ namespace AutoPrinter {
 		protected void printEnd(PrinterGraphics printer) {
 			printer.TrimY(10);
 			printer.DrawStringLineLoop("*", 8);
-			printer.TrimY(10);
+			printer.TrimY(100);
 		}
 	}
 }

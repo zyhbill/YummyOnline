@@ -13,29 +13,39 @@ namespace AutoPrinter {
 		public Bitmap bmp { get; set; }
 		public byte[] printingBytes { get; set; }
 	}
+	public class IPInfo {
+		public Queue<BmpInfo> Queue { get; set; }
+		public ManualResetEvent Mutex { get; set; }
+	}
+
 	public class TcpClientInfo {
 		public TcpClientInfo(TcpClient client) {
 			Client = client;
-			//Stream = client.GetStream();
 			OriginalRemotePoint = (IPEndPoint)client.Client.RemoteEndPoint;
 			ConnectedTime = DateTime.Now;
+			Connected = true;
+		}
+		public TcpClientInfo(TcpClient client, IPEndPoint originalRemotePoint) {
+			Client = client;
+			OriginalRemotePoint = originalRemotePoint;
 		}
 
 		public TcpClient Client { get; set; }
-		//public NetworkStream Stream { get; set; }
 		public IPEndPoint OriginalRemotePoint { get; set; }
 		public DateTime ConnectedTime { get; set; }
 		public int TimeOut { get; set; }
+		public bool Connected { get; set; }
 
 		public void Close() {
 			Client.Close();
+			Connected = false;
 		}
 	}
 
 	public class IPPrinter {
 
 		public List<TcpClientInfo> PrinterClients { get; set; } = new List<TcpClientInfo>();
-		public Dictionary<IPAddress, Queue<BmpInfo>> IpBmpDataMap { get; set; } = new Dictionary<IPAddress, Queue<BmpInfo>>();
+		public Dictionary<IPAddress, IPInfo> IpBmpDataMap { get; set; } = new Dictionary<IPAddress, IPInfo>();
 
 		// 初始化
 		private readonly byte[] init = new byte[] { 0x1B, 0x40 };
@@ -45,13 +55,13 @@ namespace AutoPrinter {
 		private readonly byte[] lf = new byte[] { 0x0A };
 
 		private Action<IPAddress, BmpInfo, string> callBack;
-		private ManualResetEvent test = new ManualResetEvent(true);
+
 		private IPPrinter(Action<IPAddress, BmpInfo, string> callBack) {
 			this.callBack = callBack;
 
 			System.Timers.Timer t = new System.Timers.Timer(10000);
 			t.Elapsed += T_Elapsed;
-			//t.Start();
+			t.Start();
 		}
 
 		private static IPPrinter instance;
@@ -69,17 +79,15 @@ namespace AutoPrinter {
 
 		private void T_Elapsed(object sender, ElapsedEventArgs e) {
 			lock(PrinterClients) {
-				for(int i = PrinterClients.Count - 1; i >= 0; i--) {
-					if(++PrinterClients[i].TimeOut == 6) {
-						callBack(PrinterClients[i].OriginalRemotePoint.Address, null, "超时断开连接");
-						PrinterClients[i].Close();
-						PrinterClients.RemoveAt(i);
+				PrinterClients.Where(c => c.Connected).ToList().ForEach(c => {
+					if(++c.TimeOut == 6) {
+						callBack(c.OriginalRemotePoint.Address, null, "超时断开连接");
+						c.Close();
 					}
 					else {
-						callBack(PrinterClients[i].OriginalRemotePoint.Address, null, $"无打印, 等待超时{PrinterClients[i].TimeOut}");
+						callBack(c.OriginalRemotePoint.Address, null, $"无打印, 等待超时{c.TimeOut}");
 					}
-
-				}
+				});
 			}
 		}
 
@@ -91,16 +99,19 @@ namespace AutoPrinter {
 
 			lock(IpBmpDataMap) {
 				if(!IpBmpDataMap.ContainsKey(ip)) {
-					IpBmpDataMap.Add(ip, new Queue<BmpInfo>());
+					IpBmpDataMap.Add(ip, new IPInfo {
+						Mutex = new ManualResetEvent(true),
+						Queue = new Queue<BmpInfo>()
+					});
 				}
-				IpBmpDataMap[ip].Enqueue(bmpInfo);
+				IpBmpDataMap[ip].Queue.Enqueue(bmpInfo);
 			}
 
 			await Task.Run(() => {
-				test.WaitOne();
-				test.Reset();
+				IpBmpDataMap[ip].Mutex.WaitOne();
+				IpBmpDataMap[ip].Mutex.Reset();
 			});
-			
+
 			await prePrint(ip);
 		}
 
@@ -154,22 +165,21 @@ namespace AutoPrinter {
 
 		private async Task prePrint(IPAddress ip) {
 			lock(IpBmpDataMap) {
-				if(!IpBmpDataMap.ContainsKey(ip) || IpBmpDataMap[ip].Count == 0) {
-					test.Set();
+				if(!IpBmpDataMap.ContainsKey(ip) || IpBmpDataMap[ip].Queue.Count == 0) {
+					IpBmpDataMap[ip].Mutex.Set();
 					return;
 				}
 			}
 			TcpClientInfo client;
 			lock(PrinterClients) {
-				client = PrinterClients.FirstOrDefault(p => p.OriginalRemotePoint.Address.Equals(ip));
+				client = PrinterClients.FirstOrDefault(p => p.OriginalRemotePoint.Address.Equals(ip) && p.Connected);
 			}
 			if(client == null) {
 				await connect(ip);
 			}
 			else {
-				await print(client, IpBmpDataMap[ip].Peek());
+				await print(client, IpBmpDataMap[ip].Queue.Peek());
 			}
-
 		}
 		private async Task print(TcpClientInfo client, BmpInfo bmpInfo) {
 			try {
@@ -182,7 +192,7 @@ namespace AutoPrinter {
 				callBack?.Invoke(client.OriginalRemotePoint.Address, bmpInfo, "打印成功");
 				client.TimeOut = 0;
 				lock(IpBmpDataMap) {
-					IpBmpDataMap[client.OriginalRemotePoint.Address].Dequeue();
+					IpBmpDataMap[client.OriginalRemotePoint.Address].Queue.Dequeue();
 				}
 				await prePrint(client.OriginalRemotePoint.Address);
 			}
@@ -193,7 +203,6 @@ namespace AutoPrinter {
 					for(int i = PrinterClients.Count - 1; i >= 0; i--) {
 						if(PrinterClients[i] == client) {
 							PrinterClients[i].Close();
-							PrinterClients.RemoveAt(i);
 						}
 					}
 				}
@@ -205,20 +214,43 @@ namespace AutoPrinter {
 
 		private async Task connect(IPAddress ip) {
 			TcpClient client = new TcpClient();
+
+
+			TcpClientInfo info;
+			lock(PrinterClients) {
+				info = PrinterClients.FirstOrDefault(p => p.OriginalRemotePoint?.Address == ip);
+
+				if(info == null) {
+					info = new TcpClientInfo(client, new IPEndPoint(ip, 9100));
+					PrinterClients.Add(info);
+				}
+				else {
+					info.Client = client;
+				}
+			}
+
 			try {
 				callBack?.Invoke(ip, null, "正在连接");
 				await client.ConnectAsync(ip, 9100);
 				callBack?.Invoke(ip, null, "连接成功");
 
-				lock(PrinterClients) {
-					PrinterClients.Add(new TcpClientInfo(client));
-				}
+				info.Connected = true;
+				info.TimeOut = 0;
+
 				await prePrint(ip);
 			}
 			catch(Exception e) {
-				callBack?.Invoke(ip, null, "连接发生错误");
-				callBack?.Invoke(ip, null, e.Message);
-				callBack?.Invoke(ip, null, "重新连接");
+				info.Connected = false;
+				info.TimeOut--;
+
+				callBack?.Invoke(ip, null, $"连接发生错误, {e.Message}");
+				callBack?.Invoke(ip, null, $"第{-info.TimeOut}次重新尝试连接");
+
+				if(-info.TimeOut >= 10) {
+					callBack?.Invoke(ip, null, $"连接次数已达上限, 连接失败");
+					return;
+				}
+
 				await Task.Delay(1000);
 				await connect(ip);
 			}

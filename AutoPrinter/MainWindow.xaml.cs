@@ -67,8 +67,8 @@ namespace AutoPrinter {
 
 			//tcp.Start();
 
-			IPPrinter.GetInstance((ip, bmp, message) => {
-				ipPrinterLog(message, ip.ToString(), bmp?.GetHashCode());
+			IPPrinter.GetInstance((ip, bmp, message, isRefresh) => {
+				ipPrinterLog(ip, bmp?.GetHashCode(), message, isRefresh);
 			});
 		}
 
@@ -163,41 +163,6 @@ namespace AutoPrinter {
 			}
 		}
 
-		//async Task testPrinter(string ip) {
-		//	ipPrinterLog($"正在测试", ip);
-		//	IPPrinter ipPrinter = new IPPrinter(new IPEndPoint(IPAddress.Parse(ip), 9100), null);
-		//	if(await ipPrinter.Test()) {
-		//		ipPrinterLog($"测试成功", ip);
-		//	}
-		//	else {
-		//		ipPrinterLog($"测试失败", ip);
-		//	}
-		//}
-		//async Task testPrinters() {
-		//	PrintersForPrinting pp = null;
-		//	try {
-		//		pp = await getPrintersForPrinting();
-		//		if(pp == null) {
-		//			localLog("获取打印机数据失败，请检查网络设置");
-		//			return;
-		//		}
-		//		foreach(var printer in pp.Printers) {
-		//			ipPrinterLog($"正在测试{printer.Name}", printer.IpAddress);
-		//			IPPrinter ipPrinter = new IPPrinter(new IPEndPoint(IPAddress.Parse(printer.IpAddress), 9100), null);
-		//			if(await ipPrinter.Test()) {
-		//				ipPrinterLog($"{printer.Name} 测试成功", printer.IpAddress);
-		//			}
-		//			else {
-		//				ipPrinterLog($"{printer.Name} 测试失败", printer.IpAddress);
-		//			}
-		//		}
-		//		ipPrinterLog($"测试完成");
-		//	}
-		//	catch(Exception e) {
-		//		localLog($"无法测试, 错误信息: {e}");
-		//	}
-		//}
-
 		async Task<DineForPrinting> getDineForPrinting(string dineId, List<int> dineMenuIds = null) {
 			object postData = new {
 				HotelId = hotelId,
@@ -258,18 +223,38 @@ namespace AutoPrinter {
 				listViewLog.ScrollIntoView(listViewLog.SelectedItem);
 			});
 		}
-		void ipPrinterLog(string message, string ip, int? hashCode) {
-			listViewIpPrinter.Dispatcher.Invoke(() => {
-				listViewIpPrinter.Items.Add(new {
-					DateTime = DateTime.Now,
-					Message = message,
-					Ip = ip,
-					HashCode = hashCode
-				});
+		void ipPrinterLog(IPAddress ip, int? hashCode, string message, bool isRefresh) {
+			if(message != null) {
+				listViewIpPrinter.Dispatcher.Invoke(() => {
+					listViewIpPrinter.Items.Add(new {
+						DateTime = DateTime.Now,
+						IP = ip,
+						Message = message,
+						HashCode = hashCode
+					});
 
-				listViewIpPrinter.SelectedIndex = listViewIpPrinter.Items.Count - 1;
-				listViewIpPrinter.ScrollIntoView(listViewIpPrinter.SelectedItem);
-			});
+					listViewIpPrinter.SelectedIndex = listViewIpPrinter.Items.Count - 1;
+					listViewIpPrinter.ScrollIntoView(listViewIpPrinter.SelectedItem);
+				});
+			}
+			
+
+			if(isRefresh) {
+				listViewIpPrinterStatus.Dispatcher.Invoke(() => {
+					listViewIpPrinterStatus.Items.Clear();
+					var map = IPPrinter.GetInstance().IPClientBmpMap;
+					foreach(IPAddress ipKey in map.Keys) {
+						listViewIpPrinterStatus.Items.Add(new {
+							IP = ipKey,
+							Connected = map[ipKey].TcpClientInfo == null ? "已断开" : "已连接",
+							WaitedCount = map[ipKey].Queue.Count,
+							IdleTime = map[ipKey].TcpClientInfo?.IdleTime
+						});
+
+					}
+				});
+			}
+
 		}
 		void remoteLog(Log.LogLevel level, string message, string detail = null) {
 			object postData = new {
@@ -281,8 +266,8 @@ namespace AutoPrinter {
 			var _ = HttpPost.PostAsync(remoteLogUrl, postData);
 		}
 
-		private void buttonTestPrinter_Click(object sender, RoutedEventArgs e) {
-			//await testPrinter(textBoxIp.Text);
+		private async void buttonTestPrinter_Click(object sender, RoutedEventArgs e) {
+			await IPPrinter.GetInstance().Connect(IPAddress.Parse(textBoxIp.Text));
 		}
 
 		private async void buttonTestRemoteDines_Click(object sender, RoutedEventArgs e) {

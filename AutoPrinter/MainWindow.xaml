@@ -18,7 +18,7 @@
 			<ListView.View>
 				<GridView>
 					<GridViewColumn Width="200" Header="日期" DisplayMemberBinding="{Binding Path=DateTime,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" />
-					<GridViewColumn Width="1000" Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
+					<GridViewColumn Width="800" Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
 				</GridView>
 			</ListView.View>
 		</ListView>
@@ -28,9 +28,9 @@
 			<ListView.View>
 				<GridView>
 					<GridViewColumn Width="200" Header="日期" DisplayMemberBinding="{Binding Path=DateTime,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" />
+					<GridViewColumn Width="100" Header="IP" DisplayMemberBinding="{Binding Path=IP}" />
 					<GridViewColumn Width="500" Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
-					<GridViewColumn Width="100" Header="IP" DisplayMemberBinding="{Binding Path=Ip}" />
-					<GridViewColumn Width="400" Header="编号" DisplayMemberBinding="{Binding Path=HashCode}" />
+					<GridViewColumn Width="200" Header="编号" DisplayMemberBinding="{Binding Path=HashCode}" />
 				</GridView>
 			</ListView.View>
 		</ListView>
@@ -41,10 +41,10 @@
 				<ColumnDefinition Width="1*"/>
 			</Grid.ColumnDefinitions>
 
-			<Button x:Name="buttonTestPrinters" Content="所有打印机测试" Margin="0,147,10,0" VerticalAlignment="Top" Height="23" HorizontalAlignment="Right" Width="101" Click="buttonTestPrinters_Click" />
+			<Button x:Name="buttonTestPrinters" Content="预连接所有打印机" Margin="0,147,10,0" VerticalAlignment="Top" Height="23" HorizontalAlignment="Right" Width="101" Click="buttonTestPrinters_Click" />
 			<Button x:Name="buttonTestRemoteDines" Content="远程订单测试" HorizontalAlignment="Left" Margin="10,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestRemoteDines_Click"/>
 			<Button x:Name="buttonTestLocalDines" Content="本地订单测试" HorizontalAlignment="Left" Margin="116,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestLocalDines_Click"/>
-			<Button x:Name="buttonTestPrinter" Content="打印机测试" HorizontalAlignment="Left" Margin="222,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestPrinter_Click" />
+			<Button x:Name="buttonTestPrinter" Content="预连接打印机" HorizontalAlignment="Left" Margin="222,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestPrinter_Click" />
 			<GroupBox x:Name="groupBox" Header="测试设置" Margin="10,10,10,38">
 				<Grid Margin="0,0,0,0">
 					<TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,11,0,0" TextWrapping="Wrap" Text="IP:" VerticalAlignment="Top"/>
@@ -57,8 +57,10 @@
 			<ListView x:Name="listViewIpPrinterStatus" Margin="10,30,10,10" Grid.Column="1">
 				<ListView.View>
 					<GridView>
-						<GridViewColumn Width="150" Header="IP" DisplayMemberBinding="{Binding Ip}" />
-						<GridViewColumn Width="400" Header="状态" DisplayMemberBinding="{Binding Connected}" />
+						<GridViewColumn Width="150" Header="IP" DisplayMemberBinding="{Binding IP}" />
+						<GridViewColumn Width="100" Header="状态" DisplayMemberBinding="{Binding Connected}" />
+						<GridViewColumn Width="100" Header="等待数量" DisplayMemberBinding="{Binding WaitedCount}" />
+						<GridViewColumn Width="100" Header="空闲超时" DisplayMemberBinding="{Binding IdleTime}" />
 					</GridView>
 				</ListView.View>
 			</ListView>

@@ -254,11 +254,12 @@
         },
         reCalc: function () {
             //重新计算价钱
-            if (this.PayElements.CurrentDiscount.Discount > 0 && this.PayElements.CurrentDiscount.Discount < 100) {
+            if (this.PayElements.CurrentDiscount.Discount >= 0 && this.PayElements.CurrentDiscount.Discount <= 100) {
                 this.PayElements.CurrentDine.DiscountName = this.PayElements.CurrentDiscount.Name;
                 this.PayElements.CurrentDine.Discount = this.PayElements.CurrentDiscount.Discount;
-            } else {
-                this.PayElements.CurrentDiscount.Discount = 100
+            }
+            else {
+                this.PayElements.CurrentDine.Discount = 100;
             }
             this.CalcPrice();
         },
@@ -382,7 +383,11 @@
             var _this = this;
             var PayList = _this.PayElements.PayMethods.filter(function (x) { return x.Number }).map(function (x) { return { Id: x.Id, Type: x.Type, Number: x.Number } });
             var DineInfo = { Id: _this.PayElements.CurrentDine.Id, Discount: _this.PayElements.CurrentDine.Discount, DiscountName: _this.PayElements.CurrentDine.DiscountName };
-            $http.post('../Templates/PayDine', { PayList: PayList, Dine: DineInfo, UserId: _this.PayElements.CurrentUser.Id }).success(function (data) {
+            $http.post('../Templates/PayDine', {
+                PayList: PayList,
+                Dine: DineInfo,
+                UserId: _this.PayElements.CurrentUser.Id
+            }).success(function (data) {
                 if (data.Status) {
                     _this.PayElements.UnpaidDines = data.Dines;
                     for (var i = 0; i < _this.PayElements.UnpaidDines.length; i++) {

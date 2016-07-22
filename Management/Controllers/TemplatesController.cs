@@ -193,6 +193,7 @@ namespace Management.Controllers
             var dine = await db.Dines.Where(d => d.Id == Dine.Id)
                 .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
                 .FirstOrDefaultAsync();
+            var HtManage = new HotelManager(ConnectingStr);
             foreach (var menu in dine.DineMenus)
             {
                 if (menu.Status == DineMenuStatus.Normal)
@@ -317,6 +318,8 @@ namespace Management.Controllers
             {
 
             }
+           
+            HtManage.ManageLog($"HotelId: {(Session["User"] as RStatus).HotelId.ToString()},DineId:{dine.Id} compeleted");
             MvcApplication.client.Send(new NewDineInformProtocol((int)(Session["User"] as RStatus).HotelId, dine.Id, true));
             var CurDesk = dine.DeskId;
             var CleanDeskDine = db.Dines.Where(d => d.IsPaid == false && d.IsOnline == false && d.DeskId == CurDesk).Count();
@@ -523,6 +526,8 @@ namespace Management.Controllers
             }
             db.Dines.Remove(DltDine);
             db.SaveChanges();
+            var HtManager = new HotelManager(ConnectingStr);
+            HtManager.ManageLog($"HotelId: {(Session["User"] as RStatus).HotelId.ToString()},DineId:{DltDine.Id} Returned");
             var desks = await db.Dines.Where(d => d.DeskId == DeskId && d.IsPaid == false && d.IsOnline == false).ToListAsync();
             if (desks.Count() == 0)
             {
@@ -540,6 +545,7 @@ namespace Management.Controllers
         /// <returns></returns>
         public async Task<JsonResult> ReturnMenu(string DineId, int Id, string Reason)
         {
+            var HtManager = new HotelManager(ConnectingStr);
             string ClerkId = (Session["User"] as RStatus).ClerkId;
             if (ClerkId == "") return Json(new ErrorState("服务员不正确"));
             var Dine = db.Dines.Where(d => d.Id == DineId);
@@ -597,6 +603,7 @@ namespace Management.Controllers
                 mn.Count--;
             }
             db.SaveChanges();
+            HtManager.ManageLog($"HotelId: {(Session["User"] as RStatus).HotelId.ToString()},DineId:{DineId} Id:{Id}", HotelDAO.Models.Log.LogLevel.Success,$"ClerkId: {ClerkId}");
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
@@ -826,7 +833,7 @@ namespace Management.Controllers
         {
             int Id = 1;
             var Now = DateTime.Now;
-            var dines = await db.Dines.Where(d => d.IsPaid == true && d.Status != DineStatus.Shifted)
+            var dines = await db.Dines.Where(d => d.Status != DineStatus.Shifted)
                 .ToListAsync();
             var DineIds = dines.Select(d => d.Id);
             var PayList = await db.DinePaidDetails.Where(d => DineIds.Contains(d.DineId))
@@ -860,6 +867,12 @@ namespace Management.Controllers
             {
                 dine.Status = DineStatus.Shifted;
                 db.SaveChanges();
+            }
+            var Desks = await db.Desks.Where(d => d.Usable == true).ToListAsync();
+            foreach(var i in Desks)
+            {
+                i.Status = DeskStatus.StandBy;
+                await db.SaveChangesAsync();
             }
             MvcApplication.client.Send(new RequestPrintShiftsProtocol((int)(Session["User"] as RStatus).HotelId, new List<int>() { Id }, DateTime.Now));
             return Json(new SuccessState());

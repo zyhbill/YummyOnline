@@ -894,6 +894,8 @@ namespace Management.Controllers
                     DataSet setObj = new DataSet();
                     adaObj.Fill(setObj);
                     conObj.Close();
+                    var Class = db.MenuClasses.Where(d => d.Usable == true).ToList();
+                    var Remarks = db.Remarks.ToList();
                     DataTable dt = setObj.Tables[0];
                     foreach (DataRow row in dt.Rows)
                     {
@@ -904,6 +906,8 @@ namespace Management.Controllers
                             Menu me = new Menu();
                             MenuPrice Mp = new MenuPrice();
                             var clean = await db.Menus
+                                .Include(m=>m.Remarks)
+                                .Include(m=>m.Classes)
                                 .Include(m => m.MenuPrice)
                                 .Where(m => m.Id == Id).FirstOrDefaultAsync();
                             if (clean == null)
@@ -927,7 +931,29 @@ namespace Management.Controllers
                                 me.Usable = true;
                                 me.IsSetMeal = false;
                                 me.DepartmentId = Convert.ToInt32(row[10].ToString());
-                                db.Menus.Add(me);
+                                me.EnglishName = row[15].ToString();
+                                var classes = row[16].ToString();
+                                if (classes != null)
+                                {
+                                    var ids = classes.Split(new char[] { '&' });
+                                    foreach(var i in ids)
+                                    {
+                                        var MenuClass = Class.Where(d => d.Id == i).FirstOrDefault();
+                                        me.Classes.Add(MenuClass);
+                                        db.SaveChanges();
+                                    }
+                                }
+                                var remarks = row[17].ToString();
+                                if (remarks != null)
+                                {
+                                    var ids = remarks.Split(new char[] { '&' });
+                                    foreach (var i in ids)
+                                    {
+                                        var MenuRemark = Remarks.Where(d => d.Id.ToString() == i).FirstOrDefault();
+                                        me.Remarks.Add(MenuRemark);
+                                        db.SaveChanges();
+                                    }
+                                }
                                 db.SaveChanges();
                                 Mp.Id = Id;
                                 Mp.Price = Convert.ToDecimal(row[12].ToString());
@@ -954,6 +980,39 @@ namespace Management.Controllers
                                 clean.SpicyDegree = Convert.ToInt32(row[9].ToString());
                                 clean.Usable = true;
                                 clean.IsSetMeal = false;
+                                clean.EnglishName =  row[15].ToString();
+                                foreach(var i in clean.Remarks)
+                                {
+                                    clean.Remarks.Remove(i);
+                                    db.SaveChanges();
+                                }
+                                foreach(var i in clean.Classes)
+                                {
+                                    clean.Classes.Remove(i);
+                                    db.SaveChanges();
+                                }
+                                var classes = row[16].ToString();
+                                if (classes != null)
+                                {
+                                    var ids = classes.Split(new char[] { '&' });
+                                    foreach (var i in ids)
+                                    {
+                                        var MenuClass = Class.Where(d => d.Id == i).FirstOrDefault();
+                                        clean.Classes.Add(MenuClass);
+                                        db.SaveChanges();
+                                    }
+                                }
+                                var remarks = row[17].ToString();
+                                if (remarks != null)
+                                {
+                                    var ids = remarks.Split(new char[] { '&' });
+                                    foreach (var i in ids)
+                                    {
+                                        var MenuRemark = Remarks.Where(d => d.Id.ToString() == i).FirstOrDefault();
+                                        clean.Remarks.Add(MenuRemark);
+                                        db.SaveChanges();
+                                    }
+                                }
                                 clean.DepartmentId = Convert.ToInt32(row[10].ToString());
                                 Mp = await db.MenuPrice.Where(m => m.Id == Id).FirstOrDefaultAsync();
                                 Mp.Price = Convert.ToDecimal(row[12].ToString());

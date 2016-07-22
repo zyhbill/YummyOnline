@@ -13,7 +13,7 @@ namespace WeiPay
 {
     public class weChat
     {
-        private string token = "weixin_dianxiaoer";
+        private string token = "wechatdianxiaoer";
         private static string ticket = string.Empty;
         //此模板字符串用于processnews
         public string templateString = @"""title"":""{0}"",
@@ -21,7 +21,7 @@ namespace WeiPay
 	                        ""picurl"":""{2}"",
 	                        ""url"":""{3}""
                                 ";
-        public string serverUrl = "http://WeChatPlaform.yummyonline.net";
+        public string serverUrl = "http://wechatplatform.yummyonline.net";
         /// <summary>
         /// 接受消息所用参数
         /// </summary>
@@ -214,63 +214,70 @@ namespace WeiPay
                             ProcessNews(tmp);
                         }
                         break;
-                    } 
-                    
+                    }
+
                 #endregion
                 #region 事件信息
                 case "event":
-                {
-                    switch (Event)
                     {
-                        //关注事件
-                        case "subscribe":
-                            subscribe();
-                            break;
-                        case "CLICK":
-                            //点击事件
-                            {
-                                xmlnode = xd.SelectSingleNode("xml/EventKey");
-                                if (xmlnode != null)
-                                    EventKey = xmlnode.InnerText;
-                                switch (EventKey)
+                        switch (Event)
+                        {
+                            //关注事件
+                            case "subscribe":
+                                subscribe();
+                                break;
+                            case "click":
+                                //点击事件
                                 {
-                                    case "cli_myinfo":
-                                        {
+                                    xmlnode = xd.SelectSingleNode("xml/EventKey");
+                                    if (xmlnode != null)
+                                        EventKey = xmlnode.InnerText;
+                                    switch (EventKey)
+                                    {
+                                        case "cli_openid":
+                                            {
+                                                //获取openid
+
+                                                ProcessMsgText("openid:\n"+FromUserName);
+                                                break;
+                                            }
+                                        case "cli_myinfo":
+                                            {
                                                 //会员注册
-                                            string tmp1 = string.Format(templateString, "店小二平台会员注册", "欢迎您，在线美味尊贵会员"
-                                                                                                , serverUrl + "res/img/A1005.jpg"
-                                                                                                , "http://114.215.107.208/weixin/wechat/wechat.aspx");
-                                            ProcessNews("{"+tmp1+"}");
-                                            break;
-                                        }
-                                    case "cli_updateinfo":
-                                        {
-                                            //信息查询
-                                            string tmp1 = string.Format(templateString, "会员信息及积分查询", "欢迎您，在线美味尊贵会员"
-                                                , serverUrl + "res/img/A1006.jpg"
-                                                , "http://114.215.107.208/weixin/wechat/wechat.aspx");
-                                            ProcessNews("{" + tmp1 + "}");
-                                            break;
-                                        }
-                                    case "cli_historyinfo":
-                                        {
+                                                string tmp1 = string.Format(templateString, "店小二平台会员注册", "欢迎您，在线美味尊贵会员"
+                                                                                                    , serverUrl + "res/img/A1005.jpg"
+                                                                                                    , "http://114.215.107.208/weixin/wechat/wechat.aspx");
+                                                ProcessNews("{" + tmp1 + "}");
+                                                break;
+                                            }
+                                        case "cli_updateinfo":
+                                            {
+                                                //信息查询
+                                                string tmp1 = string.Format(templateString, "会员信息及积分查询", "欢迎您，在线美味尊贵会员"
+                                                    , serverUrl + "res/img/A1006.jpg"
+                                                    , "http://114.215.107.208/weixin/wechat/wechat.aspx");
+                                                ProcessNews("{" + tmp1 + "}");
+                                                break;
+                                            }
+                                        case "cli_historyinfo":
+                                            {
                                                 //历史订单
-                                            string tmp1 = string.Format(templateString, "历史订单查询", "欢迎您，在线美味尊贵会员"
-                                            , serverUrl + "res/img/A1007.jpg"
-                                            , "http://114.215.107.208/weixin/wechat/wechat.aspx");
-                                            ProcessNews("{" + tmp1 + "}");
-                                            break;
-                                        }
-                                    case "cli_all":
-                                        {
+                                                string tmp1 = string.Format(templateString, "历史订单查询", "欢迎您，在线美味尊贵会员"
+                                                , serverUrl + "res/img/A1007.jpg"
+                                                , "http://114.215.107.208/weixin/wechat/wechat.aspx");
+                                                ProcessNews("{" + tmp1 + "}");
+                                                break;
+                                            }
+                                        case "cli_all":
+                                            {
                                                 //会员优惠活动
-                                            string tmp1 = string.Format(templateString, "会员优惠活动", "在线美味欢迎您"
-                                            , serverUrl + "res/img/A2001.jpg"
-                                            , "http://114.215.107.208/weixin/wechat/wechat.aspx");
-                                            ProcessNews("{" + tmp1 + "}");
-                                            break;
-                                        }
-                                       case "cli_allres":
+                                                string tmp1 = string.Format(templateString, "会员优惠活动", "在线美味欢迎您"
+                                                , serverUrl + "res/img/A2001.jpg"
+                                                , "http://114.215.107.208/weixin/wechat/wechat.aspx");
+                                                ProcessNews("{" + tmp1 + "}");
+                                                break;
+                                            }
+                                        case "cli_allres":
                                             {
                                                 string tmp1 = string.Format(templateString, "所有餐厅", "在线美味欢迎您"
                                                 , serverUrl + "res/img/A1002.jpg"
@@ -286,57 +293,57 @@ namespace WeiPay
                                         //        ProcessNews("{" + tmp1 + "}");
                                         //       break;
                                         //}
-                                    case "cli_near":
-                                        {
+                                        case "cli_near":
+                                            {
 
-                                               string tmp1 = string.Format(templateString, "附近的店", "在线美味欢迎您"
-                                               , serverUrl + "res/img/A2003.jpg"
-                                               , "http://m.amap.com/navi/?dest=121.392385,31.315824&destName=上海大学&hideRouteIcon=1&key=838344be6c55fda45c1f1c6d77736626");
+                                                string tmp1 = string.Format(templateString, "附近的店", "在线美味欢迎您"
+                                                , serverUrl + "res/img/A2003.jpg"
+                                                , "http://m.amap.com/navi/?dest=121.392385,31.315824&destName=上海大学&hideRouteIcon=1&key=838344be6c55fda45c1f1c6d77736626");
                                                 ProcessNews("{" + tmp1 + "}");
                                                 break;
-                                        }
-                                    case "cli_com":
-                                        {
-                                            string tmp1 = string.Format(templateString, "公司介绍", "在线美味欢迎您"
-                                            , serverUrl + "res/img/main.png"
-                                            , "http://mp.weixin.qq.com/s?__biz=MzA3MTg2OTg3NA==&mid=208993449&idx=1&sn=8022e7b419b489f37111284d4f0dc096&scene=18#wechat_redirect");
-                                            ProcessNews("{" + tmp1 + "}");
-                                            break;
-                                        }
-                                    case "cli_comAct":
-                                        {
-                                            string tmp1 = string.Format(templateString, "联系我们", "在线美味欢迎您"
-                                            , serverUrl + "res/img/main.png"
-                                            , "http://mp.weixin.qq.com/s?__biz=MzA3MTg2OTg3NA==&mid=208993669&idx=1&sn=5bc2bbbab2c462dab97fd3423f4a6706&scene=18#rd");
-                                            ProcessNews("{" + tmp1 + "}", 2);
-                                            break;
-                                        }
-                                    case "cli_comCon":
+                                            }
+                                        case "cli_com":
+                                            {
+                                                string tmp1 = string.Format(templateString, "公司介绍", "在线美味欢迎您"
+                                                , serverUrl + "res/img/main.png"
+                                                , "http://mp.weixin.qq.com/s?__biz=MzA3MTg2OTg3NA==&mid=208993449&idx=1&sn=8022e7b419b489f37111284d4f0dc096&scene=18#wechat_redirect");
+                                                ProcessNews("{" + tmp1 + "}");
+                                                break;
+                                            }
+                                        case "cli_comAct":
+                                            {
+                                                string tmp1 = string.Format(templateString, "联系我们", "在线美味欢迎您"
+                                                , serverUrl + "res/img/main.png"
+                                                , "http://mp.weixin.qq.com/s?__biz=MzA3MTg2OTg3NA==&mid=208993669&idx=1&sn=5bc2bbbab2c462dab97fd3423f4a6706&scene=18#rd");
+                                                ProcessNews("{" + tmp1 + "}", 2);
+                                                break;
+                                            }
+                                        case "cli_comCon":
                                             {
                                                 string tmp1 = string.Format(templateString, "加盟我们", "在线美味欢迎您"
                                                 , serverUrl + "res/img/main.png"
                                                 , "http://mp.weixin.qq.com/s?__biz=MzA3MTg2OTg3NA==&mid=208993669&idx=1&sn=5bc2bbbab2c462dab97fd3423f4a6706&scene=18#rd");
                                                 ProcessNews("{" + tmp1 + "}", 2);
                                                 break;
-                                         }
+                                            }
                                     }
-                            break;
-                            }
+                                    break;
+                                }
                             case "LOCATION":
-                             //   ProcessMsgText(string.Format("地理位置详情:{0}\n{1}\n{2}\n",
-                             //                                                   Latitude, Longitude, Precision));
+                                //   ProcessMsgText(string.Format("地理位置详情:{0}\n{1}\n{2}\n",
+                                //                                                   Latitude, Longitude, Precision));
                                 break;
                             default:
-                                break;    
+                                break;
                         }
-                break;     
-                }
+                        break;
+                    }
                 default:
                     break;
-#endregion
+                    #endregion
             }
 
-#endregion
+            #endregion
         }
         /// <summary>
         /// 回复文本消息
@@ -379,7 +386,7 @@ namespace WeiPay
             string tmp = @"{
 	                        ""title"":""在线美味--轻松点餐"",
                             ""description"":""会员活动，所有餐厅"",
-	                        ""picurl"":""http://114.215.107.208/weixin/res/img/A2002.jpg"",
+	                        ""picurl"":""http://wechatold.yummyonline.net/weixin/res/img/A2002.jpg"",
 	                        ""url"":""http://mp.weixin.qq.com/s?__biz=MzA3MTg2OTg3NA==&mid=208993449&idx=1&sn=8022e7b419b489f37111284d4f0dc096#rd""
                                 }";
             ProcessNews(tmp);
@@ -388,9 +395,9 @@ namespace WeiPay
         /// 处理图文消息函数
         /// </summary>
         /// <param name="content"></param>
-        public void ProcessNews(string content, int count=1)
+        public void ProcessNews(string content, int count = 1)
         {
-            if (count ==1)
+            if (count == 1)
             {
                 //content中保存json数据包
                 JObject json = JObject.Parse(content);
@@ -405,6 +412,7 @@ namespace WeiPay
                         <ToUserName><![CDATA[{0}]]></ToUserName>
                         <FromUserName><![CDATA[{1}]]></FromUserName>
                         <CreateTime>{2}</CreateTime>
+
                         <MsgType><![CDATA[news]]></MsgType>
                         <ArticleCount>1</ArticleCount>
                         <Articles>
@@ -415,7 +423,7 @@ namespace WeiPay
                         <Url><![CDATA[{6}]]></Url>
                         </item>
                         </Articles>
-                        </xml> ", FromUserName, ToUserName, Helper.convertTime2String(DateTime.Now),
+                        </xml> ", FromUserName,ToUserName,Helper.convertTime2String(DateTime.Now),
                            title, description, picurl, url);// <PicUrl><![CDATA[{5}]]></PicUrl> );
                 HttpContext.Current.Response.Write(bxml.ToString());
             }
@@ -450,13 +458,13 @@ namespace WeiPay
                         <Url><![CDATA[{6}]]></Url>
                         </item>
                         </Articles>
-                        </xml> ", FromUserName, ToUserName, Helper.convertTime2String(DateTime.Now),
+                        </xml> ",FromUserName, ToUserName, Helper.convertTime2String(DateTime.Now),
                            title, description, picurl, url);// <PicUrl><![CDATA[{5}]]></PicUrl> );
                 HttpContext.Current.Response.Write(bxml.ToString());
             }
-            
+
         }
-        
+
         /// <summary>
         /// 调用setButton函数请注意
         /// 1.修改按钮格式
@@ -465,76 +473,30 @@ namespace WeiPay
         /// </summary>
         public void SetButton()
         {
-            string json = @"{""button"":[
-                                    {
-                                        ""name"":""会员"",
-                                        ""sub_button"":[
-                                            {
-                                                ""type"":""view"",
-                                                ""name"":""店小二平台会员注册"",
-                                                ""url"":""""
-                                            },
-                                            {
-                                                ""type"":""view"",
-                                                ""name"":""会员信息及积分查询"",
-                                                ""key"":""cli_updateinfo""
-                                            },
-                                            {
-                                                ""type"":""view"",
-                                                ""name"":""历史订单查询"",
-                                                ""key"":""cli_historyinfo""
-                                            }
-                                         ]
-                                    }],
-                                ""button"":[{
-                                       ""name"":""活动"",
-                                        ""sub_button"":[
-                                            {
-                                                ""type"":""view"",
-                                                ""name"":""会员优惠活动"",
-                                                ""url"":""http://114.215.107.208/weixin/wechat/wechat.aspx""
-                                            },
-                                            {
-                                                ""type"":""view"",
-                                                ""name"":""所有餐厅"",
-                                                ""url"":""http://114.215.107.208/weixin/wechat/wechat.aspx""
-                                            },
-                                            {
-                                                ""type"":""view"",
-                                                ""name"":""附近的店"",
-                                                ""url"":""http://m.amap.com/navi/?dest=121.392385,31.315824&destName=上海大学&hideRouteIcon=1&key=838344be6c55fda45c1f1c6d77736626"",
-                                            }
-                                         ]
-                                }],
-                                ""button"":[{
-                                        ""name"":""公司"",
-                                        ""sub_button"":[
-                                            {
-                                                ""type"":""viewlimited"",
-                                                ""name"":""公司介绍"",
-                                                ""url"":""http://mp.weixin.qq.com/s?__biz=MzA3MTg2OTg3NA==&mid=208993449&idx=1&sn=8022e7b419b489f37111284d4f0dc096&scene=18#wechat_redirect""
-                                            },
-                                            {
-                                                ""type"":""viewlimited"",
-                                                ""name"":""联系我们"",
-                                                ""url"":""http://mp.weixin.qq.com/s?__biz=MzA3MTg2OTg3NA==&mid=208993669&idx=1&sn=5bc2bbbab2c462dab97fd3423f4a6706&scene=18#wechat_redirect""
-                                            },
-                                            {
-                                               ""type"":""viewlimited"",
-                                                ""name"":""加盟我们"",
-                                                ""url"":""http://mp.weixin.qq.com/s?__biz=MzA3MTg2OTg3NA==&mid=208993449&idx=1&sn=8022e7b419b489f37111284d4f0dc096&scene=18#wechat_redirect""                         
-                                            }
-                                         ]
-                                }]
+            string json = @"{""button"":
+                            [{
+	                            ""name"":""会员中心"",
+	                            ""sub_button"":[
+	                            {
+		                            ""type"":""view"",
+		                            ""name"":""积分查询"",
+		                            ""url"":""http://wechatplatform.yummyonline.net""
+	                            },
+	                            {
+		                            ""type"":""click"",
+		                            ""name"":""test"",
+		                            ""key"":""cli_openid""
+	                            }]
+	                            }]
                             }";
-            
-            string URL = string.Empty ;
+
+            string URL = string.Empty;
             while (WeChat_Base.access_token == string.Empty
                  || URL == string.Empty)
                 URL = menu_url + WeChat_Base.access_token;
             HttpHelper.sendMsgByPost(URL, json);
         }
-        
+
 
         /// <summary>
         /// 以下test_xxxx函数均为测试函数
@@ -553,7 +515,7 @@ namespace WeiPay
             HandleMsg(tmp);
             //ProcessMsgText("123");
 
-        }        
+        }
         public void test_responseNews()
         {
             string tmp = @"{
@@ -637,7 +599,7 @@ namespace WeiPay
             //string tmp = "\"title\":\"{0}\",\"description\":{1},\"picurl\":{2},\"url\":{3}";
             //string tmp2 = "{\"{0}\",\"{1}\",\"{2}\",\"{3}\"}";
             string tmp1 = string.Format(templateString,
-                "123", "123","123","123");
+                "123", "123", "123", "123");
             HttpContext.Current.Response.Write("{" + tmp1 + "}");
         }
     }

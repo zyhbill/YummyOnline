@@ -298,12 +298,12 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Data\Helper.cs" />
-    <Compile Include="App_Data\HttpHelper.cs" />
-    <Compile Include="App_Data\PayConfig.cs" />
-    <Compile Include="App_Data\SqlHelper.cs" />
-    <Compile Include="App_Data\weChat.cs" />
-    <Compile Include="App_Data\WeChat_Base.cs" />
+    <Compile Include="App_Start\Helper.cs" />
+    <Compile Include="App_Start\HttpHelper.cs" />
+    <Compile Include="App_Start\PayConfig.cs" />
+    <Compile Include="App_Start\SqlHelper.cs" />
+    <Compile Include="App_Start\weChat.cs" />
+    <Compile Include="App_Start\WeChat_Base.cs" />
     <Compile Include="App_Start\HotelManager.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\YummyOnlineManager.cs" />
@@ -315,6 +315,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Method.cs" />
+    <Compile Include="Models\Model.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -390,6 +391,7 @@
     <Content Include="node_modules\weui\src\style\widget\weui_tips\weui_mask.less" />
     <Content Include="node_modules\weui\src\style\widget\weui_tips\weui_toast.less" />
     <None Include="Properties\PublishProfiles\localconfig.pubxml" />
+    <Content Include="Views\Login\UserInfo.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -398,6 +400,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Data\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Home\" />
   </ItemGroup>

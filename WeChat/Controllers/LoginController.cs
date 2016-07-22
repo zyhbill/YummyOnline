@@ -12,34 +12,39 @@ namespace WeChat.Controllers
 {
     public class LoginController : Controller
     {
-        // GET: Login
-        [HttpGet]
-        public ActionResult Login()
+        //GET: Login
+       public ActionResult Login()
         {
             return View("Login");
         }
 
         [HttpGet]
-        public bool Login(string signature,string timestamp,string nonce)
+        public ActionResult CheckSignature(string signature, string timestamp, string nonce, string echostr)
         {
-            string token = "wechat_dianxiaoer";
-            string[] tmparr = new string[] {token,timestamp,nonce};
+            weChat t = new weChat();
+            //t.Auth();
+            t.ProcessMsg();
+            if (signature == null || timestamp == null || nonce == null)
+                return View("Login");
+            string token = "wechatdianxiaoer";
+            string[] tmparr = new string[] { token, timestamp, nonce };
             Array.Sort(tmparr);
             string tmpstr = string.Join("", tmparr);
-            tmpstr = Convert.ToBase64String(System.Security.Cryptography.SHA1.Create(tmpstr).Hash);
+            //tmpstr = Convert.ToBase64String(System.Security.Cryptography.SHA1.Create(tmpstr)?.Hash);
+            tmpstr = FormsAuthentication.HashPasswordForStoringInConfigFile(tmpstr, "SHA1");
             tmpstr = tmpstr.ToLower();
-            if(tmpstr==signature)
+            //t.subscribe();
+            if (tmpstr == signature)
             {
-                return true;
+                return Content(echostr);
             }
             else
             {
-                return false;
+                return Content("wrong!");
             }
         }
-
-        //[HttpPost]
-        public JsonResult Login1(string phone,string Paswrd)
+        [HttpPost]
+        public ActionResult Login1(string phone,string Paswrd)
         {
             weChat t = new weChat();
             t.Auth();
@@ -49,7 +54,14 @@ namespace WeChat.Controllers
             var psd = Method.GetMd5(Paswrd);
             var result = ctx.Users.Where(p => p.PhoneNumber ==phone && p.PasswordHash == psd)
                 .Select(d=>new { d.UserName,d.Id,d.Email,d.PhoneNumber}).FirstOrDefault();
-
+            int points = 0;
+            var hotels = ctx.Hotels.Where(d => d.Usable == true).ToList();
+            foreach(var i in hotels)
+            {
+                var ConnectStr = i.ConnectionString;
+                var HotelManager = new HotelManager(ConnectStr);
+                points += HotelManager.GetUserPointById(result.Id);
+            }
             //foreach (var d in result)
             //{
 
@@ -58,10 +70,15 @@ namespace WeChat.Controllers
             //console.writeline("");
             //}
             if (result == null)
-                return Json(new { Status = false });
+                return Json(new { Status = false ,ErrorMessage = "error"});
             else
-                return Json(new { Status = true ,user=result});//name=result.UserName,id=result.Id,email=result.Email,tel=result.PhoneNumber;
-            
+            {
+                Session["User"] = result;
+                return Json(new { Status = true, user = result, points = points });//name=result.UserName,id=result.Id,email=result.Email,tel=result.PhoneNumber;
+                //return View("UserInfo");
+
+            }
+
         }
     }
 }

@@ -21,12 +21,14 @@ namespace WeiPay
         /// <summary>
         /// appid，应用ID， 在微信公众平台中 “开发者中心”栏目可以查看到
         /// </summary>
-        public static string AppId = "wxa6f547fa6bc50c20"; 
+        ///public static string AppId = "wxa6f547fa6bc50c20";
+        public static string AppId = "wx51c299b84496948d";
 
         /// <summary>
         /// appsecret ，应用密钥， 在微信公众平台中 “开发者中心”栏目可以查看到
         /// </summary>
-        public static string AppSecret = "891aebd4347061f9fdcce8b5b76a247b"; 
+        ///public static string AppSecret = "891aebd4347061f9fdcce8b5b76a247b";
+        public static string AppSecret = "0ccbaa0c5332170b53d91bdd4be26003";
       
         /// <summary>
         /// paysignkey，API密钥，在微信商户平台中“账户设置”--“账户安全”--“设置API密钥”，只能修改不能查看

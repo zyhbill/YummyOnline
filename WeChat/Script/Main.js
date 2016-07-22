@@ -20,8 +20,8 @@
             Paswrd: psd
         },
         function (data, status) {
-            alert("name:" +data.user.UserName+"\nid:"+data.user.Id+"\nemail:"+data.user.Email+"\ntel:"+data.user.PhoneNumber);
-            
+            alert("姓名:" +data.user.UserName+"\nId:"+data.user.Id+"\n邮箱:"+data.user.Email+"\n电话号码:"+data.user.PhoneNumber+"\n积分:"+data.points);
+            //alert(data.ErrorMessage);
         });
     });
 

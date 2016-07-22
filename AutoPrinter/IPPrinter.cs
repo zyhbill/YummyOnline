@@ -126,6 +126,7 @@ namespace AutoPrinter {
 			if(IPClientBmpMap[ip].IsConnecting) {
 				return;
 			}
+
 			await Task.Run(() => {
 				IPClientBmpMap[ip].PrintingMutex.WaitOne();
 				IPClientBmpMap[ip].PrintingMutex.Reset();
@@ -259,11 +260,6 @@ namespace AutoPrinter {
 				}
 			}
 
-			//await Task.Run(() => {
-			//	clientBmpInfo.ConnectionMutex.WaitOne();
-			//	clientBmpInfo.ConnectionMutex.Reset();
-			//});
-
 			await connect(ip, clientBmpInfo);
 		}
 		private async Task connect(IPAddress ip, ClientBmpInfo clientBmpInfo) {
@@ -271,22 +267,20 @@ namespace AutoPrinter {
 
 			try {
 				clientBmpInfo.IsConnecting = true;
-				callBack?.Invoke(ip, null, "正在连接", false);
+				callBack?.Invoke(ip, null, "正在连接", true);
 				await client.ConnectAsync(ip, 9100);
 
 				clientBmpInfo.TcpClientInfo = new TcpClientInfo(client);
 				clientBmpInfo.TryTime = 0;
-
-				callBack?.Invoke(ip, null, "连接成功", true);
 				clientBmpInfo.IsConnecting = false;
+				callBack?.Invoke(ip, null, "连接成功", true);
 
 				await prePrint(ip);
 			}
 			catch(Exception e) {
 				callBack?.Invoke(ip, null, $"连接发生错误, {e.Message}", false);
-				callBack?.Invoke(ip, null, $"第{++clientBmpInfo.TryTime}次重新尝试连接", false);
 
-				if(clientBmpInfo.TryTime >= 2) {
+				if(++clientBmpInfo.TryTime >= 2) {
 					callBack?.Invoke(ip, null, $"连接次数已达上限, 连接失败", false);
 					clientBmpInfo.TryTime = 0;
 					clientBmpInfo.IsConnecting = false;
@@ -294,6 +288,8 @@ namespace AutoPrinter {
 
 					return;
 				}
+
+				callBack?.Invoke(ip, null, $"第{clientBmpInfo.TryTime}次重新尝试连接", false);
 
 				await Task.Delay(2000);
 				await connect(ip, clientBmpInfo);

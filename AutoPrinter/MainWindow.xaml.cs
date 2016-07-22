@@ -10,6 +10,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using Utility;
 using YummyOnlineTcpClient;
 
@@ -18,6 +19,7 @@ namespace AutoPrinter {
 	/// MainWindow.xaml 的交互逻辑
 	/// </summary>
 	public partial class MainWindow : Window {
+
 		private static int hotelId = Convert.ToInt32(ConfigurationManager.AppSettings["HotelId"]);
 		private static string tcpServerIp = ConfigurationManager.AppSettings["TcpServerIp"].ToString();
 		private static int tcpServerPort = Convert.ToInt32(ConfigurationManager.AppSettings["TcpServerPort"]);
@@ -226,6 +228,7 @@ namespace AutoPrinter {
 		void ipPrinterLog(IPAddress ip, int? hashCode, string message, bool isRefresh) {
 			if(message != null) {
 				listViewIpPrinter.Dispatcher.Invoke(() => {
+
 					listViewIpPrinter.Items.Add(new {
 						DateTime = DateTime.Now,
 						IP = ip,
@@ -237,23 +240,30 @@ namespace AutoPrinter {
 					listViewIpPrinter.ScrollIntoView(listViewIpPrinter.SelectedItem);
 				});
 			}
-			
 
-			if(isRefresh) {
-				listViewIpPrinterStatus.Dispatcher.Invoke(() => {
-					listViewIpPrinterStatus.Items.Clear();
-					var map = IPPrinter.GetInstance().IPClientBmpMap;
-					foreach(IPAddress ipKey in map.Keys) {
-						listViewIpPrinterStatus.Items.Add(new {
-							IP = ipKey,
-							Connected = map[ipKey].TcpClientInfo == null ? "已断开" : "已连接",
-							WaitedCount = map[ipKey].Queue.Count,
-							IdleTime = map[ipKey].TcpClientInfo?.IdleTime
-						});
 
+			//if(isRefresh) {
+			listViewIpPrinterStatus.Dispatcher.Invoke(() => {
+				listViewIpPrinterStatus.Items.Clear();
+				var map = IPPrinter.GetInstance().IPClientBmpMap;
+				foreach(IPAddress ipKey in map.Keys) {
+					string status = "已断开";
+					if(map[ipKey].IsConnecting) {
+						status = "正在连接";
 					}
-				});
-			}
+					else if(map[ipKey].TcpClientInfo != null) {
+						status = "已连接";
+					}
+					listViewIpPrinterStatus.Items.Add(new {
+						IP = ipKey,
+						Status = status,
+						WaitedCount = map[ipKey].Queue.Count,
+						IdleTime = map[ipKey].TcpClientInfo?.IdleTime
+					});
+
+				}
+			});
+			//}
 
 		}
 		void remoteLog(Log.LogLevel level, string message, string detail = null) {
@@ -266,9 +276,6 @@ namespace AutoPrinter {
 			var _ = HttpPost.PostAsync(remoteLogUrl, postData);
 		}
 
-		private async void buttonTestPrinter_Click(object sender, RoutedEventArgs e) {
-			await IPPrinter.GetInstance().Connect(IPAddress.Parse(textBoxIp.Text));
-		}
 
 		private async void buttonTestRemoteDines_Click(object sender, RoutedEventArgs e) {
 			string ipAddress = textBoxIp.Text;
@@ -281,8 +288,19 @@ namespace AutoPrinter {
 			await printLocalTest(getCheckedPrintTypes(), ipAddress);
 		}
 
-		private void buttonTestPrinters_Click(object sender, RoutedEventArgs e) {
-			//await testPrinters();
+		private async void buttonConnectPrinter_Click(object sender, RoutedEventArgs e) {
+			await IPPrinter.GetInstance().Connect(IPAddress.Parse(textBoxIp.Text));
+		}
+
+		private async void buttonConnectPrinters_Click(object sender, RoutedEventArgs e) {
+			var protocol = await getPrintersForPrinting();
+			if(protocol == null) {
+				localLog("获取打印机信息失败，请检查网络设置");
+				return;
+			}
+			foreach(var p in protocol.Printers) {
+				await IPPrinter.GetInstance().Connect(IPAddress.Parse(p.IpAddress));
+			}
 		}
 
 		private List<PrintType> getCheckedPrintTypes() {

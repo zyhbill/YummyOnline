@@ -4,11 +4,6 @@ using System.Drawing;
 
 namespace AutoPrinter {
 	public abstract class BasePrinter {
-		public BasePrinter(Action<IPEndPoint, Exception> errorDelegate) {
-			this.errorDelegate = errorDelegate;
-		}
-		protected Action<IPEndPoint, Exception> errorDelegate;
-
 		/// <summary>
 		/// 裁剪bmp至高度
 		/// </summary>
@@ -60,7 +55,7 @@ namespace AutoPrinter {
 		protected void printEnd(PrinterGraphics printer) {
 			printer.TrimY(10);
 			printer.DrawStringLineLoop("*", 8);
-			printer.TrimY(10);
+			printer.TrimY(100);
 		}
 	}
 }

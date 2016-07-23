@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoPrinter"
         mc:Ignorable="d"
-        Title="YummyOnline自助打印" Height="751.619" Width="1215.954">
+        Title="YummyOnline自助打印" Height="756.619" Width="1215.954">
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition/>

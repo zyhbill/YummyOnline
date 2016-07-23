@@ -64,7 +64,7 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 最大重新尝试连接次数
 		/// </summary>
-		private int maxTryTime = 2;
+		private int maxTryTime = 5;
 		/// <summary>
 		/// 尝试间隔
 		/// </summary>

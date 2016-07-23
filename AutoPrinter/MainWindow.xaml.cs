@@ -10,7 +10,6 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using Utility;
 using YummyOnlineTcpClient;
 
@@ -67,10 +66,10 @@ namespace AutoPrinter {
 				remoteLog(Log.LogLevel.Error, e.Message, e.ToString());
 			};
 
-			//tcp.Start();
+			tcp.Start();
 
-			IPPrinter.GetInstance((ip, bmp, message, isRefresh) => {
-				ipPrinterLog(ip, bmp?.GetHashCode(), message, isRefresh);
+			IPPrinter.GetInstance((ip, bmp, message) => {
+				ipPrinterLog(ip, bmp?.GetHashCode(), message);
 			});
 		}
 
@@ -225,7 +224,7 @@ namespace AutoPrinter {
 				listViewLog.ScrollIntoView(listViewLog.SelectedItem);
 			});
 		}
-		void ipPrinterLog(IPAddress ip, int? hashCode, string message, bool isRefresh) {
+		void ipPrinterLog(IPAddress ip, int? hashCode, string message) {
 			if(message != null) {
 				listViewIpPrinter.Dispatcher.Invoke(() => {
 
@@ -238,11 +237,10 @@ namespace AutoPrinter {
 
 					listViewIpPrinter.SelectedIndex = listViewIpPrinter.Items.Count - 1;
 					listViewIpPrinter.ScrollIntoView(listViewIpPrinter.SelectedItem);
+
 				});
 			}
 
-
-			//if(isRefresh) {
 			listViewIpPrinterStatus.Dispatcher.Invoke(() => {
 				listViewIpPrinterStatus.Items.Clear();
 				var map = IPPrinter.GetInstance().IPClientBmpMap;
@@ -260,12 +258,10 @@ namespace AutoPrinter {
 						WaitedCount = map[ipKey].Queue.Count,
 						IdleTime = map[ipKey].TcpClientInfo?.IdleTime
 					});
-
 				}
 			});
-			//}
-
 		}
+
 		void remoteLog(Log.LogLevel level, string message, string detail = null) {
 			object postData = new {
 				HotelId = hotelId,
@@ -275,8 +271,7 @@ namespace AutoPrinter {
 			};
 			var _ = HttpPost.PostAsync(remoteLogUrl, postData);
 		}
-
-
+		
 		private async void buttonTestRemoteDines_Click(object sender, RoutedEventArgs e) {
 			string ipAddress = textBoxIp.Text;
 

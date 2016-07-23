@@ -159,35 +159,35 @@ namespace AutoPrinter {
 				}
 			};
 
-			//for(int i = 1; i <= 5; i++) {
-			//	p.Dine.DineMenus.Add(new DineMenu {
-			//		Status = HotelDAO.Models.DineMenuStatus.Normal,
-			//		Count = 10,
-			//		OriPrice = 56.78m,
-			//		Price = 12.34m,
-			//		RemarkPrice = 12.34m,
-			//		Remarks = new List<Remark> {
-			//						new Remark {Id = 0,Name = "测试备注1",Price = 12.34m },
-			//						new Remark {Id = 1,Name = "测试备注2",Price = 56.78m },
-			//						new Remark {Id = 2,Name = "测试备注3",Price = 90.12m },
-			//						new Remark {Id = 3,Name = "测试备注4",Price = 34.56m }
-			//					},
-			//		Menu = new Menu {
-			//			Id = $"0000{i}",
-			//			Code = "test",
-			//			Name = $"测试菜品名{i}",
-			//			NameAbbr = $"测试{i}",
-			//			Unit = "份",
-			//			IsSetMeal = false,
-			//			Printer = new Printer {
-			//				Id = 2,
-			//				Name = "Microsoft XPS Document Writer",
-			//				IpAddress = "127.0.0.1",
-			//				Usable = true
-			//			},
-			//		}
-			//	});
-			//}
+			for(int i = 1; i <= 2; i++) {
+				p.Dine.DineMenus.Add(new DineMenu {
+					Status = HotelDAO.Models.DineMenuStatus.Normal,
+					Count = 10,
+					OriPrice = 56.78m,
+					Price = 12.34m,
+					RemarkPrice = 12.34m,
+					Remarks = new List<Remark> {
+									new Remark {Id = 0,Name = "测试备注1",Price = 12.34m },
+									new Remark {Id = 1,Name = "测试备注2",Price = 56.78m },
+									new Remark {Id = 2,Name = "测试备注3",Price = 90.12m },
+									new Remark {Id = 3,Name = "测试备注4",Price = 34.56m }
+								},
+					Menu = new Menu {
+						Id = $"0000{i}",
+						Code = "test",
+						Name = $"测试菜品名{i}",
+						NameAbbr = $"测试{i}",
+						Unit = "份",
+						IsSetMeal = false,
+						Printer = new Printer {
+							Id = 2,
+							Name = "Microsoft XPS Document Writer",
+							IpAddress = "127.0.0.1",
+							Usable = true
+						},
+					}
+				});
+			}
 
 			return p;
 		}

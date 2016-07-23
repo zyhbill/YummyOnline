@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Timers;
+using System.Diagnostics;
 
 namespace AutoPrinter {
 	public class BmpInfo {
@@ -40,14 +41,14 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 多个打印命令互斥信号量
 		/// </summary>
-		public AutoResetEvent PrintingMutex { get; set; }
-		public AutoResetEvent ConnectionMutex { get; set; }
+		//public AutoResetEvent PrintingMutex { get; set; }
 		public TcpClientInfo TcpClientInfo { get; set; }
 		/// <summary>
 		/// 尝试重新连接次数
 		/// </summary>
 		public int TryTime { get; set; }
 		public bool IsConnecting { get; set; }
+		public bool IsPrinting { get; set; }
 	}
 
 	public class IPPrinter {
@@ -60,12 +61,25 @@ namespace AutoPrinter {
 		// 换行
 		private readonly byte[] lf = new byte[] { 0x0A };
 
-		private Action<IPAddress, BmpInfo, string, bool> callBack;
+		/// <summary>
+		/// 最大重新尝试连接次数
+		/// </summary>
+		private int maxTryTime = 2;
+		/// <summary>
+		/// 尝试间隔
+		/// </summary>
+		private int tryInterval = 2;
+		/// <summary>
+		/// 最大空闲占用时间
+		/// </summary>
+		private int maxIdleTime = 60;
 
-		private IPPrinter(Action<IPAddress, BmpInfo, string, bool> callBack) {
+		private Action<IPAddress, Bitmap, string> callBack;
+
+		private IPPrinter(Action<IPAddress, Bitmap, string> callBack) {
 			this.callBack = callBack;
 
-			System.Timers.Timer t = new System.Timers.Timer(10000);
+			System.Timers.Timer t = new System.Timers.Timer(1000);
 			t.Elapsed += T_Elapsed;
 			t.Start();
 		}
@@ -75,7 +89,7 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 获得单例对象
 		/// </summary>
-		public static IPPrinter GetInstance(Action<IPAddress, BmpInfo, string, bool> callBack = null) {
+		public static IPPrinter GetInstance(Action<IPAddress, Bitmap, string> callBack = null) {
 			if(instance == null) {
 				lock(locker) {
 					if(instance == null) {
@@ -93,53 +107,51 @@ namespace AutoPrinter {
 						continue;
 					}
 
-					if(++IPClientBmpMap[ip].TcpClientInfo.IdleTime == 6) {
+					if(++IPClientBmpMap[ip].TcpClientInfo.IdleTime >= maxIdleTime) {
 						IPClientBmpMap[ip].TcpClientInfo.Close();
 						IPClientBmpMap[ip].TcpClientInfo = null;
-						callBack(ip, null, "超时断开连接", true);
-					}
-					else {
-						callBack(ip, null, null, true);
+						callBack?.Invoke(ip, null, "超时断开连接");
 					}
 				}
 			}
 		}
 
 		public async Task Print(IPAddress ip, Bitmap bmp, int colorDepth) {
-			BmpInfo bmpInfo = new BmpInfo {
-				bmp = bmp,
-				printingBytes = getPrintingBytes(bmp, colorDepth)
-			};
+			await Task.Run(async () => {
+				BmpInfo bmpInfo = null;
 
-			lock(IPClientBmpMap) {
-				if(!IPClientBmpMap.ContainsKey(ip)) {
-					IPClientBmpMap.Add(ip, new ClientBmpInfo {
-						PrintingMutex = new AutoResetEvent(true),
-						ConnectionMutex = new AutoResetEvent(true),
-						Queue = new Queue<BmpInfo>()
-					});
+				bmpInfo = new BmpInfo {
+					bmp = bmp,
+					printingBytes = await getPrintingBytes(bmp, colorDepth)
+				};
+
+				lock(IPClientBmpMap) {
+					if(!IPClientBmpMap.ContainsKey(ip)) {
+						IPClientBmpMap.Add(ip, new ClientBmpInfo {
+							Queue = new Queue<BmpInfo>()
+						});
+					}
+					IPClientBmpMap[ip].Queue.Enqueue(bmpInfo);
+
+					callBack?.Invoke(ip, bmpInfo?.bmp, "已进入打印队列");
+
+					if(IPClientBmpMap[ip].IsPrinting) {
+						return;
+					}
+					IPClientBmpMap[ip].IsPrinting = true;
 				}
-				IPClientBmpMap[ip].Queue.Enqueue(bmpInfo);
-			}
-			callBack?.Invoke(ip, bmpInfo, "已进入打印队列", true);
-
-			if(IPClientBmpMap[ip].IsConnecting) {
-				return;
-			}
-
-			await Task.Run(() => {
-				IPClientBmpMap[ip].PrintingMutex.WaitOne();
-				IPClientBmpMap[ip].PrintingMutex.Reset();
+				await prePrint(ip);
 			});
-
-			await prePrint(ip);
 		}
 
-		private byte[] getPrintingBytes(Bitmap bmp, int colorDepth) {
+		private async Task<byte[]> getPrintingBytes(Bitmap bmp, int colorDepth) {
 			List<byte> printingBytes = new List<byte>();
-			printingBytes.AddRange(init);
-			printingBytes.AddRange(getBmpBytes(bmp, colorDepth));
-			printingBytes.AddRange(cut);
+
+			await Task.Run(() => {
+				printingBytes.AddRange(init);
+				printingBytes.AddRange(getBmpBytes(bmp, colorDepth));
+				printingBytes.AddRange(cut);
+			});
 
 			return printingBytes.ToArray();
 		}
@@ -182,13 +194,12 @@ namespace AutoPrinter {
 			return bmpBytes;
 		}
 
-
 		private async Task prePrint(IPAddress ip) {
 			TcpClientInfo client;
 
 			lock(IPClientBmpMap) {
 				if(!IPClientBmpMap.ContainsKey(ip) || IPClientBmpMap[ip].Queue.Count == 0) {
-					IPClientBmpMap[ip].PrintingMutex.Set();
+					IPClientBmpMap[ip].IsPrinting = false;
 					return;
 				}
 
@@ -212,26 +223,25 @@ namespace AutoPrinter {
 				if(!stream.CanWrite) {
 					throw new Exception("不支持写入");
 				}
-
 				await stream.WriteAsync(bmpInfo.printingBytes, 0, bmpInfo.printingBytes.Length);
-
 				client.IdleTime = 0;
 				lock(IPClientBmpMap) {
 					IPClientBmpMap[ip].Queue.Dequeue();
+
+					callBack?.Invoke(ip, bmpInfo?.bmp, "打印成功");
 				}
-				callBack?.Invoke(ip, bmpInfo, "打印成功", true);
 
 				await prePrint(ip);
 			}
 			catch(Exception e) {
-				callBack?.Invoke(ip, null, $"写入数据发生错误 {e.Message}", false);
+				callBack?.Invoke(ip, null, $"写入数据发生错误 {e.Message}");
 
 				lock(IPClientBmpMap) {
 					IPClientBmpMap[ip].TcpClientInfo?.Close();
 					IPClientBmpMap[ip].TcpClientInfo = null;
 				}
 
-				callBack?.Invoke(ip, null, "重新尝试连接", true);
+				callBack?.Invoke(ip, null, "重新尝试连接");
 				await Connect(ip);
 			}
 		}
@@ -241,23 +251,22 @@ namespace AutoPrinter {
 			lock(IPClientBmpMap) {
 				if(!IPClientBmpMap.ContainsKey(ip)) {
 					IPClientBmpMap.Add(ip, new ClientBmpInfo {
-						PrintingMutex = new AutoResetEvent(true),
-						ConnectionMutex = new AutoResetEvent(true),
 						Queue = new Queue<BmpInfo>()
 					});
 				}
 				clientBmpInfo = IPClientBmpMap[ip];
 
-				callBack?.Invoke(ip, null, null, true);
+				callBack?.Invoke(ip, null, null);
 
 				if(clientBmpInfo.TcpClientInfo != null) {
-					callBack?.Invoke(ip, null, "已连接", false);
+					callBack?.Invoke(ip, null, "已连接");
 					return;
 				}
 				if(clientBmpInfo.IsConnecting) {
-					callBack?.Invoke(ip, null, "正在连接中", false);
+					callBack?.Invoke(ip, null, "正在连接中");
 					return;
 				}
+				clientBmpInfo.IsConnecting = true;
 			}
 
 			await connect(ip, clientBmpInfo);
@@ -266,32 +275,32 @@ namespace AutoPrinter {
 			TcpClient client = new TcpClient();
 
 			try {
-				clientBmpInfo.IsConnecting = true;
-				callBack?.Invoke(ip, null, "正在连接", true);
+				callBack?.Invoke(ip, null, "正在连接");
 				await client.ConnectAsync(ip, 9100);
 
 				clientBmpInfo.TcpClientInfo = new TcpClientInfo(client);
 				clientBmpInfo.TryTime = 0;
 				clientBmpInfo.IsConnecting = false;
-				callBack?.Invoke(ip, null, "连接成功", true);
+				callBack?.Invoke(ip, null, "连接成功");
 
 				await prePrint(ip);
 			}
 			catch(Exception e) {
-				callBack?.Invoke(ip, null, $"连接发生错误, {e.Message}", false);
+				callBack?.Invoke(ip, null, $"连接发生错误, {e.Message}");
 
-				if(++clientBmpInfo.TryTime >= 2) {
-					callBack?.Invoke(ip, null, $"连接次数已达上限, 连接失败", false);
-					clientBmpInfo.TryTime = 0;
+				if(++clientBmpInfo.TryTime >= maxTryTime) {
 					clientBmpInfo.IsConnecting = false;
-					clientBmpInfo.PrintingMutex.Set();
+
+					callBack?.Invoke(ip, null, $"连接次数已达上限{clientBmpInfo.TryTime}次, 连接失败");
+					clientBmpInfo.IsPrinting = false;
+					clientBmpInfo.TryTime = 0;
 
 					return;
 				}
 
-				callBack?.Invoke(ip, null, $"第{clientBmpInfo.TryTime}次重新尝试连接", false);
+				callBack?.Invoke(ip, null, $"{tryInterval}秒后重新尝试第{clientBmpInfo.TryTime}次连接");
 
-				await Task.Delay(2000);
+				await Task.Delay(tryInterval * 1000);
 				await connect(ip, clientBmpInfo);
 			}
 		}

@@ -1,4 +1,4 @@
-﻿namespace OrderSystem.Models {
+﻿namespace Protocol {
 	public class NetworkNotifyViewModels {
 		public int HotelId { get; set; }
 		public string DineId { get; set; }

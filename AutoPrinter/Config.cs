@@ -89,7 +89,7 @@ namespace AutoPrinter {
 						},
 						ServePrinter = new Printer {
 							Id = 1,
-							Name = "本地测试打印机,
+							Name = "本地测试打印机",
 							IpAddress = ipAddress,
 							Usable = true
 						}

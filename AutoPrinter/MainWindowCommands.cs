@@ -105,7 +105,7 @@ namespace AutoPrinter {
 
 		async Task<DineForPrinting> getDineForPrinting(string dineId, List<int> dineMenuIds = null) {
 			object postData = new {
-				HotelId = hotelId,
+				HotelId = Config.HotelId,
 				DineId = dineId,
 				DineMenuIds = dineMenuIds
 			};
@@ -120,7 +120,7 @@ namespace AutoPrinter {
 		}
 		async Task<ShiftForPrinting> getShiftsForPrinting(List<int> ids, DateTime dateTime) {
 			object postData = new {
-				HotelId = hotelId,
+				HotelId = Config.HotelId,
 				Ids = ids,
 				DateTime = dateTime
 			};
@@ -134,7 +134,7 @@ namespace AutoPrinter {
 		}
 		async Task<PrintersForPrinting> getPrintersForPrinting() {
 			string response = await HttpPost.PostAsync(Config.RemoteGetPrintersForPrintingUrl, new {
-				HotelId = hotelId,
+				HotelId = Config.HotelId,
 			});
 			if(response == null)
 				return null;
@@ -146,7 +146,7 @@ namespace AutoPrinter {
 
 		void printCompleted(string dineId) {
 			object postData = new {
-				HotelId = hotelId,
+				HotelId = Config.HotelId,
 				DineId = dineId
 			};
 			var _ = HttpPost.PostAsync(Config.RemotePrintCompletedUrl, postData);
@@ -203,7 +203,7 @@ namespace AutoPrinter {
 
 		void remoteLog(Log.LogLevel level, string message, string detail = null) {
 			object postData = new {
-				HotelId = hotelId,
+				HotelId = Config.HotelId,
 				Level = level,
 				Message = message,
 				Detail = detail

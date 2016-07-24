@@ -5,8 +5,8 @@ using Protocol.PrintingProtocol;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Deployment.Application;
 using System.Diagnostics;
-using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
@@ -31,10 +31,11 @@ namespace AutoPrinter {
 
 		public MainWindow() {
 			InitializeComponent();
-			Title = $"YummyOnline自助打印 {System.Reflection.Assembly.GetExecutingAssembly().GetName().Version}";
-
-			if(!Directory.Exists($@"{Environment.CurrentDirectory}\failedImgs")) {
-				Directory.CreateDirectory($@"{Environment.CurrentDirectory}\failedImgs");
+			try {
+				Title = $"YummyOnline自助打印 {ApplicationDeployment.CurrentDeployment.CurrentVersion}";
+			}
+			catch {
+				Title = $"YummyOnline自助打印 内部调试版本";
 			}
 
 			Process[] tProcess = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
@@ -68,9 +69,9 @@ namespace AutoPrinter {
 
 			tcp.Start();
 
-			IPPrinter.GetInstance((ip, bmp, message) => {
+			IPPrinter.GetInstance().OnLog += (ip, bmp, message) => {
 				ipPrinterLog(ip, bmp?.GetHashCode(), message);
-			});
+			};
 		}
 
 		async Task printDine(string dineId, List<int> dineMenuIds, List<PrintType> printTypes) {
@@ -271,7 +272,7 @@ namespace AutoPrinter {
 			};
 			var _ = HttpPost.PostAsync(remoteLogUrl, postData);
 		}
-		
+
 		private async void buttonTestRemoteDines_Click(object sender, RoutedEventArgs e) {
 			string ipAddress = textBoxIp.Text;
 

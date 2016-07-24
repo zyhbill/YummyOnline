@@ -38,10 +38,7 @@ namespace AutoPrinter {
 
 	public class ClientBmpInfo {
 		public Queue<BmpInfo> Queue { get; set; }
-		/// <summary>
-		/// 多个打印命令互斥信号量
-		/// </summary>
-		//public AutoResetEvent PrintingMutex { get; set; }
+
 		public TcpClientInfo TcpClientInfo { get; set; }
 		/// <summary>
 		/// 尝试重新连接次数
@@ -73,12 +70,12 @@ namespace AutoPrinter {
 		/// 最大空闲占用时间
 		/// </summary>
 		private int maxIdleTime = 60;
+		/// <summary>
+		/// 日志回调函数
+		/// </summary>
+		public event Action<IPAddress, Bitmap, string> OnLog;
 
-		private Action<IPAddress, Bitmap, string> callBack;
-
-		private IPPrinter(Action<IPAddress, Bitmap, string> callBack) {
-			this.callBack = callBack;
-
+		private IPPrinter() {
 			System.Timers.Timer t = new System.Timers.Timer(1000);
 			t.Elapsed += T_Elapsed;
 			t.Start();
@@ -89,11 +86,11 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 获得单例对象
 		/// </summary>
-		public static IPPrinter GetInstance(Action<IPAddress, Bitmap, string> callBack = null) {
+		public static IPPrinter GetInstance() {
 			if(instance == null) {
 				lock(locker) {
 					if(instance == null) {
-						instance = new IPPrinter(callBack);
+						instance = new IPPrinter();
 					}
 				}
 			}
@@ -110,7 +107,7 @@ namespace AutoPrinter {
 					if(++IPClientBmpMap[ip].TcpClientInfo.IdleTime >= maxIdleTime) {
 						IPClientBmpMap[ip].TcpClientInfo.Close();
 						IPClientBmpMap[ip].TcpClientInfo = null;
-						callBack?.Invoke(ip, null, "超时断开连接");
+						OnLog?.Invoke(ip, null, "超时断开连接");
 					}
 				}
 			}
@@ -133,7 +130,7 @@ namespace AutoPrinter {
 					}
 					IPClientBmpMap[ip].Queue.Enqueue(bmpInfo);
 
-					callBack?.Invoke(ip, bmpInfo?.bmp, "已进入打印队列");
+					OnLog?.Invoke(ip, bmpInfo?.bmp, "已进入打印队列");
 
 					if(IPClientBmpMap[ip].IsPrinting) {
 						return;
@@ -228,20 +225,20 @@ namespace AutoPrinter {
 				lock(IPClientBmpMap) {
 					IPClientBmpMap[ip].Queue.Dequeue();
 
-					callBack?.Invoke(ip, bmpInfo?.bmp, "打印成功");
+					OnLog?.Invoke(ip, bmpInfo?.bmp, "打印成功");
 				}
 
 				await prePrint(ip);
 			}
 			catch(Exception e) {
-				callBack?.Invoke(ip, null, $"写入数据发生错误 {e.Message}");
+				OnLog?.Invoke(ip, null, $"写入数据发生错误 {e.Message}");
 
 				lock(IPClientBmpMap) {
 					IPClientBmpMap[ip].TcpClientInfo?.Close();
 					IPClientBmpMap[ip].TcpClientInfo = null;
 				}
 
-				callBack?.Invoke(ip, null, "重新尝试连接");
+				OnLog?.Invoke(ip, null, "重新尝试连接");
 				await Connect(ip);
 			}
 		}
@@ -256,14 +253,14 @@ namespace AutoPrinter {
 				}
 				clientBmpInfo = IPClientBmpMap[ip];
 
-				callBack?.Invoke(ip, null, null);
+				OnLog?.Invoke(ip, null, null);
 
 				if(clientBmpInfo.TcpClientInfo != null) {
-					callBack?.Invoke(ip, null, "已连接");
+					OnLog?.Invoke(ip, null, "已连接");
 					return;
 				}
 				if(clientBmpInfo.IsConnecting) {
-					callBack?.Invoke(ip, null, "正在连接中");
+					OnLog?.Invoke(ip, null, "正在连接中");
 					return;
 				}
 				clientBmpInfo.IsConnecting = true;
@@ -275,30 +272,30 @@ namespace AutoPrinter {
 			TcpClient client = new TcpClient();
 
 			try {
-				callBack?.Invoke(ip, null, "正在连接");
+				OnLog?.Invoke(ip, null, "正在连接");
 				await client.ConnectAsync(ip, 9100);
 
 				clientBmpInfo.TcpClientInfo = new TcpClientInfo(client);
 				clientBmpInfo.TryTime = 0;
 				clientBmpInfo.IsConnecting = false;
-				callBack?.Invoke(ip, null, "连接成功");
+				OnLog?.Invoke(ip, null, "连接成功");
 
 				await prePrint(ip);
 			}
 			catch(Exception e) {
-				callBack?.Invoke(ip, null, $"连接发生错误, {e.Message}");
+				OnLog?.Invoke(ip, null, $"连接发生错误, {e.Message}");
 
 				if(++clientBmpInfo.TryTime >= maxTryTime) {
 					clientBmpInfo.IsConnecting = false;
 
-					callBack?.Invoke(ip, null, $"连接次数已达上限{clientBmpInfo.TryTime}次, 连接失败");
+					OnLog?.Invoke(ip, null, $"连接次数已达上限{clientBmpInfo.TryTime}次, 连接失败");
 					clientBmpInfo.IsPrinting = false;
 					clientBmpInfo.TryTime = 0;
 
 					return;
 				}
 
-				callBack?.Invoke(ip, null, $"{tryInterval}秒后重新尝试第{clientBmpInfo.TryTime}次连接");
+				OnLog?.Invoke(ip, null, $"{tryInterval}秒后重新尝试第{clientBmpInfo.TryTime}次连接");
 
 				await Task.Delay(tryInterval * 1000);
 				await connect(ip, clientBmpInfo);

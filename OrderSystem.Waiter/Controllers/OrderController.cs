@@ -82,6 +82,15 @@ namespace OrderSystem.Waiter.Controllers {
 			};
 			return Json(result);
 		}
+		public async Task<JsonResult> GetHotelConfig() {
+			return Json(DynamicsCombination.CombineDynamics(await HotelManager.GetHotelConfig(), new {
+				CurrHotel.Name,
+				CurrHotel.Address,
+				CurrHotel.Tel,
+				CurrHotel.OpenTime,
+				CurrHotel.CloseTime
+			}));
+		}
 
 		public async Task<JsonResult> GetCurrentDines(string deskId) {
 			return Json(await HotelManager.GetHistoryDines(User.Identity.GetUserId(), deskId));

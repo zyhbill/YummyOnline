@@ -37,6 +37,9 @@ namespace AutoPrinter {
 			string resultStr = Utility.AsyncInline.Run(() => {
 				return Utility.HttpPost.PostAsync(Config.RemoteGetHotelConfigUrl, null);
 			});
+			if(resultStr == null) {
+				return JsonConvert.SerializeObject(new JsonError("获取饭店信息失败"));
+			}
 
 			HotelConfig config = JsonConvert.DeserializeObject<HotelConfig>(resultStr);
 			Config.HotelId = config.Id;

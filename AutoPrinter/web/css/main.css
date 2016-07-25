@@ -10,7 +10,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 .table > tbody > tr > td,
 .table > tfoot > tr > td,
 .table > thead > tr > td {
-	padding: 2px 8px;
+	/*padding: 2px 8px;*/
 }
 
 	.table > tbody > tr > td.shrink,
@@ -24,7 +24,7 @@ h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
 	}
 
 .content {
-	font-size: 12px;
+	/*font-size: 12px;*/
 }
 
 .sidebar-menu  > li > div {

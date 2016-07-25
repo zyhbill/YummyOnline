@@ -77,6 +77,12 @@ namespace YummyOnline {
 				Discount = 1,
 				CompleteUrl = "/Payment/Complete"
 			});
+			ctx.PayKinds.Add(new PayKind {
+				Name = "随机立减",
+				Type = PayKindType.RandomPreference,
+				Usable = true,
+				Discount = 1,
+			});
 
 			Staff staff = new Staff {
 				Id = adminId,

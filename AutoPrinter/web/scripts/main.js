@@ -11,6 +11,7 @@ app.controller('MainCtrl', [
 			$scope.hotelName = result.Name;
 		} catch (e) { }
 
+		$scope.boxshow = 1;
 
 		$scope.logs = [];
 		$scope.ipPrinterLogs = [];

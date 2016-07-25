@@ -3,12 +3,12 @@ using HotelDAO.Models;
 using Protocol;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Deployment.Application;
 using System.Diagnostics;
 using System.Net;
 using System.Windows;
 using YummyOnlineTcpClient;
+using Newtonsoft.Json;
 
 namespace AutoPrinter {
 	/// <summary>
@@ -24,12 +24,22 @@ namespace AutoPrinter {
 				Title = $"YummyOnline自助打印 内部调试版本";
 			}
 
-			browser.Source = new Uri($@"{Config.BaseDir}\web\main.html");
-
 			Process[] tProcess = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
 			if(tProcess.Length > 1) {
+				MessageBox.Show("已经开启一个程序，请关闭后重试", "重复启动", MessageBoxButton.OK, MessageBoxImage.Warning);
 				Application.Current.Shutdown();
 			}
+
+			browser.Source = new Uri($@"{Config.BaseDir}\web\signin.html");
+		}
+
+		private string initialize() {
+			string resultStr = Utility.AsyncInline.Run(() => {
+				return Utility.HttpPost.PostAsync("http://localhost:54860/Order/GetHotelConfig", null);
+			});
+
+			HotelConfig config = JsonConvert.DeserializeObject<HotelConfig>(resultStr);
+			Config.HotelId = config.Id;
 
 			TcpClient tcp = new TcpClient(
 				IPAddress.Parse(Config.TcpServerIp),
@@ -47,33 +57,21 @@ namespace AutoPrinter {
 				}
 			};
 			tcp.CallBackWhenConnected = () => {
-				localLog("服务器连接成功");
+				localLog("服务器连接成功", AutoPrinter.Style.Success);
 				remoteLog(Log.LogLevel.Success, "Printer Connected");
 			};
 			tcp.CallBackWhenExceptionOccured = (e) => {
-				localLog(e.Message);
+				localLog(e.Message, AutoPrinter.Style.Danger);
 				remoteLog(Log.LogLevel.Error, e.Message, e.ToString());
 			};
 
 			tcp.Start();
 
-			IPPrinter.GetInstance().OnLog += (ip, bmp, message) => {
-				ipPrinterLog(ip, bmp?.GetHashCode(), message);
+			IPPrinter.GetInstance().OnLog += (ip, bmp, message, style) => {
+				ipPrinterLog(ip, bmp?.GetHashCode(), message, style);
 			};
-		}
 
-		private List<PrintType> getCheckedPrintTypes(bool recipt, bool serveOrder, bool kitchenOrder) {
-			List<PrintType> types = new List<PrintType>();
-			if(recipt) {
-				types.Add(PrintType.Recipt);
-			}
-			if(serveOrder) {
-				types.Add(PrintType.ServeOrder);
-			}
-			if(kitchenOrder) {
-				types.Add(PrintType.KitchenOrder);
-			}
-			return types;
+			return resultStr;
 		}
 
 		private void browser_NativeViewInitialized(object sender, WebViewEventArgs e) {
@@ -89,6 +87,20 @@ namespace AutoPrinter {
 					return;
 
 				using(app) {
+					app.Bind("signin", v => {
+						string resultStr = Utility.AsyncInline.Run(() => {
+							return Utility.HttpPost.PostAsync("http://localhost:54860/Account/Signin", new {
+								SigninName = v[0].ToString(),
+								Password = v[1].ToString()
+							});
+						});
+
+						return resultStr;
+					});
+
+					app.Bind("initialize", v => {
+						return initialize();
+					});
 					app.BindAsync("testLocalDines", async v => {
 						await printLocalTest(getCheckedPrintTypes(v[1], v[2], v[3]), v[0]);
 					});
@@ -99,9 +111,10 @@ namespace AutoPrinter {
 						await IPPrinter.GetInstance().Connect(IPAddress.Parse(v[0]));
 					});
 					app.BindAsync("connectPrinters", async v => {
+						localLog("开始预连接所有打印机", AutoPrinter.Style.Info);
 						var protocol = await getPrintersForPrinting();
 						if(protocol == null) {
-							localLog("获取打印机信息失败，请检查网络设置");
+							localLog("获取打印机信息失败，请检查网络设置", AutoPrinter.Style.Danger);
 							return;
 						}
 						foreach(var p in protocol.Printers) {
@@ -110,6 +123,20 @@ namespace AutoPrinter {
 					});
 				}
 			}
+		}
+
+		private List<PrintType> getCheckedPrintTypes(bool recipt, bool serveOrder, bool kitchenOrder) {
+			List<PrintType> types = new List<PrintType>();
+			if(recipt) {
+				types.Add(PrintType.Recipt);
+			}
+			if(serveOrder) {
+				types.Add(PrintType.ServeOrder);
+			}
+			if(kitchenOrder) {
+				types.Add(PrintType.KitchenOrder);
+			}
+			return types;
 		}
 	}
 }

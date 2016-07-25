@@ -9,19 +9,9 @@
         mc:Ignorable="d"
         Title="YummyOnline自助打印" Height="756.619" Width="1215.954" WindowState="Maximized">
 
-	<Window.Resources>
-		<awe:WebSessionProvider x:Key="webSession">
-			<awe:WebSessionProvider.DataSources>
-				<data:ResourceDataSourceProvider x:Key="local" />
-			</awe:WebSessionProvider.DataSources>
-			<core:WebPreferences/>
-		</awe:WebSessionProvider>
-	</Window.Resources>
-
 	<Grid>
 		<awe:WebControl
 			Name="browser"
-			WebSession="{Binding Source={StaticResource webSession}}"
-			Source="asset://local/web/main.html" NativeViewInitialized="browser_NativeViewInitialized" />
+			NativeViewInitialized="browser_NativeViewInitialized" />
 	</Grid>
 </Window>

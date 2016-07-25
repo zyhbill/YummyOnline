@@ -8,7 +8,12 @@ using Newtonsoft.Json;
 using Protocol.PrintingProtocol;
 
 namespace AutoPrinter {
-
+	public enum Style {
+		Success,
+		Info,
+		Waring,
+		Danger
+	}
 	public static class Config {
 #if DEBUG
 		public const string TcpServerIp = "127.0.0.1";

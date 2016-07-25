@@ -1,16 +1,26 @@
 ﻿var app = angular.module('app', []);
 
-app.controller('mainCtrl', [
+app.controller('MainCtrl', [
 	'$scope',
 	function ($scope) {
+		try {
+			var result = window.external.app.initialize();
+			result = JSON.parse(result);
+
+			$scope.hotelId = result.Id;
+			$scope.hotelName = result.Name;
+		}
+		catch (e) { document.write(e) }
+
+
 		$scope.logs = [];
 		$scope.ipPrinterLogs = [];
 		$scope.ipPrinterStatuses = [];
 
-		$scope.localIP = '192.168.0.253';
+		$scope.localIP = '';
 		$scope.recipt = true;
 		$scope.serveOrder = true,
-		$scope.kitchenOrder = false,
+		$scope.kitchenOrder = true,
 
 		$scope.testLocalDines = function () {
 			window.external.app.testLocalDines(
@@ -24,40 +34,31 @@ app.controller('mainCtrl', [
 			window.external.app.connectPrinter($scope.localIP);
 		}
 		$scope.connectPrinters = function () {
-			window.external.app.connectPrinters();
+			window.external.app.connectPrinters($scope.localIP);
 		}
 	}
 ])
 
-var internal = {
-	addLog: function (dateTime, message) {
-		var appElement = document.querySelector('body');
-		var $scope = angular.element(appElement).scope();
-		$scope.logs.splice(0, 0, {
-			DateTime: dateTime,
-			Message: message
-		});
-		$scope.$apply();
-	},
-	addIPPrinterLog: function (dateTime, ip, message, hashCode) {
-		var appElement = document.querySelector('body');
-		var $scope = angular.element(appElement).scope();
-		$scope.ipPrinterLogs.splice(0, 0, {
-			DateTime: dateTime,
-			IP: ip,
-			Message: message,
-			HashCode: hashCode
-		});
-		$scope.$apply();
-	},
-	refreshIPPrinterStatuses: function (statuses) {
-		var appElement = document.querySelector('body');
-		var $scope = angular.element(appElement).scope();
-		$scope.ipPrinterStatuses = [];
-		for (var i in statuses) {
-			$scope.ipPrinterStatuses.push(statuses[i]);
-		}
 
-		$scope.$apply();
+var addLog = function (log) {
+	var appElement = document.querySelector('body');
+	var $scope = angular.element(appElement).scope();
+	$scope.logs.splice(0, 0, log);
+	$scope.$apply();
+}
+var addIPPrinterLog = function (log) {
+	var appElement = document.querySelector('body');
+	var $scope = angular.element(appElement).scope();
+	$scope.ipPrinterLogs.splice(0, 0, log);
+	$scope.$apply();
+}
+var refreshIPPrinterStatuses = function (statuses) {
+	var appElement = document.querySelector('body');
+	var $scope = angular.element(appElement).scope();
+	$scope.ipPrinterStatuses = [];
+	for (var i in statuses) {
+		$scope.ipPrinterStatuses.push(statuses[i]);
 	}
+
+	$scope.$apply();
 }

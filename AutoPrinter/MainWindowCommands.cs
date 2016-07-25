@@ -153,35 +153,23 @@ namespace AutoPrinter {
 		}
 
 		void localLog(string message) {
-			listViewLog.Dispatcher.Invoke(() => {
-				listViewLog.Items.Add(new {
-					DateTime = DateTime.Now,
-					Message = message
-				});
+			browser.Dispatcher.Invoke(() => {
+				if(!browser.IsLive || !browser.IsDocumentReady)
+					return;
 
-				listViewLog.SelectedIndex = listViewLog.Items.Count - 1;
-				listViewLog.ScrollIntoView(listViewLog.SelectedItem);
+				browser.ExecuteJavascript($"internal.addLog('{DateTime.Now}', '{message}');");
 			});
 		}
 		void ipPrinterLog(IPAddress ip, int? hashCode, string message) {
-			if(message != null) {
-				listViewIpPrinter.Dispatcher.Invoke(() => {
+			browser.Dispatcher.Invoke(() => {
+				if(!browser.IsLive || !browser.IsDocumentReady)
+					return;
 
-					listViewIpPrinter.Items.Add(new {
-						DateTime = DateTime.Now,
-						IP = ip,
-						Message = message,
-						HashCode = hashCode
-					});
+				if(message != null) {
+					browser.ExecuteJavascript($"internal.addIPPrinterLog('{DateTime.Now}', '{ip}', '{message}', '{hashCode}');");
+				}
 
-					listViewIpPrinter.SelectedIndex = listViewIpPrinter.Items.Count - 1;
-					listViewIpPrinter.ScrollIntoView(listViewIpPrinter.SelectedItem);
-
-				});
-			}
-
-			listViewIpPrinterStatus.Dispatcher.Invoke(() => {
-				listViewIpPrinterStatus.Items.Clear();
+				List<dynamic> statuses = new List<dynamic>();
 				var map = IPPrinter.GetInstance().IPClientBmpMap;
 				foreach(IPAddress ipKey in map.Keys) {
 					string status = "已断开";
@@ -191,13 +179,15 @@ namespace AutoPrinter {
 					else if(map[ipKey].TcpClientInfo != null) {
 						status = "已连接";
 					}
-					listViewIpPrinterStatus.Items.Add(new {
-						IP = ipKey,
+					statuses.Add(new {
+						IP = ipKey.ToString(),
 						Status = status,
 						WaitedCount = map[ipKey].Queue.Count,
 						IdleTime = map[ipKey].TcpClientInfo?.IdleTime
 					});
 				}
+				string str = JsonConvert.SerializeObject(statuses.ToArray());
+				browser.ExecuteJavascript($"internal.refreshIPPrinterStatuses({str});");
 			});
 		}
 

@@ -59,14 +59,5 @@ namespace AutoPrinter.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   查找类似  的本地化字符串。
-        /// </summary>
-        internal static string s {
-            get {
-                return ResourceManager.GetString("s", resourceCulture);
-            }
-        }
     }
 }

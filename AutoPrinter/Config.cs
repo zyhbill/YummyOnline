@@ -30,8 +30,12 @@ namespace AutoPrinter {
 		public const string RemoteGetPrintersForPrintingUrl = "http://ordersystem.yummyonline.net/OrderForPrinting/GetPrintersForPrinting";
 #endif
 
-		private static string baseDir = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-		private static string configFilePath = $@"{baseDir}\config.json";
+		public static string BaseDir {
+			get {
+				return AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+			}
+		}
+		private static string configFilePath = $@"{BaseDir}\config.json";
 
 		public static int HotelId { get; set; }
 

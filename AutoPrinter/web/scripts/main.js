@@ -9,8 +9,7 @@ app.controller('MainCtrl', [
 
 			$scope.hotelId = result.Id;
 			$scope.hotelName = result.Name;
-		}
-		catch (e) { document.write(e) }
+		} catch (e) { }
 
 
 		$scope.logs = [];
@@ -62,3 +61,15 @@ var refreshIPPrinterStatuses = function (statuses) {
 
 	$scope.$apply();
 }
+
+//window.onerror = function (msg, url, line) {
+
+//	alert("真不幸，又出错了\n"
+
+//	+ "\n错误信息：" + msg
+
+//	+ "\n所在文件：" + url
+
+//	+ "\n错误行号：" + line);
+
+//}

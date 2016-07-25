@@ -35,7 +35,7 @@ namespace AutoPrinter {
 
 		private string initialize() {
 			string resultStr = Utility.AsyncInline.Run(() => {
-				return Utility.HttpPost.PostAsync("http://localhost:54860/Order/GetHotelConfig", null);
+				return Utility.HttpPost.PostAsync(Config.RemoteGetHotelConfigUrl, null);
 			});
 
 			HotelConfig config = JsonConvert.DeserializeObject<HotelConfig>(resultStr);
@@ -89,12 +89,15 @@ namespace AutoPrinter {
 				using(app) {
 					app.Bind("signin", v => {
 						string resultStr = Utility.AsyncInline.Run(() => {
-							return Utility.HttpPost.PostAsync("http://localhost:54860/Account/Signin", new {
+							return Utility.HttpPost.PostAsync(Config.RemoteSigninUrl, new {
 								SigninName = v[0].ToString(),
 								Password = v[1].ToString()
 							});
 						});
 
+						if(resultStr == null) {
+							return JsonConvert.SerializeObject(new JsonError("服务器连接失败"));
+						}
 						return resultStr;
 					});
 

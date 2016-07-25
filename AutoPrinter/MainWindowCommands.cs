@@ -29,7 +29,7 @@ namespace AutoPrinter {
 				printCompleted(dineId);
 			}
 			catch(Exception e) {
-				localLog($"无法打印 单号: {dineId}, 错误信息: {e}", AutoPrinter.Style.Danger);
+				localLog($"无法打印 单号: {dineId}, 错误信息: {e.Message}", AutoPrinter.Style.Danger);
 				remoteLog(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 			}
 		}
@@ -77,7 +77,7 @@ namespace AutoPrinter {
 				localLog($"发送本地测试单命令成功", AutoPrinter.Style.Success);
 			}
 			catch(Exception e) {
-				localLog($"无法打印本地测试单, 错误信息: {e}", AutoPrinter.Style.Danger);
+				localLog($"无法打印本地测试单, 错误信息: {e.Message}", AutoPrinter.Style.Danger);
 				remoteLog(Log.LogLevel.Error, $"Local Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 			}
 		}
@@ -98,7 +98,7 @@ namespace AutoPrinter {
 				localLog($"发送命令成功 交接班", AutoPrinter.Style.Success);
 			}
 			catch(Exception e) {
-				localLog($"无法打印 交接班, 错误信息: {e}", AutoPrinter.Style.Danger);
+				localLog($"无法打印 交接班, 错误信息: {e.Message}", AutoPrinter.Style.Danger);
 				remoteLog(Log.LogLevel.Error, $"ShiftInfos, {e.Message}", $"Data: {JsonConvert.SerializeObject(sp)}, Error: {e}");
 			}
 		}

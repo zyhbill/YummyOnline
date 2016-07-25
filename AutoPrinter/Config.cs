@@ -19,6 +19,8 @@ namespace AutoPrinter {
 		public const string TcpServerIp = "127.0.0.1";
 		public const int TcpServerPort = 18000;
 
+		public const string RemoteSigninUrl = "http://localhost:55615/Account/Signin";
+		public const string RemoteGetHotelConfigUrl = "http://localhost:55615/Order/GetHotelConfig";
 		public const string RemoteLogUrl = "http://localhost:55615/Log/RemoteRecord";
 		public const string RemotePrintCompletedUrl = "http://localhost:57504/Payment/PrintCompleted";
 		public const string RemoteGetDineForPrintingUrl = "http://localhost:57504/OrderForPrinting/GetDineForPrinting";
@@ -28,6 +30,8 @@ namespace AutoPrinter {
 		public const string TcpServerIp = "122.114.96.157";
 		public const int TcpServerPort = 18000;
 
+		public const string RemoteSigninUrl = "http://waiter.yummyonline.net/Account/Signin";
+		public const string RemoteGetHotelConfigUrl = "http://waiter.yummyonline.net/Order/GetHotelConfig";
 		public const string RemoteLogUrl = "http://system.yummyonline.net/Log/RemoteRecord";
 		public const string RemotePrintCompletedUrl = "http://ordersystem.yummyonline.net/Payment/PrintCompleted";
 		public const string RemoteGetDineForPrintingUrl = "http://ordersystem.yummyonline.net/OrderForPrinting/GetDineForPrinting";

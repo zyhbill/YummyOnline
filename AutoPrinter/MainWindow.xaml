@@ -7,11 +7,11 @@
 		xmlns:core="http://schemas.awesomium.com/core"
         xmlns:local="clr-namespace:AutoPrinter"
         mc:Ignorable="d"
-        Title="YummyOnline自助打印" Height="756.619" Width="1215.954" WindowState="Maximized">
+        Title="YummyOnline自助打印" Height="741.6" Width="1200" WindowStartupLocation="CenterScreen">
 
 	<Grid>
 		<awe:WebControl
 			Name="browser"
-			NativeViewInitialized="browser_NativeViewInitialized" />
+			NativeViewInitialized="browser_NativeViewInitialized" ShowContextMenu="browser_ShowContextMenu" />
 	</Grid>
 </Window>

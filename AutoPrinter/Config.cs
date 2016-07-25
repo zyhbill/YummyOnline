@@ -26,6 +26,17 @@ namespace AutoPrinter {
 		public const string RemoteGetDineForPrintingUrl = "http://localhost:57504/OrderForPrinting/GetDineForPrinting";
 		public const string RemoteGetShiftsForPrintingUrl = "http://localhost:57504/OrderForPrinting/GetShiftsForPrinting";
 		public const string RemoteGetPrintersForPrintingUrl = "http://localhost:57504/OrderForPrinting/GetPrintersForPrinting";
+#elif COMPANYSERVER
+		public const string TcpServerIp = "192.168.0.200";
+		public const int TcpServerPort = 18000;
+
+		public const string RemoteSigninUrl = "http://192.168.0.200:8888/Account/Signin";
+		public const string RemoteGetHotelConfigUrl = "http://192.168.0.200:8888/Order/GetHotelConfig";
+		public const string RemoteLogUrl = "http://192.168.0.200:8889/Log/RemoteRecord";
+		public const string RemotePrintCompletedUrl = "http://192.168.0.200:8080/Payment/PrintCompleted";
+		public const string RemoteGetDineForPrintingUrl = "http://192.168.0.200:8080/OrderForPrinting/GetDineForPrinting";
+		public const string RemoteGetShiftsForPrintingUrl = "http://192.168.0.200:8080/OrderForPrinting/GetShiftsForPrinting";
+		public const string RemoteGetPrintersForPrintingUrl = "http://192.168.0.200:8080/OrderForPrinting/GetPrintersForPrinting";
 #else
 		public const string TcpServerIp = "122.114.96.157";
 		public const int TcpServerPort = 18000;
@@ -235,6 +246,5 @@ namespace AutoPrinter {
 
 			return p;
 		}
-
 	}
 }

@@ -30,8 +30,9 @@
 					<span class="fa fa-lock form-control-feedback"></span>
 				</div>
 				<button type="submit" class="btn btn-primary btn-block btn-flat"
-						ng-disabled="!form.$valid">
-					<span>登录</span>
+						ng-disabled="!form.$valid || isSigning">
+					<span ng-show="!isSigning">登录</span>
+					<span ng-show="isSigning"><i class="fa fa-spinner fa-pulse fa-fw"></i> 正在登录...</span>
 				</button>
 			</form>
 		</div>

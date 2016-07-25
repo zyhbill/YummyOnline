@@ -17,12 +17,19 @@ namespace AutoPrinter {
 	public partial class MainWindow : Window {
 		public MainWindow() {
 			InitializeComponent();
+
+			Title = "YummyOnline自助打印";
+
 			try {
-				Title = $"YummyOnline自助打印 {ApplicationDeployment.CurrentDeployment.CurrentVersion}";
+				Title += $"{ApplicationDeployment.CurrentDeployment.CurrentVersion}";
 			}
-			catch {
-				Title = $"YummyOnline自助打印 内部调试版本";
-			}
+			catch { }
+
+#if DEBUG
+			Title += $" DEBUG调试版本";
+#elif COMPANYSERVER
+			Title += $" COMPANYSERVER调试版本";
+#endif
 
 			Process[] tProcess = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
 			if(tProcess.Length > 1) {
@@ -143,6 +150,10 @@ namespace AutoPrinter {
 				types.Add(PrintType.KitchenOrder);
 			}
 			return types;
+		}
+
+		private void browser_ShowContextMenu(object sender, ContextMenuEventArgs e) {
+			e.Handled = true;
 		}
 	}
 }

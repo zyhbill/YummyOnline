@@ -1,14 +1,14 @@
-﻿using Awesomium.Core;
-using HotelDAO.Models;
+﻿using HotelDAO.Models;
+using Newtonsoft.Json;
 using Protocol;
-using System;
 using System.Collections.Generic;
-using System.Deployment.Application;
 using System.Diagnostics;
 using System.Net;
+using System.Threading.Tasks;
 using System.Windows;
+using Utility;
 using YummyOnlineTcpClient;
-using Newtonsoft.Json;
+using System.Linq;
 
 namespace AutoPrinter {
 	/// <summary>
@@ -18,38 +18,23 @@ namespace AutoPrinter {
 		public MainWindow() {
 			InitializeComponent();
 
-			Title = "YummyOnline自助打印";
-
-			try {
-				Title += $"{ApplicationDeployment.CurrentDeployment.CurrentVersion}";
-			}
-			catch { }
-
-#if DEBUG
-			Title += $" DEBUG调试版本";
-#elif COMPANYSERVER
-			Title += $" COMPANYSERVER调试版本";
-#endif
-
 			Process[] tProcess = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
 			if(tProcess.Length > 1) {
-				MessageBox.Show("已经开启一个程序，请关闭后重试", "重复启动", MessageBoxButton.OK, MessageBoxImage.Warning);
+				MessageBox.Show("已经开启一个程序，请关闭后重试", "重复启动", MessageBoxButton.OK, MessageBoxImage.Error);
 				Application.Current.Shutdown();
 			}
 
-			browser.Source = new Uri($@"{Config.BaseDir}\web\signin.html");
+			IPPrinter.GetInstance().OnLog += (ip, bmp, message, style) => {
+				ipPrinterLog(ip, bmp?.GetHashCode(), message, style);
+			};
 		}
 
-		private string initialize() {
-			string resultStr = Utility.AsyncInline.Run(() => {
-				return Utility.HttpPost.PostAsync(Config.RemoteGetHotelConfigUrl, null);
-			});
-			if(resultStr == null) {
-				return JsonConvert.SerializeObject(new JsonError("获取饭店信息失败"));
-			}
+		private async Task initialize() {
+			string resultStr = await HttpPost.PostAsync(Config.RemoteGetHotelConfigUrl, null);
 
-			HotelConfig config = JsonConvert.DeserializeObject<HotelConfig>(resultStr);
-			Config.HotelId = config.Id;
+			var hotel = JsonConvert.DeserializeObject<YummyOnlineDAO.Models.Hotel>(resultStr);
+			Config.HotelId = hotel.Id;
+			Title += $" {hotel.Name}";
 
 			TcpClient tcp = new TcpClient(
 				IPAddress.Parse(Config.TcpServerIp),
@@ -76,84 +61,62 @@ namespace AutoPrinter {
 			};
 
 			tcp.Start();
-
-			IPPrinter.GetInstance().OnLog += (ip, bmp, message, style) => {
-				ipPrinterLog(ip, bmp?.GetHashCode(), message, style);
-			};
-
-			return resultStr;
 		}
 
-		private void browser_NativeViewInitialized(object sender, WebViewEventArgs e) {
-			JSObject external = browser.CreateGlobalJavascriptObject("external");
+		private async void Window_Loaded(object sender, RoutedEventArgs e) {
+			await initialize();
+		}
 
-			if(external == null)
+		private async void buttonTestRemoteDines_Click(object sender, RoutedEventArgs e) {
+			await printRemoteTest(getCheckedPrintTypes(), textBoxIp.Text);
+		}
+
+		private async void buttonTestLocalDines_Click(object sender, RoutedEventArgs e) {
+			await printLocalTest(getCheckedPrintTypes(), textBoxIp.Text);
+		}
+
+		private async void buttonConnectPrinter_Click(object sender, RoutedEventArgs e) {
+			await IPPrinter.GetInstance().Connect(IPAddress.Parse(textBoxIp.Text));
+		}
+
+		private async void buttonConnectPrinters_Click(object sender, RoutedEventArgs e) {
+			var protocol = await getPrintersForPrinting();
+			if(protocol == null) {
+				localLog("获取打印机信息失败，请检查网络设置", AutoPrinter.Style.Danger);
 				return;
+			}
 
-			using(external) {
-				JSObject app = browser.CreateGlobalJavascriptObject("external.app");
-
-				if(app == null)
-					return;
-
-				using(app) {
-					app.Bind("signin", v => {
-						string resultStr = Utility.AsyncInline.Run(() => {
-							return Utility.HttpPost.PostAsync(Config.RemoteSigninUrl, new {
-								SigninName = v[0].ToString(),
-								Password = v[1].ToString()
-							});
-						});
-
-						if(resultStr == null) {
-							return JsonConvert.SerializeObject(new JsonError("服务器连接失败"));
-						}
-						return resultStr;
-					});
-
-					app.Bind("initialize", v => {
-						return initialize();
-					});
-					app.BindAsync("testLocalDines", async v => {
-						await printLocalTest(getCheckedPrintTypes(v[1], v[2], v[3]), v[0]);
-					});
-					app.BindAsync("testRemoteDines", async v => {
-						await printRemoteTest(getCheckedPrintTypes(v[1], v[2], v[3]), v[0]);
-					});
-					app.BindAsync("connectPrinter", async v => {
-						await IPPrinter.GetInstance().Connect(IPAddress.Parse(v[0]));
-					});
-					app.BindAsync("connectPrinters", async v => {
-						localLog("开始预连接所有打印机", AutoPrinter.Style.Info);
-						var protocol = await getPrintersForPrinting();
-						if(protocol == null) {
-							localLog("获取打印机信息失败，请检查网络设置", AutoPrinter.Style.Danger);
-							return;
-						}
-						foreach(var p in protocol.Printers) {
-							await IPPrinter.GetInstance().Connect(IPAddress.Parse(p.IpAddress));
-						}
-					});
-				}
+			foreach(var ip in protocol.Printers.Select(p => p.IpAddress).Distinct()) {
+				await IPPrinter.GetInstance().Connect(IPAddress.Parse(ip));
 			}
 		}
 
-		private List<PrintType> getCheckedPrintTypes(bool recipt, bool serveOrder, bool kitchenOrder) {
+		private List<PrintType> getCheckedPrintTypes() {
 			List<PrintType> types = new List<PrintType>();
-			if(recipt) {
+			if(checkBoxRecipt.IsChecked.Value) {
 				types.Add(PrintType.Recipt);
 			}
-			if(serveOrder) {
+			if(checkBoxServeOrder.IsChecked.Value) {
 				types.Add(PrintType.ServeOrder);
 			}
-			if(kitchenOrder) {
+			if(checkBoxKitchenOrder.IsChecked.Value) {
 				types.Add(PrintType.KitchenOrder);
 			}
 			return types;
 		}
 
-		private void browser_ShowContextMenu(object sender, ContextMenuEventArgs e) {
-			e.Handled = true;
+		private void textBoxIp_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
+			IPAddress ip;
+			if(IPAddress.TryParse(textBoxIp.Text, out ip)) {
+				buttonConnectPrinter.IsEnabled = true;
+				buttonTestLocalDines.IsEnabled = true;
+				buttonTestRemoteDines.IsEnabled = true;
+			}
+			else {
+				buttonConnectPrinter.IsEnabled = false;
+				buttonTestLocalDines.IsEnabled = false;
+				buttonTestRemoteDines.IsEnabled = false;
+			}
 		}
 	}
 }

@@ -81,7 +81,9 @@ namespace AutoPrinter {
 				remoteLog(Log.LogLevel.Error, $"Local Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 			}
 		}
-
+		/// <summary>
+		/// 打印交接班
+		/// </summary>
 		async Task printShifts(List<int> Ids, DateTime dateTime) {
 			ShiftForPrinting sp = null;
 			try {
@@ -153,58 +155,50 @@ namespace AutoPrinter {
 		}
 
 		void localLog(string message, Style style) {
-			browser.Dispatcher.Invoke(() => {
-				if(!browser.IsLive || !browser.IsDocumentReady)
-					return;
-
-				string json = JsonConvert.SerializeObject(new {
+			listViewLog.Dispatcher.Invoke(() => {
+				listViewLog.Items.Add(new {
 					DateTime = DateTime.Now,
-					Message = message,
-					Style = style.ToString().ToLower()
+					Message = message
 				});
 
-				browser.ExecuteJavascript($"addLog({json});");
+				listViewLog.SelectedIndex = listViewLog.Items.Count - 1;
+				listViewLog.ScrollIntoView(listViewLog.SelectedItem);
 			});
 		}
 		void ipPrinterLog(IPAddress ip, int? hashCode, string message, Style style) {
-			browser.Dispatcher.Invoke(() => {
-				if(!browser.IsLive || !browser.IsDocumentReady)
-					return;
+			if(message != null) {
+				listViewIpPrinter.Dispatcher.Invoke(() => {
 
-				if(message != null) {
-					string json = JsonConvert.SerializeObject(new {
+					listViewIpPrinter.Items.Add(new {
 						DateTime = DateTime.Now,
-						IP = ip.ToString(),
+						IP = ip,
 						Message = message,
-						HashCode = hashCode,
-						Style = style.ToString().ToLower()
+						HashCode = hashCode
 					});
-					browser.ExecuteJavascript($"addIPPrinterLog({json});");
-				}
 
-				List<dynamic> statuses = new List<dynamic>();
+					listViewIpPrinter.SelectedIndex = listViewIpPrinter.Items.Count - 1;
+					listViewIpPrinter.ScrollIntoView(listViewIpPrinter.SelectedItem);
+				});
+			}
+
+			listViewIpPrinterStatus.Dispatcher.Invoke(() => {
+				listViewIpPrinterStatus.Items.Clear();
 				var map = IPPrinter.GetInstance().IPClientBmpMap;
 				foreach(IPAddress ipKey in map.Keys) {
 					string status = "已断开";
-					Style printerStyle = AutoPrinter.Style.Danger;
 					if(map[ipKey].IsConnecting) {
 						status = "正在连接";
-						printerStyle = AutoPrinter.Style.Info;
 					}
 					else if(map[ipKey].TcpClientInfo != null) {
 						status = "已连接";
-						printerStyle = AutoPrinter.Style.Success;
 					}
-					statuses.Add(new {
-						IP = ipKey.ToString(),
+					listViewIpPrinterStatus.Items.Add(new {
+						IP = ipKey,
 						Status = status,
 						WaitedCount = map[ipKey].Queue.Count,
-						IdleTime = map[ipKey].TcpClientInfo?.IdleTime,
-						Style = printerStyle.ToString().ToLower()
+						IdleTime = map[ipKey].TcpClientInfo?.IdleTime
 					});
 				}
-				string str = JsonConvert.SerializeObject(statuses.ToArray());
-				browser.ExecuteJavascript($"refreshIPPrinterStatuses({str});");
 			});
 		}
 

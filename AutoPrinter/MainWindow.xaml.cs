@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Utility;
 using YummyOnlineTcpClient;
+using System.Linq;
 
 namespace AutoPrinter {
 	/// <summary>
@@ -84,8 +85,9 @@ namespace AutoPrinter {
 				localLog("获取打印机信息失败，请检查网络设置", AutoPrinter.Style.Danger);
 				return;
 			}
-			foreach(var p in protocol.Printers) {
-				await IPPrinter.GetInstance().Connect(IPAddress.Parse(p.IpAddress));
+
+			foreach(var ip in protocol.Printers.Select(p => p.IpAddress).Distinct()) {
+				await IPPrinter.GetInstance().Connect(IPAddress.Parse(ip));
 			}
 		}
 

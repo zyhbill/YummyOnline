@@ -63,5 +63,17 @@ namespace AutoPrinter {
 			mainWindow.Show();
 			Close();
 		}
+
+		private void textBoxSigninName_KeyDown(object sender, KeyEventArgs e) {
+			if(e.Key == Key.Enter) {
+				buttonSignin.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, buttonSignin));
+			}
+		}
+
+		private void passwordBox_KeyDown(object sender, KeyEventArgs e) {
+			if(e.Key == Key.Enter) {
+				buttonSignin.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent, buttonSignin));
+			}
+		}
 	}
 }

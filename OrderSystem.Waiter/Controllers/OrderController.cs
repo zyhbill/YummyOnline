@@ -68,7 +68,8 @@ namespace OrderSystem.Waiter.Controllers {
 			string connStr = CurrHotel.ConnectionString;
 
 			var tAreas = new HotelManager(connStr).GetAreas();
-			var tPayKinds = new HotelManager(connStr).GetFormatedPayKinds(new List<PayKindType> { PayKindType.Points, PayKindType.Offline, PayKindType.Online, PayKindType.Cash });
+			var tPayKinds = new HotelManager(connStr).GetFormatedPayKinds(new List<PayKindType> {
+				PayKindType.Points, PayKindType.Offline, PayKindType.Online, PayKindType.Cash ,PayKindType.RandomPreference});
 			var tRemarks = new HotelManager(connStr).GetRemarks();
 			var tStaffs = new HotelManager(connStr).GetStaffs();
 			var tSellOutMenus = new HotelManager(connStr).GetFormatedMenus(MenuStatus.SellOut);

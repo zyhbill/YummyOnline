@@ -1391,7 +1391,7 @@ namespace Management.Controllers
         /// <param name="IsPayFirst"></param>
         /// <param name="Style"></param>
         /// <returns></returns>
-        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int ShiftPrintId,bool IsPayFirst,int Style)
+        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int? ShiftPrintId,bool IsPayFirst,int Style)
         {
             int HotelId = (int)(Session["User"] as RStatus).HotelId;
             var config = await db.HotelConfigs.FirstOrDefaultAsync();

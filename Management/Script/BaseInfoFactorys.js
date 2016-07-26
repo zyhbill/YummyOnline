@@ -941,6 +941,14 @@
                 }
             });
         },
+        AltShow: function (menu) {
+            menu.IsShow = !menu.IsShow;
+            $http.post('../Baseinfo/AltShow', {
+                Id: menu.Id
+            }).then(function (response) {
+
+            });
+        },
         AddClass: function (level, ParentId) {
             var _this = this;
             var deferred = $q.defer();

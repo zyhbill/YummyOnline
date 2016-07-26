@@ -284,6 +284,7 @@
         },
         getUser: function () {
             //获取登录用户
+            this.PayElements.CurrentUser.IsLogin = false;
             if (this.PayElements.CurrentUser.Id == null) {
                 this.PayElements.CurrentUser.Id = '匿名用户';
             }

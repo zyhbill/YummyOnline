@@ -50,5 +50,12 @@ namespace Management
             });
             await ctx.SaveChangesAsync();
         }
+
+        public async Task ChangeShow (string Id)
+        {
+            var Class = await ctx.MenuClasses.FirstOrDefaultAsync(d => d.Id == Id);
+            Class.IsShow = !Class.IsShow;
+            await ctx.SaveChangesAsync();
+        }
     }
 }

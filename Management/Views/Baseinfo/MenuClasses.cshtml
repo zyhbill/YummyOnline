@@ -13,14 +13,16 @@
                     <span ng-if="!menu.IsEdit">
                         {{menu.Name}}
                         <div class="pull-right action-buttons">
+                            <a href="javascript:;" ng-click="AltShow(menu)">
+                                <i class="icon-lock red bigger-130" ng-show="menu.IsShow"></i>
+                                <i class="icon-unlock green bigger-130" ng-show="!menu.IsShow"></i>
+                            </a>
                             <a class="purple" href="javascript:;" ng-click="Add(menu)">
                                 <i class="icon-plus-sign bigger-130"></i>
                             </a>
-
                             <a class="blue" href="javascript:;" ng-click="Edit(menu)">
                                 <i class="icon-pencil bigger-130"></i>
                             </a>
-
                             <a class="red" href="javascript:;" ng-if="menu.IsLeaf" ng-click="DeleteMenuClass(menu)">
                                 <i class="icon-trash bigger-130"></i>
                             </a>
@@ -44,14 +46,13 @@
                     <li class="dd-item dd2-item" ng-if="menu.IsAdd">
                         <div class="dd-handle dd2-handle">
                             <i class="normal-icon icon-leaf red bigger-130"></i>
-
                             <i class="drag-icon icon-move bigger-125"></i>
                         </div>
                         <div class="dd2-content">
-                            <input type="text" ng-model="ClassElement.NewClass.Id" placeholder="编号" maxlength="6"/>
-                            <input type="text" ng-model="ClassElement.NewClass.Name" placeholder="名称"  maxlength="20"/>
+                            <input type="text" ng-model="ClassElement.NewClass.Id" placeholder="编号" maxlength="6" />
+                            <input type="text" ng-model="ClassElement.NewClass.Name" placeholder="名称" maxlength="20" />
                             <div class="pull-right action-buttons">
-                                <a class="purple" href="javascript:;" ng-click="AddMenu(menu,1,menu.Id)" >
+                                <a class="purple" href="javascript:;" ng-click="AddMenu(menu,1,menu.Id)">
                                     <i class="icon-save bigger-130"></i>
                                 </a>
                                 <a class="red" href="javascript:;" ng-click="CancelAdd(menu,1)">
@@ -63,21 +64,22 @@
                     <li class="dd-item dd2-item" ng-repeat="submenu in ClassElement.SecondMenuClasses|menu:menu.Id">
                         <div class="dd-handle dd2-handle">
                             <i class="normal-icon icon-leaf red bigger-130"></i>
-
                             <i class="drag-icon icon-move bigger-125"></i>
                         </div>
                         <div class="dd2-content">
                             <span ng-if="!submenu.IsEdit">
                                 {{submenu.Name}}
                                 <div class="pull-right action-buttons">
+                                    <a href="javascript:;" ng-click="AltShow(submenu)">
+                                        <i class="icon-lock red bigger-130" ng-show="submenu.IsShow"></i>
+                                        <i class="icon-unlock green bigger-130" ng-show="!submenu.IsShow"></i>
+                                    </a>
                                     <a class="purple" href="javascript:;" ng-click="Add(submenu)">
                                         <i class="icon-plus-sign bigger-130"></i>
                                     </a>
-
                                     <a class="blue" href="javascript:;" ng-click="Edit(submenu)">
                                         <i class="icon-pencil bigger-130"></i>
                                     </a>
-
                                     <a class="red" href="javascript:;" ng-if="submenu.IsLeaf" ng-click="DeleteMenuClass(submenu)">
                                         <i class="icon-trash bigger-130"></i>
                                     </a>
@@ -99,12 +101,11 @@
                             <li class="dd-item dd2-item" ng-if="ClassElement.NewClass.IsAdd&&submenu.IsAdd">
                                 <div class="dd-handle dd2-handle">
                                     <i class="normal-icon icon-leaf red bigger-130"></i>
-
                                     <i class="drag-icon icon-move bigger-125"></i>
                                 </div>
                                 <div class="dd2-content">
-                                    <input type="text" ng-model="ClassElement.NewClass.Id" placeholder="编号" maxlength="6"/>
-                                    <input type="text" ng-model="ClassElement.NewClass.Name" placeholder="名称" maxlength="20"/>
+                                    <input type="text" ng-model="ClassElement.NewClass.Id" placeholder="编号" maxlength="6" />
+                                    <input type="text" ng-model="ClassElement.NewClass.Name" placeholder="名称" maxlength="20" />
                                     <div class="pull-right action-buttons">
                                         <a class="purple" ng-click="AddMenu(submenu,2,submenu.Id)">
                                             <i class="icon-save bigger-130"></i>
@@ -118,25 +119,22 @@
                             <li class="dd-item dd2-item" ng-repeat="subsubmenu in ClassElement.ThirdMenuClasses|menu:submenu.Id">
                                 <div class="dd-handle dd2-handle">
                                     <i class="normal-icon icon-leaf red bigger-130"></i>
-
                                     <i class="drag-icon icon-move bigger-125"></i>
                                 </div>
                                 <div class="dd2-content">
                                     <span ng-if="!subsubmenu.IsEdit">
                                         {{subsubmenu.Name}}
                                         <div class="pull-right action-buttons">
-
                                             <a class="blue" href="javascript:;" ng-click="Edit(subsubmenu)">
                                                 <i class="icon-pencil bigger-130"></i>
                                             </a>
-
                                             <a class="red" href="javascript:;" ng-if="subsubmenu.IsLeaf" ng-click="DeleteMenuClass(subsubmenu)">
                                                 <i class="icon-trash bigger-130"></i>
                                             </a>
                                         </div>
                                     </span>
                                     <span ng-if="subsubmenu.IsEdit">
-                                        <input type="text" ng-model="subsubmenu.Name" maxlength="20"/>
+                                        <input type="text" ng-model="subsubmenu.Name" maxlength="20" />
                                         <div class="pull-right action-buttons">
                                             <a class="purple" href="javascript:;" ng-click="EditMenu(subsubmenu)">
                                                 <i class="icon-save bigger-130"></i>
@@ -157,11 +155,10 @@
 </div>
 <div class="col-md-6">
     <form ng-submit="AddBigClass(0)">
-        编号:<input type="text" class="form-control" ng-model="ClassElement.NewBigClass.Id" maxlength="6" required/><br />
-        名称:<input type="text" class="form-control" ng-model="ClassElement.NewBigClass.Name" maxlength="20" required/><br />
+        编号:<input type="text" class="form-control" ng-model="ClassElement.NewBigClass.Id" maxlength="6" required /><br />
+        名称:<input type="text" class="form-control" ng-model="ClassElement.NewBigClass.Name" maxlength="20" required /><br />
         描述: <textarea class="form-control" cols="20" ng-model="ClassElement.NewBigClass.Description"></textarea><br />
         <button class="btn btn-success" type="submit" ng-disabled="!ClassElement.NewBigClass.Id||ClassElement.isAjax||!ClassElement.NewBigClass.Name"><img src="../../Content/images/loading.gif" ng-if="ClassElement.isAjax" style="vertical-align:middle;" />添加</button>
     </form>
 </div>
-
 <script src="../FrameWorks/assets/js/jquery.nestable.min.js"></script>

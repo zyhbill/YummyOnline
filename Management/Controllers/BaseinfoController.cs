@@ -412,6 +412,18 @@ namespace Management.Controllers
                     var flag = Method.GetPicThumbnail(MenuPlace, MenuPlace, 200, 300, 50);
                     Method.SaveImg(menu.Id, image, Method.MyGetBaseUrl((int)HotelId));
                 }
+                else
+                {
+                    string BaseUrl = Method.MyGetBaseUrl((int)HotelId);
+                    if (Method.SearchFile(BaseUrl, Menu.Id + ".jpg"))
+                    {
+
+                    }
+                    else
+                    {
+                        menu.PicturePath = HotelId.ToString() + "/none.jpg";
+                    }
+                }
                 db.SaveChanges();
                 if(classes != null)
                 {
@@ -878,7 +890,14 @@ namespace Management.Controllers
                     var paths = await db.Menus.Where(m => m.Usable == true).ToListAsync();
                     foreach (var path in paths)
                     {
-                        path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/" + path.Id + ".jpg";
+                        if (Method.SearchFile(baseUrl, path.Id + ".jpg"))
+                        {
+                            path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/" + path.Id + ".jpg";
+                        }
+                        else
+                        {
+                            path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/none.jpg";
+                        }
                         db.SaveChanges();
                     }
                 }
@@ -1224,6 +1243,19 @@ namespace Management.Controllers
             }
             return Json(new { Status = true});
         }
+        /// <summary>
+        /// 切换是否显示
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="IsShow"></param>
+        /// <returns></returns>
+        public async Task<JsonResult> AltShow(string Id)
+        {
+            var HotelManager = new HotelManager(ConnectingStr);
+            await HotelManager.ChangeShow(Id);
+            return null;
+        }
+
         /// <summary>
         /// 获取套餐信息
         /// </summary>

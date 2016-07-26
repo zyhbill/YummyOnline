@@ -432,7 +432,8 @@ namespace Management.Controllers
                 Discount = (float)OpenDiscount.Discount / 100;
                 DiscountName = "自定义";
             }
-            var result = await Method.postHttp("http://ordersystem.yummyonline.net/Payment/ManagerPay",
+            var openUrl = sysdb.SystemConfigs.FirstOrDefault()?.OrderSystemUrl;
+            var result = await Method.postHttp(openUrl+"/Payment/ManagerPay",
                 new
                 {
                     Cart = new
@@ -603,7 +604,7 @@ namespace Management.Controllers
                 mn.Count--;
             }
             db.SaveChanges();
-            HtManager.ManageLog($"HotelId: {(Session["User"] as RStatus).HotelId.ToString()},DineId:{DineId} Id:{Id}", HotelDAO.Models.Log.LogLevel.Success,$"ClerkId: {ClerkId}");
+            HtManager.ManageLog($"HotelId: {(Session["User"] as RStatus).HotelId.ToString()}, DineId:{DineId} Id:{Id}", HotelDAO.Models.Log.LogLevel.Warning,$"ClerkId: {ClerkId}");
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
@@ -1261,7 +1262,8 @@ namespace Management.Controllers
                 });
                 await sysdb.SaveChangesAsync();
             }
-            var result = await Method.postHttp("http://ordersystem.yummyonline.net/Payment/ManagerPay",
+            var openUrl = sysdb.SystemConfigs.FirstOrDefault()?.OrderSystemUrl;
+            var result = await Method.postHttp(openUrl + "/Payment/ManagerPay",
                 new
                 {
                     Cart = new

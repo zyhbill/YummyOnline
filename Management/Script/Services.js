@@ -12,7 +12,7 @@
 
         ws.onclose = function () {
             alert('连接被关闭.');
-            //$rootScope.Logout();
+            $rootScope.Logout();
         };
 
         ws.onmessage = function (message) {

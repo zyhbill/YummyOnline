@@ -73,7 +73,7 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 日志回调函数
 		/// </summary>
-		public event Action<IPAddress, Bitmap, string, Style> OnLog;
+		public event Action<IPAddress, Bitmap, string, LogLevel> OnLog;
 
 		private IPPrinter() {
 			System.Timers.Timer t = new System.Timers.Timer(1000);
@@ -107,10 +107,10 @@ namespace AutoPrinter {
 					if(++IPClientBmpMap[ip].TcpClientInfo.IdleTime >= maxIdleTime) {
 						IPClientBmpMap[ip].TcpClientInfo.Close();
 						IPClientBmpMap[ip].TcpClientInfo = null;
-						OnLog?.Invoke(ip, null, "超时断开连接", Style.Danger);
+						OnLog?.Invoke(ip, null, "超时断开连接", LogLevel.Error);
 					}
 					else {
-						OnLog?.Invoke(ip, null, null, Style.Info);
+						OnLog?.Invoke(ip, null, null, LogLevel.Info);
 					}
 				}
 			}
@@ -133,7 +133,7 @@ namespace AutoPrinter {
 					}
 					IPClientBmpMap[ip].Queue.Enqueue(bmpInfo);
 
-					OnLog?.Invoke(ip, bmpInfo?.bmp, "已进入打印队列", Style.Success);
+					OnLog?.Invoke(ip, bmpInfo?.bmp, "已进入打印队列", LogLevel.Success);
 
 					if(IPClientBmpMap[ip].IsPrinting) {
 						return;
@@ -228,20 +228,20 @@ namespace AutoPrinter {
 				lock(IPClientBmpMap) {
 					IPClientBmpMap[ip].Queue.Dequeue();
 
-					OnLog?.Invoke(ip, bmpInfo?.bmp, "打印成功", Style.Success);
+					OnLog?.Invoke(ip, bmpInfo?.bmp, "打印成功", LogLevel.Success);
 				}
 
 				await prePrint(ip);
 			}
 			catch(Exception e) {
-				OnLog?.Invoke(ip, null, $"写入数据发生错误 {e.Message}", Style.Danger);
+				OnLog?.Invoke(ip, null, $"写入数据发生错误 {e.Message}", LogLevel.Error);
 
 				lock(IPClientBmpMap) {
 					IPClientBmpMap[ip].TcpClientInfo?.Close();
 					IPClientBmpMap[ip].TcpClientInfo = null;
 				}
 
-				OnLog?.Invoke(ip, null, "重新尝试连接", Style.Info);
+				OnLog?.Invoke(ip, null, "重新尝试连接", LogLevel.Info);
 				await Connect(ip);
 			}
 		}
@@ -256,14 +256,14 @@ namespace AutoPrinter {
 				}
 				clientBmpInfo = IPClientBmpMap[ip];
 
-				OnLog?.Invoke(ip, null, null, Style.Info);
+				OnLog?.Invoke(ip, null, null, LogLevel.Info);
 
 				if(clientBmpInfo.TcpClientInfo != null) {
-					OnLog?.Invoke(ip, null, "已连接", Style.Success);
+					OnLog?.Invoke(ip, null, "已连接", LogLevel.Success);
 					return;
 				}
 				if(clientBmpInfo.IsConnecting) {
-					OnLog?.Invoke(ip, null, "正在连接中", Style.Info);
+					OnLog?.Invoke(ip, null, "正在连接中", LogLevel.Info);
 					return;
 				}
 				clientBmpInfo.IsConnecting = true;
@@ -275,30 +275,30 @@ namespace AutoPrinter {
 			TcpClient client = new TcpClient();
 
 			try {
-				OnLog?.Invoke(ip, null, "正在连接", Style.Info);
+				OnLog?.Invoke(ip, null, "正在连接", LogLevel.Info);
 				await client.ConnectAsync(ip, 9100);
 
 				clientBmpInfo.TcpClientInfo = new TcpClientInfo(client);
 				clientBmpInfo.TryTime = 0;
 				clientBmpInfo.IsConnecting = false;
-				OnLog?.Invoke(ip, null, "连接成功", Style.Success);
+				OnLog?.Invoke(ip, null, "连接成功", LogLevel.Success);
 
 				await prePrint(ip);
 			}
 			catch(Exception e) {
-				OnLog?.Invoke(ip, null, $"连接发生错误, {e.Message}", Style.Danger);
+				OnLog?.Invoke(ip, null, $"连接发生错误, {e.Message}", LogLevel.Error);
 
 				if(++clientBmpInfo.TryTime >= maxTryTime) {
 					clientBmpInfo.IsConnecting = false;
 
-					OnLog?.Invoke(ip, null, $"连接次数已达上限{clientBmpInfo.TryTime}次, 连接失败", Style.Danger);
+					OnLog?.Invoke(ip, null, $"连接次数已达上限{clientBmpInfo.TryTime}次, 连接失败", LogLevel.Error);
 					clientBmpInfo.IsPrinting = false;
 					clientBmpInfo.TryTime = 0;
 
 					return;
 				}
 
-				OnLog?.Invoke(ip, null, $"{tryInterval}秒后重新尝试第{clientBmpInfo.TryTime}次连接", Style.Info);
+				OnLog?.Invoke(ip, null, $"{tryInterval}秒后重新尝试第{clientBmpInfo.TryTime}次连接", LogLevel.Info);
 
 				await Task.Delay(tryInterval * 1000);
 				await connect(ip, clientBmpInfo);

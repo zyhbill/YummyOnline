@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using System.Windows.Data;
+using System.Windows.Media;
 using Utility;
 
 namespace AutoPrinter {
@@ -18,18 +20,18 @@ namespace AutoPrinter {
 			try {
 				dp = await getDineForPrinting(dineId, dineMenuIds);
 				if(dp == null) {
-					localLog("获取订单信息失败，请检查网络设置", AutoPrinter.Style.Danger);
+					serverLog("获取订单信息失败，请检查网络设置", LogLevel.Error);
 					return;
 				}
 
-				localLog($"发送打印命令 单号: {dineId}", AutoPrinter.Style.Info);
+				serverLog($"发送打印命令 单号: {dineId}", LogLevel.Info);
 				DinePrinter dinePrinter = new DinePrinter();
 				await dinePrinter.Print(dp, printTypes, dineMenuIds == null);
-				localLog($"发送命令成功 单号: {dineId}", AutoPrinter.Style.Success);
+				serverLog($"发送命令成功 单号: {dineId}", LogLevel.Success);
 				printCompleted(dineId);
 			}
 			catch(Exception e) {
-				localLog($"无法打印 单号: {dineId}, 错误信息: {e.Message}", AutoPrinter.Style.Danger);
+				serverLog($"无法打印 单号: {dineId}, 错误信息: {e.Message}", LogLevel.Error);
 				remoteLog(Log.LogLevel.Error, $"DineId: {dineId}, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 			}
 		}
@@ -39,10 +41,10 @@ namespace AutoPrinter {
 		async Task printRemoteTest(List<PrintType> printTypes, string ipAddress) {
 			DineForPrinting dp = null;
 			try {
-				localLog($"开始测试, 打印机: {ipAddress}", AutoPrinter.Style.Info);
+				serverLog($"开始测试, 打印机: {ipAddress}", LogLevel.Info);
 				dp = await getDineForPrinting("00000000000000");
 				if(dp == null) {
-					localLog("获取订单信息失败，请检查网络设置", AutoPrinter.Style.Danger);
+					serverLog("获取订单信息失败，请检查网络设置", LogLevel.Error);
 					return;
 				}
 				dp.Dine.Desk.ReciptPrinter.IpAddress = ipAddress;
@@ -51,14 +53,14 @@ namespace AutoPrinter {
 					dineMenu.Menu.Printer.IpAddress = ipAddress;
 				}
 
-				localLog($"发送测试单命令", AutoPrinter.Style.Info);
+				serverLog($"发送测试单命令", LogLevel.Info);
 				DinePrinter dinePrinter = new DinePrinter();
 				await dinePrinter.Print(dp, printTypes, true);
-				localLog($"发送测试单命令成功", AutoPrinter.Style.Success);
+				serverLog($"发送测试单命令成功", LogLevel.Success);
 				printCompleted("00000000000000");
 			}
 			catch(Exception e) {
-				localLog($"无法打印测试单, 错误信息: {e}", AutoPrinter.Style.Danger);
+				serverLog($"无法打印测试单, 错误信息: {e}", LogLevel.Error);
 				remoteLog(Log.LogLevel.Error, $"Online Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 			}
 		}
@@ -68,16 +70,16 @@ namespace AutoPrinter {
 		async Task printLocalTest(List<PrintType> printTypes, string ipAddress) {
 			DineForPrinting dp = Config.GetTestProtocol(ipAddress);
 			try {
-				localLog($"开始本地测试, 打印机: {ipAddress}", AutoPrinter.Style.Info);
-				localLog($"发送本地测试单命令", AutoPrinter.Style.Info);
+				serverLog($"开始本地测试, 打印机: {ipAddress}", LogLevel.Info);
+				serverLog($"发送本地测试单命令", LogLevel.Info);
 
 				DinePrinter dinePrinter = new DinePrinter();
 				await dinePrinter.Print(dp, printTypes, true);
 
-				localLog($"发送本地测试单命令成功", AutoPrinter.Style.Success);
+				serverLog($"发送本地测试单命令成功", LogLevel.Success);
 			}
 			catch(Exception e) {
-				localLog($"无法打印本地测试单, 错误信息: {e.Message}", AutoPrinter.Style.Danger);
+				serverLog($"无法打印本地测试单, 错误信息: {e.Message}", LogLevel.Error);
 				remoteLog(Log.LogLevel.Error, $"Local Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 			}
 		}
@@ -89,18 +91,18 @@ namespace AutoPrinter {
 			try {
 				sp = await getShiftsForPrinting(Ids, dateTime);
 				if(sp == null) {
-					localLog("获取交接班信息失败，请检查网络设置", AutoPrinter.Style.Danger);
+					serverLog("获取交接班信息失败，请检查网络设置", LogLevel.Error);
 					return;
 				}
 				ShiftPrinter shiftPrinter = new ShiftPrinter();
-				localLog($"发送打印命令 交接班", AutoPrinter.Style.Info);
+				serverLog($"发送打印命令 交接班", LogLevel.Info);
 
 				await shiftPrinter.Print(sp);
 
-				localLog($"发送命令成功 交接班", AutoPrinter.Style.Success);
+				serverLog($"发送命令成功 交接班", LogLevel.Success);
 			}
 			catch(Exception e) {
-				localLog($"无法打印 交接班, 错误信息: {e.Message}", AutoPrinter.Style.Danger);
+				serverLog($"无法打印 交接班, 错误信息: {e.Message}", LogLevel.Error);
 				remoteLog(Log.LogLevel.Error, $"ShiftInfos, {e.Message}", $"Data: {JsonConvert.SerializeObject(sp)}, Error: {e}");
 			}
 		}
@@ -154,26 +156,28 @@ namespace AutoPrinter {
 			var _ = HttpPost.PostAsync(Config.RemotePrintCompletedUrl, postData);
 		}
 
-		void localLog(string message, Style style) {
+		void serverLog(string message, LogLevel level) {
 			listViewLog.Dispatcher.Invoke(() => {
-				listViewLog.Items.Add(new {
+				listViewLog.Items.Add(new ServerLog {
 					DateTime = DateTime.Now,
-					Message = message
+					Message = message,
+					Level = level
 				});
 
 				listViewLog.SelectedIndex = listViewLog.Items.Count - 1;
 				listViewLog.ScrollIntoView(listViewLog.SelectedItem);
 			});
 		}
-		void ipPrinterLog(IPAddress ip, int? hashCode, string message, Style style) {
+		void ipPrinterLog(IPAddress ip, int? hashCode, string message, LogLevel level) {
 			if(message != null) {
 				listViewIpPrinter.Dispatcher.Invoke(() => {
 
-					listViewIpPrinter.Items.Add(new {
+					listViewIpPrinter.Items.Add(new IPPrinterLog {
 						DateTime = DateTime.Now,
 						IP = ip,
 						Message = message,
-						HashCode = hashCode
+						HashCode = hashCode,
+						Level = level
 					});
 
 					listViewIpPrinter.SelectedIndex = listViewIpPrinter.Items.Count - 1;
@@ -186,17 +190,21 @@ namespace AutoPrinter {
 				var map = IPPrinter.GetInstance().IPClientBmpMap;
 				foreach(IPAddress ipKey in map.Keys) {
 					string status = "已断开";
+					LogLevel printerLevel = LogLevel.Error;
 					if(map[ipKey].IsConnecting) {
 						status = "正在连接";
+						printerLevel = LogLevel.Info;
 					}
 					else if(map[ipKey].TcpClientInfo != null) {
 						status = "已连接";
+						printerLevel = LogLevel.Success;
 					}
-					listViewIpPrinterStatus.Items.Add(new {
+					listViewIpPrinterStatus.Items.Add(new IPPrinterStatus {
 						IP = ipKey,
-						Status = status,
+						Message = status,
 						WaitedCount = map[ipKey].Queue.Count,
-						IdleTime = map[ipKey].TcpClientInfo?.IdleTime
+						IdleTime = map[ipKey].TcpClientInfo?.IdleTime ?? 0,
+						Level = printerLevel
 					});
 				}
 			});

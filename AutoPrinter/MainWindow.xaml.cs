@@ -9,6 +9,7 @@ using System.Windows;
 using Utility;
 using YummyOnlineTcpClient;
 using System.Linq;
+using System.Windows.Controls;
 
 namespace AutoPrinter {
 	/// <summary>
@@ -18,11 +19,7 @@ namespace AutoPrinter {
 		public MainWindow() {
 			InitializeComponent();
 
-			Process[] tProcess = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
-			if(tProcess.Length > 1) {
-				MessageBox.Show("已经开启一个程序，请关闭后重试", "重复启动", MessageBoxButton.OK, MessageBoxImage.Error);
-				Application.Current.Shutdown();
-			}
+
 
 			IPPrinter.GetInstance().OnLog += (ip, bmp, message, style) => {
 				ipPrinterLog(ip, bmp?.GetHashCode(), message, style);
@@ -52,11 +49,11 @@ namespace AutoPrinter {
 				}
 			};
 			tcp.CallBackWhenConnected = () => {
-				localLog("服务器连接成功", AutoPrinter.Style.Success);
+				serverLog("服务器连接成功", LogLevel.Success);
 				remoteLog(Log.LogLevel.Success, "Printer Connected");
 			};
 			tcp.CallBackWhenExceptionOccured = (e) => {
-				localLog(e.Message, AutoPrinter.Style.Danger);
+				serverLog(e.Message, LogLevel.Error);
 				remoteLog(Log.LogLevel.Error, e.Message, e.ToString());
 			};
 
@@ -82,7 +79,7 @@ namespace AutoPrinter {
 		private async void buttonConnectPrinters_Click(object sender, RoutedEventArgs e) {
 			var protocol = await getPrintersForPrinting();
 			if(protocol == null) {
-				localLog("获取打印机信息失败，请检查网络设置", AutoPrinter.Style.Danger);
+				serverLog("获取打印机信息失败，请检查网络设置", LogLevel.Error);
 				return;
 			}
 

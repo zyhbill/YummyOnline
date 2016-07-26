@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using Utility;
 using Protocol;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 namespace AutoPrinter {
 	/// <summary>
@@ -23,6 +24,12 @@ namespace AutoPrinter {
 	public partial class Signin : Window {
 		public Signin() {
 			InitializeComponent();
+
+			Process[] tProcess = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName);
+			if(tProcess.Length > 1) {
+				MessageBox.Show("已经开启一个程序，请关闭后重试", "重复启动", MessageBoxButton.OK, MessageBoxImage.Error);
+				Application.Current.Shutdown();
+			}
 
 			try {
 				textBlockVersion.Text = $" {ApplicationDeployment.CurrentDeployment.CurrentVersion}";

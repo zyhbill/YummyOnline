@@ -1396,7 +1396,8 @@ namespace Management.Controllers
             var IsPayFirst = await db.HotelConfigs.Select(h => h.IsPayFirst).FirstOrDefaultAsync();
             int HotelId = (int)(Session["User"] as RStatus).HotelId;
             var Style = await sysdb.Hotels.Where(d => d.Id == HotelId).Select(d => d.CssThemePath).FirstOrDefaultAsync();
-            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst , Style = Style });
+            var NeedRandomPreference = await db.HotelConfigs.Select(h => h.NeedRandomPreference).FirstOrDefaultAsync();
+            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst , Style = Style , NeedRandomPreference = NeedRandomPreference });
         }
         /// <summary>
         /// 修改打印模式
@@ -1409,7 +1410,7 @@ namespace Management.Controllers
         /// <param name="IsPayFirst"></param>
         /// <param name="Style"></param>
         /// <returns></returns>
-        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int? ShiftPrintId,bool IsPayFirst,int Style)
+        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int? ShiftPrintId,bool IsPayFirst,int Style ,bool NeedRandomPreference)
         {
             int HotelId = (int)(Session["User"] as RStatus).HotelId;
             var config = await db.HotelConfigs.FirstOrDefaultAsync();
@@ -1417,6 +1418,7 @@ namespace Management.Controllers
             config.ShiftPrinterId = ShiftPrintId;
             config.HasAutoPrinter = IsUsePrint;
             config.IsPayFirst = IsPayFirst;
+            config.NeedRandomPreference = NeedRandomPreference;
             var font = await db.PrinterFormats.FirstOrDefaultAsync();
             font.KitchenOrderFontSize = Format.KitchenOrderFontSize;
             font.KitchenOrderSmallFontSize = Format.KitchenOrderSmallFontSize;
@@ -1464,22 +1466,22 @@ namespace Management.Controllers
                 {
                     Directory.CreateDirectory(OrderUrl);
                 }
-                if (logo != null)
+                if (logo != null && logo.ContentLength!=0)
                 {
                     logo.SaveAs(baseUrl + "index.png");
                     logo.SaveAs(OrderUrl + "index.png");
                 }
-                if (button != null)
+                if (button != null && button.ContentLength != 0)
                 {
                     button.SaveAs(baseUrl + "btn-cart.png");
                     button.SaveAs(OrderUrl + "btn-cart.png");
                 }
-                if (complete != null)
+                if (complete != null && complete.ContentLength != 0)
                 {
                     complete.SaveAs(baseUrl + "completed.gif");
                     complete.SaveAs(OrderUrl + "completed.gif");
                 }
-                if (Null != null)
+                if (Null != null && Null.ContentLength != 0)
                 {
                     Null.SaveAs(baseUrl + "null.jpg");
                     Null.SaveAs(OrderUrl + "null.jpg");

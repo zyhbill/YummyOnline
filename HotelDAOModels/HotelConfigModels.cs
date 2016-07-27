@@ -18,6 +18,7 @@ namespace HotelDAO.Models {
 		public int Id { get; set; }
 
 		public bool NeedCodeImg { get; set; }
+		public bool NeedRandomPreference { get; set; }
 		/// <summary>
 		/// 积分比率（1元 = PointsRatio积分）
 		/// </summary>
@@ -29,5 +30,6 @@ namespace HotelDAO.Models {
 		[ForeignKey(nameof(ShiftPrinter))]
 		public int? ShiftPrinterId { get; set; }
 		public Printer ShiftPrinter { get; set; }
+
 	}
 }

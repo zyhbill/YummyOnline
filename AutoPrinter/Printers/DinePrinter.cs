@@ -52,7 +52,7 @@ namespace AutoPrinter {
 				}
 			}
 
-			foreach(Task t in allTasks) {
+			foreach(var t in allTasks) {
 				await t;
 			}
 		}

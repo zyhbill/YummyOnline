@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NetworkNotifyViewModels.cs" />
     <Compile Include="PrintingProtocol\PrintersForPrinting.cs" />
     <Compile Include="PrintingProtocol\ShiftsForPrinting.cs" />
     <Compile Include="PrintingProtocol\DineForPrinting.cs" />

@@ -1200,7 +1200,8 @@
                 ShiftSmallFontSize:0
             },
             UsePrint: true,
-            IsPayFirst:true,
+            IsPayFirst: true,
+
             Rate:0
         },
         Initialize: function () {

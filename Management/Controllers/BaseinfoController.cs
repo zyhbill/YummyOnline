@@ -421,7 +421,7 @@ namespace Management.Controllers
                     }
                     else
                     {
-                        menu.PicturePath = HotelId.ToString() + "/none.jpg";
+                        menu.PicturePath = HotelId.ToString() + "/null.jpg";
                     }
                 }
                 db.SaveChanges();
@@ -552,7 +552,7 @@ namespace Management.Controllers
                     Method.SaveImg(menu.Id, image, Method.MyGetBaseUrl((int)HotelId));
                 }else
                 {
-                    menu.PicturePath = HotelId.ToString() + "/none.jpg";
+                    menu.PicturePath = HotelId.ToString() + "/null.jpg";
                 }
                 db.SaveChanges();
                 if (Classes != null)
@@ -590,12 +590,19 @@ namespace Management.Controllers
             var menu = await db.Menus
                 .Include(m=>m.Classes)
                 .FirstOrDefaultAsync(m => m.Id == MenuId);
+            var Class = await db.MenuClasses.Where(d => d.Usable == true).ToListAsync();
             menu.Usable = false;
-            foreach(var i in menu.Classes)
-            {
-                menu.Classes.Remove(i);
-            }
             db.SaveChanges();
+            if (menu != null)
+            {
+                var ClassId = menu.Classes.Select(d => d.Id).ToList();
+                foreach (var i in ClassId)
+                {
+                    var temp = Class.Where(d => d.Id == i).FirstOrDefault();
+                    menu.Classes.Remove(temp);
+                    db.SaveChanges();
+                }
+            }
             return null;
         }
         /// <summary>
@@ -896,7 +903,7 @@ namespace Management.Controllers
                         }
                         else
                         {
-                            path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/none.jpg";
+                            path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/null.jpg";
                         }
                         db.SaveChanges();
                     }
@@ -916,11 +923,12 @@ namespace Management.Controllers
                     var Class = db.MenuClasses.Where(d => d.Usable == true).ToList();
                     var Remarks = db.Remarks.ToList();
                     DataTable dt = setObj.Tables[0];
+                    int hotelId = (int)(Session["User"] as RStatus).HotelId;
                     foreach (DataRow row in dt.Rows)
                     {
                         try
                         {
-                            int hotelId = (int)(Session["User"] as RStatus).HotelId;
+                            
                             string Id = row[0].ToString();
                             Menu me = new Menu();
                             MenuPrice Mp = new MenuPrice();
@@ -937,7 +945,14 @@ namespace Management.Controllers
                                 me.Code = row[1].ToString();
                                 me.Name = row[2].ToString();
                                 me.NameAbbr = row[3].ToString();
-                                me.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
+                                if(Method.SearchFile(baseUrl, row[0].ToString() + ".jpg"))
+                                {
+                                    me.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
+                                }
+                                else
+                                {
+                                    me.PicturePath = hotelId.ToString() + "/null.jpg";
+                                }
                                 me.IsFixed = false;
                                 me.SupplyDate = 127;
                                 me.Unit = row[4].ToString();
@@ -950,7 +965,11 @@ namespace Management.Controllers
                                 me.Usable = true;
                                 me.IsSetMeal = false;
                                 me.DepartmentId = Convert.ToInt32(row[10].ToString());
+                                me.Classes = new List<MenuClass>();
+                                me.Remarks = new List<Remark>();
                                 me.EnglishName = row[15].ToString();
+                                db.Menus.Add(me);
+                                db.SaveChanges();
                                 var classes = row[16].ToString();
                                 if (classes != null)
                                 {
@@ -973,7 +992,6 @@ namespace Management.Controllers
                                         db.SaveChanges();
                                     }
                                 }
-                                db.SaveChanges();
                                 Mp.Id = Id;
                                 Mp.Price = Convert.ToDecimal(row[12].ToString());
                                 Mp.Points = Convert.ToInt32(row[14].ToString());
@@ -1041,9 +1059,9 @@ namespace Management.Controllers
                                 db.SaveChanges();
                             }
                         }
-                        catch 
+                        catch(Exception e) 
                         {
-
+                            Console.Write(e);
                         }
                     }
                 }
@@ -1435,6 +1453,7 @@ namespace Management.Controllers
                 HttpPostedFileBase logo = Request.Files["logo"];
                 HttpPostedFileBase button = Request.Files["button"];
                 HttpPostedFileBase complete = Request.Files["complete"];
+                HttpPostedFileBase Null = Request.Files["null"];
                 string baseUrl = Method.MyGetBaseUrl((int)(Session["User"] as RStatus).HotelId);
                 string OrderUrl = Method.GetBaseUrl((int)(Session["User"] as RStatus).HotelId);
                 if (!Directory.Exists(baseUrl))
@@ -1459,6 +1478,11 @@ namespace Management.Controllers
                 {
                     complete.SaveAs(baseUrl + "completed.gif");
                     complete.SaveAs(OrderUrl + "completed.gif");
+                }
+                if (Null != null)
+                {
+                    Null.SaveAs(baseUrl + "null.jpg");
+                    Null.SaveAs(OrderUrl + "null.jpg");
                 }
                 return Json(new SuccessState());
             }

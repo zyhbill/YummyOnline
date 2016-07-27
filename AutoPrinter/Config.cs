@@ -112,52 +112,7 @@ namespace AutoPrinter {
 							Usable = true
 						}
 					},
-					DineMenus = new List<DineMenu> {
-							new DineMenu {
-								Status = HotelDAO.Models.DineMenuStatus.Normal,
-								Count = 10,
-								OriPrice = 56.78m,
-								Price = 12.34m,
-								RemarkPrice = 12.34m,
-								Remarks = new List<Remark> {
-											new Remark {Id = 0,Name = "本地测试备注1",Price = 12.34m },
-											new Remark {Id = 1,Name = "本地测试备注2",Price = 56.78m },
-											new Remark {Id = 2,Name = "本地测试备注3",Price = 90.12m },
-											new Remark {Id = 3,Name = "本地测试备注4",Price = 34.56m }
-										},
-								Menu = new Menu {
-									Id = $"00000",
-									Code = "test",
-									Name = $"本地测试套餐",
-									NameAbbr = $"本地测试0",
-									Unit = "份",
-									IsSetMeal = true,
-									SetMealMenus = new List<SetMealMenu> {
-										new SetMealMenu {
-											Id = "10000",
-											Name = "本地测试套餐菜品1",
-											Count = 10
-										},
-										new SetMealMenu {
-											Id = "10001",
-											Name = "本地测试套餐菜品2",
-											Count = 10
-										},
-										new SetMealMenu {
-											Id = "10002",
-											Name = "本地测试套餐菜品3",
-											Count = 10
-										}
-									},
-									Printer = new Printer {
-										Id = 2,
-										Name = "Microsoft XPS Document Writer",
-										IpAddress = ipAddress,
-										Usable = true
-									},
-								}
-							}
-						},
+					DineMenus = new List<DineMenu> (),
 					DinePaidDetails = new List<DinePaidDetail> {
 							new DinePaidDetail {
 								Price = 12.34m,

@@ -39,13 +39,24 @@ namespace AutoPrinter {
 	public class ClientBmpInfo {
 		public Queue<BmpInfo> Queue { get; set; }
 
+		/// <summary>
+		/// 打印机客户端
+		/// </summary>
 		public TcpClientInfo TcpClientInfo { get; set; }
+		/// <summary>
+		/// 打印机状态客户端
+		/// </summary>
+		public TcpClientInfo StatusTcpClientInfo { get; set; }
 		/// <summary>
 		/// 尝试重新连接次数
 		/// </summary>
 		public int TryTime { get; set; }
 		public bool IsConnecting { get; set; }
 		public bool IsPrinting { get; set; }
+		/// <summary>
+		/// 打印互斥
+		/// </summary>
+		public AutoResetEvent Mutex { get; set; }
 	}
 
 	public class IPPrinter {
@@ -57,6 +68,10 @@ namespace AutoPrinter {
 		private readonly byte[] cut = new byte[] { 0x1D, 0x56, 1, 49 };
 		// 换行
 		private readonly byte[] lf = new byte[] { 0x0A };
+		// 查询打印机状态
+		private readonly byte[] status = new byte[] { 27, 118 };
+		// 打印机正常状态
+		private readonly byte[] statusOKBuffer = { 20, 0, 0, 0 };
 
 		/// <summary>
 		/// 最大重新尝试连接次数
@@ -97,6 +112,9 @@ namespace AutoPrinter {
 			return instance;
 		}
 
+		/// <summary>
+		/// 每隔一段时间检测打印机是否连接空闲超时
+		/// </summary>
 		private void T_Elapsed(object sender, ElapsedEventArgs e) {
 			lock(IPClientBmpMap) {
 				foreach(IPAddress ip in IPClientBmpMap.Keys) {
@@ -105,8 +123,7 @@ namespace AutoPrinter {
 					}
 
 					if(++IPClientBmpMap[ip].TcpClientInfo.IdleTime >= maxIdleTime) {
-						IPClientBmpMap[ip].TcpClientInfo.Close();
-						IPClientBmpMap[ip].TcpClientInfo = null;
+						closeIP(ip);
 						OnLog?.Invoke(ip, null, "超时断开连接", LogLevel.Error);
 					}
 					else {
@@ -119,22 +136,20 @@ namespace AutoPrinter {
 		public async Task Print(IPAddress ip, Bitmap bmp, int colorDepth) {
 			await Task.Run(async () => {
 				BmpInfo bmpInfo = null;
-
+				// 获得需要打印的图片数据
 				bmpInfo = new BmpInfo {
 					bmp = bmp,
 					printingBytes = await getPrintingBytes(bmp, colorDepth)
 				};
 
 				lock(IPClientBmpMap) {
-					if(!IPClientBmpMap.ContainsKey(ip)) {
-						IPClientBmpMap.Add(ip, new ClientBmpInfo {
-							Queue = new Queue<BmpInfo>()
-						});
-					}
+					addIP(ip);
+
 					IPClientBmpMap[ip].Queue.Enqueue(bmpInfo);
 
 					OnLog?.Invoke(ip, bmpInfo?.bmp, "已进入打印队列", LogLevel.Success);
 
+					// 如果正在打印则不做任何操作, 队列中的数据会自动打印
 					if(IPClientBmpMap[ip].IsPrinting) {
 						return;
 					}
@@ -195,18 +210,15 @@ namespace AutoPrinter {
 		}
 
 		private async Task prePrint(IPAddress ip) {
-			TcpClientInfo client;
-
 			lock(IPClientBmpMap) {
 				if(!IPClientBmpMap.ContainsKey(ip) || IPClientBmpMap[ip].Queue.Count == 0) {
 					IPClientBmpMap[ip].IsPrinting = false;
 					return;
 				}
-
-				client = IPClientBmpMap[ip].TcpClientInfo;
 			}
 
-			if(client == null) {
+			// 如果打印机没有连接则连接否则打印
+			if(IPClientBmpMap[ip].TcpClientInfo == null || IPClientBmpMap[ip].StatusTcpClientInfo == null) {
 				await Connect(ip);
 			}
 			else {
@@ -214,22 +226,31 @@ namespace AutoPrinter {
 			}
 		}
 		private async Task print(IPAddress ip, BmpInfo bmpInfo) {
-			TcpClientInfo client;
-
-			client = IPClientBmpMap[ip].TcpClientInfo;
+			TcpClientInfo client = IPClientBmpMap[ip].TcpClientInfo;
+			TcpClientInfo statusClient = IPClientBmpMap[ip].StatusTcpClientInfo;
 
 			try {
-				NetworkStream stream = client.Client.GetStream();
-				if(!stream.CanWrite) {
-					throw new Exception("不支持写入");
-				}
-				await stream.WriteAsync(bmpInfo.printingBytes, 0, bmpInfo.printingBytes.Length);
-				client.IdleTime = 0;
-				lock(IPClientBmpMap) {
-					IPClientBmpMap[ip].Queue.Dequeue();
+				OnLog?.Invoke(ip, bmpInfo.bmp, $"正在尝试打印", LogLevel.Info);
 
-					OnLog?.Invoke(ip, bmpInfo?.bmp, "打印成功", LogLevel.Success);
+				NetworkStream stream = client.Client.GetStream();
+				NetworkStream statusStream = statusClient.Client.GetStream();
+
+				// 先获取打印机状态服务器的状态, 并阻塞线程
+				await statusStream.WriteAsync(status, 0, status.Length);
+
+				IPClientBmpMap[ip].Mutex.Reset();
+				IPClientBmpMap[ip].Mutex.WaitOne();
+
+				// 写入打印数据流
+				await stream.WriteAsync(bmpInfo.printingBytes, 0, bmpInfo.printingBytes.Length);
+
+				
+				lock(IPClientBmpMap) {
+					client.IdleTime = 0;
+					IPClientBmpMap[ip].Queue.Dequeue();
 				}
+
+				OnLog?.Invoke(ip, bmpInfo?.bmp, "打印成功", LogLevel.Success);
 
 				await prePrint(ip);
 			}
@@ -237,8 +258,7 @@ namespace AutoPrinter {
 				OnLog?.Invoke(ip, null, $"写入数据发生错误 {e.Message}", LogLevel.Error);
 
 				lock(IPClientBmpMap) {
-					IPClientBmpMap[ip].TcpClientInfo?.Close();
-					IPClientBmpMap[ip].TcpClientInfo = null;
+					closeIP(ip);
 				}
 
 				OnLog?.Invoke(ip, null, "重新尝试连接", LogLevel.Info);
@@ -249,11 +269,8 @@ namespace AutoPrinter {
 		public async Task Connect(IPAddress ip) {
 			ClientBmpInfo clientBmpInfo;
 			lock(IPClientBmpMap) {
-				if(!IPClientBmpMap.ContainsKey(ip)) {
-					IPClientBmpMap.Add(ip, new ClientBmpInfo {
-						Queue = new Queue<BmpInfo>()
-					});
-				}
+				addIP(ip);
+
 				clientBmpInfo = IPClientBmpMap[ip];
 
 				OnLog?.Invoke(ip, null, null, LogLevel.Info);
@@ -273,12 +290,17 @@ namespace AutoPrinter {
 		}
 		private async Task connect(IPAddress ip, ClientBmpInfo clientBmpInfo) {
 			TcpClient client = new TcpClient();
+			TcpClient statusClient = new TcpClient();
 
 			try {
 				OnLog?.Invoke(ip, null, "正在连接", LogLevel.Info);
 				await client.ConnectAsync(ip, 9100);
+				await statusClient.ConnectAsync(ip, 4000);
 
 				clientBmpInfo.TcpClientInfo = new TcpClientInfo(client);
+				clientBmpInfo.StatusTcpClientInfo = new TcpClientInfo(statusClient);
+				startReceiving(ip, statusClient);
+
 				clientBmpInfo.TryTime = 0;
 				clientBmpInfo.IsConnecting = false;
 				OnLog?.Invoke(ip, null, "连接成功", LogLevel.Success);
@@ -303,6 +325,85 @@ namespace AutoPrinter {
 				await Task.Delay(tryInterval * 1000);
 				await connect(ip, clientBmpInfo);
 			}
+		}
+
+		private void startReceiving(IPAddress ip, TcpClient client) {
+			Task.Run(async () => {
+				if(client == null)
+					return;
+
+				try {
+					NetworkStream networkStream = client.GetStream();
+					int receiveZeroCount = 0;
+
+					while(true) {
+						byte[] buffer = new byte[4];
+
+						int lengthRead = await networkStream.ReadAsync(buffer, 0, buffer.Length);
+
+						// 如果持续受到0十次以上，则远程socket连接关闭
+						if(lengthRead == 0) {
+							receiveZeroCount++;
+							if(receiveZeroCount >= 10) {
+								throw new Exception("远程连接被关闭");
+							}
+							continue;
+						}
+						receiveZeroCount = 0;
+
+						if(!isArryEqual(buffer, statusOKBuffer)) {
+							OnLog(ip, null, "打印机状态错误", LogLevel.Error);
+							await Task.Delay(tryInterval * 1000);
+							NetworkStream stream = client.GetStream();
+							await stream.WriteAsync(status, 0, status.Length);
+							continue;
+						}
+
+						lock(IPClientBmpMap) {
+							IPClientBmpMap[ip].Mutex.Set();
+						}
+					}
+				}
+				catch(Exception e) {
+					lock(IPClientBmpMap) {
+						closeIP(ip);
+						IPClientBmpMap[ip].Mutex.Set();
+					}
+
+					OnLog(ip, null, $"打印机失去连接 {e.Message}", LogLevel.Error);
+				}
+			});
+		}
+
+		private void addIP(IPAddress ip) {
+			if(!IPClientBmpMap.ContainsKey(ip)) {
+				IPClientBmpMap.Add(ip, new ClientBmpInfo {
+					Queue = new Queue<BmpInfo>(),
+					Mutex = new AutoResetEvent(true)
+				});
+			}
+		}
+		private void closeIP(IPAddress ip) {
+			IPClientBmpMap[ip].TcpClientInfo.Close();
+			IPClientBmpMap[ip].StatusTcpClientInfo.Close();
+			IPClientBmpMap[ip].TcpClientInfo = null;
+			IPClientBmpMap[ip].StatusTcpClientInfo = null;
+
+			IPClientBmpMap[ip].IsPrinting = false;
+		}
+
+		private bool isArryEqual(byte[] b1, byte[] b2) {
+			if(b1 == null || b2 == null || b1.Length != b2.Length) {
+				return false;
+			}
+
+			for(int i = 0; i < b1.Length; i++) {
+				if(b1[i] != b2[i]) {
+					return false;
+				}
+			}
+
+			return true;
 		}
 	}
 }

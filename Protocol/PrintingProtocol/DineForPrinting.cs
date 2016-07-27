@@ -24,6 +24,8 @@ namespace Protocol.PrintingProtocol {
 		public Desk Desk { get; set; }
 		public List<DineMenu> DineMenus { get; set; } = new List<DineMenu>();
 		public List<DinePaidDetail> DinePaidDetails { get; set; } = new List<DinePaidDetail>();
+
+		public TakeOut TakeOut { get; set; }
 	}
 
 	public class Staff {
@@ -40,15 +42,11 @@ namespace Protocol.PrintingProtocol {
 		public string QrCode { get; set; }
 		public string Name { get; set; }
 		public string Description { get; set; }
+		public AreaType AreaType { get; set; }
 		public Printer ReciptPrinter { get; set; }
 		public Printer ServePrinter { get; set; }
 	}
-	public class Printer {
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public string IpAddress { get; set; }
-		public bool Usable { get; set; }
-	}
+
 	public class DineMenu {
 		public int Id { get; set; }
 		public DineMenuStatus Status { get; set; }
@@ -86,6 +84,10 @@ namespace Protocol.PrintingProtocol {
 		public string Name { get; set; }
 		public PayKindType Type { get; set; }
 	}
+	public class TakeOut {
+		public string Address { get; set; }
+		public string RecordId { get; set; }
+	}
 
 	public class Hotel {
 		public int Id { get; set; }
@@ -103,10 +105,10 @@ namespace Protocol.PrintingProtocol {
 		public string PhoneNumber { get; set; }
 	}
 
-
 	public class PrinterFormat {
 		public int PaperSize { get; set; }
 		public string Font { get; set; }
+		public int ColorDepth { get; set; }
 		public int ReciptBigFontSize { get; set; }
 		public int ReciptFontSize { get; set; }
 		public int ReciptSmallFontSize { get; set; }
@@ -123,22 +125,6 @@ namespace Protocol.PrintingProtocol {
 		public Hotel Hotel { get; set; }
 		public Dine Dine { get; set; }
 		public User User { get; set; }
-		public PrinterFormat PrinterFormat { get; set; }
-	}
-
-	public class ShiftDetail {
-		public string PayKind { get; set; }
-		public decimal ReceivablePrice { get; set; }
-		public decimal RealPrice { get; set; }
-	}
-	public class Shift {
-		public List<ShiftDetail> ShiftDetails { get; set; }
-		public DateTime DateTime { get; set; }
-		public int Id { get; set; }
-	}
-	public class ShiftForPrinting {
-		public List<Shift> Shifts { get; set; }
-		public string PrinterName { get; set; }
 		public PrinterFormat PrinterFormat { get; set; }
 	}
 }

@@ -1,0 +1,105 @@
+﻿@{
+    Layout = null;
+}
+<link href="~/Content/css/style.css" rel="stylesheet" />
+<div ng-init="Initialize()" class="row">
+    <div class="col-xs-4">
+        桌台号: <select ng-model="Element.CurrentDesk"
+                     chosen
+                     placeholder-text-single="'选择初始桌台'"
+                     no-results-text="'没有找到'"
+                     ng-options="desk.Name for desk in Element.TakeOutDeskes"
+                     ng-change="getUnPaidDines()"
+                     style="width:100%;">
+            <option value=""></option>
+        </select>
+    </div>
+</div>
+<div class="row" style="margin:10px;">
+    请选择一同支付订单
+    <span class="label label-xlg label-primary arrowed arrowed-right UnChooseDine" ng-repeat="dine in Element.UnChooseDines" ng-click="ChooseDine(dine)">
+        {{Element.CurrentDesk.Name}}
+        {{dine.TakeOut.RecordId}}号
+        {{dine.Price|currency:'￥'}}
+        <span>
+            <i class="icon-ok bigger-125"></i>
+        </span>
+    </span>
+</div>
+<button type="button" class="btn btn-info btn-sm" ng-click="ChooseAll()">
+    <i class="icon-key bigger-110"></i>
+    全部结算
+</button>
+<div class="row" style="margin:20px 10px;">
+    一同支付订单:
+    <span class="label label-xlg label-grey arrowed-in-right arrowed-in UnChooseDine" ng-repeat="dine in Element.ChooseDines" ng-click="RemoveDine(dine)">
+        {{Element.CurrentDesk.Name}}
+        {{dine.TakeOut.RecordId}}号
+        {{dine.Price|currency:'￥'}}
+        <span>
+            <i class="icon-remove bigger-125 red"></i>
+        </span>
+    </span>
+</div>
+<h5>
+    总计:
+    <span class="red">
+        {{Account()|currency:'￥'}}
+    </span>
+</h5>
+
+选择支付方式
+<select ng-options="pay.Name for pay in Element.PayKinds" ng-model="Element.CurrentPay">
+</select>
+:<input type="text" ng-model="Element.Cash" />
+
+<button type="button" class="btn btn-info btn-sm" ng-click="Pay()">
+    <i class="icon-cash bigger-110"></i>
+    结账
+</button>
+<br />
+<button type="button" class="btn btn-info btn-sm" ng-click="Detail()">
+    <i class="icon-search bigger-110"></i>
+    查看详情
+</button>
+<div class="row waterfall-4 clearfix" style="margin:10px;">
+    <div class="pricing-box waterfall-item" ng-repeat="dine in Element.SearchDines">
+        <div class="widget-box">
+            <div class="widget-header header-color-dark">
+                <h5 class="bigger lighter">
+                    {{dine.Id}}<span ng-show="dine.IsPaid==0" class="red">
+                        [未支付]
+                    </span>
+                    <span ng-show="dine.IsPaid==1" class="green">
+                        [已支付]
+                    </span>
+                    <br />
+                    {{Element.CurrentDesk.Name}}
+                    {{dine.TakeOut.RecordId}}号
+                </h5>
+            </div>
+
+            <div class="widget-body">
+                <div class="widget-main">
+                    <ul class="list-unstyled spaced2">
+                        <li ng-repeat="menu in dine.DineMenus">
+                            {{menu.Menu.English}}{{menu.Menu.Name}}
+                        </li>
+                    </ul>
+
+                    <hr>
+                    <div class="price">
+                        <span ng-show="dine.OriPrice!=dine.Price">
+                            原价:<s>{{dine.OriPrice|currency:'￥'}}</s>
+                            现价:{{dine.Price|currency:'￥'}}
+                        </span>
+
+                        <span ng-show="dine.OriPrice==dine.Price">
+                            {{dine.Price|currency:'￥'}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

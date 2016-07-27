@@ -79,6 +79,7 @@ namespace OrderSystem.Controllers {
 						HotelManager hotelManager = new HotelManager(h.ConnectionString);
 						await hotelManager.TransferDines(oldUser.Id, user.Id);
 					}
+					await UserManager.TransferUserPrice(user, oldUser);
 					await UserManager.DeleteAsync(oldUser);
 
 					await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Warning, $"User Transfer: {oldUser.Id} -> {user.Id}");

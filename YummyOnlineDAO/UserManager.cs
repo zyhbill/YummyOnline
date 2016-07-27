@@ -134,5 +134,11 @@ namespace YummyOnlineDAO.Identity {
 			ctx.Entry(user).Property(p => p.PasswordHash).IsModified = true;
 			await ctx.SaveChangesAsync();
 		}
+
+		public async Task TransferUserPrice(User newUser, User oldUser) {
+			newUser.Price += oldUser.Price;
+			oldUser.Price = 0;
+			await ctx.SaveChangesAsync();
+		}
 	}
 }

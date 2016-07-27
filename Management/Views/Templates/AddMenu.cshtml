@@ -79,7 +79,7 @@
                         <uib-tab index="0" heading="所有" ng-click="ChooseAll()">
                             <div class="MenuColumn clearfix MaxLength">
                                 <div class="MenuList" ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)"  ng-dblclick="AddSingle(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}">
-                                    <div class="text-center bigfont">{{menu.Name}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
+                                    <div class="text-center bigfont">{{menu.NameAbbr}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
                                 </div>
                                 <div class="clean"></div>
                             </div>
@@ -87,7 +87,7 @@
                         <uib-tab ng-repeat="class in OpenElements.Classes" index="{{$index + 1}}" heading="{{class.Name}}" ng-click="MenuFilter(class.Id)">
                             <div class="MenuColumn clearfix MaxLength">
                                 <div class="MenuList" ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}" ng-dblclick="AddSingle(menu)">
-                                    <div class="text-center bigfont">{{menu.Name}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
+                                    <div class="text-center bigfont">{{menu.NameAbbr}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
                                 </div>
                                 <div class="clean"></div>
                             </div>

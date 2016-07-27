@@ -20,7 +20,7 @@ namespace Management.Controllers
         public async Task<JsonResult> GetPayDetails (DateTime begintime, DateTime endtime, List<int> payKindIds)
         {
             endtime = endtime.AddDays(1);
-            var linq = db.DinePaidDetails.Include(p => p.Dine).Include(p => p.PayKind).Where(t => t.Dine.BeginTime <= endtime && begintime <= t.Dine.BeginTime);
+            var linq = db.DinePaidDetails.Include(p => p.Dine).Include(p => p.PayKind).Where(t => (t.Dine.BeginTime <= endtime && begintime <= t.Dine.BeginTime)&&t.Dine.IsPaid==true);
             if (payKindIds != null && payKindIds.Count > 0)
             {
                 linq = linq.Where(x => payKindIds.Contains(x.PayKindId));

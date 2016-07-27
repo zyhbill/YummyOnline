@@ -29,11 +29,12 @@ namespace HotelDAO.Models {
 		public int PaperSize { get; set; }
 		[MaxLength(10)]
 		public string Font { get; set; }
+		public int ColorDepth { get; set; }
 
 		public int ReciptBigFontSize { get; set; }
 		public int ReciptFontSize { get; set; }
 		public int ReciptSmallFontSize { get; set; }
-		
+
 		public int KitchenOrderFontSize { get; set; }
 		public int KitchenOrderSmallFontSize { get; set; }
 

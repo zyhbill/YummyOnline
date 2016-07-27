@@ -33,7 +33,8 @@ namespace YummyOnlineDAO.Models {
 			/// 其他远程日志
 			/// </summary>
 			Remote = 5,
-			OrderSystem_Waiter = 6
+			OrderSystem_Waiter = 6,
+			WeChat = 7
 		}
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]

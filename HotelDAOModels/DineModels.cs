@@ -90,10 +90,6 @@ namespace HotelDAO.Models {
 		/// 是否已经打印发票
 		/// </summary>
 		public bool IsInvoiced { get; set; }
-		[MaxLength(20)]
-		public string Invoice { get; set; }
-		[MaxLength(20)]
-		public string Footer { get; set; }
 
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public DateTime BeginTime { get; set; }
@@ -127,9 +123,20 @@ namespace HotelDAO.Models {
 		public ICollection<Remark> Remarks { get; set; }
 		public ICollection<DineMenu> DineMenus { get; set; }
 		public ICollection<DinePaidDetail> DinePaidDetails { get; set; }
+		public ICollection<Invoice> Invoices { get; set; }
 		public TakeOut TakeOut { get; set; }
 	}
 
+	public enum DineMenuType {
+		None = 0,
+		OnSale = 1,
+		MenuDiscount = 2,
+		PayKindDiscount = 3,
+		TimeDiscount = 4,
+		VipDiscount = 5,
+		CustomDiscount = 6,
+		SetMeal = 7
+	}
 	public enum DineMenuStatus {
 		/// <summary>
 		/// 普通
@@ -157,6 +164,7 @@ namespace HotelDAO.Models {
 		public string MenuId { get; set; }
 		public Menu Menu { get; set; }
 
+		public DineMenuType Type { get; set; } = DineMenuType.None;
 		public DineMenuStatus Status { get; set; } = DineMenuStatus.Normal;
 		public int Count { get; set; }
 		public decimal OriPrice { get; set; }
@@ -188,19 +196,6 @@ namespace HotelDAO.Models {
 		/// 支付身份记录信息
 		/// </summary>
 		public string RecordId { get; set; }
-	}
-	/// <summary> 
-	/// 订单外卖，一对一表
-	/// </summary>
-	public class TakeOut {
-		[Key, ForeignKey(nameof(Dine))]
-		public string Id { get; set; }
-		public Dine Dine { get; set; }
-
-		[MaxLength(128)]
-		public string Address { get; set; }
-		[MaxLength(11)]
-		public string PhoneNumber { get; set; }
 	}
 
 	public class ReturnedReason {

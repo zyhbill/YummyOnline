@@ -112,7 +112,7 @@ namespace Management.Controllers
         /// <param name="Area"></param>
         /// <param name="OriginAreaId">原先更改的桌台号码</param>
         /// <returns></returns>
-        public async Task<JsonResult> EditArea(Area Area, string OriginAreaId)
+        public async Task<JsonResult> EditArea(Area Area, string OriginAreaId,int Type)
         {
             if (Area.Id != OriginAreaId)
             {
@@ -120,6 +120,7 @@ namespace Management.Controllers
                 var area = await db.Areas.Where(a => a.Id == OriginAreaId).FirstOrDefaultAsync();
                 db.Areas.Remove(area);
                 db.SaveChanges();
+                Area.Type = (AreaType)Type;
                 db.Areas.Add(Area);
             }
             else
@@ -129,20 +130,21 @@ namespace Management.Controllers
                 area.Description = Area.Description;
                 area.DepartmentServeId = Area.DepartmentServeId;
                 area.DepartmentReciptId = Area.DepartmentReciptId;
+                area.Type = (AreaType)Type;
             }
             db.SaveChanges();
-            return Json(new { Status = true });
+            return Json(new SuccessState());
         }
         /// <summary>
         /// 增加区域
         /// </summary>
         /// <param name="area"></param>
         /// <returns></returns>
-        public async Task<JsonResult> AddArea(newArea area)
+        public async Task<JsonResult> AddArea(newArea area,int Type)
         {
             var Clean = await db.Areas.FirstOrDefaultAsync(a => a.Id == area.Id);
             if (Clean != null) {
-                if(Clean.Usable == true) return Json(new { Status=false,ErrorMessage="已有相同编号"});
+                if(Clean.Usable == true) return Json(new ErrorState("已有相同编号"));
                 else
                 {
                     Clean.Name = area.Name;
@@ -150,8 +152,9 @@ namespace Management.Controllers
                     Clean.Description = area.Description;
                     Clean.DepartmentReciptId = area.DepartmentReciptId;
                     Clean.DepartmentServeId = area.DepartmentServeId;
+                    Clean.Type = (AreaType)Type;
                     db.SaveChanges();
-                    return Json(new { Status = true });
+                    return Json(new SuccessState());
                 }
             }
             else
@@ -163,9 +166,10 @@ namespace Management.Controllers
                 NewAr.Description = area.Description;
                 NewAr.DepartmentReciptId = area.DepartmentReciptId;
                 NewAr.DepartmentServeId = area.DepartmentServeId;
+                NewAr.Type = (AreaType)Type;
                 db.Areas.Add(NewAr);
                 db.SaveChanges();
-                return Json(new { Status = true });
+                return Json(new SuccessState()); 
             }
             
         }
@@ -571,8 +575,14 @@ namespace Management.Controllers
         /// <returns></returns>
         public async Task<JsonResult> DeleteMenu(string MenuId)
         {
-            var menu = await db.Menus.FirstOrDefaultAsync(m => m.Id == MenuId);
+            var menu = await db.Menus
+                .Include(m=>m.Classes)
+                .FirstOrDefaultAsync(m => m.Id == MenuId);
             menu.Usable = false;
+            foreach(var i in menu.Classes)
+            {
+                menu.Classes.Remove(i);
+            }
             db.SaveChanges();
             return null;
         }
@@ -699,6 +709,7 @@ namespace Management.Controllers
             staff.WorkTimeFrom = Sfh.WorkTimeFrom;
             staff.WorkTimeTo = Sfh.WorkTimeTo;
             db.SaveChanges();
+            if (sysStaff.IsHotelAdmin) { return Json(new ErrorState("不可删除，饭店总管理身份,其他信息已经更改完毕")); }
             var cleanRoles = await db.Staffs.Where(s => s.Id == Sf.Id).FirstOrDefaultAsync();
             var Cr = cleanRoles.StaffRoles.Select(s => s.Id);
             if (Cr.Count() > 0)
@@ -1099,7 +1110,7 @@ namespace Management.Controllers
                 var menu = await db.Menus.Where(m => m.Classes.Select(mm => mm.Id).FirstOrDefault() == Id).FirstOrDefaultAsync();
                 if (menu != null)
                 {
-                    return Json(new { Status = false, ErrorMessage = "当前分类内还有菜品请删除后添加" });
+                    return Json(new { Status = false, ErrorMessage = "当前分类内还有菜品，请删除本类的所有菜品，再删除" });
                 }
                 else
                 {
@@ -1309,13 +1320,16 @@ namespace Management.Controllers
             font.ShiftBigFontSize = Format.ShiftBigFontSize;
             font.ShiftFontSize = Format.ShiftFontSize;
             font.ShiftSmallFontSize = Format.ShiftSmallFontSize;
+            font.ColorDepth = Format.ColorDepth;
             db.SaveChanges();
             var hotel = sysdb.Hotels.Where(h => h.Id == HotelId).FirstOrDefault();
             if (Style == 0)
             {
                 hotel.CssThemePath = "default.css";
+                hotel.OrderSystemStyle = OrderSystemStyle.Simple;
             }else if(Style == 1)
             {
+                hotel.OrderSystemStyle = OrderSystemStyle.Fashion;
                 hotel.CssThemePath = "cafe.css";
             }
             sysdb.SaveChanges();

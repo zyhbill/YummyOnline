@@ -33,7 +33,10 @@ namespace YummyOnlineDAO.Models {
 		public string Email { get; set; }
 		[MaxLength(20)]
 		public string UserName { get; set; }
+		public string WeChatOpenId { get; set; }
 		public string PasswordHash { get; set; }
+
+		public decimal Price { get; set; }
 
 		public bool Confirmed { get; set; }
 		public bool IsSendRecommedation { get; set; }
@@ -42,6 +45,8 @@ namespace YummyOnlineDAO.Models {
 		public DateTime CreateDate { get; set; }
 
 		public ICollection<UserRole> Roles { get; set; }
+
+		public ICollection<UserAddress> UserAddresses { get; set; }
 	}
 	public class UserRole {
 		[Key, Column(Order = 0)]
@@ -50,5 +55,16 @@ namespace YummyOnlineDAO.Models {
 
 		[Key, Column(Order = 1)]
 		public Role Role { get; set; }
+	}
+
+	public class UserAddress {
+		[Key, ForeignKey(nameof(User))]
+		[Column(Order = 0)]
+		public string UserId { get; set; }
+		public User User { get; set; }
+
+		[Key, Column(Order = 1)]
+		[MaxLength(128)]
+		public string Address { get; set; }
 	}
 }

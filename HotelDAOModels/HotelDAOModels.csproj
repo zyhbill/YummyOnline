@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InvoiceModels.cs" />
     <Compile Include="PrinterModels.cs" />
     <Compile Include="DepartmentModels.cs" />
     <Compile Include="AreaModels.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="CustomerModels.cs" />
     <Compile Include="ShiftModels.cs" />
     <Compile Include="StaffModels.cs" />
+    <Compile Include="TakeOutModels.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -15,11 +15,25 @@
             </ul>
             <div class="tab-content">
                 <div ng-repeat="area in SysElements.Areas" id="{{getIdShow($index)}}" class="tab-pane" setfirstfocus index="$index">
-                    <div class="desk" ng-repeat="desk in SysElements.Desks|filter:{AreaId:area.Id}" ng-click="OpenModel(desk)">
+                    <div class="desk" ng-repeat="desk in SysElements.Desks|filter:{AreaId:area.Id}" ng-click="OpenModel(desk,area)">
                         <h4 ng-if="!desk.Status"><img src="~/Content/images/nobody.png" class="img-responsive"></h4>
                         <h4 ng-if="desk.Status"><img src="~/Content/images/eating.png" class="img-responsive"></h4>
-                        <p ng-if="!desk.Status" class="text-success text-center">{{desk.Id}}</p>
-                        <p ng-if="desk.Status" class="text-danger text-center">{{desk.Id}}</p>
+                        <p ng-if="!desk.Status" class="text-success text-center">
+                            <span ng-show="area.Type==0">
+                                {{desk.Id}}
+                            </span>
+                            <span ng-show="area.Type==1">
+                                {{desk.Name}}
+                            </span>
+                        </p>
+                        <p ng-if="desk.Status" class="text-danger text-center">
+                            <span ng-show="area.Type==0">
+                                {{desk.Id}}
+                            </span>
+                            <span ng-show="area.Type==1">
+                                {{desk.Name}}
+                            </span>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -59,7 +73,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="dine in PayElements.UnpaidDines|filter:{DeskId:PayElements.Desk.Id}" ng-click="SetDine(dine)">
+                            <tr ng-repeat="dine in PayElements.UnpaidDines|filter:{DeskId:PayElements.Desk.Id}" ng-click="SetDine(dine)"  ng-class="{DineChoose:dine.isChoose}"> 
                                 <td>{{dine.Id}}</td>
                                 <td>{{dine.HeadCount}}</td>
                                 <td>{{dine.BeginTime|date:'yyyy-MM-dd HH:mm:ss'}}</td>
@@ -184,7 +198,7 @@
                         <uib-tab index="0" heading="所有" ng-click="ChooseAll()">
                             <div class="MenuColumn clearfix MaxLength">
                                 <div class="MenuList" ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}" ng-dblclick="AddSingle(menu)">
-                                    <div class="text-center bigfont">{{menu.EnglishName}}<br/>{{menu.Name}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
+                                    <div class="text-center bigfont">{{menu.NameAbbr}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
                                 </div>
                                 <div class="clean"></div>
                             </div>
@@ -192,16 +206,16 @@
                         <uib-tab ng-repeat="class in OpenElements.Classes" index="{{$index + 1}}" heading="{{class.Name}}" ng-click="MenuFilter(class.Id)">
                             <div class="MenuColumn clearfix MaxLength">
                                 <div class="MenuList" ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}" ng-dblclick="AddSingle(menu)">
-                                    <div class="text-center bigfont">{{menu.Name}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
+                                    <div class="text-center bigfont">{{menu.NameAbbr}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
                                 </div>
                                 <div class="clean"></div>
                             </div>
                         </uib-tab>
                     </uib-tabset>
                 </div>
-                <div class="col-xs-7"  ng-show="OpenElements.Type==1">
+                <div class="col-xs-7" ng-show="OpenElements.Type==1">
                     <!--文字模式-->
-                    <input type="text" ng-model="OpenElements.FilterInfo" class="form-control" placeholder="若要搜索,请输入名称或编号" ng-change="Filter()"/>
+                    <input type="text" ng-model="OpenElements.FilterInfo" class="form-control" placeholder="若要搜索,请输入名称或编号" ng-change="Filter()" />
                     <span class="red  icon-remove  CleanOut" ng-click="CleanFilter()"></span>
                     <ul class="menuShow OpenList">
                         <li ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)">{{menu.Name}}</li>
@@ -226,7 +240,7 @@
                                     <td class="text-right">
                                         <span ng-if="!orderMenu.IsEdit">{{orderMenu.Num}}</span>
                                         <span ng-if="orderMenu.IsEdit">
-                                            <input type="number" ng-model="orderMenu.Num" class="Num" ng-change="CheckAddNum(orderMenu)"/>
+                                            <input type="number" ng-model="orderMenu.Num" class="Num" ng-change="CheckAddNum(orderMenu)" />
                                         </span>
                                     </td>
                                     <td class="text-right">{{(orderMenu.MenuPrice.Price*orderMenu.Num).toFixed(2)}}</td>
@@ -314,4 +328,251 @@
             <div class="col-xs-5"></div>
         </div>
     </div>
+</script>
+
+<script type="text/ng-template" id="ModelReserve.html">
+    <div class="modal-header">
+        <h3 class="modal-title">
+            <div class="form-inline" ng-init="initialize()">
+                预定
+                <div class="form-group openDesk">
+                    <label>管理员:&nbsp;@((Session["User"] as Management.ObjectClasses.RStatus).Name)</label>
+                    <label>桌台号:&nbsp;<span>{{OpenElements.CurrentDesk.Id}}</span></label>&nbsp;&nbsp;
+                </div>
+            </div>
+        </h3>
+        <div class="btn btn-default shift" ng-click="ShiftType()">
+            切换
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="fakeloader"></div>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-7 PicChoose" ng-show="OpenElements.Type==0">
+                    <!--图片文字模式-->
+                    <input type="text" ng-model="OpenElements.FilterInfo" class="form-control menu-filter" placeholder="若要搜索,请输入名称或编号" ng-change="Filter()" />
+                    <span class="red  icon-remove  CleanOut" ng-click="CleanFilter()"></span>
+                    <uib-tabset active="active Justified" id="MenuLists" justified="true" class="bigfont">
+                        <uib-tab index="0" heading="所有" ng-click="ChooseAll()">
+                            <div class="MenuColumn clearfix MaxLength">
+                                <div class="MenuList" ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}" ng-dblclick="AddSingle(menu)">
+                                    <div class="text-center bigfont">{{menu.NameAbbr}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
+                                </div>
+                                <div class="clean"></div>
+                            </div>
+                        </uib-tab>
+                        <uib-tab ng-repeat="class in OpenElements.Classes" index="{{$index + 1}}" heading="{{class.Name}}" ng-click="MenuFilter(class.Id)">
+                            <div class="MenuColumn clearfix MaxLength">
+                                <div class="MenuList" ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}" ng-dblclick="AddSingle(menu)">
+                                    <div class="text-center bigfont">{{menu.NameAbbr}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
+                                </div>
+                                <div class="clean"></div>
+                            </div>
+                        </uib-tab>
+                    </uib-tabset>
+                </div>
+                <div class="col-xs-7" ng-show="OpenElements.Type==1">
+                    <!--文字模式-->
+                    <input type="text" ng-model="OpenElements.FilterInfo" class="form-control" placeholder="若要搜索,请输入名称或编号" ng-change="Filter()" />
+                    <span class="red  icon-remove  CleanOut" ng-click="CleanFilter()"></span>
+                    <ul class="menuShow OpenList">
+                        <li ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)">{{menu.Name}}</li>
+                    </ul>
+                </div>
+                <div class="col-xs-5">
+                    <div class="table-responsive menuShow">
+                        <table class="table table-striped table-bordered table-hover">
+                            <thead>
+                                <tr>
+                                    <th>项目名称</th>
+                                    <th>数量</th>
+                                    <th>原价</th>
+                                    <th>折后金额</th>
+                                    <th>备注</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="orderMenu in OpenElements.OrderMenus track by $index">
+                                    <td><span ng-if="orderMenu.IsSend" class="red">送</span>{{orderMenu.Name}}</td>
+                                    <td class="text-right">
+                                        <span ng-if="!orderMenu.IsEdit">{{orderMenu.Num}}</span>
+                                        <span ng-if="orderMenu.IsEdit">
+                                            <input type="number" ng-model="orderMenu.Num" class="Num" ng-change="CheckAddNum(orderMenu)" />
+                                        </span>
+                                    </td>
+                                    <td class="text-right">{{(orderMenu.MenuPrice.Price*orderMenu.Num).toFixed(2)}}</td>
+                                    <td class="text-right">
+                                        <span ng-if="!orderMenu.IsSend">{{CalcMenuPrice(orderMenu)}}</span>
+                                        <span ng-if="orderMenu.IsSend">0.00</span>
+                                    </td>
+                                    <td>
+                                        <span ng-if="!orderMenu.IsEdit" class="label label-success arrowed" ng-repeat="remark in orderMenu.Remarks">
+                                            {{remark.Name}}
+                                        </span>
+                                        <span ng-if="orderMenu.IsEdit">
+                                            <select chosen
+                                                    multiple
+                                                    allow-single-deselect="true"
+                                                    max-selected-options="3"
+                                                    no-results-text="'没有备注'"
+                                                    placeholder-text-multiple="'选择备注'"
+                                                    ng-model="orderMenu.Remarks"
+                                                    ng-options="remark.Name for remark in OpenElements.CurrentMenu.Remarks"
+                                                    style="width:100%;">
+                                                <option value=""></option>
+                                            </select>
+                                        </span>
+                                    </td>
+                                    <td class="text-center EditBtn">
+                                        <nobr>
+                                            <button ng-click="RemoveMenu($index)" ng-if="!orderMenu.IsEdit">
+                                                <span class="icon-trash"></span>
+                                            </button>
+                                            <button ng-click="EditMenu(orderMenu)" ng-if="!orderMenu.IsEdit">
+                                                <span class="icon-edit"></span>
+                                            </button>
+                                            <button ng-click="EditCheck(orderMenu)" ng-if="orderMenu.IsEdit">
+                                                <span class="icon-ok green"></span>
+                                            </button>
+                                            <button ng-click="EditRemove(orderMenu)" ng-if="orderMenu.IsEdit">
+                                                <span class="icon-remove red"></span>
+                                            </button>
+                                        </nobr>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div><!-- /.table-responsive -->
+                </div><!-- /span -->
+                <br />
+                <div class="col-xs-5" style="margin-top:30px;">
+                    <span class="openDiscount">
+                        折扣方式:<select ng-model="OpenElements.CurrentDiscount" ng-options="discount.Name for discount in OpenElements.Discounts"></select>&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                    <span class="openDiscount">
+                        折扣率:<input class="Headcount" type="number" ng-model="OpenElements.CurrentDiscount.Discount" ng-disabled="!OpenElements.CurrentDiscount.IsSet" ng-change="FormatDiscount()" />%
+                    </span><br /><br />
+                    <h2 class="text-danger">未支付:{{account()}}</h2>
+                </div>
+            </div><!-- row end  -->
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row">
+            <div class="col-xs-2">
+                <select chosen
+                        multiple
+                        allow-single-deselect="true"
+                        max-selected-options="3"
+                        no-results-text="'没有备注'"
+                        placeholder-text-multiple="'选择备注'"
+                        ng-model="OpenElements.CurrentMenuRemarks"
+                        ng-options="remark.Name for remark in OpenElements.CurrentMenu.Remarks"
+                        style="width:100%;">
+                    <option value=""></option>
+                </select>
+            </div>
+            <div class="col-xs-1">
+                数量:<input type="number" ng-model="OpenElements.CurrentMenu.Num" ng-change="NumChange()" class="num-spinner" />
+                <spinner-up ng-click="Up()"></spinner-up><spinner-down ng-click="Down()"></spinner-down>
+            </div>
+            <div class="col-xs-6">
+                <button class="btn btn-success" ng-click="AddMenu()">添加</button>
+                <button class="btn btn-primary" ng-click="SendMenu()">赠送</button>
+                <button class="btn btn-primary" type="button" ng-click="OpenReserveModel()">外卖信息录入</button>
+                <button class="btn btn-primary" type="button" ng-click="OpenReserve()" ng-disabled="AllowOpen()">开单</button>
+                <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+            </div>
+            <div class="col-xs-3"></div>
+        </div>
+    </div>
+</script>
+
+<script type="text/ng-template" id="ModelReservePhoneInfo.html">
+    <form ng-submit="ok()" name="reserve">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                外卖信息录入
+
+                <label>
+                    班次号:
+                    <input type="text" ng-model="OpenElements.ShiftNum" />
+                </label>
+            </h3>
+
+        </div>
+        <div class="modal-body">
+            外卖电话:
+            <input type="text" pattern="1[3|4|5|7|8]\d{9}" name="phone" ng-model="ReserveInfo.Phone" required />
+            <button type="button" class="btn btn-info btn-sm" ng-disabled="reserve.phone.$invalid" ng-click="SmartChoose()">
+                <i class="icon-key bigger-110"></i>
+                智能获取
+            </button>
+            <br />
+            <div class="widget-box transparent">
+                <div class="widget-header widget-header-small">
+                    <h4 class="blue smaller">
+                        <i class="icon-rss orange"></i>
+                        送餐地址
+                    </h4>
+
+                    <div class="widget-toolbar action-buttons">
+                        <a href="javascript:;" data-action="reload">
+                            <i class="icon-refresh blue"></i>
+                        </a>
+
+                        &nbsp;
+                    </div>
+                </div>
+
+                <div class="widget-body">
+                    <div class="widget-main padding-8">
+                        <div class="slimScrollDiv" style="position: relative; overflow: hidden; width: auto; height: 250px;">
+                            <div id="profile-feed-1" class="profile-feed" style="overflow: hidden; width: auto; height: 250px;">
+                                <div class="profile-activity clearfix address" ng-repeat="address in ReserveInfo.User.UserAddresses" ng-click="SetAddress(address,0)">
+                                    <div class="minHeight">
+                                        <span ng-show="address.IsChoose" class="icon-ok red bigger-125"></span>
+                                        <a class="user" href="javascript:;">
+                                            <span ng-show="!address.IsAlt">
+                                                {{address.Address}}
+                                            </span>
+                                            <span ng-show="address.IsAlt">
+                                                <input type="text" ng-model="address.Address" />
+                                            </span>
+                                        </a>
+                                    </div>
+
+                                    <div class="tools action-buttons">
+                                        <a href="javascript:;" class="red" ng-show="!address.IsAlt" ng-click="DeleteAddress(address)">
+                                            <i class="icon-trash bigger-125"></i>
+                                        </a>
+
+                                    </div>
+                                </div>
+
+                                <div class="profile-activity clearfix address" ng-click="SetAddress(ReserveInfo,1)">
+                                    <div class="minHeight">
+                                        <span ng-show="ReserveInfo.IsChoose" class="icon-ok red bigger-125"></span>
+                                        <a class="user" href="javascript:;">
+                                            <span ng-show="ReserveInfo.IsChoose">
+                                                新增地址:<input type="text" ng-model="ReserveInfo.NewAddress" style="width:80%;display:inline-block;" />
+                                            </span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="submit">确定</button>
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消录入</button>
+        </div>
+    </form>
+
 </script>

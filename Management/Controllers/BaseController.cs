@@ -35,6 +35,18 @@ namespace Management.Controllers
                 return _db;
             }
         }
+        private string _ConnectingStr = null;
+        public string ConnectingStr
+        {
+            get
+            {
+                if(_ConnectingStr == null)
+                {
+                    _ConnectingStr = Session["ConnectString"] as string;
+                }
+                return _ConnectingStr;
+            }
+        }
         private YummyOnlineContext _sysdb = null;
         public YummyOnlineContext sysdb
         {

@@ -49,12 +49,24 @@
 <body>
 	<div class="container-fluid">
 		<h2>YummyOnline Database Specification</h2>
-
+		
 		<div class="alert alert-danger">
-			<p>Staffs表中增加IsHotelAdmin字段</p>
-			<p>HotelConfigs表中增加IsPayFirst字段</p>
+			<p>发票功能修改</p>
 			<p class="text-right">
-				<small>2016-7-1 张朕煜</small>
+				<small>2016-7-20 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>Users中增加WeChatOpenId</p>
+			<p class="text-right">
+				<small>2016-7-19 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>PrinterFormats中增加ColorDepth</p>
+			<p>Users中增加Price</p>
+			<p class="text-right">
+				<small>2016-7-8 张朕煜</small>
 			</p>
 		</div>
 
@@ -98,6 +110,15 @@
 				<td>nvarchar(128)</td>
 				<td>描述</td>
 				<td></td>
+			</tr>
+			<tr>
+				<td>Type</td>
+				<td>int</td>
+				<td>区域类型</td>
+				<td>
+					<p>0 普通区域</p>
+					<p>1 外卖</p>
+				</td>
 			</tr>
 			<tr>
 				<td>Usable</td>
@@ -386,7 +407,7 @@
 				<th></th>
 			</tr>
 			<tr class="primary-key">
-				<td>DineId</td>
+				<td>Dine_Id</td>
 				<td>nvarchar(14)</td>
 				<td>点单号</td>
 				<td></td>
@@ -492,18 +513,6 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td>Invoice</td>
-				<td>nvarchar(20)</td>
-				<td>发票抬头</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Footer</td>
-				<td>nvarchar(15)</td>
-				<td>发票语句模板</td>
-				<td></td>
-			</tr>
-			<tr>
 				<td>BeginTime</td>
 				<td>datetime</td>
 				<td>开始时间</td>
@@ -586,6 +595,38 @@
 				<td>HasAutoPrinter</td>
 				<td>bit</td>
 				<td>是否需要AutoPrinter打印机</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>Invoices</th>
+				<th></th>
+				<th>发票信息表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>DineId</td>
+				<td>nvarchar(14)</td>
+				<td>点单编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Title</td>
+				<td>int</td>
+				<td>发票抬头</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Price</td>
+				<td>int</td>
+				<td>开票金额</td>
 				<td></td>
 			</tr>
 		</table>
@@ -1032,6 +1073,12 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>ColorDepth</td>
+				<td>int</td>
+				<td>颜色深度</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>ReciptBigFontSize</td>
 				<td>bit</td>
 				<td>收银条大字号</td>
@@ -1353,20 +1400,20 @@
 			</tr>
 			<tr class="primary-key">
 				<td>Id</td>
-				<td>varchar(14)</td>
+				<td>nvarchar(14)</td>
 				<td>点单编号</td>
 				<td></td>
 			</tr>
 			<tr>
-				<td>PhoneNumber</td>
-				<td>varchar(11)</td>
-				<td>电话号码</td>
+				<td>Address</td>
+				<td>nvarchar(128)</td>
+				<td>地址</td>
 				<td></td>
 			</tr>
 			<tr>
-				<td>Address</td>
-				<td>varchar(128)</td>
-				<td>地址</td>
+				<td>RecordId</td>
+				<td>nvarchar(MAX)</td>
+				<td>第三方外卖平台编号</td>
 				<td></td>
 			</tr>
 		</table>
@@ -1872,6 +1919,27 @@
 				<td></td>
 			</tr>
 		</table>
+
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>UserAddresses</th>
+				<th></th>
+				<th>用户地址一对多表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>UserId</td>
+				<td>nvarchar(10)</td>
+				<td>用户编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>Address</td>
+				<td>nvarchar(128)</td>
+				<td>地址</td>
+				<td></td>
+			</tr>
+		</table>
 		<table class="table table-bordered table-hover table-condensed">
 			<tr>
 				<th>UserRoles</th>
@@ -1928,9 +1996,21 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>WeChatOpenId</td>
+				<td>nvarchar(max)</td>
+				<td>微信号</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>PasswordHash</td>
 				<td>nvarchar(max)</td>
 				<td>密码</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Price</td>
+				<td>decimal(11, 2)</td>
+				<td>总金额</td>
 				<td></td>
 			</tr>
 			<tr>
@@ -1954,7 +2034,13 @@
 		</table>
 
 
-
+		<div class="alert alert-danger">
+			<p>Staffs表中增加IsHotelAdmin字段</p>
+			<p>HotelConfigs表中增加IsPayFirst字段</p>
+			<p class="text-right">
+				<small>2016-7-1 张朕煜</small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>Hotels表中增加OrderSystemStyle字段</p>
 			<p class="text-right">

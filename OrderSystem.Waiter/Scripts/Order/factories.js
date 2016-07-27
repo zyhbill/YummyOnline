@@ -197,6 +197,7 @@ app.factory('dataSet', [
 				this.Invoice = '';
 				this.OrderedMenus = [];
 				this.Desk = null;
+				this.Customer = null;
 				$dataSet.Reset();
 			},
 			Initialize: function (resolve) {

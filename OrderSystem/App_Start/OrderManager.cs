@@ -40,7 +40,7 @@ namespace OrderSystem {
 			}
 
 			Dine dine = new Dine {
-				Type = DineType.ToStay,
+				Type = addition.DineType,
 				HeadCount = cart.HeadCount,
 				IsOnline = mainPaidDetail.PayKind.Type == PayKindType.Online,
 				IsPaid = false,
@@ -117,7 +117,10 @@ namespace OrderSystem {
 
 			// 订单发票
 			if(cart.Invoice != null) {
-				dine.Invoice = cart.Invoice;
+				dine.Invoices.Add(new Invoice {
+					Price = dine.Price,
+					Title = cart.Invoice
+				});
 			}
 
 			ctx.Dines.Add(dine);
@@ -247,6 +250,7 @@ namespace OrderSystem {
 					if(menu.MenuPrice.Discount < 1) {
 						excludePayDiscount = true;
 						dineMenu.Price = menu.MenuPrice.Price * (decimal)menu.MenuPrice.Discount;
+						dineMenu.Type = DineMenuType.MenuDiscount;
 					}
 					// 是否为特价菜
 					DayOfWeek week = DateTime.Now.DayOfWeek;
@@ -254,15 +258,31 @@ namespace OrderSystem {
 					if(menuOnSales != null) {
 						excludePayDiscount = true;
 						dineMenu.Price = menuOnSales.Price;
+						dineMenu.Type = DineMenuType.OnSale;
 					}
 					// 是否为套餐
 					var menuSetMeals = await ctx.MenuSetMeals.FirstOrDefaultAsync(p => p.MenuSetId == menu.Id && p.Menu.IsSetMeal);
 					if(menuSetMeals != null) {
 						excludePayDiscount = true;
+						dineMenu.Type = DineMenuType.SetMeal;
 					}
 
 					if(!excludePayDiscount) {
 						dineMenu.Price = menu.MenuPrice.Price * (decimal)dine.Discount;
+						switch(dine.DiscountType) {
+							case DiscountType.PayKind:
+								dineMenu.Type = DineMenuType.PayKindDiscount;
+								break;
+							case DiscountType.Vip:
+								dineMenu.Type = DineMenuType.VipDiscount;
+								break;
+							case DiscountType.Time:
+								dineMenu.Type = DineMenuType.TimeDiscount;
+								break;
+							case DiscountType.Custom:
+								dineMenu.Type = DineMenuType.CustomDiscount;
+								break;
+						}
 					}
 				}
 
@@ -401,7 +421,14 @@ namespace OrderSystem {
 			await ctx.SaveChangesAsync();
 		}
 		private async Task changeCustomerPoints(Dine dine) {
-			DinePaidDetail pointsPaidDetail = await ctx.DinePaidDetails.FirstOrDefaultAsync(p => p.Dine.Id == dine.Id && p.PayKind.Type == PayKindType.Points);
+			// 用户总平台消费金额
+			var yummyonlineCtx = new YummyOnlineContext();
+			User user = await yummyonlineCtx.Users.FirstOrDefaultAsync(p => p.Id == dine.UserId);
+			if(user == null) {
+				return;
+			}
+			user.Price += dine.Price;
+			await yummyonlineCtx.SaveChangesAsync();
 
 			Customer customer = await ctx.Customers.FirstOrDefaultAsync(p => p.Id == dine.UserId);
 			// 如果用户不存在或者是匿名用户
@@ -409,6 +436,7 @@ namespace OrderSystem {
 				return;
 			}
 			// 如果使用的积分支付
+			DinePaidDetail pointsPaidDetail = await ctx.DinePaidDetails.FirstOrDefaultAsync(p => p.Dine.Id == dine.Id && p.PayKind.Type == PayKindType.Points);
 			if(pointsPaidDetail != null) {
 				HotelConfig config = await ctx.HotelConfigs.FirstOrDefaultAsync();
 				customer.Points -= Convert.ToInt32((double)pointsPaidDetail.Price / config.PointsRatio);

@@ -469,10 +469,14 @@
     }
     
     $scope.putInvoice = function () {
-        var invoice = $scope.nowDine.Invoice;
-        var Id = $scope.nowDine.Id
-        $http.post('/DinePaidDetails/putInvoice', { Id: Id, Invoice: invoice }).then(function (response) {
+        var invoice = $scope.nowDine.Title;
+        var price = $scope.nowDine.InvoicePrice;
+        var Id = $scope.nowDine.Id;
+        console.log(invoice);
+        console.log(price);
+        $http.post('/DinePaidDetails/putInvoice', { Id: Id, Invoice: invoice,Price:price }).then(function (response) {
             alert('录入成功');
+            refresh();
         });
     }
 

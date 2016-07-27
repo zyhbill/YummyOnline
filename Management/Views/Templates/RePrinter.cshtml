@@ -2,7 +2,7 @@
     Layout = null;
 }
 <link href="../Content/css/style.css" rel="stylesheet" />
-匹配桌台号<input type="number"  ng-model="RePrinterElement.CurrentDeskId"/>
+匹配桌台号<input type="text"  ng-model="RePrinterElement.CurrentDeskId"/>
 
 <div class="row waterfall-4" ng-init="Initialize()">
     <div class="pricing-box waterfall-item" ng-repeat="dine in RePrinterElement.UnShiftDines|filter:{DeskId:RePrinterElement.CurrentDeskId}">

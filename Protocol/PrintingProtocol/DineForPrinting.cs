@@ -67,6 +67,7 @@ namespace Protocol.PrintingProtocol {
 		public string Unit { get; set; }
 		public bool IsSetMeal { get; set; }
 		public List<SetMealMenu> SetMealMenus { get; set; } = new List<SetMealMenu>();
+		public string DepartmentName { get; set; }
 		public Printer Printer { get; set; }
 	}
 	public class SetMealMenu {

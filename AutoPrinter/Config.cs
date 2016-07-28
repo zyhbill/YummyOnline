@@ -189,6 +189,7 @@ namespace AutoPrinter {
 							IpAddress = ipAddress,
 							Usable = true
 						},
+						DepartmentName = $"测试厨房名{i}"
 					}
 				});
 			}

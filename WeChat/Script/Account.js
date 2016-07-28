@@ -14,18 +14,18 @@
                     Code:code,
                     Password:psw,
                     PasswordAga:pswagain
-                });
+                }),
+            function (data){
+                if(data.Succeeded==ture)
+                    alert("注册成功！");};
         }
-       //function (data){
-       //     if(data.Succeeded==ture)
-       //         alert("注册成功！");
-       //     else
-       //         alert("注册失败！");
-       // }
-    });
+        else
+        {
+            { alert("注册失败,请重新填写！");}
+        }})
     $key.click(function(){
         var phoneNumber=$('#phone').val();
         $.post("../Account/generateSmsCodeAndSend",
             { phoneNumber: phoneNumber }
         );
-    })})
+    });})

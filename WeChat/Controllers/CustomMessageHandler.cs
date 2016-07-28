@@ -24,8 +24,8 @@ namespace WeChat.Controllers
 
         internal new void  Execute()
         {
-            //var hm = new YummyOnlineManager();
-            //hm.Log("Execute",inputStream.ToString());
+            var hm = new YummyOnlineManager();
+            hm.Log("Execute", inputStream.ToString());
         }
 
         public override IResponseMessageBase OnTextRequest(RequestMessageText requestMessage)

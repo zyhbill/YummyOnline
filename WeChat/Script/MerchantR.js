@@ -1,4 +1,4 @@
-﻿$(function() {
+﻿$(function () {
     var $button = $('#button');
     var $sbutton = $('#sbutton');
     $button.click(function () {
@@ -19,9 +19,10 @@
                 alert(data.ErrorMessage);
         });
     })
-    $sbutton.click(function() {
+    $sbutton.click(function () {
         var phone = $('#phone').val();
         $.post("../MerchantRegistration/GetKey", {
             phone: phone
         });
-    })})
+    })
+})

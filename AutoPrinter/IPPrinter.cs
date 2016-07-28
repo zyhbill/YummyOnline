@@ -236,6 +236,7 @@ namespace AutoPrinter {
 				NetworkStream statusStream = statusClient.Client.GetStream();
 
 				// 先获取打印机状态服务器的状态, 并阻塞线程
+				await stream.WriteAsync(init, 0, init.Length);
 				await statusStream.WriteAsync(status, 0, status.Length);
 
 				IPClientBmpMap[ip].Mutex.Reset();

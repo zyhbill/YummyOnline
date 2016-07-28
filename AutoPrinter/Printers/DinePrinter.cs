@@ -52,7 +52,7 @@ namespace AutoPrinter {
 				}
 			}
 
-			foreach(Task t in allTasks) {
+			foreach(var t in allTasks) {
 				await t;
 			}
 		}
@@ -227,7 +227,7 @@ namespace AutoPrinter {
 
 			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, maxHeight, protocol.PrinterFormat.Font);
 
-			printGrid55(printerG, new string[] { $"单号: {protocol.Dine.Id}", $"时间: {((DateTime)protocol.Dine.BeginTime).ToString("M-d HH:mm")}" }, protocol.PrinterFormat.KitchenOrderSmallFontSize);
+			printGrid55(printerG, new string[] { $"单号: {protocol.Dine.Id}", $"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}" }, protocol.PrinterFormat.KitchenOrderSmallFontSize);
 
 			if(dineMenu.Status == HotelDAO.Models.DineMenuStatus.Returned) {
 				string returnStr = "退菜";

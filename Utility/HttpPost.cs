@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -7,9 +8,10 @@ using System.Web;
 
 namespace Utility {
 	public static class HttpPost {
+		private static HttpClient client = new HttpClient();
+
 		public static async Task<string> PostAsync(string url, object postData, string contentType = "application/json") {
 			try {
-				HttpClient client = new HttpClient();
 				StringContent content = new StringContent(JsonConvert.SerializeObject(postData));
 				content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(contentType);
 				content.Headers.Add("X-Requested-With", "XMLHttpRequest");
@@ -20,7 +22,9 @@ namespace Utility {
 					}
 				}
 			}
-			catch { }
+			catch(Exception e) {
+				System.Diagnostics.Debug.WriteLine(e);
+			}
 			return null;
 		}
 		public static string GetPostData(HttpRequestBase request) {

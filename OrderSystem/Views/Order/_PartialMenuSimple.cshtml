@@ -1,4 +1,13 @@
-﻿
+﻿<script type="text/ng-template" id="menuModal.html">
+	<div class="modal-header">
+		<button type="button" class="close" ng-click="close()"><span>&times;</span></button>
+		<h4 class="modal-title">{{menu.Name}}</h4>
+	</div>
+	<div class="modal-body menu-modal">
+		<img ng-src="/Content/image/{{menu.PicturePath}}">
+	</div>
+</script>
+
 <section class="section-menu-simple" ng-static-height="88">
 	<ul class="list-group">
 		<!-- ngRepeat menu -->
@@ -6,7 +15,7 @@
 			ng-repeat="menu in menuFilter.FilteredMenus track by menu.Id">
 			<div class="media">
 				<div class="media-left">
-					<a href="javascript:;">
+					<a href="javascript:;" ng-click="showMenuModal(menu)">
 						<img class="media-object"
 							 ng-src="/Content/image/{{menu.PicturePath}}"
 							 ng-click="showModal(menu)">

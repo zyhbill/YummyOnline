@@ -104,5 +104,18 @@
 				$scope.isLoading = false;
 			});
 		}
+
+		$scope.weixinNotify = function (dine) {
+			$http.post('/Hotel/WeixinNotify', {
+				HotelId: $scope.hotelId,
+				DineId: dine.Id
+			}).then(function (response) {
+				if (response.data.Succeeded) {
+					$scope.search();
+				} else {
+					toastr.error('支付失败');
+				}
+			});
+		}
 	}
 ])

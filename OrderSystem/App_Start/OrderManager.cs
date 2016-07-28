@@ -110,10 +110,32 @@ namespace OrderSystem {
 				}
 			}
 
+			// 随机立减
+			if(mainPaidDetail.PayKind.Type == PayKindType.Online) {
+				HotelConfig hotelConfig = await ctx.HotelConfigs.FirstOrDefaultAsync();
+				// 如果饭店支持随机立减
+				if(hotelConfig.NeedRandomPreference) {
+					PayKind randomPreferencePayKind = await ctx.PayKinds.FirstOrDefaultAsync(p => p.Type == PayKindType.RandomPreference && p.Usable == true);
+					if(randomPreferencePayKind != null) {
+						int top = (int)Math.Ceiling((double)mainPaidDetail.Price / 10);
+						Random random = new Random(DateTime.Now.Millisecond);
+						decimal randomPreferencePrice = random.Next(0, top + 1);
+						if(randomPreferencePrice != 0) {
+							dine.DinePaidDetails.Add(new DinePaidDetail {
+								PayKind = randomPreferencePayKind,
+								Price = randomPreferencePrice
+							});
+							mainPaidDetail.Price -= randomPreferencePrice;
+						}
+					}
+				}
+			}
+
 			// 如果是线上支付，则添加DinePaidDetail信息，否则不添加，交给收银系统处理
 			if(mainPaidDetail.PayKind.Type == PayKindType.Online) {
 				dine.DinePaidDetails.Add(mainPaidDetail);
 			}
+
 
 			// 订单发票
 			if(cart.Invoice != null) {

@@ -5,7 +5,19 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoPrinter"
         mc:Ignorable="d"
-        Title="YummyOnline自助打印" Height="751.619" Width="1215.954">
+        Title="YummyOnline自助打印" Height="740" Width="1200" Loaded="Window_Loaded" WindowStartupLocation="CenterScreen">
+
+	<Window.Resources>
+		<local:LogFGConverter x:Key="logFGConverter"></local:LogFGConverter>
+		<Style TargetType="ListViewItem" x:Key="listViewItemStyle">
+			<Setter Property="Foreground">
+				<Setter.Value>
+					<Binding Converter="{StaticResource logFGConverter}"></Binding>
+				</Setter.Value>
+			</Setter>
+		</Style>
+	</Window.Resources>
+	
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition/>
@@ -14,20 +26,20 @@
 		</Grid.RowDefinitions>
 
 		<TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="日志:" VerticalAlignment="Top"/>
-		<ListView x:Name="listViewLog" Margin="10,30,10,0">
+		<ListView x:Name="listViewLog" Margin="10,30,10,0" ItemContainerStyle="{StaticResource listViewItemStyle}">
 			<ListView.View>
 				<GridView>
-					<GridViewColumn Width="200" Header="日期" DisplayMemberBinding="{Binding Path=DateTime,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" />
+					<GridViewColumn Width="200" Header="日期" DisplayMemberBinding="{Binding Path=DateTime,StringFormat={}{0:yyyy/MM/dd HH:mm:ss}}" />
 					<GridViewColumn Width="800" Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
 				</GridView>
 			</ListView.View>
 		</ListView>
 
 		<TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="打印机日志:" VerticalAlignment="Top" Grid.Row="1"/>
-		<ListView x:Name="listViewIpPrinter" Grid.Row="1" Margin="10,30,10,0">
+		<ListView x:Name="listViewIpPrinter" Grid.Row="1" Margin="10,30,10,0" ItemContainerStyle="{StaticResource listViewItemStyle}">
 			<ListView.View>
 				<GridView>
-					<GridViewColumn Width="200" Header="日期" DisplayMemberBinding="{Binding Path=DateTime,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" />
+					<GridViewColumn Width="200" Header="日期" DisplayMemberBinding="{Binding Path=DateTime,StringFormat={}{0:yyyy/MM/dd HH:mm:ss}}" />
 					<GridViewColumn Width="100" Header="IP" DisplayMemberBinding="{Binding Path=IP}" />
 					<GridViewColumn Width="500" Header="日志" DisplayMemberBinding="{Binding Path=Message}" />
 					<GridViewColumn Width="200" Header="编号" DisplayMemberBinding="{Binding Path=HashCode}" />
@@ -41,30 +53,32 @@
 				<ColumnDefinition Width="1*"/>
 			</Grid.ColumnDefinitions>
 
-			<Button x:Name="buttonTestPrinters" Content="预连接所有打印机" Margin="0,147,10,0" VerticalAlignment="Top" Height="23" HorizontalAlignment="Right" Width="101" Click="buttonTestPrinters_Click" />
 			<Button x:Name="buttonTestRemoteDines" Content="远程订单测试" HorizontalAlignment="Left" Margin="10,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestRemoteDines_Click"/>
 			<Button x:Name="buttonTestLocalDines" Content="本地订单测试" HorizontalAlignment="Left" Margin="116,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestLocalDines_Click"/>
-			<Button x:Name="buttonTestPrinter" Content="预连接打印机" HorizontalAlignment="Left" Margin="222,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestPrinter_Click" />
+			<Button x:Name="buttonConnectPrinter" Content="预连接打印机" HorizontalAlignment="Left" Margin="222,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonConnectPrinter_Click" />
 			<GroupBox x:Name="groupBox" Header="测试设置" Margin="10,10,10,38">
 				<Grid Margin="0,0,0,0">
 					<TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,11,0,0" TextWrapping="Wrap" Text="IP:" VerticalAlignment="Top"/>
-					<TextBox x:Name="textBoxIp" HorizontalAlignment="Left" Height="23" Text="192.168.0.253" VerticalAlignment="Top" Width="120" Margin="29,10,0,0" />
+					<TextBox x:Name="textBoxIp" HorizontalAlignment="Left" Height="23" Text="192.168.0.253" VerticalAlignment="Top" Width="120" Margin="29,10,0,0" TextChanged="textBoxIp_TextChanged" />
 					<CheckBox x:Name="checkBoxRecipt" Content="收银条" HorizontalAlignment="Left" Margin="10,38,0,0" VerticalAlignment="Top" IsChecked="True"/>
-					<CheckBox x:Name="checkBoxServeOrder" Content="传菜单" HorizontalAlignment="Left" Margin="10,58,0,0" VerticalAlignment="Top" />
-					<CheckBox x:Name="checkBoxKitchenOrder" Content="厨房" HorizontalAlignment="Left" Margin="10,78,0,0" VerticalAlignment="Top" />
+					<CheckBox x:Name="checkBoxServeOrder" Content="传菜单" HorizontalAlignment="Left" Margin="10,58,0,0" VerticalAlignment="Top" IsChecked="True"/>
+					<CheckBox x:Name="checkBoxKitchenOrder" Content="厨房" HorizontalAlignment="Left" Margin="10,78,0,0" VerticalAlignment="Top" IsChecked="True"/>
 				</Grid>
 			</GroupBox>
-			<ListView x:Name="listViewIpPrinterStatus" Margin="10,30,10,10" Grid.Column="1">
+
+			<Button x:Name="buttonConnectPrinters" Content="预连接所有打印机" Margin="0,147,10,0" VerticalAlignment="Top" Height="23" HorizontalAlignment="Right" Width="128" Click="buttonConnectPrinters_Click" />
+
+			<TextBlock x:Name="textBlock3" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="打印机状态:" VerticalAlignment="Top" Grid.Column="1"/>
+			<ListView x:Name="listViewIpPrinterStatus" Margin="10,30,10,10" Grid.Column="1" ItemContainerStyle="{StaticResource listViewItemStyle}">
 				<ListView.View>
 					<GridView>
 						<GridViewColumn Width="150" Header="IP" DisplayMemberBinding="{Binding IP}" />
-						<GridViewColumn Width="100" Header="状态" DisplayMemberBinding="{Binding Connected}" />
+						<GridViewColumn Width="100" Header="状态" DisplayMemberBinding="{Binding Message}" />
 						<GridViewColumn Width="100" Header="等待数量" DisplayMemberBinding="{Binding WaitedCount}" />
 						<GridViewColumn Width="100" Header="空闲超时" DisplayMemberBinding="{Binding IdleTime}" />
 					</GridView>
 				</ListView.View>
 			</ListView>
-			<TextBlock x:Name="textBlock3" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="打印机状态:" VerticalAlignment="Top" Grid.Column="1"/>
 		</Grid>
 	</Grid>
 </Window>

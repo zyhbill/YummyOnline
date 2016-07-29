@@ -480,7 +480,7 @@
         });
     }
 
-    $scope.search = function () {
+    $scope.search = function (type) {
         var temp = $scope.paykindnames.filter(function (x) { return x.IsChoose }).map(function (x) { return x.Id })
         console.log(temp);
         
@@ -493,8 +493,8 @@
          
             waiterid: $scope.waiterid,
             
-            payKindIds: temp
-         
+            payKindIds: temp,
+            Type :type
         }).then(function (response) {
             console.log($scope.paykindname);
             

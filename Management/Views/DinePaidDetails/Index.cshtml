@@ -234,8 +234,12 @@
                 <option  ng-repeat="paykindnamea in paykindnames" value="{{paykindnamea.Id}}">{{paykindnamea.Name}}</option>
             </select>
         </form>*@
-    <button class="btn btn-app btn-primary btn-xs" ng-click="search()">
+    <button class="btn btn-app btn-primary btn-xs" ng-click="search(0)">
         查询订单
+        <i class="icon-search bigger-230"></i>
+    </button>
+    <button class="btn btn-app btn-primary btn-xs" ng-click="search(1)">
+        未支付
         <i class="icon-search bigger-230"></i>
     </button>
     @*<span>总金额</span><span>{{sumprice}}</span><br />*@

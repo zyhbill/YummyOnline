@@ -26,6 +26,7 @@ namespace HotelDAO.Models {
 		public TrimZero TrimZero { get; set; }
 		public bool HasAutoPrinter { get; set; }
 		public bool IsPayFirst { get; set; }
+		public bool IsPrintReciptAfterPayingOffline { get; set; }
 
 		[ForeignKey(nameof(ShiftPrinter))]
 		public int? ShiftPrinterId { get; set; }

@@ -28,6 +28,15 @@ namespace OrderSystem.Controllers {
 			if((string)Session["SmsCode"] != model.Code) {
 				return Json(new JsonError("验证码不正确", "code"));
 			}
+			if(model.PhoneNumber == null) {
+				return Json(new JsonError("手机号不能为空"));
+			}
+			if(model.Password == null) {
+				return Json(new JsonError("密码不能为空"));
+			}
+			if(model.Password == model.PasswordAga) {
+				return Json(new JsonError("密码不一致"));
+			}
 			User user;
 			bool succeeded;
 			if(await SigninManager.IsAuthenticated()) {

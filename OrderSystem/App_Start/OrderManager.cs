@@ -120,6 +120,12 @@ namespace OrderSystem {
 						int top = (int)Math.Ceiling((double)mainPaidDetail.Price / 10);
 						Random random = new Random(DateTime.Now.Millisecond);
 						decimal randomPreferencePrice = random.Next(0, top + 1);
+
+						// 如果随机立减超过应付金额则全额支付
+						if(randomPreferencePrice > mainPaidDetail.Price) {
+							randomPreferencePrice = mainPaidDetail.Price;
+						}
+
 						if(randomPreferencePrice != 0) {
 							dine.DinePaidDetails.Add(new DinePaidDetail {
 								PayKind = randomPreferencePayKind,

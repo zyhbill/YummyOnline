@@ -121,7 +121,8 @@ namespace OrderSystem {
 							Name = d.Menu.Department.Printer.Name,
 							IpAddress = d.Menu.Department.Printer.IpAddress,
 							Usable = d.Menu.Department.Printer.Usable
-						}
+						},
+						DepartmentName = d.Menu.Department.Name
 					},
 					ReturnedWaiter = new Protocol.PrintingProtocol.Staff {
 						Id = d.ReturnedWaiter.Id,

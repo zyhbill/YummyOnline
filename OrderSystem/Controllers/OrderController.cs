@@ -253,6 +253,7 @@ namespace OrderSystem.Controllers {
 								IpAddress = "127.0.0.1",
 								Usable = true
 							},
+							DepartmentName = $"测试部门名{i}"
 						}
 					});
 				}

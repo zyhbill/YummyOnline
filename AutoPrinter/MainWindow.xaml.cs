@@ -19,8 +19,6 @@ namespace AutoPrinter {
 		public MainWindow() {
 			InitializeComponent();
 
-
-
 			IPPrinter.GetInstance().OnLog += (ip, bmp, message, style) => {
 				ipPrinterLog(ip, bmp?.GetHashCode(), message, style);
 			};

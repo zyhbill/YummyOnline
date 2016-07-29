@@ -14,7 +14,6 @@ namespace WeChat.Controllers
     using Senparc.Weixin.MP;
     using Senparc.Weixin.MP.MvcExtension;
 
-
     public class WeixinController : Controller
     {
         public static readonly string Token = "wechatdianxiaoer";
@@ -32,7 +31,7 @@ namespace WeChat.Controllers
             }
             else
             {
-                return Content(postModel.Signature +CheckSignature.GetSignature(postModel.Timestamp, postModel.Nonce, Token));
+                return Content(postModel.Signature + CheckSignature.GetSignature(postModel.Timestamp, postModel.Nonce, Token));
             }
         }
 

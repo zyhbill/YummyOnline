@@ -238,7 +238,7 @@ namespace WeiPay
                                             {
                                                 //获取openid
 
-                                                ProcessMsgText("openid:\n"+FromUserName);
+                                                ProcessMsgText("openid:\n" + FromUserName);
                                                 break;
                                             }
                                         case "cli_myinfo":
@@ -423,7 +423,7 @@ namespace WeiPay
                         <Url><![CDATA[{6}]]></Url>
                         </item>
                         </Articles>
-                        </xml> ", FromUserName,ToUserName,Helper.convertTime2String(DateTime.Now),
+                        </xml> ", FromUserName, ToUserName, Helper.convertTime2String(DateTime.Now),
                            title, description, picurl, url);// <PicUrl><![CDATA[{5}]]></PicUrl> );
                 HttpContext.Current.Response.Write(bxml.ToString());
             }
@@ -458,7 +458,7 @@ namespace WeiPay
                         <Url><![CDATA[{6}]]></Url>
                         </item>
                         </Articles>
-                        </xml> ",FromUserName, ToUserName, Helper.convertTime2String(DateTime.Now),
+                        </xml> ", FromUserName, ToUserName, Helper.convertTime2String(DateTime.Now),
                            title, description, picurl, url);// <PicUrl><![CDATA[{5}]]></PicUrl> );
                 HttpContext.Current.Response.Write(bxml.ToString());
             }

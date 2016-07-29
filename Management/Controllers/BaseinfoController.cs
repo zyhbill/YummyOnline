@@ -19,6 +19,7 @@ using System.Data.OleDb;
 using System.Data;
 using System.Data.Entity.SqlServer;
 
+
 namespace Management.Controllers
 {
     public class BaseinfoController : BaseController
@@ -1006,7 +1007,14 @@ namespace Management.Controllers
                                 clean.Code = row[1].ToString();
                                 clean.Name = row[2].ToString();
                                 clean.NameAbbr = row[3].ToString();
-                                clean.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
+                                if (Method.SearchFile(baseUrl, row[0].ToString() + ".jpg"))
+                                {
+                                    clean.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
+                                }
+                                else
+                                {
+                                    clean.PicturePath = hotelId.ToString() + "/null.jpg";
+                                }
                                 clean.IsFixed = false;
                                 clean.SupplyDate = 127;
                                 clean.Unit = row[4].ToString();
@@ -1018,16 +1026,10 @@ namespace Management.Controllers
                                 clean.Usable = true;
                                 clean.IsSetMeal = false;
                                 clean.EnglishName =  row[15].ToString();
-                                foreach(var i in clean.Remarks)
-                                {
-                                    clean.Remarks.Remove(i);
-                                    db.SaveChanges();
-                                }
-                                foreach(var i in clean.Classes)
-                                {
-                                    clean.Classes.Remove(i);
-                                    db.SaveChanges();
-                                }
+
+                                clean.Remarks.ToList().Clear();
+                                clean.Classes.ToList().Clear();
+                                db.SaveChanges();
                                 var classes = row[16].ToString();
                                 if (classes != null)
                                 {

@@ -385,7 +385,7 @@ namespace Management.Controllers
                     }
                 }
             }
-            var Classes = await db.MenuClasses.Where(m => m.Usable == true && m.Level == 0).ToListAsync();
+            var Classes = await db.MenuClasses.Where(m => m.Usable == true && m.IsShow==true).ToListAsync();
             return JsonConvert.SerializeObject(new { Menus = menus, Discounts = Discounts, Classes = Classes }, setting);
         }
         /// <summary>

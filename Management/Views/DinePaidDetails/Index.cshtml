@@ -78,7 +78,7 @@
                                 <span>{{dinedetail.OriPrice|currency: '￥'}}</span>
                             </td>
                             <td class=text-right>
-                                <span>{{(dinedetail.Price/dinedetail.OriPrice)*100}}</span>
+                                <span>{{((dinedetail.Price/dinedetail.OriPrice)*100).toFixed(0)}}</span>
                             </td>
                         </tr>
                     </table>
@@ -158,7 +158,7 @@
                                 <span>{{dinedetail.OriPrice|currency: '￥'}}</span>
                             </td>
                             <td class=text-right>
-                                <span>{{(dinedetail.Price/dinedetail.OriPrice)*100}}</span>
+                                <span>{{((dinedetail.Price/dinedetail.OriPrice)*100).toFixed(0)}}</span>
                             </td>
                         </tr>
                     </table>

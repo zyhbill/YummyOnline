@@ -1514,6 +1514,7 @@
                     x.Num = 0;
                     x.Gain = 0;
                     _this.HandElement.PayList.forEach(function (s) {
+                        if ((x.Type == 2 || x.Type == 0 || x.Type == 5) && x.Id == s.Id) x.Gain = s.Total;
                         if (x.Id == s.Id) x.Num = s.Total;
                     });
                 })

@@ -585,9 +585,7 @@
         $http.post('/MenuOnSales/AddMenuOnSales', $scope.newMenuOnSale).then(function (response) {
             if (response.data.succeeded) {
                 refresh();
-                $scope.newMenuOnSale.id = null;
-                $scope.newMenuOnSale.onsaleweek = null;
-                $scope.newMenuOnSale.price = null;
+                $scope.newMenuOnSale = {};
             }
             else {
                 alert('请按要求输入！！！');

@@ -46,7 +46,8 @@ namespace YummyOnline {
 
 		public async Task InitializeHotel(int hotelId, string adminId) {
 			ctx.HotelConfigs.Add(new HotelConfig {
-				Id = hotelId
+				Id = hotelId,
+				IsPrintReciptAfterPayingOffline = true
 			});
 
 			ctx.PayKinds.Add(new PayKind {

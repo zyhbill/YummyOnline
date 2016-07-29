@@ -136,7 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindowCommands.cs" />
-    <Compile Include="PrinterGraphics.cs" />
+    <Compile Include="Printers\PrinterGraphics.cs" />
     <Compile Include="Printers\BasePrinter.cs" />
     <Compile Include="Printers\DinePrinter.cs" />
     <Compile Include="Printers\ShiftPrinter.cs" />

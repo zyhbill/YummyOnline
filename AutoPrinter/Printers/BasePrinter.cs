@@ -1,9 +1,7 @@
-﻿using Protocol;
-using Protocol.PrintingProtocol;
-using System.Drawing;
+﻿using Protocol.PrintingProtocol;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Printing;
-using System.Linq;
 
 namespace AutoPrinter {
 	public abstract class BasePrinter {

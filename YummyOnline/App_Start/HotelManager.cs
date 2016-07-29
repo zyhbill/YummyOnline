@@ -103,19 +103,19 @@ namespace YummyOnline {
 			ctx.Staffs.Add(staff);
 
 			ctx.PrinterFormats.Add(new PrinterFormat {
-				PaperSize = 556,
+				PaperSize = 278,
 				Font = "宋体",
-				ColorDepth = 200,
-				ShiftBigFontSize = 25,
-				ShiftFontSize = 17,
-				ShiftSmallFontSize = 15,
-				ReciptBigFontSize = 25,
-				ReciptFontSize = 17,
-				ReciptSmallFontSize = 15,
-				ServeOrderFontSize = 19,
-				ServeOrderSmallFontSize = 19,
-				KitchenOrderFontSize = 19,
-				KitchenOrderSmallFontSize = 19
+				ColorDepth = 55,
+				ReciptBigFontSize = 12,
+				ReciptFontSize = 8,
+				ReciptSmallFontSize = 7,
+				KitchenOrderFontSize = 10,
+				KitchenOrderSmallFontSize = 8,
+				ServeOrderFontSize = 10,
+				ServeOrderSmallFontSize = 8,
+				ShiftBigFontSize = 12,
+				ShiftFontSize = 8,
+				ShiftSmallFontSize = 7
 			});
 			await ctx.SaveChangesAsync();
 		}

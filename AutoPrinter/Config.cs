@@ -187,15 +187,18 @@ namespace AutoPrinter {
 				},
 				PrinterFormat = new PrinterFormat {
 					PaperSize = 278,
-					Font = "宋体",
+					Font = " 宋体",
 					ColorDepth = 55,
 					ReciptBigFontSize = 12,
 					ReciptFontSize = 8,
 					ReciptSmallFontSize = 7,
-					ServeOrderFontSize = 8,
+					KitchenOrderFontSize = 10,
+					KitchenOrderSmallFontSize = 8,
+					ServeOrderFontSize = 10,
 					ServeOrderSmallFontSize = 8,
-					KitchenOrderFontSize = 8,
-					KitchenOrderSmallFontSize = 8
+					ShiftBigFontSize = 12,
+					ShiftFontSize = 8,
+					ShiftSmallFontSize = 7
 				}
 			};
 

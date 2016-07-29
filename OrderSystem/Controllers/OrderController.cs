@@ -268,13 +268,13 @@ namespace OrderSystem.Controllers {
 			var manager = new HotelManager(connStr);
 
 			var tShifts = new HotelManager(connStr).GetShiftsForPrinting(ids, dateTime);
-			var tPrinterName = new HotelManager(connStr).GetShiftPrinterIpAddress();
+			var tPrinter = new HotelManager(connStr).GetShiftPrinter();
 			var tPrinterFormat = new HotelManager(connStr).GetPrinterFormatForPrinting();
 
 
 			return Json(new ShiftForPrinting {
 				Shifts = await tShifts,
-				PrinterIpAddress = await tPrinterName,
+				Printer = await tPrinter,
 				PrinterFormat = await tPrinterFormat
 			});
 		}

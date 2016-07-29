@@ -12,10 +12,9 @@ namespace AutoPrinter {
 		private string fontName { get; set; }
 		private float spacing { get; set; } = 0;
 
-		public PrinterGraphics(Graphics g, int paperWidth, int paperHeight, string fontName) {
+		public PrinterGraphics(Graphics g, int paperWidth, string fontName) {
 			this.g = g;
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
-			g.FillRectangle(Brushes.White, 0, 0, paperWidth, paperHeight);
 			this.paperWidth = paperWidth;
 			this.fontName = fontName;
 		}

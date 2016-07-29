@@ -1,13 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Protocol.PrintingProtocol;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace AutoPrinter {
+	public class HistoryConfig {
+		public bool IsIPPrinter { get; set; }
+		public string HistorySigninName { get; set; }
+		public string HistoryPassword { get; set; }
+		public string HistoryIPAddress { get; set; }
+	}
+
 	public static class Config {
 #if DEBUG
 		public const string TcpServerIp = "127.0.0.1";
@@ -53,7 +57,39 @@ namespace AutoPrinter {
 
 		public static int HotelId { get; set; }
 
-		public static DineForPrinting GetTestProtocol(string ipAddress) {
+		public static bool IsIPPrinter { get; set; }
+		public static string HistorySigninName { get; set; }
+		public static string HistoryPassword { get; set; }
+		public static string HistoryIPAddress { get; set; }
+
+		public static void LoadConfigs() {
+			if(!File.Exists(configFilePath)) {
+				return;
+			}
+
+			string configStr = File.ReadAllText(configFilePath);
+			try {
+				HistoryConfig config = JsonConvert.DeserializeObject<HistoryConfig>(configStr);
+				IsIPPrinter = config.IsIPPrinter;
+				HistorySigninName = config.HistorySigninName;
+				HistoryPassword = config.HistoryPassword;
+				HistoryIPAddress = config.HistoryIPAddress;
+			}
+			catch { }
+		}
+
+		public static void SaveConfigs() {
+			HistoryConfig config = new HistoryConfig {
+				IsIPPrinter = IsIPPrinter,
+				HistorySigninName = HistorySigninName,
+				HistoryPassword = HistoryPassword,
+				HistoryIPAddress = HistoryIPAddress,
+			};
+			string configStr = JsonConvert.SerializeObject(config);
+			File.WriteAllText(configFilePath, configStr);
+		}
+
+		public static DineForPrinting GetTestProtocol(string ipOrName) {
 			DineForPrinting p = new DineForPrinting {
 				Hotel = new Hotel {
 					Id = 1,
@@ -101,18 +137,18 @@ namespace AutoPrinter {
 						AreaType = HotelDAO.Models.AreaType.Normal,
 						ReciptPrinter = new Printer {
 							Id = 0,
-							Name = "本地测试打印机",
-							IpAddress = ipAddress,
+							Name = ipOrName,
+							IpAddress = ipOrName,
 							Usable = true
 						},
 						ServePrinter = new Printer {
 							Id = 1,
-							Name = "本地测试打印机",
-							IpAddress = ipAddress,
+							Name = ipOrName,
+							IpAddress = ipOrName,
 							Usable = true
 						}
 					},
-					DineMenus = new List<DineMenu> (),
+					DineMenus = new List<DineMenu>(),
 					DinePaidDetails = new List<DinePaidDetail> {
 							new DinePaidDetail {
 								Price = 12.34m,
@@ -150,16 +186,19 @@ namespace AutoPrinter {
 					PhoneNumber = "12345678900"
 				},
 				PrinterFormat = new PrinterFormat {
-					PaperSize = 556,
-					Font = "宋体",
-					ColorDepth = 200,
-					ReciptBigFontSize = 25,
-					ReciptFontSize = 17,
-					ReciptSmallFontSize = 15,
-					ServeOrderFontSize = 19,
-					ServeOrderSmallFontSize = 19,
-					KitchenOrderFontSize = 19,
-					KitchenOrderSmallFontSize = 19
+					PaperSize = 278,
+					Font = " 宋体",
+					ColorDepth = 55,
+					ReciptBigFontSize = 12,
+					ReciptFontSize = 8,
+					ReciptSmallFontSize = 7,
+					KitchenOrderFontSize = 10,
+					KitchenOrderSmallFontSize = 8,
+					ServeOrderFontSize = 10,
+					ServeOrderSmallFontSize = 8,
+					ShiftBigFontSize = 12,
+					ShiftFontSize = 8,
+					ShiftSmallFontSize = 7
 				}
 			};
 
@@ -185,8 +224,8 @@ namespace AutoPrinter {
 						IsSetMeal = false,
 						Printer = new Printer {
 							Id = 2,
-							Name = $"本地测试打印机{i}",
-							IpAddress = ipAddress,
+							Name = ipOrName,
+							IpAddress = ipOrName,
 							Usable = true
 						},
 						DepartmentName = $"测试厨房名{i}"

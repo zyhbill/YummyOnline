@@ -19,6 +19,8 @@ namespace AutoPrinter {
 		public MainWindow() {
 			InitializeComponent();
 
+			textBoxIP.Text = Config.HistoryIPAddress;
+
 			if(!Config.IsIPPrinter) {
 				buttonConnectPrinter.Visibility = Visibility.Collapsed;
 				buttonConnectPrinters.Visibility = Visibility.Collapsed;
@@ -142,6 +144,9 @@ namespace AutoPrinter {
 				buttonConnectPrinter.IsEnabled = true;
 				buttonTestLocalDines.IsEnabled = true;
 				buttonTestRemoteDines.IsEnabled = true;
+
+				Config.HistoryIPAddress = textBoxIP.Text;
+				Config.SaveConfigs();
 			}
 			else {
 				buttonConnectPrinter.IsEnabled = false;

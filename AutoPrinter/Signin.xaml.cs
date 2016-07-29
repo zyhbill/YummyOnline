@@ -41,6 +41,12 @@ namespace AutoPrinter {
 #elif COMPANYSERVER
 			textBlockVersion.Text = $"COMPANYSERVER调试版本";
 #endif
+
+			Config.LoadConfigs();
+			textBoxSigninName.Text = Config.HistorySigninName;
+			passwordBox.Password = Config.HistoryPassword;
+			radioButtonIPPrinter.IsChecked = Config.IsIPPrinter;
+			radioButtonDriverPrinter.IsChecked = !Config.IsIPPrinter;
 		}
 
 		private async void buttonSignin_Click(object sender, RoutedEventArgs e) {
@@ -67,6 +73,9 @@ namespace AutoPrinter {
 			}
 
 			Config.IsIPPrinter = radioButtonIPPrinter.IsChecked.Value;
+			Config.HistorySigninName = textBoxSigninName.Text;
+			Config.HistoryPassword = passwordBox.Password;
+			Config.SaveConfigs();
 
 			MainWindow mainWindow = new MainWindow();
 			mainWindow.Show();

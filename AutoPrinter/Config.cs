@@ -1,13 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Protocol.PrintingProtocol;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace AutoPrinter {
+	public class HistoryConfig {
+		public bool IsIPPrinter { get; set; }
+		public string HistorySigninName { get; set; }
+		public string HistoryPassword { get; set; }
+		public string HistoryIPAddress { get; set; }
+	}
+
 	public static class Config {
 #if DEBUG
 		public const string TcpServerIp = "127.0.0.1";
@@ -52,7 +56,38 @@ namespace AutoPrinter {
 		private static string configFilePath = $@"{BaseDir}\config.json";
 
 		public static int HotelId { get; set; }
+
 		public static bool IsIPPrinter { get; set; }
+		public static string HistorySigninName { get; set; }
+		public static string HistoryPassword { get; set; }
+		public static string HistoryIPAddress { get; set; }
+
+		public static void LoadConfigs() {
+			if(!File.Exists(configFilePath)) {
+				return;
+			}
+
+			string configStr = File.ReadAllText(configFilePath);
+			try {
+				HistoryConfig config = JsonConvert.DeserializeObject<HistoryConfig>(configStr);
+				IsIPPrinter = config.IsIPPrinter;
+				HistorySigninName = config.HistorySigninName;
+				HistoryPassword = config.HistoryPassword;
+				HistoryIPAddress = config.HistoryIPAddress;
+			}
+			catch { }
+		}
+
+		public static void SaveConfigs() {
+			HistoryConfig config = new HistoryConfig {
+				IsIPPrinter = IsIPPrinter,
+				HistorySigninName = HistorySigninName,
+				HistoryPassword = HistoryPassword,
+				HistoryIPAddress = HistoryIPAddress,
+			};
+			string configStr = JsonConvert.SerializeObject(config);
+			File.WriteAllText(configFilePath, configStr);
+		}
 
 		public static DineForPrinting GetTestProtocol(string ipOrName) {
 			DineForPrinting p = new DineForPrinting {
@@ -151,16 +186,16 @@ namespace AutoPrinter {
 					PhoneNumber = "12345678900"
 				},
 				PrinterFormat = new PrinterFormat {
-					PaperSize = 556,
+					PaperSize = 278,
 					Font = "宋体",
-					ColorDepth = 200,
-					ReciptBigFontSize = 25,
-					ReciptFontSize = 17,
-					ReciptSmallFontSize = 15,
-					ServeOrderFontSize = 19,
-					ServeOrderSmallFontSize = 19,
-					KitchenOrderFontSize = 19,
-					KitchenOrderSmallFontSize = 19
+					ColorDepth = 55,
+					ReciptBigFontSize = 12,
+					ReciptFontSize = 8,
+					ReciptSmallFontSize = 7,
+					ServeOrderFontSize = 8,
+					ServeOrderSmallFontSize = 8,
+					KitchenOrderFontSize = 8,
+					KitchenOrderSmallFontSize = 8
 				}
 			};
 

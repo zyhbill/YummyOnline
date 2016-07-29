@@ -59,7 +59,7 @@
 			<GroupBox x:Name="groupBox" Header="测试设置" Margin="10,10,10,38">
 				<Grid Margin="0,0,0,0">
 					<TextBlock x:Name="textBlockIP" HorizontalAlignment="Left" Margin="10,11,0,0" TextWrapping="Wrap" Text="IP:" VerticalAlignment="Top"/>
-					<TextBox x:Name="textBoxIP" HorizontalAlignment="Left" Height="23" Text="192.168.0.253" VerticalAlignment="Top" Width="120" Margin="29,10,0,0" TextChanged="textBoxIPorName_TextChanged" />
+					<TextBox x:Name="textBoxIP" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="120" Margin="29,10,0,0" TextChanged="textBoxIPorName_TextChanged" />
 					<CheckBox x:Name="checkBoxRecipt" Content="收银条" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" IsChecked="True"/>
 					<CheckBox x:Name="checkBoxServeOrder" Content="传菜单" HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" IsChecked="True"/>
 					<CheckBox x:Name="checkBoxKitchenOrder" Content="厨房" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" IsChecked="True"/>

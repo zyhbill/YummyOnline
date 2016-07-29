@@ -218,7 +218,7 @@ namespace AutoPrinter {
 			}
 
 			// 如果打印机没有连接则连接否则打印
-			if(IPClientBmpMap[ip].TcpClientInfo == null || IPClientBmpMap[ip].StatusTcpClientInfo == null) {
+			if(IPClientBmpMap[ip].TcpClientInfo == null ) {
 				await Connect(ip);
 			}
 			else {
@@ -227,25 +227,25 @@ namespace AutoPrinter {
 		}
 		private async Task print(IPAddress ip, BmpInfo bmpInfo) {
 			TcpClientInfo client = IPClientBmpMap[ip].TcpClientInfo;
-			TcpClientInfo statusClient = IPClientBmpMap[ip].StatusTcpClientInfo;
+			//TcpClientInfo statusClient = IPClientBmpMap[ip].StatusTcpClientInfo;
 
 			try {
 				OnLog?.Invoke(ip, bmpInfo.bmp, $"正在尝试打印", LogLevel.Info);
 
 				NetworkStream stream = client.Client.GetStream();
-				NetworkStream statusStream = statusClient.Client.GetStream();
+				//NetworkStream statusStream = statusClient.Client.GetStream();
 
 				// 先获取打印机状态服务器的状态, 并阻塞线程
 				await stream.WriteAsync(init, 0, init.Length);
-				await statusStream.WriteAsync(status, 0, status.Length);
+				//await statusStream.WriteAsync(status, 0, status.Length);
 
-				IPClientBmpMap[ip].Mutex.Reset();
-				IPClientBmpMap[ip].Mutex.WaitOne();
+				//IPClientBmpMap[ip].Mutex.Reset();
+				//IPClientBmpMap[ip].Mutex.WaitOne();
 
 				// 写入打印数据流
 				await stream.WriteAsync(bmpInfo.printingBytes, 0, bmpInfo.printingBytes.Length);
 
-				
+
 				lock(IPClientBmpMap) {
 					client.IdleTime = 0;
 					IPClientBmpMap[ip].Queue.Dequeue();
@@ -291,16 +291,17 @@ namespace AutoPrinter {
 		}
 		private async Task connect(IPAddress ip, ClientBmpInfo clientBmpInfo) {
 			TcpClient client = new TcpClient();
-			TcpClient statusClient = new TcpClient();
+			//TcpClient statusClient = new TcpClient();
 
 			try {
-				OnLog?.Invoke(ip, null, "正在连接", LogLevel.Info);
+				OnLog?.Invoke(ip, null, "正在连接打印机", LogLevel.Info);
 				await client.ConnectAsync(ip, 9100);
-				await statusClient.ConnectAsync(ip, 4000);
+				//OnLog?.Invoke(ip, null, "正在连接打印机状态服务器", LogLevel.Info);
+				//await statusClient.ConnectAsync(ip, 4000);
 
 				clientBmpInfo.TcpClientInfo = new TcpClientInfo(client);
-				clientBmpInfo.StatusTcpClientInfo = new TcpClientInfo(statusClient);
-				startReceiving(ip, statusClient);
+				//clientBmpInfo.StatusTcpClientInfo = new TcpClientInfo(statusClient);
+				//startReceiving(ip, statusClient);
 
 				clientBmpInfo.TryTime = 0;
 				clientBmpInfo.IsConnecting = false;
@@ -352,11 +353,15 @@ namespace AutoPrinter {
 						}
 						receiveZeroCount = 0;
 
+						string b = "";
+						foreach(var i in buffer) {
+							b += i + " ";
+						}
+						OnLog(ip, null, b, LogLevel.Warning);
 						if(!isArryEqual(buffer, statusOKBuffer)) {
 							OnLog(ip, null, "打印机状态错误", LogLevel.Error);
 							await Task.Delay(tryInterval * 1000);
-							NetworkStream stream = client.GetStream();
-							await stream.WriteAsync(status, 0, status.Length);
+							await networkStream.WriteAsync(status, 0, status.Length);
 							continue;
 						}
 
@@ -385,8 +390,8 @@ namespace AutoPrinter {
 			}
 		}
 		private void closeIP(IPAddress ip) {
-			IPClientBmpMap[ip].TcpClientInfo.Close();
-			IPClientBmpMap[ip].StatusTcpClientInfo.Close();
+			IPClientBmpMap[ip].TcpClientInfo?.Close();
+			IPClientBmpMap[ip].StatusTcpClientInfo?.Close();
 			IPClientBmpMap[ip].TcpClientInfo = null;
 			IPClientBmpMap[ip].StatusTcpClientInfo = null;
 

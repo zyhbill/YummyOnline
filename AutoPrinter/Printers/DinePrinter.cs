@@ -71,6 +71,8 @@ namespace AutoPrinter {
 	}
 	public class DinePrinter : BaseDinePrinter {
 		public async Task Print(DineForPrinting protocol, List<PrintType> printTypes, bool isFullDineMenus) {
+			handleIPPrinterFormat(protocol.PrinterFormat);
+
 			List<Task> allTasks = new List<Task>();
 			foreach(PrintType type in printTypes) {
 				if(type == PrintType.Recipt) {

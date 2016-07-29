@@ -18,6 +18,8 @@ namespace AutoPrinter {
 	}
 	public class ShiftPrinter : BaseShiftPrinter {
 		public async Task Print(ShiftForPrinting protocol) {
+			handleIPPrinterFormat(protocol.PrinterFormat);
+
 			IPAddress ip = IPAddress.Parse(protocol.Printer.IpAddress);
 			Bitmap bmp = generateShiftBmp(protocol);
 			await IPPrinter.GetInstance().Print(ip, bmp, protocol.PrinterFormat.ColorDepth);

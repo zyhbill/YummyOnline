@@ -1,9 +1,20 @@
 ﻿using System;
 using System.Net;
 using System.Drawing;
+using System.Collections.Generic;
+using System.Drawing.Printing;
+using System.Linq;
 
 namespace AutoPrinter {
 	public abstract class BasePrinter {
+		public static List<string> GetPritners() {
+			List<string> printers = new List<string>();
+			foreach(string printer in PrinterSettings.InstalledPrinters) {
+				printers.Add(printer);
+			}
+			return printers;
+		}
+		protected int maxHeight = 2000;
 		/// <summary>
 		/// 裁剪bmp至高度
 		/// </summary>

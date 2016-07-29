@@ -66,6 +66,8 @@ namespace AutoPrinter {
 				return;
 			}
 
+			Config.IsIPPrinter = radioButtonIPPrinter.IsChecked.Value;
+
 			MainWindow mainWindow = new MainWindow();
 			mainWindow.Show();
 			Close();

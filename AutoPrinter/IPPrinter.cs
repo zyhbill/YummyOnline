@@ -194,7 +194,7 @@ namespace AutoPrinter {
 						int yPos = i * 24 + k;
 						if(yPos < bmp.Height) {
 							Color pixelColor = bmp.GetPixel(j, yPos);
-							if(pixelColor.R <= colorDepth) {
+							if(pixelColor.A >= colorDepth) {
 								imgData[k / 8] += (byte)(128 >> (k % 8));
 							}
 						}

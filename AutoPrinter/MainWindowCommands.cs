@@ -38,24 +38,35 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 打印远程测试
 		/// </summary>
-		async Task printRemoteTest(List<PrintType> printTypes, string ipAddress) {
+		async Task printRemoteTest(List<PrintType> printTypes, string ipOrName) {
 			DineForPrinting dp = null;
 			try {
-				serverLog($"开始测试, 打印机: {ipAddress}", LogLevel.Info);
+				serverLog($"开始测试, 打印机: {ipOrName}", LogLevel.Info);
 				dp = await getDineForPrinting("00000000000000");
 				if(dp == null) {
 					serverLog("获取订单信息失败，请检查网络设置", LogLevel.Error);
 					return;
 				}
-				dp.Dine.Desk.ReciptPrinter.IpAddress = ipAddress;
-				dp.Dine.Desk.ServePrinter.IpAddress = ipAddress;
+				dp.Dine.Desk.ReciptPrinter.IpAddress = ipOrName;
+				dp.Dine.Desk.ReciptPrinter.Name = ipOrName;
+				dp.Dine.Desk.ServePrinter.IpAddress = ipOrName;
+				dp.Dine.Desk.ServePrinter.Name = ipOrName;
 				foreach(var dineMenu in dp.Dine.DineMenus) {
-					dineMenu.Menu.Printer.IpAddress = ipAddress;
+					dineMenu.Menu.Printer.IpAddress = ipOrName;
+					dineMenu.Menu.Printer.Name = ipOrName;
 				}
 
 				serverLog($"发送测试单命令", LogLevel.Info);
-				DinePrinter dinePrinter = new DinePrinter();
-				await dinePrinter.Print(dp, printTypes, true);
+
+				if(Config.IsIPPrinter) {
+					DinePrinter dinePrinter = new DinePrinter();
+					await dinePrinter.Print(dp, printTypes, true);
+				}
+				else {
+					DineDriverPrinter dineDriverPrinter = new DineDriverPrinter();
+					dineDriverPrinter.Print(dp, printTypes, true);
+				}
+				
 				serverLog($"发送测试单命令成功", LogLevel.Success);
 				printCompleted("00000000000000");
 			}
@@ -67,15 +78,21 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 打印本地测试
 		/// </summary>
-		async Task printLocalTest(List<PrintType> printTypes, string ipAddress) {
-			DineForPrinting dp = Config.GetTestProtocol(ipAddress);
+		async Task printLocalTest(List<PrintType> printTypes, string ipOrName) {
+			DineForPrinting dp = Config.GetTestProtocol(ipOrName);
 			try {
-				serverLog($"开始本地测试, 打印机: {ipAddress}", LogLevel.Info);
+				serverLog($"开始本地测试, 打印机: {ipOrName}", LogLevel.Info);
 				serverLog($"发送本地测试单命令", LogLevel.Info);
 
-				DinePrinter dinePrinter = new DinePrinter();
-				await dinePrinter.Print(dp, printTypes, true);
-
+				if(Config.IsIPPrinter) {
+					DinePrinter dinePrinter = new DinePrinter();
+					await dinePrinter.Print(dp, printTypes, true);
+				}
+				else {
+					DineDriverPrinter dineDriverPrinter = new DineDriverPrinter();
+					dineDriverPrinter.Print(dp, printTypes, true);
+				}
+			
 				serverLog($"发送本地测试单命令成功", LogLevel.Success);
 			}
 			catch(Exception e) {

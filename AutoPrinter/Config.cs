@@ -52,8 +52,9 @@ namespace AutoPrinter {
 		private static string configFilePath = $@"{BaseDir}\config.json";
 
 		public static int HotelId { get; set; }
+		public static bool IsIPPrinter { get; set; }
 
-		public static DineForPrinting GetTestProtocol(string ipAddress) {
+		public static DineForPrinting GetTestProtocol(string ipOrName) {
 			DineForPrinting p = new DineForPrinting {
 				Hotel = new Hotel {
 					Id = 1,
@@ -101,18 +102,18 @@ namespace AutoPrinter {
 						AreaType = HotelDAO.Models.AreaType.Normal,
 						ReciptPrinter = new Printer {
 							Id = 0,
-							Name = "本地测试打印机",
-							IpAddress = ipAddress,
+							Name = ipOrName,
+							IpAddress = ipOrName,
 							Usable = true
 						},
 						ServePrinter = new Printer {
 							Id = 1,
-							Name = "本地测试打印机",
-							IpAddress = ipAddress,
+							Name = ipOrName,
+							IpAddress = ipOrName,
 							Usable = true
 						}
 					},
-					DineMenus = new List<DineMenu> (),
+					DineMenus = new List<DineMenu>(),
 					DinePaidDetails = new List<DinePaidDetail> {
 							new DinePaidDetail {
 								Price = 12.34m,
@@ -185,8 +186,8 @@ namespace AutoPrinter {
 						IsSetMeal = false,
 						Printer = new Printer {
 							Id = 2,
-							Name = $"本地测试打印机{i}",
-							IpAddress = ipAddress,
+							Name = ipOrName,
+							IpAddress = ipOrName,
 							Usable = true
 						},
 						DepartmentName = $"测试厨房名{i}"

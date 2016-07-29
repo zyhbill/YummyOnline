@@ -19,6 +19,27 @@ namespace AutoPrinter {
 		public MainWindow() {
 			InitializeComponent();
 
+			if(!Config.IsIPPrinter) {
+				buttonConnectPrinter.Visibility = Visibility.Collapsed;
+				buttonConnectPrinters.Visibility = Visibility.Collapsed;
+
+				Grid.SetRowSpan(listViewLog, 2);
+				listViewIpPrinter.Visibility = Visibility.Collapsed;
+				textBlockIpPrinter.Visibility = Visibility.Collapsed;
+				listViewIpPrinterStatus.Visibility = Visibility.Collapsed;
+				textBlockIpPrinterStatus.Visibility = Visibility.Collapsed;
+
+				textBlockIP.Visibility = Visibility.Collapsed;
+				textBoxIP.Visibility = Visibility.Collapsed;
+				comboBox.Visibility = Visibility.Visible;
+
+				List<string> printers = BasePrinter.GetPritners();
+				printers.ForEach(p => {
+					comboBox.Items.Add(p);
+				});
+				comboBox.SelectedIndex = 0;
+			}
+
 			IPPrinter.GetInstance().OnLog += (ip, bmp, message, style) => {
 				ipPrinterLog(ip, bmp?.GetHashCode(), message, style);
 			};
@@ -63,15 +84,26 @@ namespace AutoPrinter {
 		}
 
 		private async void buttonTestRemoteDines_Click(object sender, RoutedEventArgs e) {
-			await printRemoteTest(getCheckedPrintTypes(), textBoxIp.Text);
+			if(Config.IsIPPrinter) {
+				await printRemoteTest(getCheckedPrintTypes(), textBoxIP.Text);
+			}
+			else {
+				await printRemoteTest(getCheckedPrintTypes(), comboBox.SelectedItem.ToString());
+			}
 		}
 
 		private async void buttonTestLocalDines_Click(object sender, RoutedEventArgs e) {
-			await printLocalTest(getCheckedPrintTypes(), textBoxIp.Text);
+			if(Config.IsIPPrinter) {
+				await printLocalTest(getCheckedPrintTypes(), textBoxIP.Text);
+			}
+			else {
+				await printLocalTest(getCheckedPrintTypes(), comboBox.SelectedItem.ToString());
+			}
+
 		}
 
 		private async void buttonConnectPrinter_Click(object sender, RoutedEventArgs e) {
-			await IPPrinter.GetInstance().Connect(IPAddress.Parse(textBoxIp.Text));
+			await IPPrinter.GetInstance().Connect(IPAddress.Parse(textBoxIP.Text));
 		}
 
 		private async void buttonConnectPrinters_Click(object sender, RoutedEventArgs e) {
@@ -100,9 +132,13 @@ namespace AutoPrinter {
 			return types;
 		}
 
-		private void textBoxIp_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e) {
+		private void textBoxIPorName_TextChanged(object sender, TextChangedEventArgs e) {
+			if(!Config.IsIPPrinter) {
+				return;
+			}
+
 			IPAddress ip;
-			if(IPAddress.TryParse(textBoxIp.Text, out ip)) {
+			if(IPAddress.TryParse(textBoxIP.Text, out ip)) {
 				buttonConnectPrinter.IsEnabled = true;
 				buttonTestLocalDines.IsEnabled = true;
 				buttonTestRemoteDines.IsEnabled = true;

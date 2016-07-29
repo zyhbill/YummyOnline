@@ -15,7 +15,7 @@ namespace Protocol.PrintingProtocol {
 	}
 	public class ShiftForPrinting {
 		public List<Shift> Shifts { get; set; }
-		public string PrinterIpAddress { get; set; }
+		public Printer Printer { get; set; }
 		public PrinterFormat PrinterFormat { get; set; }
 	}
 }

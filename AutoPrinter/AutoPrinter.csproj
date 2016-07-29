@@ -111,6 +111,8 @@
     </ApplicationDefinition>
     <Compile Include="Config.cs" />
     <Compile Include="Logs.cs" />
+    <Compile Include="Printers\BaseDinePrinter.cs" />
+    <Compile Include="Printers\BaseShiftPrinter.cs" />
     <Compile Include="Signin.xaml.cs">
       <DependentUpon>Signin.xaml</DependentUpon>
     </Compile>

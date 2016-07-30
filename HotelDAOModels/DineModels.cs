@@ -135,7 +135,8 @@ namespace HotelDAO.Models {
 		TimeDiscount = 4,
 		VipDiscount = 5,
 		CustomDiscount = 6,
-		SetMeal = 7
+		SetMeal = 7,
+		Gift = 8
 	}
 	public enum DineMenuStatus {
 		/// <summary>

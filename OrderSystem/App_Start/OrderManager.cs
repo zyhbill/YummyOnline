@@ -267,7 +267,7 @@ namespace OrderSystem {
 
 					Menu = menu,
 					Remarks = new List<Remark>(),
-					Status = menuExtensionWithGift.IsGift ? DineMenuStatus.Gift : DineMenuStatus.Normal
+					Type = menuExtensionWithGift.IsGift ? DineMenuType.Gift : DineMenuType.None
 				};
 
 				if(!menuExtensionWithGift.IsGift) {

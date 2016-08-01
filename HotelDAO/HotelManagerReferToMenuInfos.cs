@@ -19,7 +19,7 @@ namespace HotelDAO {
 		}
 		public async Task<dynamic> GetFormatedMenus(MenuStatus status = MenuStatus.Normal) {
 			var linq = ctx.Menus
-				.Where(p => p.Usable && p.Status == status)
+				.Where(p => p.Usable && !p.IsOnlyInSetMeal && p.Status == status)
 				.Select(p => new {
 					p.Id,
 					p.Code,
@@ -59,14 +59,27 @@ namespace HotelDAO {
 			return await linq.ToListAsync();
 		}
 		public async Task<dynamic> GetFormatedMenuSetMeals() {
-			var linq = ctx.SetMealClasses
+			var linq = ctx.SetMealClasses.GroupBy(p => p.SetMealId)
 				.Select(p => new {
-					p.SetMealId,
-					p.Name,
-					p.Count,
-					Menus = p.SetMealClassMenus.Select(m => new {
-						m.Count,
-						m.MenuId
+					SetMealId = p.Key,
+					Classes = p.Select(c => new {
+						c.Name,
+						c.Count,
+						Menus = c.SetMealClassMenus.Select(m => new {
+							m.Count,
+							Menu = new {
+								m.Menu.Id,
+								m.Menu.Code,
+								m.Menu.Name,
+								m.Menu.EnglishName,
+								m.Menu.NameAbbr,
+								m.Menu.PicturePath,
+								m.Menu.Unit,
+								m.Menu.MinOrderCount,
+								m.Menu.Ordered,
+								m.Menu.MenuPrice,
+							}
+						})
 					})
 				});
 

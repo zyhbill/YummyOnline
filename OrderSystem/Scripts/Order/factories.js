@@ -22,7 +22,7 @@
 				Remarks: [],
 
 				OriPrice: menu.MenuPrice.Price,
-				SetMeals: [],
+				SetMealClasses: [],
 				IsOnSale: false,
 				ExcludePayDiscount: false,
 				IsShowRemark: menu.Remarks != null && menu.Remarks.length > 0,
@@ -33,7 +33,7 @@
 
 			angular.extend(menu, {
 				IsShowSetMeal: function () {
-					return this.Addition.SetMeals.length > 0;
+					return this.Addition.SetMealClasses.length > 0;
 				},
 				ToggleSetMeal: function () {
 					this.Addition.IsSetMealCollapsed = !this.Addition.IsSetMealCollapsed;
@@ -52,12 +52,7 @@
 
 			return menu;
 		}
-		function _filterSetMenu(menu) {
-			menu.Addition = {
-				Ordered: 0,
-			};
-			return menu;
-		}
+
 		return function () {
 			return $q(function (resolve) {
 				var menuOnSales, menuSetMeals, payKinds;
@@ -110,10 +105,8 @@
 							}
 						}
 						for (var j in menuSetMeals) {
-							if (menuSetMeals[j].MenuSetId == menu.Id && menu.IsSetMeal) {
-								menuSetMeals[j].Menu = _filterSetMenu(menuSetMeals[j].Menu);
-								menuSetMeals[j].Menu.Addition.Ordered = menuSetMeals[j].Count;
-								menu.Addition.SetMeals.push(menuSetMeals[j].Menu);
+							if (menuSetMeals[j].SetMealId == menu.Id && menu.IsSetMeal) {
+								menu.Addition.SetMealClasses = menuSetMeals[j].Classes;
 								setExcludePayKindDiscount(menu);
 							}
 						}

@@ -49,7 +49,7 @@ namespace OrderSystem.Controllers {
 				MenuClasses = await t1,
 				Menus = await t2,
 				MenuOnSales = await t3,
-				//MenuSetMeals = await t4,
+				MenuSetMeals = await t4,
 				PayKinds = await t5,
 				DiscountMethods = new {
 					TimeDiscounts = await t7,

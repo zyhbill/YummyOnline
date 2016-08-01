@@ -4,9 +4,59 @@
 		<h4 class="modal-title">{{menu.Name}}</h4>
 	</div>
 	<div class="modal-body setmeals-modal">
-		<p ng-repeat="menuSetMeal in menu.Addition.SetMeals">
-			{{menuSetMeal.Name}}&times;{{menuSetMeal.Addition.Ordered}}
-		</p>
+
+		<div ng-repeat="class in menu.Addition.Classes">
+			<p>{{class.Name}}</p>
+			<p>{{class.Count}}</p>
+
+			<section class="section-menu-fashion">
+				<ul class="list-group">
+					<!-- ngRepeat Menus -->
+					<li class="list-group-item"
+						ng-repeat="menu in class.Menus">
+						<div class="media">
+							<div class="media-left">
+								<a href="javascript:;">
+									<img class="media-object"
+										 ng-src="/Content/image/{{menu.PicturePath}}">
+								</a>
+							</div>
+							<div class="media-body">
+								<div class="meal-point"><i class="fa fa-heart"></i> {{menu.Ordered}}</div>
+
+								<div class="meal-bottom">
+									<div class="cart-control">
+										<span ng-if="menu.Addition.Ordered>0">
+											<button class="btn btn-sm btn-cart-decrease"
+													ng-click="cart.RemoveMenu(menu)">
+												<i class="fa fa-minus"></i>
+											</button>
+											<span class="btn btn-sm btn-cart-num">{{menu.Addition.Ordered}}</span>
+										</span>
+										<button class="btn btn-sm btn-cart-add"
+												ng-click="cart.AddMenu(menu)">
+											<i class="fa fa-plus"></i>
+										</button>
+									</div>
+									<div class="meal-price">
+										{{menu.MenuPrice.Price | currency : "￥"}}
+										<s ng-show="menu.Addition.OriPrice!=menu.MenuPrice.Price" class="meal-oriprice">
+											{{menu.Addition.OriPrice | currency : "￥"}}
+										</s>
+									</div>
+									<div class="meal-title">
+										{{menu.EnglishName}} {{menu.Name}}
+										<span class="meal-on-sale" ng-if="menu.Addition.IsOnSale">特价</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</section>
+		</div>
+
+
 	</div>
 </script>
 

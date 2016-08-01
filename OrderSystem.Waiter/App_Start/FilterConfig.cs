@@ -21,7 +21,9 @@ namespace OrderSystem.Waiter {
 
 	public class FilterConfig {
 		public static void RegisterGlobalFilters(GlobalFilterCollection filters) {
+#if !DEBUG
 			filters.Add(new AppHandleErrorAttribute());
+#endif
 		}
 	}
 }

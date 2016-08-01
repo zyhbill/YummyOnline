@@ -110,7 +110,8 @@ namespace OrderSystem.Controllers {
 				DineType = cartAddition.DineType,
 				Discount = cartAddition.Discount,
 				DiscountName = cartAddition.DiscountName,
-				GiftMenus = cartAddition.GiftMenus
+				GiftMenus = cartAddition.GiftMenus,
+				From = DineFrom.Manager
 			};
 
 			User user = await UserManager.FindByIdAsync(cartAddition.UserId);

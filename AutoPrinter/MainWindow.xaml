@@ -18,7 +18,7 @@
 		</Style>
 	</Window.Resources>
 	
-	<Grid>
+	<Grid Name="mainGrid">
 		<Grid.RowDefinitions>
 			<RowDefinition/>
 			<RowDefinition/>
@@ -26,7 +26,7 @@
 		</Grid.RowDefinitions>
 
 		<TextBlock x:Name="textBlock1" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="日志:" VerticalAlignment="Top"/>
-		<ListView x:Name="listViewLog" Margin="10,30,10,0" ItemContainerStyle="{StaticResource listViewItemStyle}">
+		<ListView x:Name="listViewLog" Margin="10,30,10,0" ItemContainerStyle="{StaticResource listViewItemStyle}" >
 			<ListView.View>
 				<GridView>
 					<GridViewColumn Width="200" Header="日期" DisplayMemberBinding="{Binding Path=DateTime,StringFormat={}{0:yyyy/MM/dd HH:mm:ss}}" />
@@ -35,7 +35,7 @@
 			</ListView.View>
 		</ListView>
 
-		<TextBlock x:Name="textBlock2" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="打印机日志:" VerticalAlignment="Top" Grid.Row="1"/>
+		<TextBlock x:Name="textBlockIpPrinter" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="打印机日志:" VerticalAlignment="Top" Grid.Row="1"/>
 		<ListView x:Name="listViewIpPrinter" Grid.Row="1" Margin="10,30,10,0" ItemContainerStyle="{StaticResource listViewItemStyle}">
 			<ListView.View>
 				<GridView>
@@ -58,17 +58,18 @@
 			<Button x:Name="buttonConnectPrinter" Content="预连接打印机" HorizontalAlignment="Left" Margin="222,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonConnectPrinter_Click" />
 			<GroupBox x:Name="groupBox" Header="测试设置" Margin="10,10,10,38">
 				<Grid Margin="0,0,0,0">
-					<TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,11,0,0" TextWrapping="Wrap" Text="IP:" VerticalAlignment="Top"/>
-					<TextBox x:Name="textBoxIp" HorizontalAlignment="Left" Height="23" Text="192.168.0.253" VerticalAlignment="Top" Width="120" Margin="29,10,0,0" TextChanged="textBoxIp_TextChanged" />
-					<CheckBox x:Name="checkBoxRecipt" Content="收银条" HorizontalAlignment="Left" Margin="10,38,0,0" VerticalAlignment="Top" IsChecked="True"/>
-					<CheckBox x:Name="checkBoxServeOrder" Content="传菜单" HorizontalAlignment="Left" Margin="10,58,0,0" VerticalAlignment="Top" IsChecked="True"/>
-					<CheckBox x:Name="checkBoxKitchenOrder" Content="厨房" HorizontalAlignment="Left" Margin="10,78,0,0" VerticalAlignment="Top" IsChecked="True"/>
+					<TextBlock x:Name="textBlockIP" HorizontalAlignment="Left" Margin="10,11,0,0" TextWrapping="Wrap" Text="IP:" VerticalAlignment="Top"/>
+					<TextBox x:Name="textBoxIP" HorizontalAlignment="Left" Height="23" VerticalAlignment="Top" Width="120" Margin="29,10,0,0" TextChanged="textBoxIPorName_TextChanged" />
+					<CheckBox x:Name="checkBoxRecipt" Content="收银条" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" IsChecked="True"/>
+					<CheckBox x:Name="checkBoxServeOrder" Content="传菜单" HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" IsChecked="True"/>
+					<CheckBox x:Name="checkBoxKitchenOrder" Content="厨房" HorizontalAlignment="Left" Margin="10,85,0,0" VerticalAlignment="Top" IsChecked="True"/>
+					<ComboBox x:Name="comboBox" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="220" Visibility="Collapsed"/>
 				</Grid>
 			</GroupBox>
 
 			<Button x:Name="buttonConnectPrinters" Content="预连接所有打印机" Margin="0,147,10,0" VerticalAlignment="Top" Height="23" HorizontalAlignment="Right" Width="128" Click="buttonConnectPrinters_Click" />
 
-			<TextBlock x:Name="textBlock3" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="打印机状态:" VerticalAlignment="Top" Grid.Column="1"/>
+			<TextBlock x:Name="textBlockIpPrinterStatus" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="打印机状态:" VerticalAlignment="Top" Grid.Column="1"/>
 			<ListView x:Name="listViewIpPrinterStatus" Margin="10,30,10,10" Grid.Column="1" ItemContainerStyle="{StaticResource listViewItemStyle}">
 				<ListView.View>
 					<GridView>

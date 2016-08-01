@@ -27,8 +27,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://autoprinter.yummyonline.net/</UpdateUrl>
     <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>8</ApplicationRevision>
-    <ApplicationVersion>0.5.2.%2a</ApplicationVersion>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>0.6.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -111,6 +111,8 @@
     </ApplicationDefinition>
     <Compile Include="Config.cs" />
     <Compile Include="Logs.cs" />
+    <Compile Include="Printers\BaseDinePrinter.cs" />
+    <Compile Include="Printers\BaseShiftPrinter.cs" />
     <Compile Include="Signin.xaml.cs">
       <DependentUpon>Signin.xaml</DependentUpon>
     </Compile>
@@ -134,7 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="MainWindowCommands.cs" />
-    <Compile Include="PrinterGraphics.cs" />
+    <Compile Include="Printers\PrinterGraphics.cs" />
     <Compile Include="Printers\BasePrinter.cs" />
     <Compile Include="Printers\DinePrinter.cs" />
     <Compile Include="Printers\ShiftPrinter.cs" />

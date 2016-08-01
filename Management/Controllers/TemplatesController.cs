@@ -986,7 +986,7 @@ namespace Management.Controllers
                     {
                         temp.Price = 0;
                         temp.RemarkPrice = 0;
-                        temp.Status = DineMenuStatus.Gift;
+                        temp.Type = DineMenuType.Gift;
                     }
                     else
                     {

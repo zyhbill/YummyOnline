@@ -55,7 +55,7 @@ namespace Management.Controllers
                 discount = d.OriPrice - d.Price,
                 d.DinePaidDetails,
                 ReturnPrice  = DineMenus.Where(dd=>dd.DineId==d.Id&&dd.Status == DineMenuStatus.Returned).Sum(dd=>dd.Price * dd.Count),
-                GiftPrice  = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Gift).Sum(dd => dd.OriPrice * dd.Count)
+                GiftPrice  = DineMenus.Where(dd => dd.DineId == d.Id && dd.Type == DineMenuType.Gift).Sum(dd => dd.OriPrice * dd.Count)
             }).ToList();
             var Sum = new
             {
@@ -84,6 +84,7 @@ namespace Management.Controllers
                 .Select(t => new
                 {
                     t.MenuId,
+					t.Type,
                     t.Status,
                     t.Menu.Name,
                     t.Price,
@@ -91,7 +92,7 @@ namespace Management.Controllers
                     t.Count
 
                 }).ToListAsync();
-            var gift =  linq.Where(p => p.Status ==DineMenuStatus.Gift).Select(q => new
+            var gift =  linq.Where(p => p.Type ==DineMenuType.Gift).Select(q => new
             {
                 q.OriPrice,
                 q.Price
@@ -303,7 +304,7 @@ namespace Management.Controllers
                 d.DinePaidDetails,
                 d.IsInvoiced,
                 ReturnPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Returned).Sum(dd => dd.Price * dd.Count),
-                GiftPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Gift).Sum(dd => dd.OriPrice * dd.Count)
+                GiftPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Type == DineMenuType.Gift).Sum(dd => dd.OriPrice * dd.Count)
             }).ToList();
             var Sum = new
             {

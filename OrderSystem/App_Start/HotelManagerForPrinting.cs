@@ -35,17 +35,17 @@ namespace OrderSystem {
 				dine.DineMenus.RemoveAll(p => !dineMenuIds.Contains(p.Id));
 			}
 
-			foreach(var dineMenu in dine.DineMenus) {
-				if(dineMenu.Menu.IsSetMeal) {
-					dineMenu.Menu.SetMealMenus = await ctx.MenuSetMeals
-					.Where(p => p.MenuSetId == dineMenu.Menu.Id)
-					.Select(p => new Protocol.PrintingProtocol.SetMealMenu {
-						Id = p.Menu.Id,
-						Name = p.Menu.Name,
-						Count = p.Count
-					}).ToListAsync();
-				}
-			}
+			//foreach(var dineMenu in dine.DineMenus) {
+			//	if(dineMenu.Menu.IsSetMeal) {
+			//		dineMenu.Menu.SetMealMenus = await ctx.MenuSetMeals
+			//		.Where(p => p.MenuSetId == dineMenu.Menu.Id)
+			//		.Select(p => new Protocol.PrintingProtocol.SetMealMenu {
+			//			Id = p.Menu.Id,
+			//			Name = p.Menu.Name,
+			//			Count = p.Count
+			//		}).ToListAsync();
+			//	}
+			//}
 			return dine;
 		}
 

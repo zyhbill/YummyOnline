@@ -58,22 +58,22 @@ namespace HotelDAO {
 				});
 			return await linq.ToListAsync();
 		}
-		public async Task<dynamic> GetFormatedMenuSetMeals() {
-			var linq = ctx.MenuSetMeals
-				.Select(p => new {
-					p.MenuSetId,
-					p.Count,
-					Menu = new {
-						p.Menu.Id,
-						p.Menu.Name,
-						p.Menu.MenuPrice.Price,
-						p.Menu.MenuPrice.Discount,
-						p.Menu.Ordered,
-					}
-				});
+		//public async Task<dynamic> GetFormatedMenuSetMeals() {
+		//	var linq = ctx.MenuSetMeals
+		//		.Select(p => new {
+		//			p.MenuSetId,
+		//			p.Count,
+		//			Menu = new {
+		//				p.Menu.Id,
+		//				p.Menu.Name,
+		//				p.Menu.MenuPrice.Price,
+		//				p.Menu.MenuPrice.Discount,
+		//				p.Menu.Ordered,
+		//			}
+		//		});
 
-			return await linq.ToListAsync();
-		}
+		//	return await linq.ToListAsync();
+		//}
 
 		public async Task<dynamic> GetFormatedPayKinds(List<PayKindType> payKindTypes) {
 			var linq = formatPayKind(ctx.PayKinds

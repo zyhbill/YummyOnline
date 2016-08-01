@@ -92,6 +92,7 @@ namespace HotelDAO.Models {
 
 		public bool Usable { get; set; }
 		public bool IsSetMeal { get; set; }
+		public bool IsOnlyInSetMeal { get; set; }
 
 		public int DepartmentId { get; set; }
 		public Department Department { get; set; }
@@ -132,22 +133,5 @@ namespace HotelDAO.Models {
 		public DayOfWeek OnSaleWeek { get; set; }
 
 		public decimal Price { get; set; }
-	}
-	/// <summary>
-	/// 套餐菜品表
-	/// </summary>
-	public class MenuSetMeal {
-		// 该类使用了Fluent API来删除级联
-		// 套餐菜品
-		[Key, Column(Order = 0)]
-		public string MenuSetId { get; set; }
-		public Menu MenuSet { get; set; }
-
-		// 套餐菜品对应的单个菜品
-		[Key, Column(Order = 1)]
-		public string MenuId { get; set; }
-		public Menu Menu { get; set; }
-
-		public int Count { get; set; }
 	}
 }

@@ -65,6 +65,7 @@
     <Compile Include="ReserveModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CustomerModels.cs" />
+    <Compile Include="SetMealModels.cs" />
     <Compile Include="ShiftModels.cs" />
     <Compile Include="StaffModels.cs" />
     <Compile Include="TakeOutModels.cs" />

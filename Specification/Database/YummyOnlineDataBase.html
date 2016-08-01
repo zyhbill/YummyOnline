@@ -50,7 +50,12 @@
 	<div class="container-fluid">
 		<h2>YummyOnline Database Specification</h2>
 		
-
+		<div class="alert alert-danger">
+			<p>加入DineMenuType</p>
+			<p class="text-right">
+				<small>2016-7-30 张朕煜</small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>加入IsPrintReciptAfterPayingOffline</p>
 			<p class="text-right">
@@ -61,25 +66,6 @@
 			<p>加入随机立减功能</p>
 			<p class="text-right">
 				<small>2016-7-25 张朕煜</small>
-			</p>
-		</div>
-		<div class="alert alert-danger">
-			<p>发票功能修改</p>
-			<p class="text-right">
-				<small>2016-7-20 张朕煜</small>
-			</p>
-		</div>
-		<div class="alert alert-danger">
-			<p>Users中增加WeChatOpenId</p>
-			<p class="text-right">
-				<small>2016-7-19 张朕煜</small>
-			</p>
-		</div>
-		<div class="alert alert-danger">
-			<p>PrinterFormats中增加ColorDepth</p>
-			<p>Users中增加Price</p>
-			<p class="text-right">
-				<small>2016-7-8 张朕煜</small>
 			</p>
 		</div>
 
@@ -340,6 +326,22 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>Type</td>
+				<td>int</td>
+				<td>菜品类型</td>
+				<td>
+					<p>0 正常</p>
+					<p>1 特价</p>
+					<p>2 折扣</p>
+					<p>3 支付折扣</p>
+					<p>4 时段折扣</p>
+					<p>5 会员折扣</p>
+					<p>6 自定义折扣</p>
+					<p>7 套餐</p>
+					<p>8 赠送</p>
+				</td>
+			</tr>
+			<tr>
 				<td>Price</td>
 				<td>decimal(11, 2)</td>
 				<td>菜品价格</td>
@@ -364,7 +366,6 @@
 				<td>
 					<p>0 普通</p>
 					<p>1 退回</p>
-					<p>2 赠菜</p>
 				</td>
 			</tr>
 			<tr>
@@ -2060,6 +2061,25 @@
 		</table>
 
 
+		<div class="alert alert-danger">
+			<p>发票功能修改</p>
+			<p class="text-right">
+				<small>2016-7-20 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>Users中增加WeChatOpenId</p>
+			<p class="text-right">
+				<small>2016-7-19 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>PrinterFormats中增加ColorDepth</p>
+			<p>Users中增加Price</p>
+			<p class="text-right">
+				<small>2016-7-8 张朕煜</small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>Staffs表中增加IsHotelAdmin字段</p>
 			<p>HotelConfigs表中增加IsPayFirst字段</p>

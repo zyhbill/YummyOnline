@@ -289,11 +289,11 @@ namespace OrderSystem {
 						dineMenu.Type = DineMenuType.OnSale;
 					}
 					// 是否为套餐
-					var menuSetMeals = await ctx.MenuSetMeals.FirstOrDefaultAsync(p => p.MenuSetId == menu.Id && p.Menu.IsSetMeal);
-					if(menuSetMeals != null) {
-						excludePayDiscount = true;
-						dineMenu.Type = DineMenuType.SetMeal;
-					}
+					//var menuSetMeals = await ctx.MenuSetMeals.FirstOrDefaultAsync(p => p.MenuSetId == menu.Id && p.Menu.IsSetMeal);
+					//if(menuSetMeals != null) {
+					//	excludePayDiscount = true;
+					//	dineMenu.Type = DineMenuType.SetMeal;
+					//}
 
 					if(!excludePayDiscount) {
 						dineMenu.Price = menu.MenuPrice.Price * (decimal)dine.Discount;

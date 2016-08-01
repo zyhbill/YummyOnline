@@ -44,10 +44,13 @@ namespace HotelDAO.Models {
 		public DbSet<Menu> Menus { get; set; }
 		public DbSet<MenuPrice> MenuPrice { get; set; }
 		public DbSet<MenuOnSale> MenuOnSales { get; set; }
-		public DbSet<MenuSetMeal> MenuSetMeals { get; set; }
+
+		public DbSet<SetMealClass> SetMealClasses { get; set; }
+		public DbSet<SetMealClassMenu> SetMealClassMenus { get; set; }
 
 		public DbSet<Dine> Dines { get; set; }
 		public DbSet<DineMenu> DineMenus { get; set; }
+		public DbSet<DineMenuSetMeal> DineMenuSetMeals { get; set; }
 		public DbSet<DinePaidDetail> DinePaidDetails { get; set; }
 		public DbSet<ReturnedReason> ReturnedReasons { get; set; }
 		public DbSet<TakeOut> TakeOuts { get; set; }

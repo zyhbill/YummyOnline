@@ -787,68 +787,10 @@ angular.module('Baseinfo', [])
 }])
 .controller('SetMealsCtrl', ['$scope', '$rootScope', '$uibModal', 'SetMeals', function ($scope, $rootScope, $uibModal, SetMeals) {
     $rootScope.FatherPage = "菜品管理"; $rootScope.FatherPath = "#/SetMeals"; $rootScope.ChildPage = "套餐设置";
-    $scope.Initialize = function () {
-        var promise = SetMeals.Initialize();
-        promise.then(function (data) {
-            $scope.MealElement = SetMeals.MealElement;
-        }, function (data) {
-            console.log(data);
-        })
-    }
-    $scope.OpenEditModel = function (meal) {
-        if ($rootScope.IsStaffEdit) {
-            var modalInstance = $uibModal.open({//打开修改模块
-                animation: $scope.animationsEnabled,
-                templateUrl: 'ModalMealEdit.html',
-                controller: 'ModalMealEditCtrl',
-                backdrop: 'static',
-                size: 'sm',
-                resolve: {
-                    option: {
-                        method: SetMeals,CurMeal:meal
-                    }
-                }
-            });
-        }
-        else {
-            alert("对不起，你没有相关权限，请联系管理员")
-        }
-    }
-    $scope.DeleteMeal = function (meal) {
-        if ($rootScope.IsStaffEdit) {
-            SetMeals.DeleteMeal(meal);
-        }
-        else {
-            alert("对不起，你没有相关权限，请联系管理员")
-        }
-    }
+    
 }])
 .controller('ModalMealEditCtrl', function ($scope, $rootScope, $uibModalInstance, $q, $timeout, option) {
-    option.method.MealElement.CurMeal = option.CurMeal;
-    var temp = angular.copy(option.CurMeal);
-    $scope.MealElement = option.method.MealElement;
-    $scope.EditMeal = function () {
-        var promise = option.method.EditMeal();
-        promise.then(function (data) {
-            if (data.Status) {
-                $uibModalInstance.dismiss('cancel');
-            } else {
-                alert(data.ErrorMessage);
-            }
-        }, function (data) {
-            console.log(data);
-        })
-    }
-    $scope.DeleteMenu = function (menu) { option.method.DeleteMenu(menu); }
-    $scope.SelectChange = function (menu) { option.method.SelectChange(menu); }
-    $scope.NumChange = function () { option.method.NumChange(); }
-    $scope.AddMenuInMeal = function () { option.method.AddMenuInMeal(); }
-    $scope.cancel = function () {
-        for (var i = 0; i < option.method.MealElement.Meals.length; i++) {
-            if (option.method.MealElement.Meals[i].MealMenu.Id == temp.MealMenu.Id) option.method.MealElement.Meals[i] = temp;
-        }
-        $uibModalInstance.dismiss('cancel');
-    }
+    
 })
 .controller('PrinterCtrl', ['$scope', '$rootScope', 'Print', function ($scope, $rootScope, Print) {
     $rootScope.FatherPage = "酒店杂项管理";$rootScope.ChildPage = "杂项设置";

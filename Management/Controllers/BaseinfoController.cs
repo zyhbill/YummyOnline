@@ -1277,113 +1277,6 @@ namespace Management.Controllers
         }
 
         /// <summary>
-        /// 获取套餐信息
-        /// </summary>
-        /// <returns></returns>
-        public async Task<JsonResult> getSetMeal()
-        {
-            var MenuSetIds = await db.Menus.Where(m => m.Usable == true && m.IsSetMeal == true)
-                .Select(m => m.Id)
-                .ToListAsync();
-            var Meals = new List<Meal>();
-            foreach(var i in MenuSetIds)
-            {
-                var newMeal = new Meal();
-                var meal = await db.MenuSetMeals
-                    .Include(m=>m.Menu.MenuPrice)
-                    .Include(m=>m.MenuSet.MenuPrice)
-                    .Where(m => m.MenuSetId == i)
-                    .ToListAsync();
-                var details = new List<MealList>();
-                if (meal.Count() > 0)
-                {
-                    foreach (var j in meal)
-                    {
-                        var newList = new MealList();
-                        newList.Count = j.Count;
-                        newList.Menu = j.Menu;
-                        details.Add(newList);
-                    }
-                }
-                newMeal.MealMenu = await db.Menus
-                    .Include(m=>m.MenuPrice)
-                    .FirstOrDefaultAsync(m=>m.Id==i);
-                newMeal.Menus = details;
-                Meals.Add(newMeal);
-            }
-            var Menus = await db.Menus.Where(m => m.Usable == true&&m.IsSetMeal==false)
-                .Include(m => m.MenuPrice)
-                .ToListAsync();
-            return Json(new { Meals= Meals, Menus= Menus });
-        }
-        /// <summary>
-        /// 删除套餐信息
-        /// </summary>
-        /// <param name="MealId"></param>
-        /// <param name="MenuId"></param>
-        /// <returns></returns>
-        public async Task<JsonResult> deleteMealMenu(string MealId,string MenuId)
-        {
-            var meal = await db.MenuSetMeals.Where(m => m.MenuSetId == MealId && m.MenuId == MenuId)
-                            .FirstOrDefaultAsync();
-            if(meal==null)  return Json(new { Status = true });
-            db.MenuSetMeals.Remove(meal);
-            db.SaveChanges();
-            return Json(new { Status = true });
-        }
-        /// <summary>
-        /// 修改套餐菜品
-        /// </summary>
-        /// <param name="MealId"></param>
-        /// <param name="Menus"></param>
-        /// <param name="Name"></param>
-        /// <param name="Price"></param>
-        /// <returns></returns>
-        public async Task<JsonResult> EditMenusInMeal(string MealId,List<MenuInMeal> Menus,string Name,decimal Price)
-        {
-            var curmeal = await db.Menus.Where(m => m.Id == MealId)
-                .Include(m => m.MenuPrice)
-                .FirstOrDefaultAsync();
-            if(curmeal==null) return Json(new { Status = false, ErrorMessage = "没有套餐" });
-            curmeal.Name = Name;
-            curmeal.MenuPrice.Price = Price;
-            db.SaveChanges();
-            if (Menus==null) return Json(new { Status = false ,ErrorMessage="请直接删除套餐"});
-            var listmenus = await db.MenuSetMeals.Where(m => m.MenuSetId == MealId)
-                                .ToListAsync();
-            if (listmenus != null)
-            {
-                foreach (var i in listmenus)
-                {
-                    db.MenuSetMeals.Remove(i);
-                    db.SaveChanges();
-                }
-            }
-            foreach(var i in Menus)
-            {
-                var meal = new MenuSetMeal();
-                meal.MenuSetId = MealId;
-                meal.Count = i.Count;
-                meal.MenuId = i.MenuId;
-                db.MenuSetMeals.Add(meal);
-                db.SaveChanges();
-            }
-            return Json(new { Status = true });
-        }
-        /// <summary>
-        /// 删除套餐
-        /// </summary>
-        /// <param name="MealId"></param>
-        /// <returns></returns>
-        public async Task<JsonResult> DeleteMeal(string MealId)
-        {
-            var meal = await db.Menus.Where(m => m.Id == MealId).FirstOrDefaultAsync();
-            meal.Usable = false;
-            db.SaveChanges();
-            return Json(new { Status = true });
-        }
-
-        /// <summary>
         /// 获取打印信息
         /// </summary>
         /// <returns></returns>
@@ -1494,5 +1387,30 @@ namespace Management.Controllers
             }
             return Json(new ErrorState("请选择文件"));
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     }
 }

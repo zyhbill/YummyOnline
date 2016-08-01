@@ -180,6 +180,27 @@ namespace HotelDAO.Models {
 		public ICollection<Remark> Remarks { get; set; }
 	}
 
+	public class DineMenuSetMeal {
+		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+		public int Id { get; set; }
+
+		[ForeignKey(nameof(DineMenu))]
+		public int DineMenuId { get; set; }
+
+		[Required]
+		[MaxLength(20)]
+		public string ClassName { get; set; }
+
+		[Required]
+		[ForeignKey(nameof(Menu))]
+		public string MenuId { get; set; }
+
+		public int Count { get; set; }
+
+		public DineMenu DineMenu { get; set; }
+		public Menu Menu { get; set; }
+	}
+
 	/// <summary>
 	/// 支付明细表
 	/// </summary>

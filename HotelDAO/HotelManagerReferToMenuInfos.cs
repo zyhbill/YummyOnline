@@ -59,17 +59,15 @@ namespace HotelDAO {
 			return await linq.ToListAsync();
 		}
 		public async Task<dynamic> GetFormatedMenuSetMeals() {
-			var linq = ctx.MenuSetMeals
+			var linq = ctx.SetMealClasses
 				.Select(p => new {
-					p.MenuSetId,
+					p.SetMealId,
+					p.Name,
 					p.Count,
-					Menu = new {
-						p.Menu.Id,
-						p.Menu.Name,
-						p.Menu.MenuPrice.Price,
-						p.Menu.MenuPrice.Discount,
-						p.Menu.Ordered,
-					}
+					Menus = p.SetMealClassMenus.Select(m => new {
+						m.Count,
+						m.MenuId
+					})
 				});
 
 			return await linq.ToListAsync();

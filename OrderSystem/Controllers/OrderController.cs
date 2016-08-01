@@ -38,7 +38,7 @@ namespace OrderSystem.Controllers {
 			var t1 = new HotelManager(CurrHotel.ConnectionString).GetFormatedMenuClasses();
 			var t2 = new HotelManager(CurrHotel.ConnectionString).GetFormatedMenus();
 			var t3 = new HotelManager(CurrHotel.ConnectionString).GetFormatedMenuOnSales();
-			//var t4 = new HotelManager(CurrHotel.ConnectionString).GetFormatedMenuSetMeals();
+			var t4 = new HotelManager(CurrHotel.ConnectionString).GetFormatedMenuSetMeals();
 			var t5 = new HotelManager(CurrHotel.ConnectionString).GetFormatedPayKinds(new List<PayKindType> { PayKindType.Online, PayKindType.Other });
 			var t6 = new HotelManager(CurrHotel.ConnectionString).GetHotelConfig();
 			var t7 = new HotelManager(CurrHotel.ConnectionString).GetTimeDiscounts();

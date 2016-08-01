@@ -13,6 +13,8 @@ namespace HotelDAO.Models {
 		[MaxLength(20)]
 		public string Name { get; set; }
 
+		public int Count { get; set; }
+
 		[Required]
 		[ForeignKey(nameof(SetMeal))]
 		public string SetMealId { get; set; }

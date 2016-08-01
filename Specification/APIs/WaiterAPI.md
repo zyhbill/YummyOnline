@@ -10,6 +10,7 @@ waiter.yummyonline.net
 - 2016-7-11 Menus中增加EnglishName
 - 2016-7-13 增加AddMenus增加菜品接口
 - 2016-7-19 增加查询历史订单的多个接口
+- 2016-8-1 增加From与BeginTime两个字段
 
 ### 服务员登录
 #### POST
@@ -298,7 +299,9 @@ waiter.yummyonline.net
 	"CartAddition": {
 		"UserId": <string 会员编号>,
 		"Discount": <float 自定义折扣率>,
-		"DiscountName": <string 自定义折扣名称>
+		"DiscountName": <string 自定义折扣名称>,
+		"From": <int 具体详见数据库文档>,
+		"BeginTime": <string 下单时间, 如为NULL或不传此字段则视下单时间为调用此接口时间>
 	}
 }
 ```
@@ -538,6 +541,7 @@ waiter.yummyonline.net
 	"Id": <string>,
 	"Status": <int>,
 	"Type": <int>,
+  	"From": <int>,
 	"HeadCount": <int>,
 	"Price": <float>,
 	"OriPrice": <float>,

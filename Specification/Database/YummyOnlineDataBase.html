@@ -50,7 +50,12 @@
 	<div class="container-fluid">
 		<h2>YummyOnline Database Specification</h2>
 		
-
+		<div class="alert alert-danger">
+			<p>加入From</p>
+			<p class="text-right">
+				<small>2016-8-1 张朕煜</small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>加入IsPrintReciptAfterPayingOffline</p>
 			<p class="text-right">
@@ -463,6 +468,18 @@
 				<td>
 					<p>0 堂吃</p>
 					<p>1 外卖</p>
+				</td>
+			</tr>
+			<tr>
+				<td>From</td>
+				<td>int</td>
+				<td>下单原始地点</td>
+				<td>
+					<p>0 顾客浏览器点餐</p>
+					<p>1 服务员浏览器</p>
+					<p>2 服务员PAD</p>
+					<p>3 服务员APP</p>
+					<p>4 后台管理系统</p>
 				</td>
 			</tr>
 			<tr>

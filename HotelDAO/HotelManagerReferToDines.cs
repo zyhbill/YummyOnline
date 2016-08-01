@@ -28,6 +28,7 @@ namespace HotelDAO {
 				p.Id,
 				p.Status,
 				p.Type,
+				p.From,
 				p.HeadCount,
 				p.Price,
 				p.OriPrice,

@@ -54,6 +54,13 @@ namespace HotelDAO.Models {
 		/// </summary>
 		Custom = 4
 	}
+	public enum DineFrom {
+		CustomerBrowser = 0,
+		WaiterBrowser = 1,
+		WaiterPad = 2,
+		WaiterApp = 3,
+		Manager = 4
+	}
 
 	/// <summary>
 	/// 订单
@@ -65,11 +72,12 @@ namespace HotelDAO.Models {
 		/// <summary>
 		/// 订单状态
 		/// </summary>
-		public DineStatus Status { get; set; } = DineStatus.Untreated;
+		public DineStatus Status { get; set; }
 		/// <summary>
 		/// 订单类型
 		/// </summary>
 		public DineType Type { get; set; }
+		public DineFrom From { get; set; }
 		/// <summary>
 		/// 人数
 		/// </summary>
@@ -91,7 +99,6 @@ namespace HotelDAO.Models {
 		/// </summary>
 		public bool IsInvoiced { get; set; }
 
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public DateTime BeginTime { get; set; }
 		/// <summary>
 		///  是否为线上支付

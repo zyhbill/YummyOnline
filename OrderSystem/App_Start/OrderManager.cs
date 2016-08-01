@@ -51,7 +51,10 @@ namespace OrderSystem {
 
 				DineMenus = new List<DineMenu>(),
 				Remarks = new List<Remark>(),
-				DinePaidDetails = new List<DinePaidDetail>()
+				DinePaidDetails = new List<DinePaidDetail>(),
+
+				BeginTime = addition.BeginTime ?? DateTime.Now,
+				From = addition.From
 			};
 
 			// 订单备注

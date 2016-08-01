@@ -124,7 +124,7 @@
                                     <td><span class="label label-success arrowed" ng-repeat="remark in oldmenu.Remarks">{{remark.Name}}</span>&nbsp;</td>
                                     <td>原有</td>
                                 </tr>
-                                <tr ng-repeat="oldmenu in OpenElements.CurrentDine.DineMenus|filter:{Status:2}">
+                                <tr ng-repeat="oldmenu in OpenElements.CurrentDine.DineMenus|filter:{Type:8}">
                                     <td>{{oldmenu.Menu.Name}}</td>
                                     <td class="text-right">{{oldmenu.Count}}</td>
                                     <td class="text-right">{{(oldmenu.OriPrice * oldmenu.Count).toFixed(2)}}</td>

@@ -119,7 +119,8 @@ namespace Management.Controllers
                             RemarkPrice = dd.RemarkPrice,
                             Remarks = dd.Remarks,
                             ReturnedWaiterId = dd.ReturnedWaiterId,
-                            Status = dd.Status
+                            Status = dd.Status,
+                            Type= dd.Type
                         }),
                         Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
                         d.DeskId,

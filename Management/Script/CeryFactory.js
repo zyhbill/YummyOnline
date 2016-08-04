@@ -627,6 +627,7 @@
             CurrentMenu: {},
             CurrentMenuRemarks: [],
             CurrentDine: {},
+            CurMeal:{},
             FilterInfo: "",
             CurrentFilter: "",
             allchoose: true,
@@ -1121,6 +1122,15 @@
                 }).then(function (response) {
                     _this.ReserveInfo.User = response.data.Data[0];
                 })
+            });
+        },
+        GetMeal: function (MenuId) {
+            var _this = this;
+            $http.post("../Templates/GetMeal", {
+                MealId: MenuId
+            }).then(function (response) {
+                _this.OpenElements.CurMeal = response.data.Data;
+                console.log(_this.OpenElements.CurMeal);
             });
         }
     }

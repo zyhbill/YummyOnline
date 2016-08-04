@@ -227,7 +227,21 @@
         option.method.MenuFilter(id);
     }
     $scope.AddSingle = function (menu) {
-        option.method.AddSingle(menu);
+        console.log(menu);
+        if (menu.IsSetMeal) {
+            var modalInstance = $uibModal.open({//打开开桌
+                animation: $scope.animationsEnabled,
+                templateUrl: 'ModelSetMeal.html',
+                controller: 'ModelSetMealCtrl',
+                backdrop: 'static',
+                size: 'lg',
+                resolve: {
+                    option: { method: option.method ,MenuId : menu.Id}
+                }
+            });
+        } else {
+            option.method.AddSingle(menu);
+        }
     }
     $scope.Filter = function () {
         option.method.Filter();
@@ -236,6 +250,15 @@
     $scope.Down = function () { option.method.Down(); }
     $scope.cancel = function () {
         option.method.KeepShift();
+        $uibModalInstance.dismiss('cancel');
+    }
+})
+.controller('ModelSetMealCtrl', function ($scope, $rootScope, $uibModal, $uibModalInstance, $q, $timeout, option) {
+    $scope.OpenElements = option.method.OpenElements;
+    $scope.GetMeal = function () {
+        option.method.GetMeal(option.MenuId);
+    }
+    $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     }
 })

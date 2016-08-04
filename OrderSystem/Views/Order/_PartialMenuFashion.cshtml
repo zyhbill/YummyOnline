@@ -4,16 +4,16 @@
 		<h4 class="modal-title">{{menu.Name}}</h4>
 	</div>
 	<div class="modal-body setmeals-modal">
-
-		<div ng-repeat="class in menu.Addition.Classes">
+		<div ng-repeat="class in menu.Addition.SetMealClasses">
 			<p>{{class.Name}}</p>
 			<p>{{class.Count}}</p>
 
-			<section class="section-menu-fashion">
+			<section class="section-menu-fashion full-width">
 				<ul class="list-group">
 					<!-- ngRepeat Menus -->
 					<li class="list-group-item"
-						ng-repeat="menu in class.Menus">
+						ng-init="menu = menuWithCount.Menu"
+						ng-repeat="menuWithCount in class.Menus">
 						<div class="media">
 							<div class="media-left">
 								<a href="javascript:;">

@@ -16,7 +16,7 @@ angular.module('Baseinfo', [])
                 animation: $scope.animationsEnabled,
                 templateUrl: 'ModalAreaEdit.html',
                 controller: 'ModalAreaEditCtrl',
-                backdrop:'static',
+                backdrop: 'static',
                 size: 'sm',
                 resolve: {
                     option: {
@@ -80,7 +80,7 @@ angular.module('Baseinfo', [])
     }
     $scope.cancel = function () {
         for (var i = 0 ; i < option.method.AreaElement.Areas.length; i++) {
-            if (option.method.AreaElement.Areas[i].Id == temp.Id)   option.method.AreaElement.Areas[i] = temp;
+            if (option.method.AreaElement.Areas[i].Id == temp.Id) option.method.AreaElement.Areas[i] = temp;
         }
         $uibModalInstance.dismiss('cancel');
     }
@@ -184,7 +184,7 @@ angular.module('Baseinfo', [])
     }
     $scope.AreaChange = function () { option.method.AreaChange($scope.CurrentDesk); }
     $scope.cancel = function () {
-        for (var i = 0; i < option.method.DeskElement.Desks.length;i++){
+        for (var i = 0; i < option.method.DeskElement.Desks.length; i++) {
             if (option.method.DeskElement.Desks[i].Id == temp.Id) option.method.DeskElement.Desks[i] = temp;
         }
         $uibModalInstance.dismiss('cancel');
@@ -349,8 +349,8 @@ angular.module('Baseinfo', [])
             console.log(data);
         })
     }
-    $scope.AllowAdd = function () { return option.method.AllowAdd();}
-    $scope.SelectChange = function () { option.method.SelectChange();}
+    $scope.AllowAdd = function () { return option.method.AllowAdd(); }
+    $scope.SelectChange = function () { option.method.SelectChange(); }
     $scope.MenuElement = option.method.MenuElement;
     $scope.cancel = function () { $uibModalInstance.dismiss('cancel'); }
 })
@@ -623,7 +623,7 @@ angular.module('Baseinfo', [])
 .controller('ModalRemarksAddCtrl', function ($scope, $rootScope, $uibModalInstance, $q, $timeout, option) {
     option.method.RemarkElement.CurRemark = { Price: 0 };
     $scope.RemarkElement = option.method.RemarkElement;
-    $scope.AddRemark= function () {
+    $scope.AddRemark = function () {
         option.method.AddRemark();
         $uibModalInstance.dismiss('cancel');
     }
@@ -748,7 +748,7 @@ angular.module('Baseinfo', [])
         })
     }
     $scope.DeleteMenuClass = function (menu) {
-        MenuClass.DeleteMenuClass(menu,menu.Level);
+        MenuClass.DeleteMenuClass(menu, menu.Level);
     }
     $scope.Add = function (menu) {
         $scope.IsSubClass = true;
@@ -787,13 +787,178 @@ angular.module('Baseinfo', [])
 }])
 .controller('SetMealsCtrl', ['$scope', '$rootScope', '$uibModal', 'SetMeals', function ($scope, $rootScope, $uibModal, SetMeals) {
     $rootScope.FatherPage = "菜品管理"; $rootScope.FatherPath = "#/SetMeals"; $rootScope.ChildPage = "套餐设置";
-    
+    $scope.Initialize = function () {
+        SetMeals.Initialize();
+    }
+    $scope.MealElement = SetMeals.MealElement;
+    $scope.DeleteSetMeals = function (meal) {
+        if ($rootScope.IsStaffEdit) {
+            SetMeals.DeleteSetMeals(meal);
+        }
+        else {
+            alert("对不起，你没有相关权限，请联系管理员")
+        }
+    }
+    $scope.OpenEditModel = function (meal) {
+        if ($rootScope.IsStaffEdit) {
+            var modalInstance = $uibModal.open({//打开修改模块
+                animation: $scope.animationsEnabled,
+                templateUrl: 'ModalMealEdit.html',
+                controller: 'ModalMealEditCtrl',
+                backdrop: 'static',
+                size: 'lg',
+                resolve: {
+                    option: {
+                        method: SetMeals, CurMeal: meal
+                    }
+                }
+            });
+        }
+        else {
+            alert("对不起，你没有相关权限，请联系管理员")
+        }
+    }
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    }
 }])
-.controller('ModalMealEditCtrl', function ($scope, $rootScope, $uibModalInstance, $q, $timeout, option) {
-    
+.controller('ModalMealEditCtrl', function ($scope, $rootScope, $uibModal, $uibModalInstance, $q, $timeout, option) {
+    option.method.MealElement.CurMeal = option.CurMeal;
+    var temp = angular.copy(option.CurMeal);
+    $scope.MealElement = option.method.MealElement;
+
+    $scope.OpenAddSetMealClass = function () {
+        var modalInstance = $uibModal.open({//打开修改模块
+            animation: $scope.animationsEnabled,
+            templateUrl: 'AddSetMealClass.html',
+            controller: 'AddSetMealClassCtrl',
+            backdrop: 'static',
+            size: 'sm',
+            resolve: {
+                option: {
+                    method: option.method, CurMeal: $scope.MealElement.CurMeal
+                }
+            }
+        });
+    }
+
+    $scope.OpenAddMenuModel = function (Class) {
+        var modalInstance = $uibModal.open({//打开修改模块
+            animation: $scope.animationsEnabled,
+            templateUrl: 'AddSetMealMenu.html',
+            controller: 'AddSetMealMenuCtrl',
+            backdrop: 'static',
+            size: 'lg',
+            resolve: {
+                option: {
+                    method: option.method, CurClass : Class
+                }
+            }
+        });
+    }
+
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    }
+
+
+    $scope.EditMealClass = function (Class) {
+        option.method.EditMealClass(Class);
+        Class.IsAlt = false;
+    }
+
+    $scope.DeleteClasses = function (Class) {
+        option.method.DeleteClasses(Class);
+    }
+
+    $scope.AltEdit = function (Class) {
+        Class.IsAlt = !Class.IsAlt;
+        temp.Name = Class.Name;
+        temp.Count = Class.Count;
+    }
+    $scope.CancelEdit = function (Class) {
+        Class.Name = temp.Name;
+        Class.Count = temp.Count;
+        Class.IsAlt = false;
+    }
+
+
+    $scope.DeleteMenuInClass = function (menu, Class) {
+        option.method.DeleteMenuInClass(menu, Class);
+    }
+
+    $scope.close = function () {
+        $uibModalInstance.dismiss('cancel');
+    }
+})
+.controller('AddSetMealClassCtrl', function ($scope, $rootScope, $uibModal, $uibModalInstance, $q, $timeout, option) {
+    option.method.MealElement.CurMeal = option.CurMeal;
+    $scope.MealElement = option.method.MealElement;
+    var temp = {};
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    }
+    $scope.AddClass = function () {
+        var promise = option.method.AddClass();
+        promise.then(function (data) {
+            if (data.data.Succeeded) {
+                $uibModalInstance.dismiss('cancel');
+            }
+        })
+    }
+    $scope.Plus = function () {
+        option.method.Plus();
+    }
+    $scope.Minus = function () {
+        option.method.Minus();
+    }
+
+})
+.controller('AddSetMealMenuCtrl', function ($scope, $rootScope, $uibModal, $uibModalInstance, $q, $timeout, option) {
+    option.method.MealElement.CurClass = option.CurClass;
+    $scope.MealElement = option.method.MealElement;
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    }
+    $scope.Filter = function () {
+        option.method.Filter();
+    }
+    $scope.SelectChange = function (menu) {
+        option.method.SelectChange(menu);
+    }
+    $scope.MenuFilter = function (id) {
+        option.method.MenuFilter(id);
+    }
+    $scope.CleanFilter = function () {
+        option.method.CleanFilter();
+    }
+    $scope.AddSingle = function (menu) {
+        option.method.AddSingle(menu);
+    }
+    $scope.RemoveMenu = function (index) {
+        option.method.RemoveMenu(index);
+    }
+    $scope.EditMenu = function (menu) {
+        option.method.EditMenu(menu);
+    }
+    $scope.EditCheck = function (menu) {
+        option.method.EditCheck(menu);
+    }
+    $scope.EditRemove = function (menu) {
+        option.method.EditRemove(menu);
+    }
+    $scope.AddMenuInMenuClass = function () {
+        var promise = option.method.AddMenuInMenuClass();
+        promise.then(function (data) {
+            if (data.Succeeded) {
+                $uibModalInstance.dismiss('cancel');
+            }
+        })
+    }
 })
 .controller('PrinterCtrl', ['$scope', '$rootScope', 'Print', function ($scope, $rootScope, Print) {
-    $rootScope.FatherPage = "酒店杂项管理";$rootScope.ChildPage = "杂项设置";
+    $rootScope.FatherPage = "酒店杂项管理"; $rootScope.ChildPage = "杂项设置";
     $scope.Initialize = function () { Print.Initialize(); }
     $scope.PrintElement = Print.PrintElement;
     $scope.changeInfo = function () {

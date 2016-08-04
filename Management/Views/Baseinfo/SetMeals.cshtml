@@ -1,4 +1,280 @@
 ﻿@{
     Layout = null;
 }
+<link href="~/Content/css/style.css" rel="stylesheet" />
+<div class="row" ng-init="Initialize()">
+    <div class="col-xs-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover nomargin">
+                <thead>
+                    <tr>
+                        <th class="text-center">编号</th>
+                        <th class="text-center">名称</th>
+                        <th class="text-center">价格</th>
+                        <th class="text-center" style="width:80px;">相关操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="meal in MealElement.SetMeals">
+                        <td>{{meal.Id}}</td>
+                        <td>{{meal.Name}}</td>
+                        <td class="text-right">{{meal.Price.Price|currency:'￥'}}</td>
 
+
+                        <td>
+                            <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
+                                <button class="btn btn-xs btn-info" ng-click="OpenEditModel(meal)">
+                                    <i class="icon-edit bigger-120"></i>
+                                </button>
+                                <button class="btn btn-xs btn-danger" ng-click="DeleteSetMeals(meal)">
+                                    <i class="icon-trash bigger-120"></i>
+                                </button>
+                            </div>
+                            <div class="visible-xs visible-sm hidden-md hidden-lg">
+                                <div class="inline position-relative">
+                                    <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
+                                        <i class="icon-cog icon-only bigger-110"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
+                                        <li>
+                                            <a href="javascript:;" class="tooltip-success" data-rel="tooltip" title="编辑" ng-click="OpenEditModel(meal)">
+                                                <span class="green">
+                                                    <i class="icon-edit bigger-120"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="javascript:;" class="tooltip-error" data-rel="tooltip" title="删除" ng-click="DeleteSetMeals(meal)">
+                                                <span class="red">
+                                                    <i class="icon-trash bigger-120"></i>
+                                                </span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div><!--hidden over-->
+                        </td>
+                    </tr>
+                </tbody>
+            </table><!--table over-->
+        </div><!--table over-->
+    </div>
+</div>
+
+
+<script type="text/ng-template" id="ModalMealEdit.html">
+    <form ng-submit="close()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                套餐修改
+                <div class="pull-right">
+                    <button class="btn btn-success" ng-click="OpenAddSetMealClass()">添加分类</button>
+                </div>
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12" ng-repeat="Class in MealElement.CurMeal.SetMealClasses">
+                        <div class="widget-box">
+                            <div class="widget-header">
+                                <h4 class="smaller">
+                                    <span ng-show="!Class.IsAlt">
+                                        {{Class.Name}}
+                                        --
+                                        {{Class.Count}}
+                                        份
+                                    </span>
+                                    <span ng-show="Class.IsAlt">
+                                        <input type="text" ng-model="Class.Name" />
+                                        --
+                                        <input type="number" ng-model="Class.Count" />
+                                        份
+                                    </span>
+                                </h4>
+                                <div class="pull-right action-buttons" style="line-height:40px;" ng-show="!Class.IsAlt">
+                                    <a class="purple" href="javascript:;" ng-click="OpenAddMenuModel(Class)">
+                                        <i class="icon-plus-sign bigger-130"></i>
+                                    </a>
+                                    <a class="blue" href="javascript:;" ng-click="AltEdit(Class)">
+                                        <i class="icon-pencil bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="javascript:;" ng-click="DeleteClasses(Class)">
+                                        <i class="icon-trash bigger-130"></i>
+                                    </a>
+                                </div>
+
+                                <div class="pull-right action-buttons" style="line-height:40px;" ng-show="Class.IsAlt">
+                                    <a class="green" href="javascript:;" ng-click="EditMealClass(Class)">
+                                        <i class="icon-ok bigger-130"></i>
+                                    </a>
+                                    <a class="red" href="javascript:;" ng-click="CancelEdit(Class)">
+                                        <i class="icon-remove bigger-130"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="widget-body">
+                                <div class="widget-main clearfix">
+                                    <div class="col-xs-6 col-sm-2 widget-container-span ui-sortable" ng-repeat="menu in Class.SetMealClassMenus">
+                                        <div class="widget-box light-border">
+                                            <div class="widget-header header-color-dark">
+                                                <h5 class="smaller">{{menu.Name}}</h5>
+
+                                                <div class="widget-toolbar">
+                                                    <div class="pull-right action-buttons">
+
+                                                        <a href="javascript:;" ng-click="DeleteMenuInClass(menu,Class)">
+                                                            <i class="icon-remove red bigger-125"></i>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="widget-body">
+                                                <div class="widget-main padding-6">
+                                                    <div class="alert alert-info">
+                                                        一次点<span class="red">{{menu.Count}}</span>份
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input class="btn btn-success" type="submit" value="提交">
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>
+
+<script type="text/ng-template" id="AddSetMealClass.html">
+    <form ng-submit="AddClass()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                添加分类
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    名称:
+                    <br />
+                    <input type="text" ng-model="MealElement.SetMealClass.Name" />
+                    <br />
+                    最多点份数:
+                    <div class="input-group">
+                        <div class="spinner-buttons input-group-btn">
+                            <button type="button" class="btn spinner-down btn-xs btn-danger" ng-click="Minus()">
+                                <i class="icon-minus smaller-75"></i>
+                            </button>
+                        </div>
+                        <input type="number" class="input-mini spinner-input form-control" id="spinner3" min="0" ng-model="MealElement.SetMealClass.Count">
+                        <div class="spinner-buttons input-group-btn pull-left">
+                            <button type="button" class="btn spinner-up btn-xs btn-success" ng-click="Plus()">
+                                <i class="icon-plus smaller-75"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input class="btn btn-success" type="submit" value="添加">
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>
+
+
+
+<script type="text/ng-template" id="AddSetMealMenu.html">
+    <form ng-submit="AddMenuInMenuClass()">
+        <div class="modal-header">
+            <h3 class="modal-title">
+                添加菜品
+            </h3>
+        </div>
+        <div class="modal-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-7">
+                        <input type="text" ng-model="MealElement.FilterInfo" class="form-control menu-filter" placeholder="若要搜索,请输入名称或编号" ng-change="Filter()" />
+                        <span class="red  icon-remove  CleanOut" ng-click="CleanFilter()"></span>
+                        <uib-tabset active="active Justified" id="MenuLists" justified="true" class="bigfont">
+                            <uib-tab index="0" heading="所有" ng-click="ChooseAll()">
+                                <div class="MenuColumn clearfix MaxLength">
+                                    <div class="MenuList" ng-repeat="menu in MealElement.OriMenus|filter:{$:MealElement.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}" ng-dblclick="AddSingle(menu)">
+                                        <div class="text-center bigfont">{{menu.NameAbbr}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
+                                    </div>
+                                    <div class="clean"></div>
+                                </div>
+                            </uib-tab>
+                            <uib-tab ng-repeat="class in MealElement.Classes" index="{{$index + 1}}" heading="{{class.Name}}" ng-click="MenuFilter(class.Id)">
+                                <div class="MenuColumn clearfix MaxLength">
+                                    <div class="MenuList" ng-repeat="menu in MealElement.Menus|filter:{$:MealElement.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}" ng-dblclick="AddSingle(menu)">
+                                        <div class="text-center bigfont">{{menu.NameAbbr}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
+                                    </div>
+                                    <div class="clean"></div>
+                                </div>
+                            </uib-tab>
+                        </uib-tabset>
+                    </div>
+                    <div class="col-xs-5">
+                        <div class="table-responsive menuShow">
+                            <table class="table table-striped table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>项目名称</th>
+                                        <th>每份数量</th>
+                                        <th>相关操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="orderMenu in MealElement.OrderMenus track by $index">
+                                        <td>
+                                            {{orderMenu.Name}}
+                                        </td>
+                                        <td>
+                                            <span ng-show="!orderMenu.IsEdit">{{orderMenu.Num}}</span>
+                                            <span ng-show="orderMenu.IsEdit">
+                                                <input type="number" ng-model="orderMenu.Num" />
+                                            </span>
+                                        </td>
+                                        <td class="text-center EditBtn">
+                                            <nobr>
+                                                <button ng-click="RemoveMenu($index)" ng-if="!orderMenu.IsEdit">
+                                                    <span class="icon-trash"></span>
+                                                </button>
+                                                <button ng-click="EditMenu(orderMenu)" ng-if="!orderMenu.IsEdit">
+                                                    <span class="icon-edit"></span>
+                                                </button>
+                                                <button ng-click="EditCheck(orderMenu)" ng-if="orderMenu.IsEdit">
+                                                    <span class="icon-ok green"></span>
+                                                </button>
+                                                <button ng-click="EditRemove(orderMenu)" ng-if="orderMenu.IsEdit">
+                                                    <span class="icon-remove red"></span>
+                                                </button>
+                                            </nobr>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div><!-- /.table-responsive -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <input class="btn btn-success" type="submit" value="添加">
+            <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+        </div>
+    </form>
+</script>

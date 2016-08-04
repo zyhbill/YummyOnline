@@ -11,7 +11,7 @@
                 { Name: '堂吃区域', Value: 0 },
                 { Name: '外卖区域', Value: 1 }
             ],
-            CurrentType:0,
+            CurrentType: 0,
             isAjax: false
         },
         intialize: function () {
@@ -43,7 +43,7 @@
             this.AreaElement.isAjax = true;
             var _this = this;
             var deferred = $q.defer();
-            $http.post('../Baseinfo/AddArea', { area: _this.AreaElement.newArea, Type:_this.AreaElement.CurrentType}).success(function (data) {
+            $http.post('../Baseinfo/AddArea', { area: _this.AreaElement.newArea, Type: _this.AreaElement.CurrentType }).success(function (data) {
                 _this.AreaElement.isAjax = false;
                 if (data.Status) {
                     _this.AreaElement.newArea.DepartmentServeId = _this.AreaElement.ServiceDepartment.Id;
@@ -99,7 +99,7 @@
             $http.post('../Baseinfo/EditArea', {
                 Area: area
                 , OriginAreaId: OriId
-                ,Type:_this.AreaElement.CurrentType
+                , Type: _this.AreaElement.CurrentType
             }).success(function (data) {
                 _this.AreaElement.isAjax = false;
                 deferred.resolve(data);
@@ -431,7 +431,7 @@
 .factory('StaffRoles', ['$http', '$rootScope', '$q', function ($http, $rootScope, $q) {
     var service = {
         StaffRolesElement: {
-            Schemas: [{ Name: "读取会员数据", Id: 0 },{ Name: "提交会员订单", Id: 1 },{ Name: "支付模块", Id: 2 }, { Name: "退菜模块", Id: 3 }, { Name: "修改信息模块", Id: 4 }],
+            Schemas: [{ Name: "读取会员数据", Id: 0 }, { Name: "提交会员订单", Id: 1 }, { Name: "支付模块", Id: 2 }, { Name: "退菜模块", Id: 3 }, { Name: "修改信息模块", Id: 4 }],
             StaffRoles: [],
             SelectSchemes: [],
             CurRole: {},
@@ -750,7 +750,7 @@
             })
             return deferred.promise;
         },
-        InitSelect:function(){
+        InitSelect: function () {
             var _this = this;
             this.DepartElement.Prints.forEach(function (x) {
                 if (_this.DepartElement.CurDepartent.Printer.Id = x.Id) {
@@ -770,19 +770,19 @@
                 cancelButtonText: "否, 保留!",
                 closeOnConfirm: false
             }, function () {
-               $http.post('../Baseinfo/DeleteDepartment', { Id: department.Id })
-               .success(function (data) {
-                   if (data.Status) {
-                       _this.DepartElement.Departments.forEach(function (x, index) {
-                           if (x.Id == department.Id) _this.DepartElement.Departments.splice(index, 1);
-                       })
-                   } else {
-                       alert(data.ErrorMessage);
-                   }
-                   swal("删除成功!", "部门已删除.", "success");
-               }).error(function (data) {
-                   console.log(data);
-               })
+                $http.post('../Baseinfo/DeleteDepartment', { Id: department.Id })
+                .success(function (data) {
+                    if (data.Status) {
+                        _this.DepartElement.Departments.forEach(function (x, index) {
+                            if (x.Id == department.Id) _this.DepartElement.Departments.splice(index, 1);
+                        })
+                    } else {
+                        alert(data.ErrorMessage);
+                    }
+                    swal("删除成功!", "部门已删除.", "success");
+                }).error(function (data) {
+                    console.log(data);
+                })
             });
         },
         EditDepartment: function () {
@@ -843,7 +843,7 @@
             FirstMenuClasses: [],
             SecondMenuClasses: [],
             ThirdMenuClasses: [],
-            NewBigClass:{},
+            NewBigClass: {},
             NewClass: {},
             isAjax: false
         },
@@ -1050,7 +1050,222 @@
 .factory('SetMeals', ['$http', '$rootScope', '$q', function ($http, $rootScope, $q) {
     var service = {
         MealElement: {
+            Menus: [],
+            SetMeals: [],
+            CurClass: {},
+            Classes:[],
+            CurMeal: {},
+            OriMenus: [],
+            OrderMenus: [],
+            CurrentFilter: "",
+            FilterInfo: "",
+            CurrentNum:1,
+            SetMealClass: {
+                Count: 1
+            },
+        },
+        Initialize: function () {
+            var _this = this;
+            $http.post('../Baseinfo/getSetMeals').then(function (response) {
+                _this.MealElement.SetMeals = response.data.Data.SetMeals;
+                _this.MealElement.Menus = response.data.Data.Menus;
+                _this.MealElement.Classes = response.data.Data.Classes;
+                _this.MealElement.OriMenus = response.data.Data.Menus;
+            })
+        },
+        DeleteSetMeals: function (meal) {
+            var _this = this;
+            $http.post('../Baseinfo/DeleteSetMeals', {
+                Id: meal.Id
+            }).then(function (response) {
+                if (response.data.Succeeded) {
+                    _this.MealElement.SetMeals.forEach(function (x, index) {
+                        if (x.Id == meal.Id) _this.MealElement.SetMeals.splice(index, 1);
+                    })
+                }
+            })
+        },
+        AddClass: function () {
+            var _this = this;
+            var deferred = $q.defer();
+            $http.post('../Baseinfo/AddSetMealClass', {
+                Name: _this.MealElement.SetMealClass.Name,
+                Count: _this.MealElement.SetMealClass.Count,
+                MealId: _this.MealElement.CurMeal.Id
+            }).then(function (response) {
+                deferred.resolve(response);
+                if (response.data.Succeeded) {
+                    response.data.Data.SetMealClassMenus = [];
+                    _this.MealElement.CurMeal.SetMealClasses.push(response.data.Data);
+                    _this.MealElement.SetMealClass = {
+                        Count: 1
+                    };
+                } else {
+                    alert(response.data.ErrorMessage);
+                }
+            })
+            return deferred.promise;
+        },
+        Minus: function () {
+            if (this.MealElement.SetMealClass.Count > 1) {
+                this.MealElement.SetMealClass.Count--;
+            } else {
+                this.MealElement.SetMealClass.Count = 1;
+            }
+        },
+        Plus: function () {
+            this.MealElement.SetMealClass.Count++;
+        },
+        EditMealClass: function (Class) {
+            var _this = this;
+            $http.post('../Baseinfo/EditSetMealClass', {
+                Id: Class.Id,
+                Name: Class.Name,
+                Count: Class.Count
+            });
+        },
+        DeleteClasses: function (Class) {
+            var _this = this;
+            $http.post('../Baseinfo/DeleteSetMealClass', {
+                Id: Class.Id,
+            }).then(function (response) {
+                if (response.data.Succeeded) {
+                    _this.MealElement.CurMeal.SetMealClasses.forEach(function (x, index) {
+                        if (x.Id == Class.Id) _this.MealElement.CurMeal.SetMealClasses.splice(index, 1);
+                    })
+                } else {
+                    alert(response.data.ErrorMessage);
+                }
+            })
+        },
+        Filter: function () {
+            this.MealElement.CurrentFilter = this.MealElement.FilterInfo;
+        },
+        SelectChange: function (menu) {
+            this.MealElement.OriMenus.forEach(function (x) { x.Click = false; })
+            this.MealElement.Menus.forEach(function (x) { x.Click = false; });
+            menu.Click = true;
+            this.MealElement.FilterInfo = menu.Name;
+        },
+        MenuFilter: function (ClassId) {
+            this.MealElement.Menus = this.MealElement.OriMenus.filter(function (x) {
+                var flag = false;
+                x.Classes.forEach(function (xx) {
+                    if (xx.Id == ClassId) { flag = true; return; }
+                })
+                return flag;
+            })
+            this.MealElement.allchoose = false;
+            this.MealElement.Classes.forEach(function (x) {
+                x.Current = false;
+                if (x.Id == ClassId) { x.Current = true; }
+            })
+        },
+        CleanFilter: function () {
+            this.MealElement.CurrentFilter = "";
+            this.MealElement.FilterInfo = "";
+        },
+        AddSingle: function (menu) {
+            var _this = this;
+            var flag = true;
+            this.MealElement.OrderMenus.forEach(function (x) {
+                if (x.Id == menu.Id) { flag = false; return;}
+            })
+            if (!flag) { alert("已有重复菜品"); return;}
+            var temp = angular.copy(menu);
+            temp.Num = 1;
+            if (temp.Id) this.MealElement.OrderMenus.push(temp);
+            this.MealElement.OriMenus.forEach(function (x) {
+                x.Click = false;
+                if (x.Id == menu.Id) x.Class = true;
+            });
+            this.MealElement.Menus.forEach(function (x) {
+                x.Click = false;
+                if (x.Id == menu.Id) x.Class = true;
+            })
+            this.MealElement.FilterInfo = "";
+            this.MealElement.CurrentFilter = "";
+        },
+        RemoveMenu: function (index) {
+            var Id = this.MealElement.OrderMenus[index].Id;
+            this.MealElement.OrderMenus.splice(index, 1);
+            if (this.MealElement.OrderMenus.filter(function (x) { return x.Id == Id }).length == 0) {
+                this.MealElement.OriMenus.forEach(function (x) {
+                    if (x.Id == Id) x.Class = false;
+                });
+                this.MealElement.Menus.forEach(function (x) {
+                    if (x.Id == Id) x.Class = false;
+                })
+            }
+        },
+        EditMenu: function (menu) {
+            this.MealElement.CurrentNum = menu.Num;
+            menu.IsEdit = true;
+        },
+        EditCheck: function (menu) {
+            menu.IsEdit = false;
+            this.MealElement.CurrentNum = 1;
+        },
+        EditRemove: function (menu) {
+            menu.Num = this.MealElement.CurrentNum;
+            menu.IsEdit = false;
+        },
+        AddMenuInMenuClass: function () {
+            //console.log(this.MealElement.CurClass);
+            //console.log(this.MealElement.OrderMenus);
+            //console.log(this.MealElement.CurMeal.Id);
+            if (this.MealElement.OrderMenus.length == 0) return;
+            var deferred = $q.defer();
+            var _this = this;
+            var MenuSetId = this.MealElement.CurMeal.Id;
+            var MenuIds = this.MealElement.OrderMenus.map(function (x) {
+                return { Id: x.Id, Count: x.Num ,Name:x.Name,NameAbbr:x.NameAbbr };
+            });
+            //console.log(MenuIds);
+            $http.post('../Baseinfo/AddMenuInMealClass', {
+                ClassId: _this.MealElement.CurClass.Id,
+                Menus: MenuIds,
+                MenuSetId: MenuSetId
+            }).then(function (response) {
+                deferred.resolve(response.data);
+                if (response.data.Succeeded) {
+                    MenuIds.forEach(function (x) {
+                        _this.MealElement.CurClass.SetMealClassMenus.push({
+                            Id: x.Id,
+                            Name: x.Name,
+                            NameAbbr: x.NameAbbr,
+                            Count: x.Count
+                        });
+                    });
+                    _this.MealElement.OrderMenus = [];
+                    _this.MealElement.OriMenus.forEach(function (x) {
+                        x.Class = false;
+                        x.Click = false;
+                    });
+                } else {
+                    alert(response.data.ErrorMessage);
+                }
+            })
+            return deferred.promise;
+        },
+        DeleteMenuInClass: function (menu, Class) {
+            var _this = this;
+            $http.post('../Baseinfo/DeleteMenuInClass', {
+                ClassId:Class.Id,
+                MenuId:menu.Id
+            }).then(function (response) {
+                if (response.data.Succeeded) {
+                    var Classes = _this.MealElement.CurMeal.SetMealClasses.filter(function (x) { return x.Id == Class.Id }).length == 0 ? null : _this.MealElement.CurMeal.SetMealClasses.filter(function (x) { return x.Id == Class.Id })[0];
+                    if (Classes != null) {
+                        Classes.SetMealClassMenus.forEach(function (x, index) {
+                            if (x.Id == menu.Id) Classes.SetMealClassMenus.splice(index, 1);
+                        });
+                    }
 
+                } else {
+                    alert(response.data.ErrorMessage)
+                }
+            })
         }
     }
     return service;
@@ -1076,28 +1291,28 @@
             PrinterFormat: {},
             CurrentPrinter: {},
             CurrentFont: {},
-            CurrentStyle:{},
+            CurrentStyle: {},
             Fonts: [{ Name: "宋体" }, { Name: "黑体" }],
-            Styles: [{ Id: 0, Name: "简单" }, {Id:1,Name:"时尚"}],
+            Styles: [{ Id: 0, Name: "简单" }, { Id: 1, Name: "时尚" }],
             OldFormat: {},
-            CurrentFormat:{
-                KitchenOrderFontSize:0,
-                KitchenOrderSmallFontSize:0,
-                PaperSize:0,
-                ReciptBigFontSize:0,
-                ReciptFontSize:0,
-                ReciptSmallFontSize:0,
-                ServeOrderFontSize:0,
-                ServeOrderSmallFontSize:0,
-                ShiftBigFontSize:0,
-                ShiftFontSize:0,
-                ShiftSmallFontSize:0
+            CurrentFormat: {
+                KitchenOrderFontSize: 0,
+                KitchenOrderSmallFontSize: 0,
+                PaperSize: 0,
+                ReciptBigFontSize: 0,
+                ReciptFontSize: 0,
+                ReciptSmallFontSize: 0,
+                ServeOrderFontSize: 0,
+                ServeOrderSmallFontSize: 0,
+                ShiftBigFontSize: 0,
+                ShiftFontSize: 0,
+                ShiftSmallFontSize: 0
             },
             UsePrint: true,
             IsPayFirst: true,
             NeedRandomPreference: true,
-            IsPrintReciptAfterPayingOffline:true,
-            Rate:0
+            IsPrintReciptAfterPayingOffline: true,
+            Rate: 0
         },
         Initialize: function () {
             var _this = this;
@@ -1148,7 +1363,7 @@
                 IsPayFirst: _this.PrintElement.IsPayFirst,
                 Style: _this.PrintElement.CurrentStyle.Id,
                 NeedRandomPreference: _this.PrintElement.NeedRandomPreference,
-                IsPrintReciptAfterPayingOffline:_this.PrintElement.IsPrintReciptAfterPayingOffline
+                IsPrintReciptAfterPayingOffline: _this.PrintElement.IsPrintReciptAfterPayingOffline
             }).success(function (data) {
                 $rootScope.IsPayFirst = _this.PrintElement.IsPayFirst;
                 alert("保存成功");

@@ -18,7 +18,7 @@ using ICSharpCode.SharpZipLib.Zip;
 using System.Data.OleDb;
 using System.Data;
 using System.Data.Entity.SqlServer;
-
+using Protocol;
 
 namespace Management.Controllers
 {
@@ -1388,19 +1388,178 @@ namespace Management.Controllers
             return Json(new ErrorState("请选择文件"));
         }
 
+        public async Task<JsonResult> getSetMeals()
+        {
+            try
+            {
+                var MealClasses = await db.SetMealClasses
+               .Include(d => d.SetMealClassMenus.Select(dd => dd.Menu))
+               .ToListAsync();
+                var Menus = await db.Menus
+                    .Include(d=>d.Classes)
+                    .Include(d => d.MenuPrice)
+                    .Where(d => d.Usable == true && d.IsSetMeal == false)
+                    .Select(d => new
+                    {
+                        d.Id,
+                        d.Name,
+                        d.NameAbbr,
+                        d.MenuPrice,
+                        d.MinOrderCount,
+                        d.Classes,
+                        Num = d.MinOrderCount
+                    }).ToListAsync();
+                var SetMeals = await db.Menus
+                    .Include(d => d.MenuPrice)
+                    .Where(d => d.IsSetMeal == true)
+                    .Select(d => new {
+                        d.Id,
+                        d.Name,
+                        d.NameAbbr,
+                        d.MenuPrice
+                    })
+                    .ToListAsync();
+                var Meals = new List<MyMeal>();
+                if (SetMeals != null&&SetMeals.Count>0)
+                {
+                    foreach(var i in SetMeals)
+                    {
+                        var temp = new MyMeal();
+                        temp.Id = i.Id;
+                        temp.Name = i.Name;
+                        temp.NameAbbr = i.NameAbbr;
+                        temp.Price = i.MenuPrice;
+                        var tempClass = MealClasses.Where(d => d.SetMealId == i.Id)
+                        .Select(d => new MealClass
+                        {
+                            Id = d.Id,
+                            Name = d.Name,
+                            Count = d.Count,
+                            SetMealClassMenus = d.SetMealClassMenus
+                            .Select(dd => new MealClassMenu
+                            {
+                                Id = dd.MenuId,
+                                Name = dd.Menu.Name,
+                                NameAbbr = dd.Menu.NameAbbr,
+                                Count = dd.Count
+                            }).ToList()
+                        })
+                        .ToList();
+                        temp.SetMealClasses = tempClass;
+                        Meals.Add(temp);
+                    }
+                }
+                var Classes = await db.MenuClasses.Where(d => d.Usable == true && d.IsShow == true).ToListAsync();
+                return Json(new JsonSuccess(new { SetMeals = Meals, Menus = Menus, Classes= Classes }));
+            }
+            catch (Exception e)
+            {
+                return Json(new JsonError(e.Message));
+            }
+        }
 
 
+        public async Task<JsonResult> DeleteSetMeals(string Id)
+        {
+            var meal = await db.Menus.Where(d => d.Id == Id).FirstOrDefaultAsync();
+            var MealClasses = await db.SetMealClasses.Where(d => d.SetMealId == Id).ToListAsync();
+            MealClasses.RemoveAll(d=>true);
+            meal.Usable = false;
+            await db.SaveChangesAsync();
+            return Json(new JsonSuccess());
+        }
+
+        public async Task<JsonResult> AddSetMealClass(string MealId, string Name,int Count)
+        {
+            if (Count != 0 && Name != string.Empty && MealId != string.Empty)
+            {
+                var NewClass = new SetMealClass
+                {
+                    Count = Count,
+                    Name = Name,
+                    SetMealId = MealId
+                };
+                db.SetMealClasses.Add(NewClass);
+                await db.SaveChangesAsync();
+                return Json(new JsonSuccess(NewClass));
+            }
+            else
+            {
+                return Json(new JsonError("请确保输入正确性"));
+            }
+        }
+
+        public async Task<JsonResult> EditSetMealClass(int Id,string Name,int Count)
+        {
+            var SetMealClass =await db.SetMealClasses.Where(d => d.Id == Id).FirstOrDefaultAsync();
+            SetMealClass.Name = Name;
+            SetMealClass.Count = Count;
+            await db.SaveChangesAsync();
+            return Json(new JsonSuccess());
+        }
+
+        public async Task<JsonResult> DeleteSetMealClass(int Id)
+        {
+            try
+            {
+                var SetMealClass = await db.SetMealClasses
+                    .Include(d=>d.SetMealClassMenus)
+                    .Where(d => d.Id == Id).FirstOrDefaultAsync();
+                var Classes = SetMealClass.SetMealClassMenus.ToList();
+                Classes.RemoveAll(d => true);
+                db.SetMealClasses.Remove(SetMealClass);
+                await db.SaveChangesAsync();
+                return Json(new JsonSuccess());
+            }
+            catch(Exception e)
+            {
+                return Json(new JsonError(e.Message));
+            }
+        }
 
 
+        public async Task<JsonResult> AddMenuInMealClass(string MenuSetId,List<AddSetMeal> Menus,int ClassId)
+        {
+            var MealClasses = await db.SetMealClasses
+                .Include(d=>d.SetMealClassMenus)
+                .Where(d => d.Id == ClassId).FirstOrDefaultAsync();
+            if (MealClasses == null) return Json(new JsonError("类别不正确"));
+            if (Menus != null)
+            {
+                foreach(var i in Menus)
+                {
+                    var temp = MealClasses.SetMealClassMenus.Where(d => d.MenuId == i.Id).FirstOrDefault();
+                    if (temp != null)
+                    {
+                        return Json(new JsonError("类别中已有相同菜品"));
+                    }
+                    else
+                    {
+                        MealClasses.SetMealClassMenus.Add(new SetMealClassMenu
+                        {
+                            MenuId = i.Id,
+                            SetMealClassId = ClassId,
+                            Count = i.Count
+                        });
+                    }
+                }
+                await db.SaveChangesAsync();
+            }
+            return Json(new JsonSuccess());
+        }
 
-
-
-
-
-
-
-
-
+        public async Task<JsonResult> DeleteMenuInClass(int ClassId,string MenuId)
+        {
+            var MealClasses = await db.SetMealClasses
+              .Include(d => d.SetMealClassMenus)
+              .Where(d => d.Id == ClassId).FirstOrDefaultAsync();
+            if (MealClasses == null) return Json(new JsonError("类别不正确"));
+            var Menu = MealClasses.SetMealClassMenus.Where(d => d.MenuId == MenuId).FirstOrDefault();
+            if(Menu==null) return Json(new JsonError("菜品不正确"));
+            MealClasses.SetMealClassMenus.Remove(Menu);
+            await db.SaveChangesAsync();
+            return Json(new JsonSuccess());
+        }
 
 
 

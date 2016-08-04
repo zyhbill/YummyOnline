@@ -394,4 +394,35 @@ namespace Management.ObjectClasses
         public int ShiftSmallFontSize { get; set; }
         public int ColorDepth { get; set; }
     }
+
+    public class MyMeal
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string NameAbbr { get; set; }
+        public List<MealClass> SetMealClasses { get; set; }
+        public MenuPrice Price { get; set; }
+    }
+
+    public class MealClass
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public int Count { get; set; }
+        public List<MealClassMenu> SetMealClassMenus { get; set; }
+    }
+
+    public class MealClassMenu
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string NameAbbr { get; set; }
+        public int Count { get; set; }
+    }
+
+    public class AddSetMeal
+    {
+        public string Id { get; set; }
+        public int Count { get; set; }
+    }
 }

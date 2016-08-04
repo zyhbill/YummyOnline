@@ -1002,14 +1002,15 @@ namespace Management.Controllers
                             temp.Price = menu.MenuPrice.Price * (decimal)dine.Discount;
                         }
                         var serMenu = await db.MenuOnSales.Where(d => d.Id == menu.Id).FirstOrDefaultAsync();
-                        var SetMeal = await db.MenuSetMeals.Where(d => d.MenuSetId == menu.Id).FirstOrDefaultAsync();
+                        //var SetMeal = await db.MenuSetMeals.Where(d => d.MenuSetId == menu.Id).FirstOrDefaultAsync();
                         if (dine.DiscountType == DiscountType.None)
                         {
-                            if (SetMeal != null)
+                            /*if (SetMeal != null)
                             {
                                 temp.Type = DineMenuType.SetMeal;
                             }
-                            else if (serMenu != null)
+                            else*/
+                            if (serMenu != null)
                             {
                                 temp.Type = DineMenuType.OnSale;
                             }

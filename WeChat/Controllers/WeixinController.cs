@@ -8,6 +8,7 @@ using System.Web.Mvc;
 using Senparc.Weixin.MP.Entities.Request;
 using WeiPay;
 using Senparc.Weixin.MessageHandlers;
+using MessageHandle;
 
 namespace WeChat.Controllers
 {
@@ -19,6 +20,7 @@ namespace WeChat.Controllers
         public static readonly string Token = "wechatdianxiaoer";
         public static readonly string EncodingAESKey = "fABUsgNVABIcGe7ceZCIjuLFToRYZeN3nPAldcf0JHe";
         public static readonly string AppId = "wx51c299b84496948d";
+        public static readonly string AppSecret = "0ccbaa0c5332170b53d91bdd4be26003";
 
 
         [HttpGet]
@@ -47,7 +49,7 @@ namespace WeChat.Controllers
             postModel.EncodingAESKey = EncodingAESKey;
             postModel.AppId = AppId;
 
-            var messageHandler = new CustomMessageHandler(Request.InputStream, postModel);
+            var messageHandler = new CustomMessageHandler(Request.InputStream, 1);
             messageHandler.Execute();
             return new FixWeixinBugWeixinResult(messageHandler);
         }

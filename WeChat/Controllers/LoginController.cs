@@ -1,84 +1,77 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Linq;
 using System.Web.Mvc;
 using WeChat.Models;
-using WeChat;
-using WeiPay;
-using System.Web.Security;
+using Protocol;
+using System.Diagnostics;
+using System.Collections.Specialized;
+using System.Web;
 
 namespace WeChat.Controllers
 {
-    public class LoginController : Controller
+    public class LoginController : BaseWeChartController
     {
         //GET: Login
-       public ActionResult Login()
+       [HttpGet]
+       public ActionResult Login(string openid)
         {
+            Session["openid"] = openid;
+            //Request.QueryString["openid"].ToString();
             return View("Login");
         }
 
-        [HttpGet]
-        public ActionResult CheckSignature(string signature, string timestamp, string nonce, string echostr)
+        public ActionResult query(string phone,string Paswrd)
         {
-            weChat t = new weChat();
-            //t.Auth();
-            t.ProcessMsg();
-            if (signature == null || timestamp == null || nonce == null)
-                return View("Login");
-            string token = "wechatdianxiaoer";
-            string[] tmparr = new string[] { token, timestamp, nonce };
-            Array.Sort(tmparr);
-            string tmpstr = string.Join("", tmparr);
-            //tmpstr = Convert.ToBase64String(System.Security.Cryptography.SHA1.Create(tmpstr)?.Hash);
-            tmpstr = FormsAuthentication.HashPasswordForStoringInConfigFile(tmpstr, "SHA1");
-            tmpstr = tmpstr.ToLower();
-            //t.subscribe();
-            if (tmpstr == signature)
-            {
-                return Content(echostr);
-            }
+            string wechatid = Session["openid"].ToString();
+            //if (wechatid == "" || wechatid == null)
+            //    Debug.WriteLine("0");
+            //else
+            //    Debug.WriteLine(wechatid);
+
+            if (validate(phone, Paswrd)==false)
+                return Json(new { Status = false, ErrorMessage = "没有用户信息" });
             else
             {
-                return Content("wrong!");
+                if (wechatid == "" || wechatid == null)
+                    return Json(new JsonError("openid为空"));
+                var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
+                //var User = ctx.Users.FirstOrDefault(d => d.WeChatOpenId == wechatid);
+                var User = ctx.Users.FirstOrDefault(d => d.PhoneNumber == phone);
+                if (User == null)
+                {
+                    return Json(new { Status = false, ErrorMessage = "user没有用户信息" });
+                }
+                else
+                {
+                    User.WeChatOpenId = wechatid;
+                    ctx.SaveChanges();
+                    return Json(new JsonSuccess());
+                }
             }
+                
         }
-        [HttpPost]
-        public ActionResult Login1(string phone,string Paswrd)
+
+        bool validate(string openid)
         {
-            weChat t = new weChat();
-            t.Auth();
-            t.ProcessMsg();
+            var yummyonlineManager = new YummyOnlineManager();
+            var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
+            var result = ctx.Users.Where(p => p.WeChatOpenId == openid)
+                .Select(d => new { d.UserName, d.Id, d.Email, d.PhoneNumber, d.WeChatOpenId }).FirstOrDefault();
+            if (result == null)
+                return false;
+            else
+                return true;
+        }
+        bool validate(string phone, string Paswrd)
+        {
             var yummyonlineManager = new YummyOnlineManager();
             var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
             var psd = Method.GetMd5(Paswrd);
-            var result = ctx.Users.Where(p => p.PhoneNumber ==phone && p.PasswordHash == psd)
-                .Select(d=>new { d.UserName,d.Id,d.Email,d.PhoneNumber}).FirstOrDefault();
-            int points = 0;
-            var hotels = ctx.Hotels.Where(d => d.Usable == true).ToList();
-            foreach(var i in hotels)
-            {
-                var ConnectStr = i.ConnectionString;
-                var HotelManager = new HotelManager(ConnectStr);
-                points += HotelManager.GetUserPointById(result.Id);
-            }
-            //foreach (var d in result)
-            //{
-
-
-            //console.writeline("name:{0}", d.username);
-            //console.writeline("");
-            //}
+            var result = ctx.Users.Where(p => p.PhoneNumber == phone && p.PasswordHash == psd)
+                .Select(d => new { d.UserName, d.Id, d.Email, d.PhoneNumber, d.WeChatOpenId }).FirstOrDefault();
             if (result == null)
-                return Json(new { Status = false ,ErrorMessage = "error"});
+                return false;
             else
-            {
-                Session["User"] = result;
-                return Json(new { Status = true, user = result, points = points });//name=result.UserName,id=result.Id,email=result.Email,tel=result.PhoneNumber;
-                //return View("UserInfo");
-
-            }
-
+                return true;
         }
     }
 }

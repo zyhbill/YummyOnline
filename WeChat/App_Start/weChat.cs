@@ -138,7 +138,7 @@ namespace WeiPay
 
             string content = string.Empty;
             XmlDocument xd = new XmlDocument();
-            xd.LoadXml(xml);
+            xd.Load(xml);
             XmlNode xmlnode = xd.SelectSingleNode("xml/ToUserName");
             if (xmlnode != null)
                 this.ToUserName = xmlnode.InnerText;

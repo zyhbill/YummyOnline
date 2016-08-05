@@ -84,7 +84,7 @@ namespace WeChat.Controllers
             if (P.IsMatch(Phone))
                 return Json(new JsonSuccess());
             else
-                return Json(new JsonError("号码不对"));
+                return Json(new JsonError("号码输入错误"));
         }
     }
 }

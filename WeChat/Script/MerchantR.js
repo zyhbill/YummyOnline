@@ -21,18 +21,18 @@
     })
     $sbutton.click(function () {
         var phone = $('#phone').val();
-        //$.post("../MerchantRegistration/Verify", {
-        //    Phone: phone
-        //}),
-        //function (data) {
-        //    if (data.Succeeded == true)
-        //    {
+        $.post("../MerchantRegistration/Verify", {
+            Phone: phone
+        },
+        function (data) {
+            if (data.Succeeded == true)
+            {
                 $.post("../MerchantRegistration/GetKey", {
                     Phone: phone
                 });
-        //    }
-        //    else
-        //        alert(data.ErrorMessage);
-        //}
-    })
-})
+            }
+            else
+                alert(data.ErrorMessage);
+        }
+    )}
+)})

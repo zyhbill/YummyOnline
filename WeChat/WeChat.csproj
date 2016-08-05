@@ -229,6 +229,10 @@
     <Content Include="node_modules\jquery\src\var\support.js" />
     <Content Include="node_modules\jquery\src\var\toString.js" />
     <Content Include="node_modules\jquery\src\wrap.js" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\css\materialize.css" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\css\materialize.min.css" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\js\materialize.js" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\js\materialize.min.js" />
     <Content Include="node_modules\weui\dist\example\example.css" />
     <Content Include="node_modules\weui\dist\example\example.js" />
     <Content Include="node_modules\weui\dist\example\images\icon_nav_actionSheet.png" />
@@ -313,6 +317,7 @@
     <Content Include="node_modules\weui\src\example\zepto.min.js" />
     <Content Include="Properties\PublishProfiles\localconfig.pubxml.user" />
     <Content Include="Script\Account.js" />
+    <Content Include="Script\History.js" />
     <Content Include="Script\Main.js" />
     <Content Include="Script\MerchantR.js" />
     <Content Include="Senparc.Weixin-v13.7.5\chm文件无法显示内容解决方案.txt" />
@@ -324,6 +329,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\CustomMessageContext.cs" />
+    <Compile Include="App_Start\CustomMessageHandler.cs" />
+    <Compile Include="App_Start\CustomMessageHandler_Events.cs" />
     <Compile Include="App_Start\Helper.cs" />
     <Compile Include="App_Start\HttpHelper.cs" />
     <Compile Include="App_Start\PayConfig.cs" />
@@ -335,7 +342,7 @@
     <Compile Include="App_Start\YummyOnlineManager.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
-    <Compile Include="Controllers\CustomMessageHandler.cs" />
+    <Compile Include="Controllers\HistoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\MerchantRegistrationController.cs" />
@@ -419,6 +426,28 @@
     <Content Include="node_modules\weui\src\style\widget\weui_tips\weui_dialog.less" />
     <Content Include="node_modules\weui\src\style\widget\weui_tips\weui_mask.less" />
     <Content Include="node_modules\weui\src\style\widget\weui_tips\weui_toast.less" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Bold.eot" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Bold.ttf" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Bold.woff" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Bold.woff2" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Light.eot" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Light.ttf" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Light.woff" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Light.woff2" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Medium.eot" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Medium.ttf" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Medium.woff" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Medium.woff2" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Regular.eot" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Regular.ttf" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Regular.woff" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Regular.woff2" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Thin.eot" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Thin.ttf" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Thin.woff" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\fonts\roboto\Roboto-Thin.woff2" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\LICENSE" />
+    <Content Include="node_modules\materialize-v0.97.7\materialize\README.md" />
     <None Include="Properties\PublishProfiles\localconfig.pubxml" />
     <Content Include="Views\Login\UserInfo.cshtml" />
     <Content Include="Views\Account\Account.cshtml" />
@@ -426,6 +455,7 @@
     <Content Include="Views\MerchantRegistration\Success.cshtml" />
     <Content Include="Senparc.Weixin-v13.7.5\Senparc.Weixin-v13.7.5.chm" />
     <Content Include="Senparc.Weixin-v13.7.5\Senparc.Weixin-v13.7.5.chw" />
+    <Content Include="Views\History\History.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

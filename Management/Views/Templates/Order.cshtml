@@ -243,7 +243,14 @@
                                             <input type="number" ng-model="orderMenu.Num" class="Num" ng-change="CheckAddNum(orderMenu)" />
                                         </span>
                                     </td>
-                                    <td class="text-right">{{(orderMenu.MenuPrice.Price*orderMenu.Num).toFixed(2)}}</td>
+                                    <td class="text-right">
+                                        <span ng-if="!orderMenu.IsSetMeal">
+                                            {{(orderMenu.MenuPrice.Price*orderMenu.Num).toFixed(2)}}
+                                        </span>
+                                        <span ng-if="orderMenu.IsSetMeal">
+                                            {{(orderMenu.Price.Price*orderMenu.Num).toFixed(2)}}
+                                        </span>
+                                    </td>
                                     <td class="text-right">
                                         <span ng-if="!orderMenu.IsSend">{{CalcMenuPrice(orderMenu)}}</span>
                                         <span ng-if="orderMenu.IsSend">0.00</span>
@@ -402,7 +409,14 @@
                                             <input type="number" ng-model="orderMenu.Num" class="Num" ng-change="CheckAddNum(orderMenu)" />
                                         </span>
                                     </td>
-                                    <td class="text-right">{{(orderMenu.MenuPrice.Price*orderMenu.Num).toFixed(2)}}</td>
+                                    <td class="text-right">
+                                        <span ng-if="!orderMenu.IsSetMeal">
+                                            {{(orderMenu.MenuPrice.Price*orderMenu.Num).toFixed(2)}}
+                                        </span>
+                                        <span ng-if="orderMenu.IsSetMeal">
+                                            {{(orderMenu.Price.Price*orderMenu.Num).toFixed(2)}}
+                                        </span>
+                                    </td>
                                     <td class="text-right">
                                         <span ng-if="!orderMenu.IsSend">{{CalcMenuPrice(orderMenu)}}</span>
                                         <span ng-if="orderMenu.IsSend">0.00</span>
@@ -578,7 +592,7 @@
 </script>
 
 <script type="text/ng-template" id="ModelSetMeal.html">
-    <form ng-submit="">
+    <form ng-submit="AddMeal()">
         <div class="modal-header" ng-init="GetMeal()">
             <h3 class="modal-title">
                 配置套餐

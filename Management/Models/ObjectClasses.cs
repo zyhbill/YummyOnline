@@ -402,6 +402,7 @@ namespace Management.ObjectClasses
         public string NameAbbr { get; set; }
         public List<MealClass> SetMealClasses { get; set; }
         public MenuPrice Price { get; set; }
+        public bool IsSetMeal { get; set; } = true;
     }
 
     public class MealClass

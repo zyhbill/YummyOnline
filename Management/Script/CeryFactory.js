@@ -784,6 +784,9 @@
                 //赠送
                 return 0;
             }
+            else if (menu.IsSetMeal) {
+                return menu.Price.Price;
+            }
             else {
                 //正常
                 if (menu.MenuPrice.ExcludePayDiscount) {
@@ -836,7 +839,8 @@
             else {
                 //有点菜
                 var priceAll = this.OpenElements.OrderMenus.map(function (x) {
-                    if (x.IsSend) return 0;
+                    if (x.IsSend) { return 0; }
+                    else if (x.IsSetMeal) { return x.Price.Price;}
                     else return x.MenuPrice.ExcludePayDiscount ? x.MenuPrice.Price * x.Num + x.Remarks.filter(function (r) { return r.Price }).map(function (r) { return r.Price }).reduce(function (a, b) { return +a + +b }, 0)
                     : _this.OpenElements.CurrentDiscount.Discount / 100 * x.MenuPrice.Price * x.Num + x.Remarks.filter(function (r) { return r.Price }).map(function (r) { return r.Price }).reduce(function (a, b) { return +a + +b }, 0);
                 }).reduce(function (a, b) { return +a + +b }, 0);
@@ -1153,6 +1157,13 @@
             else {
                 menu.OrderNum++;
                 menu.Check = true;
+            }
+        },
+        AddMeal: function () {
+            var _this = this;
+            this.OpenElements.CurMeal.Num = 1;
+            if (this.OpenElements.CurMeal.Id) {
+                this.OpenElements.OrderMenus.push(angular.copy(this.OpenElements.CurMeal));
             }
         }
     }

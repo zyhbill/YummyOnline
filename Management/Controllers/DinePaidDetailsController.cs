@@ -209,7 +209,7 @@ namespace Management.Controllers
                    .Include(d => d.Dine)
                    .Where(p => p.Dine.BeginTime >= Begin && p.Dine.BeginTime <= End)
                    .ToListAsync();
-            if (type == 0)
+            if (type == 1)
             {
                 var Unpaid = await db.Dines
                 .Include(d => d.Remarks)

@@ -296,8 +296,30 @@ namespace Management.Controllers
             {
                 dine.Price = totalPrcie;
                 dine.Discount = Dine.Discount * 1.0 / 100;
-                dine.DiscountType = DiscountType.Custom;
+                if (Dine.Type == 0|| Dine.Type==null)
+                {
+                    dine.DiscountType = DiscountType.Custom;
+
+                }else if (Dine.Type == 1)
+                {
+                    dine.DiscountType = DiscountType.Time;
+                }
+                else if(Dine.Type == 2)
+                {
+                    dine.DiscountType = DiscountType.Vip;
+                }
                 dine.DiscountName = Dine.DiscountName;
+                foreach(var i in dine.DineMenus)
+                {
+                    if (i.Menu.MenuPrice.ExcludePayDiscount)
+                    {
+
+                    }
+                    else
+                    {
+                        i.Price = i.OriPrice * (decimal)(Dine.Discount * 1.0 / 100);
+                    }
+                }
             }
             dine.IsPaid = true;
             db.SaveChanges();

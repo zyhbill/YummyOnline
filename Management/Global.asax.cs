@@ -34,26 +34,33 @@ namespace Management
            );
             client.CallBackWhenMessageReceived = async (t, p) =>
             {
-                if (t != TcpProtocolType.NewDineInform)
+                try
                 {
-                    return;
-                }
-                NewDineInformProtocol protocol = (NewDineInformProtocol)p;
-                string Cstr = await (db.Hotels.Where(h => h.Id == protocol.HotelId).Select(h => h.ConnectionString)).FirstOrDefaultAsync();
-                var hotel = new HotelContext(Cstr);
-                var temp = await hotel.Dines.Where(dine => dine.Id == protocol.DineId).Select(dine => new { dine.DeskId, dine.IsOnline }).FirstOrDefaultAsync();
-                if (!temp.IsOnline)
-                {
-                    var desk = hotel.Desks.FirstOrDefault(d => d.Id == temp.DeskId);
-                    desk.Status = DeskStatus.Used;
-                    var clean = await hotel.Dines.Where(d => d.DeskId == desk.Id && d.IsOnline == false && d.IsPaid == false).ToListAsync();
-                    if (clean.Count() == 0)
+                    if (t != TcpProtocolType.NewDineInform)
                     {
-                        desk.Status = DeskStatus.StandBy;
+                        return;
                     }
-                    hotel.SaveChanges();
-                    await ws.SendToClient(protocol.HotelId, "desk");
-                    await ws.SendToClient(protocol.HotelId, "dine");
+                    NewDineInformProtocol protocol = (NewDineInformProtocol)p;
+                    string Cstr = await (db.Hotels.Where(h => h.Id == protocol.HotelId).Select(h => h.ConnectionString)).FirstOrDefaultAsync();
+                    var hotel = new HotelContext(Cstr);
+                    var temp = await hotel.Dines.Where(dine => dine.Id == protocol.DineId).Select(dine => new { dine.DeskId, dine.IsOnline }).FirstOrDefaultAsync();
+                    if (!temp.IsOnline)
+                    {
+                        var desk = hotel.Desks.FirstOrDefault(d => d.Id == temp.DeskId);
+                        desk.Status = DeskStatus.Used;
+                        var clean = await hotel.Dines.Where(d => d.DeskId == desk.Id && d.IsOnline == false && d.IsPaid == false).ToListAsync();
+                        if (clean.Count() == 0)
+                        {
+                            desk.Status = DeskStatus.StandBy;
+                        }
+                        hotel.SaveChanges();
+                        await ws.SendToClient(protocol.HotelId, "desk");
+                        await ws.SendToClient(protocol.HotelId, "dine");
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.Write(e);
                 }
             };
 

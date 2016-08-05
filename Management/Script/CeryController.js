@@ -261,6 +261,12 @@
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');
     }
+    $scope.AddMenuNum = function (menu, Class) {
+        option.method.AddMenuNum(menu, Class);
+    }
+    $scope.PlusMenuNum = function (menu, Class) {
+        option.method.PlusMenuNum(menu, Class);
+    }
 })
 .controller('ModelReserveCtrl', function ($scope, $rootScope, $uibModal, $uibModalInstance, $q, $timeout, option) {
     $scope.ReserveInfo = option.method.ReserveInfo;

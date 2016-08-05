@@ -418,6 +418,7 @@ namespace Management.ObjectClasses
         public string Name { get; set; }
         public string NameAbbr { get; set; }
         public int Count { get; set; }
+        public int OrderNum { get; set; } = 0;
     }
 
     public class AddSetMeal

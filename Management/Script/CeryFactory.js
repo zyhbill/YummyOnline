@@ -1132,6 +1132,15 @@
                 _this.OpenElements.CurMeal = response.data.Data;
                 console.log(_this.OpenElements.CurMeal);
             });
+        },
+        PlusMenuNum: function (menu, Class) {
+            if (menu.OrderNum > 0) {
+                menu.OrderNum--;
+            }
+            if (menu.OrderNum == 0) menu.Check = false;
+        },
+        AddMenuNum: function (menu, Class) {
+            var MaxCount = Class.Count;
         }
     }
     return service;

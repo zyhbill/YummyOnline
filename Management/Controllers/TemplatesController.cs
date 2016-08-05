@@ -195,19 +195,30 @@ namespace Management.Controllers
                 .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
                 .FirstOrDefaultAsync();
             var HtManage = new HotelManager(ConnectingStr);
+            var NowDay = DateTime.Now.DayOfWeek;
+            var SpecialMenus = await db.MenuOnSales.Where(d => d.OnSaleWeek == NowDay).ToListAsync();
             foreach (var menu in dine.DineMenus)
             {
                 if (menu.Status == DineMenuStatus.Normal)
                 {
-                    if (menu.Menu.MenuPrice.ExcludePayDiscount)
-                    {//不打折
-                        totalPrcie += menu.OriPrice * menu.Count + menu.RemarkPrice;
+                    var temp = SpecialMenus.Where(d => d.Id == menu.MenuId).FirstOrDefault();
+                    if (temp != null)
+                    {
+                        totalPrcie += temp.Price;
                     }
                     else
-                    {//整单打折
-                        totalPrcie += menu.OriPrice * menu.Count * (decimal)(Dine.Discount * 1.0 / 100) + menu.RemarkPrice;
+                    {
+                        if (menu.Menu.MenuPrice.ExcludePayDiscount)
+                        {//不打折
+                            totalPrcie += menu.OriPrice * menu.Count + menu.RemarkPrice;
+                        }
+                        else
+                        {//整单打折
+                            totalPrcie += menu.OriPrice * menu.Count * (decimal)(Dine.Discount * 1.0 / 100) + menu.RemarkPrice;
+                        }
                     }
                 }
+              
             }
             decimal PayTotal = 0;//总共价格
             decimal Point = 0;//积分
@@ -311,13 +322,24 @@ namespace Management.Controllers
                 dine.DiscountName = Dine.DiscountName;
                 foreach(var i in dine.DineMenus)
                 {
-                    if (i.Menu.MenuPrice.ExcludePayDiscount)
+                    if (i.Status == DineMenuStatus.Normal)
                     {
+                        var temp = SpecialMenus.Where(d => d.Id == i.MenuId).FirstOrDefault();
+                        if (temp != null)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if (i.Menu.MenuPrice.ExcludePayDiscount)
+                            {
 
-                    }
-                    else
-                    {
-                        i.Price = i.OriPrice * (decimal)(Dine.Discount * 1.0 / 100);
+                            }
+                            else
+                            {
+                                i.Price = i.OriPrice * (decimal)(Dine.Discount * 1.0 / 100);
+                            }
+                        }
                     }
                 }
             }

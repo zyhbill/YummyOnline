@@ -626,10 +626,14 @@
     }
 }])
 .controller('ModalAddMenuCtrl', function ($scope, $rootScope, $uibModalInstance, option) {
-    option.method.getElements();
-    option.method.OpenElements.CurrentDine = option.CurDine;
-    option.method.OpenElements.CurrentDiscount.Discount = option.CurDine.Discount
-    $scope.OpenElements = option.method.OpenElements;
+    $scope.Initialize = function () {
+        var promise  =   option.method.getElements();
+        promise.then(function (data) {
+            $scope.OpenElements = option.method.OpenElements;
+            $scope.OpenElements.CurrentDine = option.CurDine;
+            $scope.OpenElements.CurrentDiscount.Discount = option.CurDine.Discount * 100;
+        })
+    }
     $scope.NumChange = function () { option.method.NumChange(); }
     $scope.SelectChange = function (menu) {
         option.method.SelectChange(menu);

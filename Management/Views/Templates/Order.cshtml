@@ -608,6 +608,9 @@
                                             <div class="widget-header header-color-dark">
                                                 <h5 class="smaller">
                                                     {{menu.Name}}
+                                                    每份占
+                                                    {{menu.Count}}
+                                                    份
                                                 </h5>
                                                 <div class="widget-toolbar">
                                                     <div class="pull-right">
@@ -620,13 +623,13 @@
                                                 <div class="widget-main padding-6 text-center">
                                                     <div class="input-group" style="padding-left:25%">
                                                         <div class="spinner-buttons input-group-btn">
-                                                            <button type="button" class="btn spinner-down btn-xs btn-danger" ng-click="AddMenuNum(menu,Class)">
+                                                            <button type="button" class="btn spinner-down btn-xs btn-danger" ng-click="PlusMenuNum(menu,Class)">
                                                                 <i class="icon-minus smaller-75"></i>
                                                             </button>
                                                         </div>
                                                         <input type="number" class="input-mini spinner-input form-control" id="spinner3" min="0" ng-model="menu.OrderNum">
                                                         <div class="spinner-buttons input-group-btn pull-left">
-                                                            <button type="button" class="btn spinner-up btn-xs btn-success" ng-click="PlusMenuNum(menu,Class)">
+                                                            <button type="button" class="btn spinner-up btn-xs btn-success" ng-click="AddMenuNum(menu,Class)">
                                                                 <i class="icon-plus smaller-75"></i>
                                                             </button>
                                                         </div>
@@ -635,11 +638,9 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {{Class.SetMealClassMenus}}
                                 </div>
                             </div>
                         </div>
-                        {{OpenElements.CurMeal}}
                     </div>
                 </div>
             </div>

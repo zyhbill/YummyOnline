@@ -1137,10 +1137,23 @@
             if (menu.OrderNum > 0) {
                 menu.OrderNum--;
             }
-            if (menu.OrderNum == 0) menu.Check = false;
+            if (menu.OrderNum <= 0) {
+                menu.OrderNum = 0;
+                menu.Check = false;
+            }
         },
         AddMenuNum: function (menu, Class) {
             var MaxCount = Class.Count;
+            var CurCount = Class.SetMealClassMenus.filter(function (x) { return x.Check }).map(function (x) { return x.OrderNum * x.Count }).reduce(function (a, b) { return +a + +b }, 0);
+            if (!CurCount) CurCount = 0;
+            if (CurCount + menu.Count > MaxCount) {
+                alert("请选择套餐指定份数");
+                return;
+            }
+            else {
+                menu.OrderNum++;
+                menu.Check = true;
+            }
         }
     }
     return service;

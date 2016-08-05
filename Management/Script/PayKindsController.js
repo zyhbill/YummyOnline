@@ -192,8 +192,6 @@
         $http.post('/TimeDiscounts/AddTimeDiscounts', $scope.newTimeDiscount).then(function (response) {
             if (response.data.succeeded) {
                 refresh();
-                $scope.newTimeDiscount.from = null;
-                $scope.newTimeDiscount.to = null;
                 $scope.newTimeDiscount.week = null;
                 $scope.newTimeDiscount.discount = null;
                 $scope.newTimeDiscount.name = null;

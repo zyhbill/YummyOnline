@@ -205,8 +205,13 @@ namespace Management.Controllers
             {
                 End = new DateTime(EndTime.Year, EndTime.Month, EndTime.Day, 23 , 59, 59);
             }
-
-            var Unpaid = await db.Dines
+            var DineMenus = await db.DineMenus
+                   .Include(d => d.Dine)
+                   .Where(p => p.Dine.BeginTime >= Begin && p.Dine.BeginTime <= End)
+                   .ToListAsync();
+            if (type == 0)
+            {
+                var Unpaid = await db.Dines
                 .Include(d => d.Remarks)
                 .Include(d => d.Desk)
                 .Include(d => d.DineMenus)
@@ -214,15 +219,76 @@ namespace Management.Controllers
                 .Where(d => (d.BeginTime >= Begin && d.BeginTime <= End) && d.IsPaid == false)
                 .ToListAsync();
 
-            var DineMenus = await db.DineMenus
-               .Include(d => d.Dine)
-               .Where(p => p.Dine.BeginTime >= Begin && p.Dine.BeginTime <= End)
-               .ToListAsync();
+                if (Unpaid.Count == 0) return Json(new { succeeded = false });
+                else
+                {
+                    var flag = Unpaid.Select(d => new
+                    {
+                        d.Id,
+                        d.DeskId,
+                        Area = db.Areas.Select(dd => new { Id = dd.Id, Name = dd.Name }).FirstOrDefault(dd => d.Desk.AreaId == dd.Id),
+                        Waiter = db.Staffs.FirstOrDefault(dd => dd.Id == d.WaiterId),
+                        Clerk = db.Staffs.FirstOrDefault(dd => dd.Id == d.ClerkId),
+                        d.BeginTime,
+                        d.OriPrice,
+                        d.Price,
+                        d.Remarks,
+                        d.IsPaid,
+                        d.Discount,
+                        d.IsOnline,
+                        d.HeadCount,
+                        discount = d.OriPrice - d.Price,
+                        d.DinePaidDetails,
+                        d.IsInvoiced,
+                        ReturnPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Returned).Sum(dd => dd.Price * dd.Count),
+                        GiftPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Gift).Sum(dd => dd.OriPrice * dd.Count)
+                    }).ToList();
 
-            if (Unpaid.Count==0) return Json(new { succeeded = false });
+                    var UnSum = new
+                    {
+                        headcount = flag.Where(t => t.IsPaid == true).Sum(t => t.HeadCount),
+                        oriprice = flag.Where(t => t.IsPaid == true).Sum(t => t.OriPrice),
+                        price = flag.Where(t => t.IsPaid == true).Sum(t => t.Price),
+                        ReturnPrice = flag.Where(t => t.IsPaid == true).Sum(t => t.ReturnPrice),
+                        GiftPrice = flag.Where(t => t.IsPaid == true).Sum(t => t.GiftPrice),
+                        discount = flag.Where(t => t.IsPaid == true).Sum(t => t.discount)
+                    };
+                    return Json(new { aaa = flag, Sum = UnSum });
+
+                }
+            }
             else
             {
-                var flag = Unpaid.Select(d => new
+                if (payKindIds == null) return Json(new { succeeded = false });
+                var Dines = db.Dines
+                    .Include(d => d.Remarks)
+                    .Include(d => d.Desk)
+                    .Include(d => d.DineMenus)
+                    .Include(q => q.DinePaidDetails.Select(x => x.PayKind))
+                    .Where(d => d.BeginTime >= Begin && d.BeginTime <= End);
+                //var total = await Dines.ToListAsync();
+
+                var DineIds = Dines.Select(d => d.Id);
+
+                var Pays = await db.DinePaidDetails
+                    .Where(d => DineIds.Contains(d.DineId) && payKindIds.Contains(d.PayKindId))
+                    .Select(p => p.DineId)
+                    .ToListAsync();
+                var total = Dines.Where(d => Pays.Contains(d.Id)).ToList();
+                if (waiterid == null || waiterid == "")
+                {
+
+                }
+                else
+                {
+                    total = total.Where(d => d.WaiterId == waiterid).ToList();
+                }
+
+                if (total.Count() == 0)
+                {
+                    return Json(new { succeeded = false });
+                }
+                var temp = total.Select(d => new
                 {
                     d.Id,
                     d.DeskId,
@@ -241,88 +307,26 @@ namespace Management.Controllers
                     d.DinePaidDetails,
                     d.IsInvoiced,
                     ReturnPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Returned).Sum(dd => dd.Price * dd.Count),
-                    GiftPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Gift).Sum(dd => dd.OriPrice * dd.Count)
+                    GiftPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Type == DineMenuType.Gift).Sum(dd => dd.OriPrice * dd.Count)
                 }).ToList();
-
-                var UnSum = new
+                var Sum = new
                 {
-                    headcount = flag.Where(t => t.IsPaid == true).Sum(t => t.HeadCount),
-                    oriprice = flag.Where(t => t.IsPaid == true).Sum(t => t.OriPrice),
-                    price = flag.Where(t => t.IsPaid == true).Sum(t => t.Price),
-                    ReturnPrice = flag.Where(t => t.IsPaid == true).Sum(t => t.ReturnPrice),
-                    GiftPrice = flag.Where(t => t.IsPaid == true).Sum(t => t.GiftPrice),
-                    discount = flag.Where(t => t.IsPaid == true).Sum(t => t.discount)
+                    headcount = temp.Where(t => t.IsPaid == true).Sum(t => t.HeadCount),
+                    oriprice = temp.Where(t => t.IsPaid == true).Sum(t => t.OriPrice),
+                    price = temp.Where(t => t.IsPaid == true).Sum(t => t.Price),
+                    ReturnPrice = temp.Where(t => t.IsPaid == true).Sum(t => t.ReturnPrice),
+                    GiftPrice = temp.Where(t => t.IsPaid == true).Sum(t => t.GiftPrice),
+                    discount = temp.Where(t => t.IsPaid == true).Sum(t => t.discount)
                 };
-                return Json(new { aaa = flag, Sum = UnSum });
-
+                if (temp.Count() == 0)
+                {
+                    return Json(new { succeeded = false });
+                }
+                else
+                {
+                    return Json(new { aaa = temp, Sum = Sum });
+                }
             }
-            if (payKindIds==null) return Json(new { succeeded = false });
-            var Dines = db.Dines
-                .Include(d => d.Remarks)
-                .Include(d => d.Desk)
-                .Include(d => d.DineMenus)
-                .Include(q => q.DinePaidDetails.Select(x => x.PayKind))
-                .Where(d => d.BeginTime >= Begin && d.BeginTime <= End);
-            //var total = await Dines.ToListAsync();
-
-            var DineIds = Dines.Select(d => d.Id);
-
-            var Pays = await db.DinePaidDetails
-                .Where(d => DineIds.Contains(d.DineId) && payKindIds.Contains(d.PayKindId))
-                .Select(p => p.DineId)
-                .ToListAsync();
-            var total = Dines.Where(d => Pays.Contains(d.Id)).ToList();
-            if (waiterid == null || waiterid == "")
-            {
-
-            }
-            else
-            {
-                total = total.Where(d => d.WaiterId == waiterid).ToList();
-            }
-
-            if (total.Count() == 0)
-            {
-                return Json(new { succeeded = false });
-            }
-            var temp = total.Select(d => new
-            {
-                d.Id,
-                d.DeskId,
-                Area = db.Areas.Select(dd=>new { Id=dd.Id,Name=dd.Name}).FirstOrDefault(dd => d.Desk.AreaId == dd.Id),
-                Waiter = db.Staffs.FirstOrDefault(dd => dd.Id == d.WaiterId),
-                Clerk = db.Staffs.FirstOrDefault(dd => dd.Id == d.ClerkId),
-                d.BeginTime,
-                d.OriPrice,
-                d.Price,
-                d.Remarks,
-                d.IsPaid,
-                d.Discount,
-                d.IsOnline,
-                d.HeadCount,
-                discount = d.OriPrice - d.Price,
-                d.DinePaidDetails,
-                d.IsInvoiced,
-                ReturnPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Returned).Sum(dd => dd.Price * dd.Count),
-                GiftPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Type == DineMenuType.Gift).Sum(dd => dd.OriPrice * dd.Count)
-            }).ToList();
-            var Sum = new
-            {
-                headcount = temp.Where(t => t.IsPaid == true).Sum(t => t.HeadCount),
-                oriprice = temp.Where(t => t.IsPaid == true).Sum(t => t.OriPrice),
-                price = temp.Where(t => t.IsPaid == true).Sum(t => t.Price),
-                ReturnPrice = temp.Where(t => t.IsPaid == true).Sum(t => t.ReturnPrice),
-                GiftPrice = temp.Where(t => t.IsPaid == true).Sum(t => t.GiftPrice),
-                discount = temp.Where(t => t.IsPaid == true).Sum(t => t.discount)
-            };
-            if (temp.Count() == 0)
-            {
-                return Json(new { succeeded = false });
-            }
-            else { 
-                 return Json(new { aaa = temp, Sum = Sum });
-            }
-
         }
         public async Task<JsonResult> putInvoice(string Id, string Invoice,decimal Price)
         {

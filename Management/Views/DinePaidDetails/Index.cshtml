@@ -324,16 +324,16 @@
                 @*<span>{{dine.Price|currency : '￥'}}</span>*@
             </td>
             <td class=text-right>
-                <span ng-if="dine.IsPaid">{{dine.OriPrice|currency : '￥'}}</span>
+                {{dine.OriPrice|currency : '￥'}}
             </td>
             <td class=text-right>
-                <span ng-if="dine.IsPaid">{{dine.discount|currency : '￥'}}</span>
+                {{dine.discount|currency : '￥'}}
             </td>
             <td class=text-right>
-                <span ng-if="dine.IsPaid">{{dine.GiftPrice|currency:'￥'}}</span>
+                {{dine.GiftPrice|currency:'￥'}}
             </td>
             <td class=text-right>
-                <span ng-if="dine.IsPaid">{{dine.ReturnPrice|currency:'￥'}}</span>
+                {{dine.ReturnPrice|currency:'￥'}}
             </td>
             <td class="text-right">
                 <span class="label label-warning" ng-if="dine.IsInvoiced==0">

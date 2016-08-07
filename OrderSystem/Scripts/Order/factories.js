@@ -22,7 +22,7 @@
 				Remarks: [],
 
 				OriPrice: menu.MenuPrice.Price,
-				SetMealClasses: [],
+
 				IsOnSale: false,
 				ExcludePayDiscount: false,
 				IsShowRemark: menu.Remarks != null && menu.Remarks.length > 0,
@@ -33,7 +33,7 @@
 
 			angular.extend(menu, {
 				IsShowSetMeal: function () {
-					return this.Addition.SetMealClasses.length > 0;
+					return this.IsSetMeal;
 				},
 				ToggleSetMeal: function () {
 					this.Addition.IsSetMealCollapsed = !this.Addition.IsSetMealCollapsed;
@@ -51,6 +51,28 @@
 			});
 
 			return menu;
+		}
+
+		function _filterSetMeal(setMeal, classes) {
+			setMeal.Addition.SetMeal = {
+				Classes: classes
+			};
+
+			for (var j in setMeal.Addition.SetMeal.Classes) {
+				var setMealClass = setMeal.Addition.SetMeal.Classes[j];
+				setMealClass.Addition = {
+					IsSelected: false,
+					Ordered: 0,
+					OrderedMenus: []
+				};
+
+				for (var k in setMealClass.Menus) {
+					var menu = setMealClass.Menus[k];
+					menu.Addition = {
+						Ordered: 0,
+					};
+				}
+			}
 		}
 
 		return function () {
@@ -106,7 +128,8 @@
 						}
 						for (var j in menuSetMeals) {
 							if (menuSetMeals[j].SetMealId == menu.Id && menu.IsSetMeal) {
-								menu.Addition.SetMealClasses = menuSetMeals[j].Classes;
+								_filterSetMeal(menu, menuSetMeals[j].Classes);
+
 								setExcludePayKindDiscount(menu);
 							}
 						}
@@ -166,6 +189,7 @@ app.factory('cart', [
 			Desk: null,
 			PayKind: null,
 			OrderedMenus: [],
+			OrderedSetMeals: [],
 			/* Cart Data */
 
 			IsInitialized: false, // 是否初始化
@@ -247,6 +271,9 @@ app.factory('cart', [
 				if (menu.Addition.Ordered == menu.MinOrderCount) {
 					this.OrderedMenus.push(menu);
 				}
+				if (menu.IsSetMeal) {
+					this.OrderedSetMeals.push(angular.copy(menu));
+				}
 
 				for (var i in $dataSet.MenuClasses) {
 					for (var j in menu.MenuClasses) {
@@ -273,11 +300,42 @@ app.factory('cart', [
 						}
 					}
 				}
+				if (menu.IsSetMeal) {
+					for (var i = this.OrderedSetMeals.length - 1; i >= 0; i--) {
+						if (this.OrderedSetMeals[i].Id == menu.Id) {
+							this.OrderedSetMeals.splice(i, 1);
+							break;
+						}
+					}
+				}
 
 				for (var i in $dataSet.MenuClasses) {
 					for (var j in menu.MenuClasses) {
 						if ($dataSet.MenuClasses[i].Id == menu.MenuClasses[j]) {
 							$dataSet.MenuClasses[i].Addition.Ordered -= min;
+							break;
+						}
+					}
+				}
+			},
+			AddSetMealMenu: function (setMealMenu, setMealClass) {
+				var min = setMealMenu.Count;
+				setMealMenu.Addition.Ordered += min;
+				setMealClass.Addition.Ordered += min;
+
+				if (setMealMenu.Addition.Ordered == min) {
+					setMealClass.Addition.OrderedMenus.push(setMealMenu);
+				}
+			},
+			RemoveSetMealMenu: function (setMealMenu, setMealClass) {
+				var min = setMealMenu.Count;
+				setMealMenu.Addition.Ordered -= min;
+				setMealClass.Addition.Ordered -= min;
+
+				if (setMealMenu.Addition.Ordered == 0) {
+					for (var i = 0; i < setMealClass.Addition.OrderedMenus.length; i++) {
+						if (angular.equals(setMealMenu, setMealClass.Addition.OrderedMenus[i])) {
+							setMealClass.Addition.OrderedMenus.splice(i, 1);
 							break;
 						}
 					}
@@ -436,10 +494,8 @@ app.factory('cart', [
 ).factory('menuFilter', [
 	'$rootScope',
 	'$filter',
-	'cart',
 	'dataSet',
-	function ($rootScope, $filter, $cart, $dataSet) {
-
+	function ($rootScope, $filter, $dataSet) {
 		var mode = {
 			search: 0,
 			normal: 1,
@@ -541,6 +597,73 @@ app.factory('cart', [
 
 		$rootScope.menuFilter = menuFilter;
 		return menuFilter;
+	}]
+);
+
+app.factory('setMealFilter', [
+	'$rootScope',
+	'$filter',
+	'cart',
+	'dataSet',
+	function ($rootScope, $filter, $cart, $dataSet) {
+		var setMealFilter = {
+			_activeSetMeal: null,
+			ActiveClass: null,
+			FilteredSetMeals: [],
+			FilteredSetMealClasses: [],
+
+			IsShowSetMeal: function (setMeal) {
+				return setMeal.IsSetMeal && setMeal.Addition.Ordered > 0;
+			},
+			CanClassAddMenu: function (setMealMenu, setMealClass) {
+				return setMealMenu.Count + setMealClass.Addition.Ordered <= setMealClass.Count;
+			},
+			CanCloseSetMealModal: function () {
+				for (var i in this.FilteredSetMeals) {
+					var setMeal = this.FilteredSetMeals[i];
+					for (var j in setMeal.Addition.SetMeal.Classes) {
+						var setMealClass = setMeal.Addition.SetMeal.Classes[j];
+						if (setMealClass.Count != setMealClass.Addition.Ordered) {
+							console.log(1);
+							return false;
+						}
+					}
+				}
+				console.log(2);
+				return true;
+			},
+			LoadSetMeals: function (setMeal) {
+				this.FilteredSetMeals = [];
+				for (var i in $cart.OrderedSetMeals) {
+					if (setMeal.Id == $cart.OrderedSetMeals[i].Id) {
+						this.FilteredSetMeals.push($cart.OrderedSetMeals[i]);
+					}
+				}
+				this.ToggleSetMealSelected(this.FilteredSetMeals[this.FilteredSetMeals.length - 1]);
+				
+			},
+			ToggleSetMealSelected: function (setMeal) {
+				if (this._activeSetMeal != null) {
+					this._activeSetMeal.Addition.IsSelected = false;
+				}
+				setMeal.Addition.IsSelected = true;
+				this._activeSetMeal = setMeal;
+
+				this.FilteredSetMealClasses = setMeal.Addition.SetMeal.Classes
+
+				this.ToggleClassSelected(this.FilteredSetMealClasses[0]);
+			},
+			ToggleClassSelected: function (setMealClass) {
+				if (this.ActiveClass != null) {
+					this.ActiveClass.Addition.IsSelected = false;
+				}
+				setMealClass.Addition.IsSelected = true;
+				this.ActiveClass = setMealClass;
+			},
+		}
+
+		$rootScope.setMealFilter = setMealFilter;
+		return setMealFilter;
 	}]
 );
 

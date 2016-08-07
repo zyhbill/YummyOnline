@@ -1,62 +1,79 @@
 ﻿<script type="text/ng-template" id="setMealsModal.html">
 	<div class="modal-header">
-		<button type="button" class="close" ng-click="close()"><span>&times;</span></button>
-		<h4 class="modal-title">{{menu.Name}}</h4>
+		<button class="btn btn-sm btn-close btn-primary pull-right"
+				ng-disabled="!setMealFilter.CanCloseSetMealModal()"
+				ng-click="ok()">
+			确定
+		</button>
+		<button class="btn btn-sm btn-close btn-default pull-right"
+				ng-click="cancel()">
+			取消
+		</button>
+		<h4 class="modal-title">
+			{{menu.Name}}
+			<button class="btn btn-xs btn-primary btn-circle"
+					ng-class="{active:setMeal.Addition.IsSelected}"
+					ng-repeat="setMeal in setMealFilter.FilteredSetMeals track by $index"
+					ng-click="setMealFilter.ToggleSetMealSelected(setMeal)">
+				{{$index+1}}
+			</button>
+		</h4>
 	</div>
-	<div class="modal-body setmeals-modal">
-		<div ng-repeat="class in menu.Addition.SetMealClasses">
-			<p>{{class.Name}}</p>
-			<p>{{class.Count}}</p>
+	<div class="modal-body setmeals-modal clearfix">
+		<div class="section-category">
+			<ul class="list-group">
+				<li class="list-group-item"
+					ng-class="{active:class.Addition.IsSelected}"
+					ng-click="setMealFilter.ToggleClassSelected(class)"
+					ng-repeat="class in setMealFilter.FilteredSetMealClasses">
+					<div>{{class.Name}}</div>
+					<div>{{class.Addition.Ordered}} / {{class.Count}}</div>
+				</li>
+			</ul>
+		</div>
+		<div class="section-menu-fashion">
 
-			<section class="section-menu-fashion full-width">
-				<ul class="list-group">
-					<!-- ngRepeat Menus -->
-					<li class="list-group-item"
-						ng-init="menu = menuWithCount.Menu"
-						ng-repeat="menuWithCount in class.Menus">
-						<div class="media">
-							<div class="media-left">
-								<a href="javascript:;">
-									<img class="media-object"
-										 ng-src="/Content/image/{{menu.PicturePath}}">
-								</a>
-							</div>
-							<div class="media-body">
-								<div class="meal-point"><i class="fa fa-heart"></i> {{menu.Ordered}}</div>
+			<ul class="list-group">
+				<!-- ngRepeat Menus -->
+				<li class="list-group-item"
+					ng-repeat="setMealMenu in setMealFilter.ActiveClass.Menus">
+					<div class="media">
+						<div class="media-left">
+							<a href="javascript:;">
+								<img class="media-object"
+									 ng-src="/Content/image/{{setMealMenu.Menu.PicturePath}}">
+							</a>
+						</div>
+						<div class="media-body">
+							<div class="meal-point"><i class="fa fa-heart"></i> {{setmealMenu.Menu.Ordered}}</div>
 
-								<div class="meal-bottom">
-									<div class="cart-control">
-										<span ng-if="menu.Addition.Ordered>0">
-											<button class="btn btn-sm btn-cart-decrease"
-													ng-click="cart.RemoveMenu(menu)">
-												<i class="fa fa-minus"></i>
-											</button>
-											<span class="btn btn-sm btn-cart-num">{{menu.Addition.Ordered}}</span>
-										</span>
-										<button class="btn btn-sm btn-cart-add"
-												ng-click="cart.AddMenu(menu)">
-											<i class="fa fa-plus"></i>
+							<div class="meal-bottom">
+								<div class="cart-control">
+									<span ng-if="setMealMenu.Addition.Ordered>0">
+										<button class="btn btn-sm btn-cart-decrease"
+												ng-click="cart.RemoveSetMealMenu(setMealMenu, setMealFilter.ActiveClass)">
+											<i class="fa fa-minus"></i>
 										</button>
-									</div>
-									<div class="meal-price">
-										{{menu.MenuPrice.Price | currency : "￥"}}
-										<s ng-show="menu.Addition.OriPrice!=menu.MenuPrice.Price" class="meal-oriprice">
-											{{menu.Addition.OriPrice | currency : "￥"}}
-										</s>
-									</div>
-									<div class="meal-title">
-										{{menu.EnglishName}} {{menu.Name}}
-										<span class="meal-on-sale" ng-if="menu.Addition.IsOnSale">特价</span>
-									</div>
+										<span class="btn btn-sm btn-cart-num">{{setMealMenu.Addition.Ordered}}</span>
+									</span>
+									<button class="btn btn-sm btn-cart-add"
+											ng-disabled="!setMealFilter.CanClassAddMenu(setMealMenu, setMealFilter.ActiveClass)"
+											ng-click="cart.AddSetMealMenu(setMealMenu, setMealFilter.ActiveClass)">
+										<i class="fa fa-plus"></i>
+									</button>
+								</div>
+								<div class="meal-price">
+									{{setMealMenu.Menu.MenuPrice.Price | currency : "￥"}}
+								</div>
+								<div class="meal-title">
+									{{setMealMenu.Menu.EnglishName}} {{setMealMenu.Menu.Name}}
 								</div>
 							</div>
 						</div>
-					</li>
-				</ul>
-			</section>
+					</div>
+				</li>
+			</ul>
 		</div>
-
-
 	</div>
 </script>
 
@@ -105,7 +122,7 @@
 						</div>
 					</div>
 
-					<div class="setmeals" ng-if="menu.IsShowSetMeal()">
+					<div class="setmeals" ng-if="setMealFilter.IsShowSetMeal(menu)">
 						<button class="btn btn-primary btn-xs"
 								ng-click="showSetMealsModal(menu)">
 							套餐详情
@@ -122,7 +139,7 @@
 								<span class="btn btn-sm btn-cart-num">{{menu.Addition.Ordered}}</span>
 							</span>
 							<button class="btn btn-sm btn-cart-add"
-									ng-click="cart.AddMenu(menu)">
+									ng-click="cart.AddMenu(menu); showSetMealsModal(menu)">
 								<i class="fa fa-plus"></i>
 							</button>
 						</div>

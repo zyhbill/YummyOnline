@@ -55,7 +55,7 @@ Tcp客户端的核心类
 
 ```csharp
 public TcpClient(
-    IPAddress ip, // 服务器Ip地址
+    IPAddress ip, // 服务器IP地址
     int port, // 服务器端口号
     BaseTcpProtocol connectSender, // Tcp连接完成后发送的身份信息
 )

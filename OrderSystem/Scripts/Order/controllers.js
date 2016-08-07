@@ -4,7 +4,8 @@
 	'$uibModal',
 	'cart',
 	'menuFilter',
-	function ($scope, $rootScope, $modal, $cart, $menuFilter) {
+	'setMealFilter',
+	function ($scope, $rootScope, $modal, $cart, $menuFilter, $setMealFilter) {
 		$scope.showMenuModal = function (menu) {
 			$modal.open({
 				templateUrl: 'menuModal.html',
@@ -21,6 +22,7 @@
 			$modal.open({
 				templateUrl: 'setMealsModal.html',
 				controller: 'SetMealsCtrl',
+				backdrop: 'static',
 				resolve: {
 					menu: function () {
 						return menu;
@@ -43,6 +45,7 @@ app.controller('MenuModalCtrl', [
 		$scope.close = function () {
 			$modalInstance.dismiss();
 		};
+
 	}
 ]);
 
@@ -50,11 +53,20 @@ app.controller('SetMealsCtrl', [
 	'$scope',
 	'$uibModalInstance',
 	'menu',
-	function ($scope, $modalInstance, $menu) {
+	'cart',
+	'setMealFilter',
+	function ($scope, $modalInstance, $menu, $cart, $setMealFilter) {
 		$scope.menu = $menu;
-		$scope.close = function () {
+
+		$scope.cancel = function () {
+			$cart.RemoveMenu($menu)
 			$modalInstance.dismiss();
-		};
+		}
+
+		$scope.ok = function () {
+			$modalInstance.dismiss();
+		}
+		$setMealFilter.LoadSetMeals($menu);
 	}
 ]);
 

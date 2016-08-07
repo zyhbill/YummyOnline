@@ -10,6 +10,12 @@
 	margin-right: 5px;
 }
 
+.btn-close {
+	margin-top: -2px;
+	margin-bottom: -2px;
+	margin-right: 5px;
+}
+
 .cart-control {
 	display: inline-block;
 	padding: 0;
@@ -76,11 +82,6 @@
 	width: 70%;
 	float: left;
 }
-
-	.section-menu-fashion.full-width {
-		width: 100%;
-		float: none;
-	}
 
 	.section-menu-fashion .list-group {
 		margin-bottom: 50px;
@@ -288,9 +289,13 @@
 		width: 100%;
 	}
 
-.setmeals-modal p:last-child {
-	margin-bottom: 0;
+.setmeals-modal {
+	padding: 0;
 }
+
+
+
+
 
 .radio.radio-paykind {
 	padding-left: 0;

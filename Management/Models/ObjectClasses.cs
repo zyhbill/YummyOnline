@@ -49,7 +49,7 @@ namespace Management.ObjectClasses
         public string Id { get; set; }
         public int Discount { get; set; }
         public string DiscountName { get; set; }
-
+        public int? Type { get; set; }
     }
 
     public class OpenInfo

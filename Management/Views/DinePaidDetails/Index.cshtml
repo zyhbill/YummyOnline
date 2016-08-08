@@ -33,8 +33,8 @@
                     <span>顾客人数：</span><span>{{nowDine.HeadCount}}</span><br />
                     <span>
                         已支付:
-                        <span ng-if="dine.IsPaid">是</span>
-                        <span ng-if="!dine.IsPaid">否</span>
+                        <span ng-if="nowDine.IsPaid">是</span>
+                        <span ng-if="!nowDine.IsPaid">否</span>
                     </span><br />
                     <span>消费金额：</span><span>{{nowDine.OriPrice |currency: '￥'}}</span><br />
                     <span>应计金额：</span><span>{{nowDine.Price |currency: '￥'}}</span><br />
@@ -113,8 +113,8 @@
                     <span>房间号：</span><span>{{nowDine.Area.Name}}</span><br />
                     <span>
                         已支付:
-                        <span ng-if="dine.IsPaid">是</span>
-                        <span ng-if="!dine.IsPaid">否</span>
+                        <span ng-if="nowDine.IsPaid">是</span>
+                        <span ng-if="!nowDine.IsPaid">否</span>
                     </span><br />
                     <span>消费金额：</span><span>{{nowDine.OriPrice |currency: '￥'}}</span><br />
                     <span>应计金额：</span><span>{{nowDine.Price |currency: '￥'}}</span><br />
@@ -324,16 +324,16 @@
                 @*<span>{{dine.Price|currency : '￥'}}</span>*@
             </td>
             <td class=text-right>
-                <span ng-if="dine.IsPaid">{{dine.OriPrice|currency : '￥'}}</span>
+                {{dine.OriPrice|currency : '￥'}}
             </td>
             <td class=text-right>
-                <span ng-if="dine.IsPaid">{{dine.discount|currency : '￥'}}</span>
+                {{dine.discount|currency : '￥'}}
             </td>
             <td class=text-right>
-                <span ng-if="dine.IsPaid">{{dine.GiftPrice|currency:'￥'}}</span>
+                {{dine.GiftPrice|currency:'￥'}}
             </td>
             <td class=text-right>
-                <span ng-if="dine.IsPaid">{{dine.ReturnPrice|currency:'￥'}}</span>
+                {{dine.ReturnPrice|currency:'￥'}}
             </td>
             <td class="text-right">
                 <span class="label label-warning" ng-if="dine.IsInvoiced==0">

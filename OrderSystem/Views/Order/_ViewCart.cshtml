@@ -1,13 +1,13 @@
 ﻿@Html.Partial("_PartialNavTitle", "购物车")
 
 <div class="container-fluid" ng-static-height="88">
-	<ul class="list-group">
+	<ul class="list-group list-group-cart">
 		<li class="list-group-item"
 			ng-if="!menu.IsSetMeal"
 			ng-repeat="menu in cart.GetOrderedMenusWithFixed()">
 			<div class="row no-padding">
 				<div class="col-xs-6">
-					{{$index + 1}} {{menu.Name}}
+					{{menu.Name}}
 				</div>
 				<div class="col-xs-6 text-right">
 					<span>{{menu.MenuPrice.Price | currency : "￥"}}</span>
@@ -58,21 +58,26 @@
 		<li class="list-group-item" ng-repeat="setMeal in cart.OrderedSetMeals">
 			<div class="row">
 				<div class="col-xs-6">
-					<p>{{setMeal.Name}}</p>
+					<span>{{setMeal.Name}}</span>
 					<div ng-repeat="class in setMeal.Addition.SetMeal.Classes">
-						<p>{{class.Name}}</p>
-						<p ng-repeat="setMealMenu in class.Menus">
+						<p class="setmeal-class">
+							{{class.Name}}
+							
+							<span ng-class="{'text-danger': class.Addition.Ordered < class.Count}">
+								({{class.Addition.Ordered}} / {{class.Count}})
+								<span ng-if="class.Addition.Ordered < class.Count">
+									<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
+								</span>
+							</span>
+						</p>
+						<p class="setmeal-menu"
+						   ng-repeat="setMealMenu in class.Menus"
+						   ng-if="setMealMenu.Addition.Ordered > 0">
 							{{setMealMenu.Menu.Name}} * {{setMealMenu.Addition.Ordered}}
 						</p>
 					</div>
-
-				</div>
-				<div class="col-xs-6 text-right">
-					<span>{{menu.MenuPrice.Price | currency : "￥"}}</span>
-					<span class="btn btn-sm btn-cart-num">{{menu.Addition.Ordered}}</span>
 				</div>
 			</div>
-
 		</li>
 	</ul>
 </div>
@@ -83,7 +88,7 @@
 	<div class="bar-btn-group pull-right"
 		 ng-show="cart.CanSubmit()">
 		<button class="btn btn-primary btn-round btn-goto-payment"
-				route-href="/Payment">
+				ng-click="gotoPayment()">
 			去结算
 		</button>
 	</div>

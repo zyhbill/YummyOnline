@@ -8,7 +8,13 @@ namespace OrderSystem.Models {
 		public string Id { get; set; }
 		public int Ordered { get; set; }
 		public List<int> Remarks { get; set; } = new List<int>();
+		public List<SetMealExtensionClass> SetMealClasses { get; set; } = new List<SetMealExtensionClass>();
 	}
+	public class SetMealExtensionClass {
+		public int Id { get; set; }
+		public List<MenuExtension> OrderedMenus { get; set; } = new List<MenuExtension>();
+	}
+	
 	public class Cart {
 		public int HeadCount { get; set; }
 		/// <summary>

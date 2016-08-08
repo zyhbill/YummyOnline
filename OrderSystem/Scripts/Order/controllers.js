@@ -73,10 +73,22 @@ app.controller('SetMealsCtrl', [
 app.controller('CartCtrl', [
 	'$scope',
 	'$rootScope',
+	'$location',
 	'$uibModal',
 	'cart',
-	function ($scope, $rootScope, $modal, $cart) {
+	'setMealFilter',
+	function ($scope, $rootScope, $location, $modal, $cart, $setMealFilter) {
 		$cart.Initialize();
+
+		$scope.gotoPayment = function () {
+			if (!$setMealFilter.IsSetMealAllOrdered()) {
+				var result = confirm('套餐中尚有未点的菜品, 是否仍然下单?');
+				if (!result)
+					return;
+			}
+
+			$location.path('/Payment');
+		}
 	}
 ]);
 

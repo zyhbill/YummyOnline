@@ -293,8 +293,19 @@
 	padding: 0;
 }
 
+.list-group-cart {
+	line-height: 28px;
+}
 
+.list-group-cart .setmeal-class {
+	margin-bottom: 0;
+	margin-left: 2em;
+}
 
+.list-group-cart .setmeal-menu {
+	margin-bottom: 0;
+	margin-left: 4em;
+}
 
 
 .radio.radio-paykind {

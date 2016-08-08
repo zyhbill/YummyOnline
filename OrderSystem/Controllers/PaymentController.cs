@@ -40,7 +40,9 @@ namespace OrderSystem.Controllers {
 		[RequireHotel]
 		[HotelAvailable]
 		public async Task<JsonResult> Pay(Cart cart) {
-			CartAddition addition = new CartAddition();
+			CartAddition addition = new CartAddition {
+				From = DineFrom.CustomerBrowser
+			};
 
 			// 新建或获取用户Id
 			User user = await createOrGetUser(User.Identity.GetUserId(), "OrderSystem");

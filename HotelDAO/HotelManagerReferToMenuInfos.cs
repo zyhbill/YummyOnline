@@ -63,6 +63,7 @@ namespace HotelDAO {
 				.Select(p => new {
 					SetMealId = p.Key,
 					Classes = p.Select(c => new {
+						c.Id,
 						c.Name,
 						c.Count,
 						Menus = c.SetMealClassMenus.Select(m => new {

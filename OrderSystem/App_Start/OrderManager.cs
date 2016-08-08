@@ -97,6 +97,9 @@ namespace OrderSystem {
 			if(!result.Succeeded) {
 				return result;
 			}
+
+
+
 			// 处理最后生成的价格并比较前端传输的价格数据
 			result = await handleDinePrice(dine, cart.Price);
 			if(!result.Succeeded) {
@@ -274,11 +277,37 @@ namespace OrderSystem {
 						dineMenu.Type = DineMenuType.OnSale;
 					}
 					// 是否为套餐
-					//var menuSetMeals = await ctx.MenuSetMeals.FirstOrDefaultAsync(p => p.MenuSetId == menu.Id && p.Menu.IsSetMeal);
-					//if(menuSetMeals != null) {
-					//	excludePayDiscount = true;
-					//	dineMenu.Type = DineMenuType.SetMeal;
-					//}
+					if(menu.IsSetMeal) {
+						excludePayDiscount = true;
+						dineMenu.Type = DineMenuType.SetMeal;
+
+						foreach(SetMealExtensionClass setMealExtensionClass in menuExtension.SetMealClasses) {
+							SetMealClass setMealClass = await ctx.SetMealClasses.Where(p => p.Id == setMealExtensionClass.Id).FirstOrDefaultAsync();
+							if(setMealClass == null) {
+								return new FunctionResult(false, "未找到分类", $"No SetMealClass {setMealExtensionClass.Id}");
+							}
+
+							int orderedCount = 0;
+							foreach(MenuExtension setMealMenuExtension in setMealExtensionClass.OrderedMenus) {
+								Menu setMealMenu = await ctx.Menus.FirstOrDefaultAsync(p => p.Id == setMealMenuExtension.Id);
+								if(setMealMenu == null) {
+									return new FunctionResult(false, "未找到菜品", $"No SetMealMenu {setMealMenuExtension.Id} in {setMealExtensionClass.Id}");
+								}
+								orderedCount += setMealMenuExtension.Ordered;
+
+								ctx.DineMenuSetMeals.Add(new DineMenuSetMeal {
+									DineMenu = dineMenu,
+									ClassName = setMealClass.Name,
+									Count = setMealMenuExtension.Ordered,
+									Menu = setMealMenu
+								});
+							}
+
+							if(orderedCount > setMealClass.Count) {
+								return new FunctionResult(false, "套餐数量错误", $"SetMealClass Count Error in {setMealExtensionClass.Id}, Cart Count {orderedCount}, Cal Count {setMealClass.Count}");
+							}
+						}
+					}
 
 					if(!excludePayDiscount) {
 						dineMenu.Price = menu.MenuPrice.Price * (decimal)dine.Discount;
@@ -407,7 +436,7 @@ namespace OrderSystem {
 				if(randomPrice > mainPaidDetail.Price) {
 					randomPrice = mainPaidDetail.Price;
 				}
-				
+
 				if(randomPrice != 0) {
 					dine.DinePaidDetails.Add(new DinePaidDetail {
 						PayKind = randomPreferencePayKind,

@@ -25,8 +25,16 @@ namespace AutoPrinter {
 				}
 
 				serverLog($"发送打印命令 单号: {dineId}", LogLevel.Info);
-				DinePrinter dinePrinter = new DinePrinter();
-				await dinePrinter.Print(dp, printTypes, dineMenuIds == null);
+
+				if(Config.IsIPPrinter) {
+					DinePrinter dinePrinter = new DinePrinter();
+					await dinePrinter.Print(dp, printTypes, dineMenuIds.Count == 0);
+				}
+				else {
+					DineDriverPrinter dineDriverPrinter = new DineDriverPrinter();
+					dineDriverPrinter.Print(dp, printTypes, dineMenuIds.Count == 0);
+				}
+
 				serverLog($"发送命令成功 单号: {dineId}", LogLevel.Success);
 				printCompleted(dineId);
 			}
@@ -66,7 +74,7 @@ namespace AutoPrinter {
 					DineDriverPrinter dineDriverPrinter = new DineDriverPrinter();
 					dineDriverPrinter.Print(dp, printTypes, true);
 				}
-				
+
 				serverLog($"发送测试单命令成功", LogLevel.Success);
 				printCompleted("00000000000000");
 			}
@@ -92,7 +100,7 @@ namespace AutoPrinter {
 					DineDriverPrinter dineDriverPrinter = new DineDriverPrinter();
 					dineDriverPrinter.Print(dp, printTypes, true);
 				}
-			
+
 				serverLog($"发送本地测试单命令成功", LogLevel.Success);
 			}
 			catch(Exception e) {

@@ -228,7 +228,35 @@ app.factory('cart', [
 					});
 				}
 			},
+			_loadSetMeal: function (setMeal, existedSetMealClasses) {
+				for (var i in setMeal.Addition.OrderedSetMealClasses[setMeal.Addition.OrderedSetMealClasses.length - 1]) {
+					var setMealClass = setMeal.Addition.OrderedSetMealClasses[setMeal.Addition.OrderedSetMealClasses.length - 1][i];
+					if (typeof setMealClass == 'string')
+						continue;
+					for (var j in existedSetMealClasses) {
+						var existedSetMealClass = existedSetMealClasses[j];
+						if (setMealClass.Id == existedSetMealClass.Id) {
+							for (var k in setMealClass.Menus) {
+								var setMealMenu = setMealClass.Menus[k];
 
+								for (var l in existedSetMealClass.Addition.OrderedMenus) {
+									var existedSetMealMenu = existedSetMealClass.Addition.OrderedMenus[l];
+									if (setMealMenu.Menu.Id == existedSetMealMenu.Menu.Id) {
+
+										for (var m = 0; m < existedSetMealMenu.Addition.Ordered / setMealMenu.Count ; m++) {
+											this.AddSetMealMenu(setMealMenu, setMealClass);
+										}
+										console.log(setMeal)
+									}
+								}
+							}
+						}
+
+					}
+				}
+
+
+			},
 			LoadExistedCart: function (existedCart) {
 				this.HeadCount = existedCart.HeadCount;
 				this.Invoice = existedCart.Invoice;
@@ -240,9 +268,17 @@ app.factory('cart', [
 							var menu = $dataSet.Menus[j];
 
 							var count = existedMenu.Addition.Ordered - menu.MinOrderCount + 1;
+
 							for (var k = 0; k < count; k++) {
 								this.AddMenu(menu);
+								if (menu.IsSetMeal) {
+									console.log(menu);
+									this._loadSetMeal(menu, existedMenu.Addition.OrderedSetMealClasses[k]);
+									console.log(menu);
+								}
+
 							};
+
 							for (var k in existedCart.OrderedMenus[i].Addition.Remarks) {
 								for (var l in menu.Remarks) {
 									if (existedCart.OrderedMenus[i].Addition.Remarks[k].Id == menu.Remarks[l].Id) {
@@ -252,15 +288,6 @@ app.factory('cart', [
 								}
 							}
 							break;
-						}
-					}
-				}
-
-				if (!angular.isUndefined(existedCart.OrderedSetMeals)) {
-					this.OrderedSetMeals = existedCart.OrderedSetMeals;
-					for (var i in this.OrderedSetMeals) {
-						for (var j in this.OrderedSetMeals[i].Addition.SetMeal.Classes) {
-							this.OrderedSetMeals[i].Addition.SetMeal.Classes[j].Addition.IsSelected = false;
 						}
 					}
 				}

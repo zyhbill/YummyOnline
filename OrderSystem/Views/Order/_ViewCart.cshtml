@@ -3,6 +3,7 @@
 <div class="container-fluid" ng-static-height="88">
 	<ul class="list-group">
 		<li class="list-group-item"
+			ng-if="!menu.IsSetMeal"
 			ng-repeat="menu in cart.GetOrderedMenusWithFixed()">
 			<div class="row no-padding">
 				<div class="col-xs-6">
@@ -52,6 +53,26 @@
 					</button>
 				</div>
 			</div>
+		</li>
+
+		<li class="list-group-item" ng-repeat="setMeal in cart.OrderedSetMeals">
+			<div class="row">
+				<div class="col-xs-6">
+					<p>{{setMeal.Name}}</p>
+					<div ng-repeat="class in setMeal.Addition.SetMeal.Classes">
+						<p>{{class.Name}}</p>
+						<p ng-repeat="setMealMenu in class.Menus">
+							{{setMealMenu.Menu.Name}} * {{setMealMenu.Addition.Ordered}}
+						</p>
+					</div>
+
+				</div>
+				<div class="col-xs-6 text-right">
+					<span>{{menu.MenuPrice.Price | currency : "￥"}}</span>
+					<span class="btn btn-sm btn-cart-num">{{menu.Addition.Ordered}}</span>
+				</div>
+			</div>
+
 		</li>
 	</ul>
 </div>

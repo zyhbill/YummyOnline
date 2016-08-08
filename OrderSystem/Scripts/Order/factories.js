@@ -460,6 +460,7 @@ app.factory('cart', [
 					PayKindId: this.PayKind.Id,
 
 					OrderedMenus: [],
+					OrderedSetMeals: []
 				}
 
 				for (var i in this.OrderedMenus) {
@@ -474,6 +475,8 @@ app.factory('cart', [
 
 					sendData.OrderedMenus.push(orderedMenu);
 				}
+
+
 				return sendData;
 			},
 			Submit: function () {
@@ -640,7 +643,7 @@ app.factory('setMealFilter', [
 					}
 				}
 				this.ToggleSetMealSelected(this.FilteredSetMeals[this.FilteredSetMeals.length - 1]);
-				
+
 			},
 			ToggleSetMealSelected: function (setMeal) {
 				if (this._activeSetMeal != null) {

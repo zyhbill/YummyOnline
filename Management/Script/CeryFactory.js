@@ -1198,11 +1198,31 @@
         },
         AddMeal: function () {
             var _this = this;
+            var deferred = $q.defer();
             this.OpenElements.CurMeal.Num = 1;
-            if (this.OpenElements.CurMeal.Id) {
-                console.log(this.OpenElements.CurMeal);
-                this.OpenElements.OrderMenus.push(angular.copy(this.OpenElements.CurMeal));
+            var OrderCount = this.OpenElements.CurMeal.SetMealClasses.map(function (x) {
+                return x.SetMealClassMenus.map(function (xx) { return xx.OrderNum }).reduce(function (a, b) { return +a + +b }, 0);
+            }).reduce(function (a, b) { return +a + +b }, 0);
+            if (!OrderCount) {
+                alert("请选择套餐内容");
+                deferred.resolve(false);
             }
+            else {
+                this.OpenElements.OriMenus.forEach(function (x) {
+                    x.Click = false;
+                    if (x.Id == _this.OpenElements.CurMeal.Id) x.Class = true;
+                });
+                this.OpenElements.Menus.forEach(function (x) {
+                    x.Click = false;
+                    if (x.Id == _this.OpenElements.CurMeal.Id) x.Class = true;
+                })
+                if (this.OpenElements.CurMeal.Id) {
+                    console.log(this.OpenElements.CurMeal);
+                    this.OpenElements.OrderMenus.push(angular.copy(this.OpenElements.CurMeal));
+                }
+                deferred.resolve(true);
+            }
+            return deferred.promise;
         }
     }
     return service;

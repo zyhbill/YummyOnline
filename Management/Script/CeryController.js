@@ -268,8 +268,10 @@
         option.method.PlusMenuNum(menu, Class);
     }
     $scope.AddMeal = function () {
-        option.method.AddMeal();
-        $uibModalInstance.dismiss('cancel');
+        var promise = option.method.AddMeal();
+        promise.then(function (data) {
+            if (data) { $uibModalInstance.dismiss('cancel'); }
+        })
     }
 })
 .controller('ModelReserveCtrl', function ($scope, $rootScope, $uibModal, $uibModalInstance, $q, $timeout, option) {

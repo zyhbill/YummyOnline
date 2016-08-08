@@ -388,8 +388,8 @@ app.factory('dataSet', [
 				now = now.toTimeString();
 				for (var i in $dataSet.DiscountMethods.TimeDiscounts) {
 					var timeDiscount = $dataSet.DiscountMethods.TimeDiscounts[i];
-					var from = new Date('1-1-1 ' + timeDiscount.From);
-					var to = new Date('1-1-1 ' + timeDiscount.To);
+					var from = new Date('1/1/1 ' + timeDiscount.From);
+					var to = new Date('1/1/1 ' + timeDiscount.To);
 					from = from.toTimeString();
 					to = to.toTimeString();
 					if (now >= from && now <= to) {

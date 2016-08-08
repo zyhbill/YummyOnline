@@ -61,6 +61,18 @@ namespace Management.ObjectClasses
         public List<OpenOrderMenus> SendMenus { get; set; }
     }
 
+    public class OpenMealClass
+    {
+        public int Id { get; set; }
+        public List<OpenMealClassMenu> OrderedMenus { get; set; }
+    }
+
+    public class OpenMealClassMenu
+    {
+        public string Id { get; set; }
+        public int Ordered { get; set; }
+    }
+
     public class OpenDeskInfo
     {
         public string Id { get; set; }
@@ -71,6 +83,7 @@ namespace Management.ObjectClasses
         public string Id { get; set; }
         public int Ordered { get; set; }
         public List<int> Remarks { get; set; }
+        public List<OpenMealClass> SetMealClasses { get; set; }
     }
 
     public class OpenDiscount

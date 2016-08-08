@@ -788,7 +788,16 @@
                 return 0;
             }
             else if (menu.IsSetMeal) {
-                return menu.Price.Price;
+                if ($rootScope.PayUnder == 0) {
+                    //如果不需要抹零
+                    return (menu.Price.Price * menu.Num).toFixed(2);
+                } else if ($rootScope.PayUnder == 1) {
+                    //如果需要抹零
+                    return parseInt(menu.Price.Price * menu.Num) * menu.Num;
+                } else if ($rootScope.PayUnder == 2) {
+                    //需要四舍五入的
+                    return (menu.Price.Price * menu.Num).toFixed(0);
+                }
             }
             else {
                 //正常
@@ -895,7 +904,28 @@
             var _this = this;
             var deferred = $q.defer();
             var tempOrderedMenus = this.OpenElements.OrderMenus.filter(function (x) { return !x.IsSend }).map(function (x) {
-                return { Id: x.Id, Ordered: x.Num, Remarks: x.Remarks.map(function (x) { return x.Id }) }
+                if (x.IsSetMeal) {
+                    return {
+                        Id: x.Id,
+                        Classes: x.SetMealClasses.map(function (xx) {
+                            return {
+                                Id: xx.Id,
+                                OrderedMenus: xx.SetMealClassMenus.map(function (xxx) {
+                                    return {
+                                        Id: xxx.Id,
+                                        Ordered: xxx.OrderNum
+                                    }
+                                })
+                            }
+                        })
+                    }
+                } else {
+                    return {
+                        Id: x.Id,
+                        Ordered: x.Num,
+                        Remarks: x.Remarks.map(function (x) { return x.Id })
+                    }
+                }
             })
             var tempSendMenus = this.OpenElements.OrderMenus.filter(function (x) { return x.IsSend }).map(function (x) {
                 return { Id: x.Id, Ordered: x.Num, Remarks: x.Remarks.map(function (x) { return x.Id }) }
@@ -907,7 +937,11 @@
                 OrderedMenus: tempOrderedMenus,
                 SendMenus: tempSendMenus
             };
-            $http.post('../Templates/OpenDesk', { OrderInfo: OrderInfo, UserId: _this.OpenElements.CurrentUser.Id, OpenDiscount: _this.OpenElements.CurrentDiscount }).success(function (data) {
+            $http.post('../Templates/OpenDesk', {
+                OrderInfo: OrderInfo,
+                UserId: _this.OpenElements.CurrentUser.Id,
+                OpenDiscount: _this.OpenElements.CurrentDiscount
+            }).success(function (data) {
                 data = JSON.parse(data);
                 _this.OpenElements.OrderMenus = [];
                 deferred.resolve(data);
@@ -1166,6 +1200,7 @@
             var _this = this;
             this.OpenElements.CurMeal.Num = 1;
             if (this.OpenElements.CurMeal.Id) {
+                console.log(this.OpenElements.CurMeal);
                 this.OpenElements.OrderMenus.push(angular.copy(this.OpenElements.CurMeal));
             }
         }

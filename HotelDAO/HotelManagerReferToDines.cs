@@ -77,13 +77,28 @@ namespace HotelDAO {
 						d.Menu.Name,
 						d.Menu.NameAbbr,
 						d.Menu.PicturePath,
-						d.Menu.Unit
+						d.Menu.Unit,
+						d.Menu.IsSetMeal
 					},
 					ReturnedWaiter = new {
 						d.ReturnedWaiter.Id,
 						d.ReturnedWaiter.Name
 					},
-					d.ReturnedReason
+					d.ReturnedReason,
+					SetMealClasses = d.SetMeals.GroupBy(s => s.ClassName).Select(s => new {
+						ClassName = s.Key,
+						Menus = s.Select(m => new {
+							m.Count,
+							Menu = new {
+								m.Menu.Id,
+								m.Menu.Code,
+								m.Menu.Name,
+								m.Menu.NameAbbr,
+								m.Menu.PicturePath,
+								m.Menu.Unit
+							}
+						})
+					})
 				}),
 				DinePaidDetails = p.DinePaidDetails.Select(d => new {
 					d.Price,
@@ -92,7 +107,7 @@ namespace HotelDAO {
 						d.PayKind.Id,
 						d.PayKind.Name,
 						d.PayKind.Type
-					}
+					},
 				}),
 				TakeOut = new {
 					p.TakeOut.Address

@@ -256,10 +256,12 @@ app.factory('cart', [
 					}
 				}
 
-				this.OrderedSetMeals = existedCart.OrderedSetMeals;
-				for (var i in this.OrderedSetMeals) {
-					for (var j in this.OrderedSetMeals[i].Addition.SetMeal.Classes) {
-						this.OrderedSetMeals[i].Addition.SetMeal.Classes[j].Addition.IsSelected = false;
+				if (!angular.isUndefined(existedCart.OrderedSetMeals)) {
+					this.OrderedSetMeals = existedCart.OrderedSetMeals;
+					for (var i in this.OrderedSetMeals) {
+						for (var j in this.OrderedSetMeals[i].Addition.SetMeal.Classes) {
+							this.OrderedSetMeals[i].Addition.SetMeal.Classes[j].Addition.IsSelected = false;
+						}
 					}
 				}
 

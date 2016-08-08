@@ -19,16 +19,18 @@
 		}
 
 		$scope.showSetMealsModal = function (menu) {
-			$modal.open({
-				templateUrl: 'setMealsModal.html',
-				controller: 'SetMealsCtrl',
-				backdrop: 'static',
-				resolve: {
-					menu: function () {
-						return menu;
+			if (menu.IsSetMeal) {
+				$modal.open({
+					templateUrl: 'setMealsModal.html',
+					controller: 'SetMealsCtrl',
+					backdrop: 'static',
+					resolve: {
+						menu: function () {
+							return menu;
+						}
 					}
-				}
-			});
+				});
+			}
 		}
 		$cart.Initialize(function () {
 			$menuFilter.IntoRankMode();
@@ -45,7 +47,6 @@ app.controller('MenuModalCtrl', [
 		$scope.close = function () {
 			$modalInstance.dismiss();
 		};
-
 	}
 ]);
 
@@ -66,6 +67,8 @@ app.controller('SetMealsCtrl', [
 		$scope.ok = function () {
 			$modalInstance.dismiss();
 		}
+
+		console.log(1);
 		$setMealFilter.LoadSetMeals($menu);
 	}
 ]);

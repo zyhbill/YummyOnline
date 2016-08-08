@@ -185,6 +185,7 @@ namespace HotelDAO.Models {
 		public string ReturnedReason { get; set; }
 
 		public ICollection<Remark> Remarks { get; set; }
+		public ICollection<DineMenuSetMeal> SetMeals { get; set; }
 	}
 
 	public class DineMenuSetMeal {

@@ -297,14 +297,14 @@
 	line-height: 28px;
 }
 
-.list-group-cart .setmeal-class {
+.setmeal-class {
 	margin-bottom: 0;
-	margin-left: 2em;
+	padding-left: 2em;
 }
 
-.list-group-cart .setmeal-menu {
+.setmeal-menu {
 	margin-bottom: 0;
-	margin-left: 4em;
+	padding-left: 4em;
 }
 
 

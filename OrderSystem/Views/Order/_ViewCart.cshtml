@@ -1,4 +1,5 @@
 ﻿@Html.Partial("_PartialNavTitle", "购物车")
+@Html.Partial("_PartialSetMealModal")
 
 <div class="container-fluid" ng-static-height="88">
 	<ul class="list-group list-group-cart">
@@ -7,10 +8,10 @@
 			ng-repeat="menu in cart.GetOrderedMenusWithFixed()">
 			<div class="row no-padding">
 				<div class="col-xs-6">
-					{{menu.Name}}
+					<span class="text">{{menu.Name}}</span>
 				</div>
 				<div class="col-xs-6 text-right">
-					<span>{{menu.MenuPrice.Price | currency : "￥"}}</span>
+					<span class="text">{{menu.MenuPrice.Price | currency : "￥"}}</span>
 					<div class="cart-control">
 						<span ng-if="menu.Addition.Ordered>0">
 							<button class="btn btn-sm btn-cart-decrease"
@@ -36,7 +37,7 @@
 				<button class="btn btn-primary btn-xs btn-remark"
 						ng-repeat="remark in menu.Addition.Remarks"
 						ng-click="cart.RemoveRemark(menu,remark,$index)">
-					{{remark.Name}}
+					{{rem ark.Name}}
 					<span ng-if="remark.Price>0">({{remark.Price | currency : "￥"}})</span>
 					<span class="fa fa-times-circle"></span>
 				</button>
@@ -54,26 +55,43 @@
 				</div>
 			</div>
 		</li>
+	</ul>
 
-		<li class="list-group-item" ng-repeat="setMeal in cart.OrderedSetMeals">
+	<ul class="list-group list-group-cart"
+		ng-if="setMeal.IsSetMeal"
+		ng-repeat="setMeal in cart.GetOrderedMenusWithFixed()">
+		<li class="list-group-item"
+			ng-repeat="setMealClasses in setMeal.Addition.OrderedSetMealClasses">
 			<div class="row">
 				<div class="col-xs-6">
-					<span>{{setMeal.Name}}</span>
-					<div ng-repeat="class in setMeal.Addition.SetMeal.Classes">
+					<span class="text">{{setMeal.Name}}</span>
+				</div>
+				<div class="col-xs-6 text-right">
+					<span class="text">{{setMeal.MenuPrice.Price | currency : "￥"}}</span>
+					<div class="cart-control">
+						<button class="btn btn-sm btn-primary btn-setmeal-change"
+								ng-click="showSetMealsModal(setMeal, $index)">
+							修改套餐
+						</button>
+					</div>
+				</div>
+
+				<div class="col-xs-12">
+					<div ng-repeat="setMealClass in setMealClasses">
 						<p class="setmeal-class">
-							{{class.Name}}
-							
-							<span ng-class="{'text-danger': class.Addition.Ordered < class.Count}">
-								({{class.Addition.Ordered}} / {{class.Count}})
-								<span ng-if="class.Addition.Ordered < class.Count">
+							{{setMealClass.Name}}
+
+							<span ng-class="{'text-danger': setMealClass.Addition.Ordered < setMealClass.Count}">
+								({{setMealClass.Addition.Ordered}} / {{setMealClass.Count}})
+								<span ng-if="setMealClass.Addition.Ordered < setMealClass.Count">
 									<i class="fa fa-exclamation-circle" aria-hidden="true"></i>
 								</span>
 							</span>
 						</p>
 						<p class="setmeal-menu"
-						   ng-repeat="setMealMenu in class.Menus"
+						   ng-repeat="setMealMenu in setMealClass.Menus"
 						   ng-if="setMealMenu.Addition.Ordered > 0">
-							{{setMealMenu.Menu.Name}} * {{setMealMenu.Addition.Ordered}}
+							{{setMealMenu.Menu.Name}} &times;{{setMealMenu.Addition.Ordered}}
 						</p>
 					</div>
 				</div>

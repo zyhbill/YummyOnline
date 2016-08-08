@@ -38,6 +38,14 @@
 		font-size: 14px;
 	}
 
+	.cart-control .btn-setmeal-change {
+		padding: 0 10px;
+		height: 25px;
+		line-height: 25px;
+		border-radius: 50%;
+		border: none;
+	}
+
 .section-category {
 	width: 30%;
 	float: left;
@@ -294,8 +302,18 @@
 }
 
 .list-group-cart {
-	line-height: 28px;
+	margin-bottom: 0;
 }
+
+	.list-group-cart:last-child {
+		margin-bottom: 30px;
+	}
+
+	.list-group-cart .text {
+		position: relative;
+		display: inline-block;
+		bottom: -3px;
+	}
 
 .setmeal-class {
 	margin-bottom: 0;

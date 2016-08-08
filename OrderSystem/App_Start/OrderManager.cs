@@ -98,8 +98,6 @@ namespace OrderSystem {
 				return result;
 			}
 
-
-
 			// 处理最后生成的价格并比较前端传输的价格数据
 			result = await handleDinePrice(dine, cart.Price);
 			if(!result.Succeeded) {

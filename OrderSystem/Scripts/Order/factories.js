@@ -20,6 +20,7 @@
 			menu.Addition = {
 				Ordered: 0,
 				Remarks: [],
+				OrderedSetMealClasses: [],
 
 				OriPrice: menu.MenuPrice.Price,
 
@@ -189,7 +190,6 @@ app.factory('cart', [
 			Desk: null,
 			PayKind: null,
 			OrderedMenus: [],
-			OrderedSetMeals: [],
 			/* Cart Data */
 
 			IsInitialized: false, // 是否初始化
@@ -283,7 +283,7 @@ app.factory('cart', [
 					this.OrderedMenus.push(menu);
 				}
 				if (menu.IsSetMeal) {
-					this.OrderedSetMeals.push(angular.copy(menu));
+					menu.Addition.OrderedSetMealClasses.push(angular.copy(menu.Addition.SetMeal.Classes));
 				}
 
 				for (var i in $dataSet.MenuClasses) {
@@ -312,12 +312,7 @@ app.factory('cart', [
 					}
 				}
 				if (menu.IsSetMeal) {
-					for (var i = this.OrderedSetMeals.length - 1; i >= 0; i--) {
-						if (this.OrderedSetMeals[i].Id == menu.Id) {
-							this.OrderedSetMeals.splice(i, 1);
-							break;
-						}
-					}
+					menu.Addition.OrderedSetMealClasses.splice(menu.Addition.OrderedSetMealClasses.length - 1, 1);
 				}
 
 				for (var i in $dataSet.MenuClasses) {
@@ -470,8 +465,7 @@ app.factory('cart', [
 					DeskId: this.Desk.Id,
 					PayKindId: this.PayKind.Id,
 
-					OrderedMenus: [],
-					OrderedSetMeals: []
+					OrderedMenus: []
 				}
 
 				for (var i in this.OrderedMenus) {
@@ -485,40 +479,43 @@ app.factory('cart', [
 					}
 
 					if (this.OrderedMenus[i].IsSetMeal) {
-						for (var k in this.OrderedSetMeals) {
-							var orderedSetMeal = this.OrderedSetMeals[k];
-							if (orderedSetMeal.Id == menu.Id) {
-								var setMeal = {
-									Id: menu.Id,
-									Ordered: 1,
-									Remarks: menu.Remarks,
-									SetMealClasses: []
-								}
+						console.log(this.OrderedMenus[i])
+						for (var j in this.OrderedMenus[i].Addition.OrderedSetMealClasses) {
+							var orderedSetMealClasses = this.OrderedMenus[i].Addition.OrderedSetMealClasses[j];
 
-								for (var k in orderedSetMeal.Addition.SetMeal.Classes) {
-									var orderedSetMealClass = orderedSetMeal.Addition.SetMeal.Classes[k];
-									var setMealClass = {
-										Id: orderedSetMealClass.Id,
-										OrderedMenus: []
-									}
-									for (var l in orderedSetMealClass.Menus) {
-										setMealClass.OrderedMenus.push({
-											Id: orderedSetMealClass.Menus[l].Menu.Id,
-											Ordered: orderedSetMealClass.Menus[l].Addition.Ordered
-										})
-									}
-									setMeal.SetMealClasses.push(setMealClass);
-								}
-
-								sendData.OrderedMenus.push(setMeal);
+							var setMeal = {
+								Id: menu.Id,
+								Ordered: 1,
+								Remarks: menu.Remarks,
+								SetMealClasses: []
 							}
+
+							for (var j in orderedSetMealClasses) {
+								var orderedSetMealClass = orderedSetMealClasses[j];
+								if (typeof orderedSetMealClass == 'string')
+									continue;
+								var setMealClass = {
+									Id: orderedSetMealClass.Id,
+									OrderedMenus: []
+								}
+								for (var k in orderedSetMealClass.Addition.OrderedMenus) {
+									var orderedSetMealMenu = orderedSetMealClass.Addition.OrderedMenus[k];
+
+									setMealClass.OrderedMenus.push({
+										Id: orderedSetMealMenu.Menu.Id,
+										Ordered: orderedSetMealMenu.Addition.Ordered
+									})
+								}
+								setMeal.SetMealClasses.push(setMealClass);
+							}
+
+							sendData.OrderedMenus.push(setMeal);
 						}
 					} else {
 						sendData.OrderedMenus.push(menu);
 					}
-
 				}
-
+				console.log(sendData)
 				return sendData;
 			},
 			Submit: function () {
@@ -652,9 +649,9 @@ app.factory('setMealFilter', [
 	'dataSet',
 	function ($rootScope, $filter, $cart, $dataSet) {
 		var setMealFilter = {
-			_activeSetMeal: null,
+			ActiveClasses: null,
 			ActiveClass: null,
-			FilteredSetMeals: [],
+
 			FilteredSetMealClasses: [],
 
 			IsShowSetMeal: function (setMeal) {
@@ -665,48 +662,42 @@ app.factory('setMealFilter', [
 			},
 			CanCloseSetMealModal: function () {
 				var ordered = 0;
-				for (var i in this.FilteredSetMeals) {
-					var setMeal = this.FilteredSetMeals[i];
-					for (var j in setMeal.Addition.SetMeal.Classes) {
-						var setMealClass = setMeal.Addition.SetMeal.Classes[j];
-						ordered += setMealClass.Addition.Ordered;
-					}
+				for (var i in this.ActiveClasses) {
+					if (typeof this.ActiveClasses[i] == 'string')
+						continue;
+					var setMealClass = this.ActiveClasses[i];
+					ordered += setMealClass.Addition.Ordered;
 				}
-
 				return ordered != 0;
 			},
 			IsSetMealAllOrdered: function () {
-				for (var i in $cart.OrderedSetMeals) {
-					var setMeal = $cart.OrderedSetMeals[i];
-					for (var j in setMeal.Addition.SetMeal.Classes) {
-						var setMealClass = setMeal.Addition.SetMeal.Classes[j];
-						if (setMealClass.Count != setMealClass.Addition.Ordered) {
-							return false;
+				for (var i in $cart.OrderedMenus) {
+					var setMeal = $cart.OrderedMenus[i];
+					if (!setMeal.IsSetMeal)
+						continue;
+
+					console.log(setMeal.Addition.OrderedSetMealClasses);
+					for (var j in setMeal.Addition.OrderedSetMealClasses) {
+						var setMealClasses = setMeal.Addition.OrderedSetMealClasses[j];
+
+						for (var k in setMealClasses) {
+							var setMealClass = setMealClasses[k];
+							if (typeof setMealClass == 'string') {
+								continue;
+							}
+							if (setMealClass.Count != setMealClass.Addition.Ordered) {
+								return false;
+							}
 						}
 					}
 				}
 				return true;
 			},
-			LoadSetMeals: function (setMeal) {
-				this.FilteredSetMeals = [];
-				for (var i in $cart.OrderedSetMeals) {
-					if (setMeal.Id == $cart.OrderedSetMeals[i].Id) {
-						this.FilteredSetMeals.push($cart.OrderedSetMeals[i]);
-					}
-				}
-				this.ToggleSetMealSelected(this.FilteredSetMeals[this.FilteredSetMeals.length - 1]);
+			ToggleSetMealSelected: function (setMealClasses) {
+				this.ActiveClasses = setMealClasses;
+				this.ToggleClassSelected(this.ActiveClasses[0]);
 
-			},
-			ToggleSetMealSelected: function (setMeal) {
-				if (this._activeSetMeal != null) {
-					this._activeSetMeal.Addition.IsSelected = false;
-				}
-				setMeal.Addition.IsSelected = true;
-				this._activeSetMeal = setMeal;
-
-				this.FilteredSetMealClasses = setMeal.Addition.SetMeal.Classes
-
-				this.ToggleClassSelected(this.FilteredSetMealClasses[0]);
+				this.FilteredSetMealClasses = setMealClasses;
 			},
 			ToggleClassSelected: function (setMealClass) {
 				if (this.ActiveClass != null) {

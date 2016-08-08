@@ -27,7 +27,8 @@
 					resolve: {
 						menu: function () {
 							return menu;
-						}
+						},
+						index: null
 					}
 				});
 			}
@@ -54,9 +55,10 @@ app.controller('SetMealsCtrl', [
 	'$scope',
 	'$uibModalInstance',
 	'menu',
+	'index',
 	'cart',
 	'setMealFilter',
-	function ($scope, $modalInstance, $menu, $cart, $setMealFilter) {
+	function ($scope, $modalInstance, $menu, $index, $cart, $setMealFilter) {
 		$scope.menu = $menu;
 
 		$scope.cancel = function () {
@@ -68,8 +70,10 @@ app.controller('SetMealsCtrl', [
 			$modalInstance.dismiss();
 		}
 
-		console.log(1);
-		$setMealFilter.LoadSetMeals($menu);
+		if ($index == null) {
+			$index = $menu.Addition.OrderedSetMealClasses.length - 1;
+		}
+		$setMealFilter.ToggleSetMealSelected($menu.Addition.OrderedSetMealClasses[$index]);
 	}
 ]);
 
@@ -91,6 +95,25 @@ app.controller('CartCtrl', [
 			}
 
 			$location.path('/Payment');
+		}
+
+		$scope.showSetMealsModal = function (menu, index) {
+			console.log(index);
+			if (menu.IsSetMeal) {
+				$modal.open({
+					templateUrl: 'setMealsModal.html',
+					controller: 'SetMealsCtrl',
+					backdrop: 'static',
+					resolve: {
+						menu: function () {
+							return menu;
+						},
+						index: function () {
+							return index;
+						}
+					}
+				});
+			}
 		}
 	}
 ]);

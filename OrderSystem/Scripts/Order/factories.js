@@ -272,11 +272,8 @@ app.factory('cart', [
 							for (var k = 0; k < count; k++) {
 								this.AddMenu(menu);
 								if (menu.IsSetMeal) {
-									console.log(menu);
 									this._loadSetMeal(menu, existedMenu.Addition.OrderedSetMealClasses[k]);
-									console.log(menu);
 								}
-
 							};
 
 							for (var k in existedCart.OrderedMenus[i].Addition.Remarks) {
@@ -750,15 +747,18 @@ app.factory('dineToCart', [
 				OrderedMenus: [],
 			}
 			for (var i = 0; i < dine.DineMenus.length; i++) {
-				var detail = dine.DineMenus[i];
-				cart.OrderedMenus.push({
-					Id: detail.Menu.Id,
+				var dineMenu = dine.DineMenus[i];
+
+				var orderedMenu = {
+					Id: dineMenu.Menu.Id,
 					Addition: {
-						Ordered: detail.Count,
-						Remarks: detail.Remarks
+						Ordered: dineMenu.Count,
+						Remarks: dineMenu.Remarks
 					}
-				});
+				};
+				cart.OrderedMenus.push();
 			}
+
 			$cart.Reset();
 			$cart.LoadExistedCart(cart);
 		}

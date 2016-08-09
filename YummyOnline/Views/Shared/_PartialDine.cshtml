@@ -87,6 +87,26 @@
 					{{menu.Price | currency : "￥"}}
 				</span>
 			</div>
+
+			<div ng-if="menu.Menu.IsSetMeal">
+				<div ng-repeat="class in menu.SetMealClasses">
+					<div class="col-xs-12">
+						<p class="setmeal-class">{{class.ClassName}}</p>
+					</div>
+
+					<div ng-repeat="setMealMenu in class.Menus">
+						<div class="col-xs-6">
+							<p class="setmeal-menu">{{setMealMenu.Menu.Name}}</p>
+						</div>
+						<div class="col-xs-2 text-right">
+							&times;{{setMealMenu.Count}}
+						</div>
+						<div class="col-xs-4">
+							&nbsp;
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</li>
 

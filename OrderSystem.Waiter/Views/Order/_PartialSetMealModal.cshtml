@@ -1,0 +1,67 @@
+﻿
+<script type="text/ng-template" id="setMealsModal.html">
+	<div class="modal-header">
+		<button class="btn btn-sm btn-close btn-primary pull-right"
+				ng-disabled="!setMealFilter.CanCloseSetMealModal()"
+				ng-click="ok()">
+			确定
+		</button>
+		<button class="btn btn-sm btn-close btn-default pull-right"
+				ng-click="cancel()">
+			删除
+		</button>
+		<h4 class="modal-title">
+			{{menu.Name}}
+			<button class="btn btn-xs btn-primary btn-circle"
+					ng-class="{active:setMealClasses == setMealFilter.ActiveSetMealClasses}"
+					ng-repeat="setMealClasses in menu.Addition.OrderedSetMealClasses"
+					ng-click="setMealFilter.ToggleSetMealSelected(setMealClasses)">
+				{{$index+1}}
+			</button>
+		</h4>
+	</div>
+	<div class="modal-body setmeals-modal clearfix">
+		<div class="form-group">
+			<div class="btn-group">
+				<button class="btn btn-default"
+						ng-class="{active:class.Addition.IsSelected}"
+						ng-click="setMealFilter.ToggleClassSelected(class)"
+						ng-repeat="class in setMealFilter.FilteredSetMealClasses">
+					<div>{{class.Name}}</div>
+					<div>{{class.Addition.Ordered}} / {{class.Count}}</div>
+				</button>
+			</div>
+		</div>
+		<div>
+			<div class="menu-btn"
+				 ng-repeat="setMealMenu in setMealFilter.ActiveClass.Menus"
+				 ng-class="{active:setMealMenu.Addition.Ordered>0}"
+				 ng-click="cart.AddSetMealMenu(setMealMenu, setMealFilter.ActiveClass)">
+				<div class="row">
+					<div class="col-xs-10">
+						{{setMealMenu.Menu.NameAbbr}}
+					</div>
+					<div class="col-xs-2 text-left"
+						 ng-if="setMealMenu.Addition.Ordered > 0">
+						{{setMealMenu.Addition.Ordered}}
+					</div>
+
+					<div class="col-xs-12 menu-control" ng-if="setMealMenu.Addition.Ordered>0">
+						<div class="row">
+							<div class="col-xs-6">
+								&nbsp;
+							</div>
+							<div class="col-xs-6 text-right">
+								<button class="btn btn-default btn-sm"
+										ng-click="cart.RemoveSetMealMenu(setMealMenu, setMealFilter.ActiveClass)"
+										stop-event>
+									<i class="fa fa-minus"></i>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>

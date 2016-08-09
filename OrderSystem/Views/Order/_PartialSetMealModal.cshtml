@@ -58,7 +58,7 @@
 										<span class="btn btn-sm btn-cart-num">{{setMealMenu.Addition.Ordered}}</span>
 									</span>
 									<button class="btn btn-sm btn-cart-add"
-											ng-disabled="!setMealFilter.CanClassAddMenu(setMealMenu, setMealFilter.ActiveClass)"
+											ng-disabled="!cart.CanClassAddMenu(setMealMenu, setMealFilter.ActiveClass)"
 											ng-click="cart.AddSetMealMenu(setMealMenu, setMealFilter.ActiveClass)">
 										<i class="fa fa-plus"></i>
 									</button>

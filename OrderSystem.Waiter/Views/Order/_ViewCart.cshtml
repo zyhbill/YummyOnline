@@ -2,6 +2,8 @@
 
 @Html.Partial("_PartialCustomerModal")
 
+@Html.Partial("_PartialSetMealModal")
+
 <script type="text/ng-template" id="remarkModal.html">
 	<div class="modal-header">
 		<h3 class="modal-title">选择备注</h3>
@@ -42,10 +44,16 @@
 		<!-- ngRepeat menu -->
 		<div class="menu-btn" ng-repeat="menu in menuFilter.FilteredMenus"
 			 ng-class="{active:menu.Addition.Ordered>0}"
-			 ng-click="cart.AddMenu(menu)">
+			 ng-click="cart.AddMenu(menu); showSetMealsModal(menu)">
 			<div class="row">
 				<div class="col-xs-10">
 					{{menu.NameAbbr}}
+					<button class="btn btn-primary btn-xs"
+							ng-if="setMealFilter.IsShowSetMeal(menu)"
+							ng-click="showSetMealsModal(menu)"
+							stop-event>
+						套餐
+					</button>
 				</div>
 				<div class="col-xs-2 text-left"
 					 ng-if="menu.Addition.Ordered>0">
@@ -74,7 +82,6 @@
 						</button>
 					</div>
 				</div>
-
 			</div>
 		</div>
 	</section>

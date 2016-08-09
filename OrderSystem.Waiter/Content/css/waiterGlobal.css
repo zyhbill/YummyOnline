@@ -8,6 +8,12 @@
 	border-color: #071C2B;
 }
 
+.btn-close {
+	margin-top: -2px;
+	margin-bottom: -2px;
+	margin-right: 5px;
+}
+
 
 .index {
 }

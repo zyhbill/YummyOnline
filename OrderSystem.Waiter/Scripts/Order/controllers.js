@@ -6,7 +6,8 @@
 	'$uibModal',
 	'cart',
 	'menuFilter',
-	function ($scope, $rootScope, $http, $window, $modal, $cart, $menuFilter) {
+	'setMealFilter',
+	function ($scope, $rootScope, $http, $window, $modal, $cart, $menuFilter, $setMealFilter) {
 		$scope.openRemarkModal = function (menu) {
 			var modalInstance = $modal.open({
 				templateUrl: 'remarkModal.html',
@@ -17,6 +18,21 @@
 					}
 				}
 			});
+		}
+		$scope.showSetMealsModal = function (menu) {
+			if (menu.IsSetMeal) {
+				$modal.open({
+					templateUrl: 'setMealsModal.html',
+					controller: 'SetMealsCtrl',
+					backdrop: 'static',
+					resolve: {
+						menu: function () {
+							return menu;
+						},
+						index: null
+					}
+				});
+			}
 		}
 
 		$rootScope.openCustomerModal = function () {
@@ -36,6 +52,32 @@
 		$cart.Initialize(function () {
 			$menuFilter.IntoRankMode();
 		});
+	}
+]);
+
+app.controller('SetMealsCtrl', [
+	'$scope',
+	'$uibModalInstance',
+	'menu',
+	'index',
+	'cart',
+	'setMealFilter',
+	function ($scope, $modalInstance, $menu, $index, $cart, $setMealFilter) {
+		$scope.menu = $menu;
+
+		$scope.cancel = function () {
+			$cart.RemoveMenu($menu)
+			$modalInstance.dismiss();
+		}
+
+		$scope.ok = function () {
+			$modalInstance.dismiss();
+		}
+
+		if ($index == null) {
+			$index = $menu.Addition.OrderedSetMealClasses.length - 1;
+		}
+		$setMealFilter.ToggleSetMealSelected($menu.Addition.OrderedSetMealClasses[$index]);
 	}
 ]);
 

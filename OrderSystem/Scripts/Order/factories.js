@@ -255,8 +255,6 @@ app.factory('cart', [
 
 					}
 				}
-
-
 			},
 			LoadExistedCart: function (existedCart) {
 				this.HeadCount = existedCart.HeadCount;
@@ -349,7 +347,13 @@ app.factory('cart', [
 					}
 				}
 			},
+			CanClassAddMenu: function (setMealMenu, setMealClass) {
+				return setMealMenu.Count + setMealClass.Addition.Ordered <= setMealClass.Count;
+			},
 			AddSetMealMenu: function (setMealMenu, setMealClass) {
+				if (!this.CanClassAddMenu(setMealMenu, setMealClass))
+					return;
+
 				var min = setMealMenu.Count;
 				setMealMenu.Addition.Ordered += min;
 				setMealClass.Addition.Ordered += min;
@@ -540,7 +544,7 @@ app.factory('cart', [
 						sendData.OrderedMenus.push(menu);
 					}
 				}
-				console.log(sendData)
+
 				return sendData;
 			},
 			Submit: function () {
@@ -681,9 +685,6 @@ app.factory('setMealFilter', [
 
 			IsShowSetMeal: function (setMeal) {
 				return setMeal.IsSetMeal && setMeal.Addition.Ordered > 0;
-			},
-			CanClassAddMenu: function (setMealMenu, setMealClass) {
-				return setMealMenu.Count + setMealClass.Addition.Ordered <= setMealClass.Count;
 			},
 			CanCloseSetMealModal: function () {
 				var ordered = 0;

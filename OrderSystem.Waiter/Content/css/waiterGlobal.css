@@ -91,6 +91,10 @@
 		border-right: none;
 	}
 
+	.menu-btn.disabled {
+		opacity: .65;
+	}
+
 	.menu-btn .row {
 		margin-right: -5px;
 		margin-left: -5px;
@@ -264,3 +268,8 @@
 		padding: 0 10px;
 		width: auto;
 	}
+
+
+.setmeals-modal .btn-group .btn {
+	padding: 5px;
+}

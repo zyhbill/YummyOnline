@@ -43,7 +43,6 @@
 	<section ng-hide="cart.Desk==null">
 		<!-- ngRepeat menu -->
 		<div class="menu-btn" ng-repeat="menu in menuFilter.FilteredMenus"
-			 ng-class="{active:menu.Addition.Ordered>0}"
 			 ng-click="cart.AddMenu(menu); showSetMealsModal(menu)">
 			<div class="row">
 				<div class="col-xs-10">

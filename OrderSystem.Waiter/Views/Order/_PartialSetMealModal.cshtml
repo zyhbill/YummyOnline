@@ -1,5 +1,4 @@
-﻿
-<script type="text/ng-template" id="setMealsModal.html">
+﻿<script type="text/ng-template" id="setMealsModal.html">
 	<div class="modal-header">
 		<button class="btn btn-sm btn-close btn-primary pull-right"
 				ng-disabled="!setMealFilter.CanCloseSetMealModal()"
@@ -13,7 +12,7 @@
 		<h4 class="modal-title">
 			{{menu.Name}}
 			<button class="btn btn-xs btn-primary btn-circle"
-					ng-class="{active:setMealClasses == setMealFilter.ActiveSetMealClasses}"
+					ng-class="{active:setMealClasses == setMealFilter.ActiveClasses}"
 					ng-repeat="setMealClasses in menu.Addition.OrderedSetMealClasses"
 					ng-click="setMealFilter.ToggleSetMealSelected(setMealClasses)">
 				{{$index+1}}
@@ -22,20 +21,19 @@
 	</div>
 	<div class="modal-body setmeals-modal clearfix">
 		<div class="form-group">
-			<div class="btn-group">
-				<button class="btn btn-default"
+			
+				<button class="btn btn-default btn-sm"  ng-repeat="class in setMealFilter.FilteredSetMealClasses"
 						ng-class="{active:class.Addition.IsSelected}"
-						ng-click="setMealFilter.ToggleClassSelected(class)"
-						ng-repeat="class in setMealFilter.FilteredSetMealClasses">
+						ng-click="setMealFilter.ToggleClassSelected(class)">
 					<div>{{class.Name}}</div>
 					<div>{{class.Addition.Ordered}} / {{class.Count}}</div>
 				</button>
-			</div>
+			
 		</div>
 		<div>
 			<div class="menu-btn"
 				 ng-repeat="setMealMenu in setMealFilter.ActiveClass.Menus"
-				 ng-class="{active:setMealMenu.Addition.Ordered>0}"
+				 ng-class="{disabled: !cart.CanClassAddMenu(setMealMenu, setMealFilter.ActiveClass)}"
 				 ng-click="cart.AddSetMealMenu(setMealMenu, setMealFilter.ActiveClass)">
 				<div class="row">
 					<div class="col-xs-10">

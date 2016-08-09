@@ -345,6 +345,7 @@
     <Compile Include="Controllers\HistoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\MerchantInfoController.cs" />
     <Compile Include="Controllers\MerchantRegistrationController.cs" />
     <Compile Include="Controllers\WeixinController.cs" />
     <Compile Include="Global.asax.cs">
@@ -456,6 +457,7 @@
     <Content Include="Senparc.Weixin-v13.7.5\Senparc.Weixin-v13.7.5.chm" />
     <Content Include="Senparc.Weixin-v13.7.5\Senparc.Weixin-v13.7.5.chw" />
     <Content Include="Views\History\History.cshtml" />
+    <Content Include="Views\MerchantInfo\MerchantInfo.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

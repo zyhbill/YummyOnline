@@ -36,6 +36,19 @@ namespace MessageHandle
 
                     }
                     break;
+                case "History":
+                    {
+                        var strongResposeMessage = CreateResponseMessage<ResponseMessageNews>();
+                        strongResposeMessage.Articles.Add(new Article()
+                        {
+                            Title = "查看历史订单",
+                            Description = "历史订单",
+                            PicUrl = "http://img.ivsky.com/img/tupian/pre/201012/04/katong_meishi-010.jpg",
+                            Url = "http://wechatplatform.yummyonline.net/history/history/?openid=" + WeixinOpenId
+                        });
+                        reponseMessage = strongResposeMessage;
+                    }
+                    break;
                 default:
                     {
                         var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
@@ -68,8 +81,10 @@ namespace MessageHandle
                 points += HotelManager.GetUserPointById(result.Id);
             }
             var end = new StringBuilder();
+            end.AppendFormat("您的总积分： {0}",points);
+            //end.AppendLine("\r\n");
             //end.AppendFormat("");
-            return string.Format("您的积分：{0}", points);
+            return end.ToString();//string.Format("您的积分：{0}", points);
 
         }
 

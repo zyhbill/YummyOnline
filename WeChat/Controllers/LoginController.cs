@@ -52,6 +52,8 @@ namespace WeChat.Controllers
 
         bool validate(string openid)
         {
+            if (openid == null)
+                return false;
             var yummyonlineManager = new YummyOnlineManager();
             var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
             var result = ctx.Users.Where(p => p.WeChatOpenId == openid)

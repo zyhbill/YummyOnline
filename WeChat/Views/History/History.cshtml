@@ -2,7 +2,6 @@
 @{
     Layout = null;
 }
-
 <!DOCTYPE html>
 
 <html>
@@ -13,22 +12,10 @@
     <link rel="stylesheet" href="~/node_modules/materialize-v0.97.7/materialize/css/materialize.min.css" />
 </head>
 <body>
-    <div class="card-panel blue">history</div>
     <div>
-
+        <a class="waves-effect waves-light btn" id="btn">历史订单</a>
     </div>
-
-    <div>
-        <div class="card-panel">
-            <span class="blue-text text-darken-2">This is a card panel with dark blue text</span>
-        </div>
-    </div>
-    <div>
-        <label id="label"></label>
-    </div>
-    <div>
-        <a class="waves-effect waves-light btn" id="btn">button</a>
-    </div>
+    <div class="card-panel" id="dinelist"></div>
     <script src="~/node_modules/jquery/dist/jquery.js"></script>
     <script src="~/Script/History.js"></script>
 </body>

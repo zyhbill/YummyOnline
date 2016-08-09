@@ -19,7 +19,7 @@ namespace WeChat.Controllers
             {
                 if (_WeChetId == null)
                 {
-                    _WeChetId = Session["openid"] as string ;
+                    _WeChetId = Session["openid"] as string;
                 }
                 return _WeChetId;
             }
@@ -30,24 +30,30 @@ namespace WeChat.Controllers
         public ActionResult History(string openid)
         {
             Session["openid"] = openid;
+            //ViewData["history"] = ;
             return View("History");
         }
 
+        //查找历史订单
         public async Task<ActionResult> select()
         {
-           
+
             if (query(WeChetId) == true)
             {
                 var Result = await history(WeChetId);
-                return Json(new JsonSuccess(Result.Data));
+                Debug.WriteLine(Result);
+                return Json(new JsonSuccess(Result.Data)); 
             }
             else
+            {
                 return Json(new JsonError("该用户不存在"));
+            }
+
         }
 
         //历史订单
         public async Task<JsonResult> history(string wechatid)
-        {
+       {
             var yummonlineManager = new YummyOnlineManager();
             var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
             var result = ctx.Users.Where(p => p.WeChatOpenId == wechatid).Select(d => new { d.UserName, d.Id }).FirstOrDefault();
@@ -60,12 +66,13 @@ namespace WeChat.Controllers
                 var Dines = await HotelManager.GetFormatedHistoryDines(result.Id);
                 if (Dines.Count > 0)
                 {
-                    foreach(var j in Dines)
+                    foreach (var j in Dines)
                     {
+                        if (DineLists.Count > 10)
+                            break;
                         DineLists.Add(j);
                     }
                 }
-                Debug.WriteLine(Dines);
             }
             return Json(new JsonSuccess(DineLists));
         }
@@ -73,6 +80,8 @@ namespace WeChat.Controllers
         //查询用户
         bool query(string wechatid)
         {
+            if (wechatid == null)
+                return false;
             var yummonlineManager = new YummyOnlineManager();
             var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
             var result = ctx.Users.Where(p => p.WeChatOpenId == wechatid).Select(d => new { d.UserName, d.Id }).FirstOrDefault();

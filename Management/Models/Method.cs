@@ -222,6 +222,21 @@ namespace Management.Models
             }
         }
 
+        public static  bool SearchFile(string Path, string Name)
+        {
+            string filePath = Path;
+            string fileName = Name;
+            if (System.IO.File.Exists(Path+fileName))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
         public static List<string> GetMenuIdByFather(string Fathers, HotelContext db)
         {
             List<string> ClassId = new List<string>();

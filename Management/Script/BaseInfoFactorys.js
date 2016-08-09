@@ -941,6 +941,14 @@
                 }
             });
         },
+        AltShow: function (menu) {
+            menu.IsShow = !menu.IsShow;
+            $http.post('../Baseinfo/AltShow', {
+                Id: menu.Id
+            }).then(function (response) {
+
+            });
+        },
         AddClass: function (level, ParentId) {
             var _this = this;
             var deferred = $q.defer();
@@ -1192,7 +1200,9 @@
                 ShiftSmallFontSize:0
             },
             UsePrint: true,
-            IsPayFirst:true,
+            IsPayFirst: true,
+            NeedRandomPreference: true,
+            IsPrintReciptAfterPayingOffline:true,
             Rate:0
         },
         Initialize: function () {
@@ -1205,6 +1215,8 @@
                 })
                 if (data.font) _this.PrintElement.OldFormat = data.font;
                 _this.PrintElement.IsPayFirst = data.IsPayFirst;
+                _this.PrintElement.NeedRandomPreference = data.NeedRandomPreference;
+                _this.PrintElement.IsPrintReciptAfterPayingOffline = data.IsPrintReciptAfterPayingOffline;
                 if (data.font) {
                     _this.PrintElement.CurrentFont = { Name: data.font.Font };
                     _this.PrintElement.CurrentFormat = {
@@ -1240,7 +1252,9 @@
                 IsUsePrint: _this.PrintElement.UsePrint,
                 ShiftPrintId: _this.PrintElement.CurrentPrinter.Id,
                 IsPayFirst: _this.PrintElement.IsPayFirst,
-                Style:_this.PrintElement.CurrentStyle.Id
+                Style: _this.PrintElement.CurrentStyle.Id,
+                NeedRandomPreference: _this.PrintElement.NeedRandomPreference,
+                IsPrintReciptAfterPayingOffline:_this.PrintElement.IsPrintReciptAfterPayingOffline
             }).success(function (data) {
                 $rootScope.IsPayFirst = _this.PrintElement.IsPayFirst;
                 alert("保存成功");

@@ -52,6 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArticleModels.cs" />
     <Compile Include="HotelModels.cs" />
     <Compile Include="LogModels.cs" />
     <Compile Include="MenuModels.cs" />

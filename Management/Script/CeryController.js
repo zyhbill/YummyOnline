@@ -660,7 +660,7 @@
         });
     }
 }])
-.controller('ModalAddMenuCtrl', function ($scope, $rootScope, $uibModalInstance, option) {
+.controller('ModalAddMenuCtrl', function ($scope, $rootScope, $uibModal, $uibModalInstance, option) {
     $scope.Initialize = function () {
         var promise  =   option.method.getElements();
         promise.then(function (data) {
@@ -702,7 +702,21 @@
         $uibModalInstance.dismiss('cancel');
     }
     $scope.AddSingle = function (menu) {
-        option.method.AddSingle(menu);
+        console.log(menu);
+        if (menu.IsSetMeal) {
+            var modalInstance = $uibModal.open({//打开开桌
+                animation: $scope.animationsEnabled,
+                templateUrl: 'ModelSetMeal.html',
+                controller: 'ModelSetMealCtrl',
+                backdrop: 'static',
+                size: 'lg',
+                resolve: {
+                    option: { method: option.method, MenuId: menu.Id }
+                }
+            });
+        } else {
+            option.method.AddSingle(menu);
+        }
     }
     $scope.Filter = function () {
         option.method.Filter();

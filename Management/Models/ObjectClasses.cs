@@ -84,6 +84,7 @@ namespace Management.ObjectClasses
         public int Ordered { get; set; }
         public List<int> Remarks { get; set; }
         public List<OpenMealClass> SetMealClasses { get; set; }
+        public bool? IsSend { get; set; }
     }
 
     public class OpenDiscount
@@ -277,6 +278,7 @@ namespace Management.ObjectClasses
     {
         public string DineId { get; set; }
         public List<myMenu> Menus { get; set; }
+        public List<OpenOrderMenus> OpenOrderMenus { get; set; }
     }
 
     public class myMenu

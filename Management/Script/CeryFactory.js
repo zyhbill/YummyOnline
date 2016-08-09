@@ -873,10 +873,30 @@
             var deferred = $q.defer();
             var temp = {
                 DineId: this.OpenElements.CurrentDine.Id,
-                Menus: this.OpenElements.OrderMenus.map(function (x) {
+                Menus: this.OpenElements.OrderMenus.filter(function (x) { return !x.IsSetMeal}).map(function (x) {
                     return { Id: x.Id, Num: x.Num, Remarks: x.Remarks.map(function (x) { return x.Id }), IsSend: !!x.IsSend }
+                }),
+                OpenOrderMenus: this.OpenElements.OrderMenus.filter(function (x) { return x.IsSetMeal }).map(function (x) {
+                    return {
+                        Id: x.Id,
+                        SetMealClasses: x.SetMealClasses.map(function (xx) {
+                            return {
+                                Id: xx.Id,
+                                OrderedMenus: xx.SetMealClassMenus.map(function (xxx) {
+                                    return {
+                                        Id: xxx.Id,
+                                        Ordered: xxx.OrderNum
+                                    }
+                                })
+                            }
+                        }),
+                        IsSend: !!x.IsSend,
+                        Ordered:x.Num
+                    }
                 })
             }
+            console.log(this.OpenElements.OrderMenus);
+            console.log(temp);
             if (!this.OpenElements.isAjax) {
                 this.OpenElements.isAjax = true;
                 $http.post('../Templates/AddDineMenu', {
@@ -907,7 +927,7 @@
                 if (x.IsSetMeal) {
                     return {
                         Id: x.Id,
-                        Classes: x.SetMealClasses.map(function (xx) {
+                        SetMealClasses: x.SetMealClasses.map(function (xx) {
                             return {
                                 Id: xx.Id,
                                 OrderedMenus: xx.SetMealClassMenus.map(function (xxx) {

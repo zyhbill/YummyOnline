@@ -1025,6 +1025,7 @@ namespace Management.Controllers
         /// <returns></returns>
         public async Task<JsonResult> AddDineMenu(AddDineMenu Menus)
         {
+            var MealClasses = await db.SetMealClasses.ToListAsync();
             if (Menus.DineId == null) { return Json(new { Status = false, ErrorMessage = "未找到该订单" }); }
             var dine = await db.Dines.Where(d => d.Id == Menus.DineId).FirstOrDefaultAsync();
             if (dine.IsPaid == true) { return Json(new { Status = false, ErrorMessage = "不允许对已支付订单操作" }); }
@@ -1125,6 +1126,75 @@ namespace Management.Controllers
                             if (remark == null) { return Json(new { Status = false, ErrorMessage = "备注有误，请检查数据" }); }
                             menuRemark.Remarks.Add(remark);
                             db.SaveChanges();
+                        }
+                    }
+
+                }
+            }
+            if (Menus.OpenOrderMenus != null)
+            {
+                foreach (var i in Menus.OpenOrderMenus)
+                {
+                    var menu = await db.Menus.Where(m => m.Id == i.Id)
+                      .Include(m => m.MenuPrice)
+                      .FirstOrDefaultAsync();
+                    if (menu == null) { return Json(new { Status = false, ErrorMessage = "菜品有误，请检查数据" }); }
+                    dine.OriPrice += menu.MenuPrice.Price * i.Ordered;
+                    var temp = new DineMenu();
+                    temp.DineId = dine.Id;
+                    temp.MenuId = menu.Id;
+                    temp.Count = i.Ordered;
+                    temp.OriPrice = menu.MenuPrice.Price;
+                    if ((bool)i.IsSend)
+                    {
+                        temp.Price = 0;
+                        temp.RemarkPrice = 0;
+                        temp.Type = DineMenuType.Gift;
+                    }
+                    else
+                    {
+                        temp.Status = DineMenuStatus.Normal;
+                        temp.Price = menu.MenuPrice.Price;
+                        temp.Type = DineMenuType.SetMeal;
+                        if (i.Remarks != null)
+                        {
+                            temp.RemarkPrice = await db.Remarks
+                                .Where(r => i.Remarks.Contains(r.Id))
+                                .GroupBy(r => r.Id).Select(g => g.Sum(gg => gg.Price)).FirstOrDefaultAsync();
+                        }
+                        else
+                        {
+                            temp.RemarkPrice = 0;
+                        }
+                        dine.Price += temp.RemarkPrice + temp.Price * i.Ordered;
+                    }
+                    db.DineMenus.Add(temp);
+                    db.SaveChanges();
+                    menus.Add(temp.Id);
+                    if (i.Remarks != null)
+                    {
+                        var menuRemark = await db.DineMenus.Where(d => d.Id == temp.Id)
+                               .Include(d => d.Remarks)
+                               .FirstOrDefaultAsync();
+                        foreach (var j in i.Remarks)
+                        {
+                            var remark = await db.Remarks.FirstOrDefaultAsync(r => r.Id == j);
+                            if (remark == null) { return Json(new { Status = false, ErrorMessage = "备注有误，请检查数据" }); }
+                            menuRemark.Remarks.Add(remark);
+                            db.SaveChanges();
+                        }
+                    }
+                    foreach(var j in i.SetMealClasses)
+                    {
+                        foreach(var k in j.OrderedMenus)
+                        {
+                            var tempMeal = new DineMenuSetMeal();
+                            tempMeal.ClassName = MealClasses.Where(d => d.Id == j.Id).Select(d => d.Name).FirstOrDefault();
+                            tempMeal.MenuId = k.Id;
+                            tempMeal.Count = k.Ordered;
+                            tempMeal.DineMenuId = temp.Id;
+                            db.DineMenuSetMeals.Add(tempMeal);
+                            await db.SaveChangesAsync();
                         }
                     }
                 }

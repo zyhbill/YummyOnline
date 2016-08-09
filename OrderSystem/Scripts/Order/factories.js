@@ -165,6 +165,7 @@ app.factory('dataSet', [
 					this.Menus[i].Addition.IsSetMealCollapsed = false;
 					this.Menus[i].Remarks = this.Menus[i].Remarks.concat(this.Menus[i].Addition.Remarks);
 					this.Menus[i].Addition.Remarks = [];
+					this.Menus[i].Addition.OrderedSetMealClasses = [];
 				}
 			}
 		}
@@ -746,17 +747,19 @@ app.factory('dineToCart', [
 				Invoice: dine.Invoice,
 				OrderedMenus: [],
 			}
-			for (var i = 0; i < dine.DineMenus.length; i++) {
+			for (var i in dine.DineMenus) {
 				var dineMenu = dine.DineMenus[i];
 
 				var orderedMenu = {
 					Id: dineMenu.Menu.Id,
 					Addition: {
 						Ordered: dineMenu.Count,
-						Remarks: dineMenu.Remarks
+						Remarks: dineMenu.Remarks,
+						OrderedSetMealClasses: [],
 					}
 				};
-				cart.OrderedMenus.push();
+
+				cart.OrderedMenus.push(orderedMenu);
 			}
 
 			$cart.Reset();

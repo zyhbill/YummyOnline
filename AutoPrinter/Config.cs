@@ -148,7 +148,110 @@ namespace AutoPrinter {
 							Usable = true
 						}
 					},
-					DineMenus = new List<DineMenu>(),
+					DineMenus = new List<DineMenu> {
+						new DineMenu {
+							Status = HotelDAO.Models.DineMenuStatus.Normal,
+							Count = 1,
+							OriPrice = 56.78m,
+							Price = 12.34m,
+							RemarkPrice = 12.34m,
+							Remarks = new List<Remark>(),
+							Menu = new Menu {
+								Id = $"00000",
+								Code = "test",
+								Name = $"测试套餐",
+								NameAbbr = $"测试0",
+								Unit = "份",
+								IsSetMeal = true,
+								Printer = new Printer {
+									Id = 2,
+									Name = ipOrName,
+									IpAddress = ipOrName,
+									Usable = true
+								},
+							},
+							SetMealClasses = new List<DineMenuSetMealClass> {
+								new DineMenuSetMealClass {
+									ClassName = "测试套餐分类1",
+									SetMealMenus = new List<DineMenuSetMealMenu> {
+										new DineMenuSetMealMenu {
+											Count = 2,
+											Menu = new Menu {
+												Id = $"00000",
+												Code = "test",
+												Name = $"测试套餐菜品1",
+												NameAbbr = $"测试1",
+												Unit = "份",
+												IsSetMeal = true,
+												Printer = new Printer {
+													Id = 2,
+													Name =ipOrName,
+													IpAddress =ipOrName,
+													Usable = true
+												},
+											}
+										},
+										new DineMenuSetMealMenu {
+											Count = 5,
+											Menu = new Menu {
+												Id = $"00000",
+												Code = "test",
+												Name = $"测试套餐菜品2",
+												NameAbbr = $"测试2",
+												Unit = "份",
+												IsSetMeal = true,
+												Printer = new Printer {
+													Id = 2,
+													Name = ipOrName,
+													IpAddress =ipOrName,
+													Usable = true
+												},
+											}
+										}
+									}
+								},
+								new DineMenuSetMealClass {
+									ClassName = "测试套餐分类2",
+									SetMealMenus = new List<DineMenuSetMealMenu> {
+										new DineMenuSetMealMenu {
+											Count = 2,
+											Menu = new Menu {
+												Id = $"00000",
+												Code = "test",
+												Name = $"测试套餐菜品1",
+												NameAbbr = $"测试1",
+												Unit = "份",
+												IsSetMeal = true,
+												Printer = new Printer {
+													Id = 2,
+													Name = ipOrName,
+													IpAddress = ipOrName,
+													Usable = true
+												},
+											}
+										},
+										new DineMenuSetMealMenu {
+											Count = 5,
+											Menu = new Menu {
+												Id = $"00000",
+												Code = "test",
+												Name = $"测试套餐菜品2",
+												NameAbbr = $"测试2",
+												Unit = "份",
+												IsSetMeal = true,
+												Printer = new Printer {
+													Id = 2,
+													Name = ipOrName,
+													IpAddress = ipOrName,
+													Usable = true
+												},
+											}
+										}
+									}
+								}
+							}
+						}
+					},
 					DinePaidDetails = new List<DinePaidDetail> {
 							new DinePaidDetail {
 								Price = 12.34m,
@@ -187,7 +290,7 @@ namespace AutoPrinter {
 				},
 				PrinterFormat = new PrinterFormat {
 					PaperSize = 278,
-					Font = " 宋体",
+					Font = "宋体",
 					ColorDepth = 55,
 					ReciptBigFontSize = 12,
 					ReciptFontSize = 8,

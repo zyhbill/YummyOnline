@@ -54,14 +54,16 @@ namespace AutoPrinter {
 							pd.Print();
 						}
 						else {
-							foreach(SetMealMenu setMealMenu in dineMenu.Menu.SetMealMenus) {
-								PrintDocument pd = new PrintDocument();
-								pd.PrinterSettings.PrinterName = dineMenu.Menu.Printer.Name;
-								pd.DefaultPageSettings.PaperSize = new PaperSize("Custom", protocol.PrinterFormat.PaperSize, maxHeight);
-								pd.PrintPage += (sender, e) => {
-									drawKitchenOrder(e.Graphics, protocol, dineMenu, setMealMenu);
-								};
-								pd.Print();
+							foreach(DineMenuSetMealClass setMealClass in dineMenu.SetMealClasses) {
+								foreach(DineMenuSetMealMenu setMealMenu in setMealClass.SetMealMenus) {
+									PrintDocument pd = new PrintDocument();
+									pd.PrinterSettings.PrinterName = dineMenu.Menu.Printer.Name;
+									pd.DefaultPageSettings.PaperSize = new PaperSize("Custom", protocol.PrinterFormat.PaperSize, maxHeight);
+									pd.PrintPage += (sender, e) => {
+										drawKitchenOrder(e.Graphics, protocol, dineMenu, setMealMenu);
+									};
+									pd.Print();
+								}
 							}
 						}
 					}
@@ -105,10 +107,13 @@ namespace AutoPrinter {
 							allTasks.Add(IPPrinter.GetInstance().Print(ip, bmp, protocol.PrinterFormat.ColorDepth));
 						}
 						else {
-							foreach(SetMealMenu setMealMenu in dineMenu.Menu.SetMealMenus) {
-								IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
-								Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, setMealMenu);
-								allTasks.Add(IPPrinter.GetInstance().Print(ip, bmp, protocol.PrinterFormat.ColorDepth));
+
+							foreach(DineMenuSetMealClass setMealClass in dineMenu.SetMealClasses) {
+								foreach(DineMenuSetMealMenu setMealMenu in setMealClass.SetMealMenus) {
+									IPAddress ip = IPAddress.Parse(dineMenu.Menu.Printer.IpAddress);
+									Bitmap bmp = generateKitchenOrderBmp(protocol, dineMenu, setMealMenu);
+									allTasks.Add(IPPrinter.GetInstance().Print(ip, bmp, protocol.PrinterFormat.ColorDepth));
+								}
 							}
 						}
 					}

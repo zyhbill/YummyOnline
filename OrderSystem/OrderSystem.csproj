@@ -160,6 +160,8 @@
     <None Include="Properties\PublishProfiles\CompanyServer.pubxml" />
     <Content Include="Views\Order\_PartialMenuFashion.cshtml" />
     <Content Include="Views\Order\_PartialMenuSimple.cshtml" />
+    <Content Include="Views\Order\_PartialSetMealModalFashion.cshtml" />
+    <Content Include="Views\Order\_PartialSetMealModalSimple.cshtml" />
     <None Include="Web.CompanyServer.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

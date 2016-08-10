@@ -35,17 +35,6 @@ namespace OrderSystem {
 				dine.DineMenus.RemoveAll(p => !dineMenuIds.Contains(p.Id));
 			}
 
-			//foreach(var dineMenu in dine.DineMenus) {
-			//	if(dineMenu.Menu.IsSetMeal) {
-			//		dineMenu.Menu.SetMealMenus = await ctx.MenuSetMeals
-			//		.Where(p => p.MenuSetId == dineMenu.Menu.Id)
-			//		.Select(p => new Protocol.PrintingProtocol.SetMealMenu {
-			//			Id = p.Menu.Id,
-			//			Name = p.Menu.Name,
-			//			Count = p.Count
-			//		}).ToListAsync();
-			//	}
-			//}
 			return dine;
 		}
 
@@ -84,13 +73,13 @@ namespace OrderSystem {
 					Name = p.Desk.Name,
 					Description = p.Desk.Description,
 					AreaType = p.Desk.Area.Type,
-					ReciptPrinter = new Protocol.PrintingProtocol.Printer {
+					ReciptPrinter = p.Desk.Area.DepartmentRecipt.Printer == null ? null : new Protocol.PrintingProtocol.Printer {
 						Id = p.Desk.Area.DepartmentRecipt.Printer.Id,
 						Name = p.Desk.Area.DepartmentRecipt.Printer.Name,
 						IpAddress = p.Desk.Area.DepartmentRecipt.Printer.IpAddress,
 						Usable = p.Desk.Area.DepartmentRecipt.Printer.Usable
 					},
-					ServePrinter = new Protocol.PrintingProtocol.Printer {
+					ServePrinter = p.Desk.Area.DepartmentServe.Printer == null ? null : new Protocol.PrintingProtocol.Printer {
 						Id = p.Desk.Area.DepartmentServe.Printer.Id,
 						Name = p.Desk.Area.DepartmentServe.Printer.Name,
 						IpAddress = p.Desk.Area.DepartmentServe.Printer.IpAddress,
@@ -116,7 +105,7 @@ namespace OrderSystem {
 						NameAbbr = d.Menu.NameAbbr,
 						Unit = d.Menu.Unit,
 						IsSetMeal = d.Menu.IsSetMeal,
-						Printer = new Protocol.PrintingProtocol.Printer {
+						Printer = d.Menu.Department.Printer == null ? null : new Protocol.PrintingProtocol.Printer {
 							Id = d.Menu.Department.Printer.Id,
 							Name = d.Menu.Department.Printer.Name,
 							IpAddress = d.Menu.Department.Printer.IpAddress,
@@ -128,7 +117,28 @@ namespace OrderSystem {
 						Id = d.ReturnedWaiter.Id,
 						Name = d.ReturnedWaiter.Name
 					},
-					ReturnedReason = d.ReturnedReason
+					ReturnedReason = d.ReturnedReason,
+					SetMealClasses = d.SetMeals.GroupBy(s => s.ClassName).Select(s => new Protocol.PrintingProtocol.DineMenuSetMealClass {
+						ClassName = s.Key,
+						SetMealMenus = s.Select(m => new Protocol.PrintingProtocol.DineMenuSetMealMenu {
+							Count = m.Count,
+							Menu = new Protocol.PrintingProtocol.Menu {
+								Id = m.Menu.Id,
+								Code = m.Menu.Code,
+								Name = m.Menu.Name,
+								NameAbbr = m.Menu.NameAbbr,
+								Unit = m.Menu.Unit,
+								IsSetMeal = m.Menu.IsSetMeal,
+								Printer = m.Menu.Department.Printer == null ? null : new Protocol.PrintingProtocol.Printer {
+									Id = m.Menu.Department.Printer.Id,
+									Name = m.Menu.Department.Printer.Name,
+									IpAddress = m.Menu.Department.Printer.IpAddress,
+									Usable = m.Menu.Department.Printer.Usable
+								},
+								DepartmentName = m.Menu.Department.Name
+							}
+						}).ToList()
+					}).ToList(),
 				}).ToList(),
 				DinePaidDetails = p.DinePaidDetails.Select(d => new Protocol.PrintingProtocol.DinePaidDetail {
 					Price = d.Price,

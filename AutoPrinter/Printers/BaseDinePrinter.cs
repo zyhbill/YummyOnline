@@ -64,17 +64,21 @@ namespace AutoPrinter {
 
 				// 如果菜品为套餐，则打印套餐包含的具体菜品信息
 				if(dineMenu.Menu.IsSetMeal) {
-					List<SetMealMenu> setMealMenus = dineMenu.Menu.SetMealMenus;
-					for(int i = 0; i < setMealMenus.Count; i++) {
-						char tab = '├';
-						if(i == setMealMenus.Count - 1) {
-							tab = '└';
+					List<DineMenuSetMealClass> setMealClasses = dineMenu.SetMealClasses;
+					for(int i = 0; i < setMealClasses.Count; i++) {
+						printerG.DrawStringLine($"└ {setMealClasses[i].ClassName}", protocol.PrinterFormat.ReciptFontSize);
+
+						List<DineMenuSetMealMenu> setMealMenus = setMealClasses[i].SetMealMenus;
+						for(int j = 0; j < setMealMenus.Count; j++) {
+							string tab = "\r├";
+							if(j == setMealMenus.Count - 1) {
+								tab = "\r└";
+							}
+							printGrid5122(printerG, new string[] {$"   {tab} {setMealMenus[j].Menu.Name}",
+								setMealMenus[j].Count.ToString(),
+								null, null
+							}, protocol.PrinterFormat.ReciptFontSize);
 						}
-						printGrid5122(printerG, new string[] {
-							$"{tab} {setMealMenus[i].Name}",
-							setMealMenus[i].Count.ToString(),
-							null, null
-						}, protocol.PrinterFormat.ReciptFontSize);
 					}
 				}
 
@@ -102,7 +106,7 @@ namespace AutoPrinter {
 				priceAll = protocol.Dine.Price;
 			}
 			printGrid55f(printerG, new string[] { "总计", priceAll.ToString() }, protocol.PrinterFormat.ReciptBigFontSize);
-			
+
 			printerG.DrawStringLine($"{protocol.Dine.DiscountName}: {protocol.Dine.Discount * 10}折", protocol.PrinterFormat.ReciptFontSize);
 
 			string paidWay = protocol.Dine.IsOnline ? "线上支付" : "线下支付";
@@ -159,16 +163,23 @@ namespace AutoPrinter {
 
 				// 如果菜品为套餐，则打印套餐包含的具体菜品信息
 				if(dineMenu.Menu.IsSetMeal) {
-					List<SetMealMenu> setMealMenus = dineMenu.Menu.SetMealMenus;
-					for(int i = 0; i < setMealMenus.Count; i++) {
-						char tab = '├';
-						if(i == setMealMenus.Count - 1) {
-							tab = '└';
+					List<DineMenuSetMealClass> setMealClasses = dineMenu.SetMealClasses;
+					for(int i = 0; i < setMealClasses.Count; i++) {
+						printerG.DrawStringLine($"└ {setMealClasses[i].ClassName}", protocol.PrinterFormat.ServeOrderFontSize);
+
+						List<DineMenuSetMealMenu> setMealMenus = setMealClasses[i].SetMealMenus;
+						for(int j = 0; j < setMealMenus.Count; j++) {
+							string tab = "\r├";
+							if(j == setMealMenus.Count - 1) {
+								tab = "\r└";
+							}
+							printGrid5122(printerG, new string[] {$"   {tab} {setMealMenus[j].Menu.Name}",
+								setMealMenus[j].Count.ToString(),
+								null, null
+							}, protocol.PrinterFormat.ServeOrderFontSize);
 						}
-						printGrid82(printerG, new string[] { $"{tab} {setMealMenus[i].Name}", setMealMenus[i].Count.ToString() }, protocol.PrinterFormat.ServeOrderFontSize);
 					}
 				}
-
 				// 打印菜品的备注信息
 				var remarks = dineMenu.Remarks.ToList();
 				for(int i = 0; i < dineMenu.Remarks.Count; i++) {
@@ -188,7 +199,7 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 生成厨房单图片
 		/// </summary>
-		protected Bitmap generateKitchenOrderBmp(DineForPrinting protocol, DineMenu dineMenu, SetMealMenu setMealMenu) {
+		protected Bitmap generateKitchenOrderBmp(DineForPrinting protocol, DineMenu dineMenu, DineMenuSetMealMenu setMealMenu) {
 			Bitmap bmp = new Bitmap(protocol.PrinterFormat.PaperSize, maxHeight);
 			Graphics g = Graphics.FromImage(bmp);
 			int realHeight = drawKitchenOrder(g, protocol, dineMenu, setMealMenu);
@@ -197,7 +208,7 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 根据Graphics绘制厨房单
 		/// </summary>
-		protected int drawKitchenOrder(Graphics g, DineForPrinting protocol, DineMenu dineMenu, SetMealMenu setMealMenu) {
+		protected int drawKitchenOrder(Graphics g, DineForPrinting protocol, DineMenu dineMenu, DineMenuSetMealMenu setMealMenu) {
 			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font);
 
 			printerG.DrawStringLine(dineMenu.Menu.DepartmentName, protocol.PrinterFormat.KitchenOrderFontSize);
@@ -215,7 +226,7 @@ namespace AutoPrinter {
 			printGrid82(printerG, new string[] { dineMenu.Menu.Name, dineMenu.Count.ToString() }, protocol.PrinterFormat.KitchenOrderFontSize);
 
 			if(setMealMenu != null) {
-				printGrid82(printerG, new string[] { $"└ {setMealMenu.Name}", setMealMenu.Count.ToString() }, protocol.PrinterFormat.KitchenOrderFontSize);
+				printGrid82(printerG, new string[] { $"└ {setMealMenu.Menu.Name}", setMealMenu.Count.ToString() }, protocol.PrinterFormat.KitchenOrderFontSize);
 			}
 
 			// 打印菜品的备注信息

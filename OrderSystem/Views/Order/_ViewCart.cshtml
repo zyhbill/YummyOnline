@@ -1,5 +1,16 @@
-﻿@Html.Partial("_PartialNavTitle", "购物车")
-@Html.Partial("_PartialSetMealModal")
+﻿@{
+	YummyOnlineDAO.Models.OrderSystemStyle style = ViewBag.OrderSystemStyle;
+	switch(style) {
+		case YummyOnlineDAO.Models.OrderSystemStyle.Simple:
+			@Html.Partial("_PartialSetMealModalSimple")
+			break;
+		default:
+			@Html.Partial("_PartialSetMealModalFashion")
+			break;
+	}
+}
+
+@Html.Partial("_PartialNavTitle", "购物车")
 
 <div class="container-fluid" ng-static-height="88">
 	<ul class="list-group list-group-cart">

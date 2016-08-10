@@ -20,7 +20,8 @@ namespace OrderSystem.Controllers {
 			ViewBag.OrderSystemStyle = (await YummyOnlineManager.GetHotelById(CurrHotel.Id)).OrderSystemStyle;
 			return View();
 		}
-		public ActionResult _ViewCart() {
+		public async Task<ActionResult> _ViewCart() {
+			ViewBag.OrderSystemStyle = (await YummyOnlineManager.GetHotelById(CurrHotel.Id)).OrderSystemStyle;
 			return View();
 		}
 		public ActionResult _ViewPayment() {
@@ -81,122 +82,185 @@ namespace OrderSystem.Controllers {
 
 			var tHotel = new YummyOnlineManager().GetHotelForPrintingById(hotelId);
 
-			Task<Dine> tDine = null;
+			Dine dine = null;
 			if(dineId == "00000000000000") {
-				tDine = generateTestDine();
+				dine = generateTestDine();
 			}
 			else {
-				tDine = new HotelManager(connStr).GetDineForPrintingById(dineId, dineMenuIds);
+				dine = await new HotelManager(connStr).GetDineForPrintingById(dineId, dineMenuIds);
 			}
 
 			var tPrinterFormat = new HotelManager(connStr).GetPrinterFormatForPrinting();
-			var tUser = new YummyOnlineManager().GetUserForPrintingById((await tDine).UserId);
+			var tUser = new YummyOnlineManager().GetUserForPrintingById(dine.UserId);
 
 			return Json(new DineForPrinting {
 				Hotel = await tHotel,
-				Dine = await tDine,
+				Dine = dine,
 				User = await tUser,
 				PrinterFormat = await tPrinterFormat
 			});
 		}
 
-		private async Task<Dine> generateTestDine() {
-			return await Task<Dine>.Run(() => {
-				var Dine = new Dine {
-					Id = "00000000000000",
-					Status = HotelDAO.Models.DineStatus.Untreated,
-					Type = HotelDAO.Models.DineType.ToStay,
-					HeadCount = 10,
-					Price = 123.56m,
-					OriPrice = 987.65m,
-					Change = 123.456m,
-					Discount = 0.5,
-					DiscountName = "测试折扣名",
-					DiscountType = HotelDAO.Models.DiscountType.PayKind,
-					BeginTime = DateTime.Now,
-					IsPaid = true,
-					IsOnline = true,
-					UserId = "0000000000",
-					Waiter = new Staff {
-						Id = "00000000",
-						Name = "测试服务员名"
-					},
-					Clerk = new Staff {
-						Id = "00000000",
-						Name = "测试收银员名"
-					},
-					Remarks = new List<Remark> {
+		private Dine generateTestDine() {
+
+			var Dine = new Dine {
+				Id = "00000000000000",
+				Status = HotelDAO.Models.DineStatus.Untreated,
+				Type = HotelDAO.Models.DineType.ToStay,
+				HeadCount = 10,
+				Price = 123.56m,
+				OriPrice = 987.65m,
+				Change = 123.456m,
+				Discount = 0.5,
+				DiscountName = "测试折扣名",
+				DiscountType = HotelDAO.Models.DiscountType.PayKind,
+				BeginTime = DateTime.Now,
+				IsPaid = true,
+				IsOnline = true,
+				UserId = "0000000000",
+				Waiter = new Staff {
+					Id = "00000000",
+					Name = "测试服务员名"
+				},
+				Clerk = new Staff {
+					Id = "00000000",
+					Name = "测试收银员名"
+				},
+				Remarks = new List<Remark> {
 							new Remark {Id = 1,Name = "测试备注1",Price = 12.34m },
 							new Remark {Id = 2,Name = "测试备注2",Price = 56.78m },
 							new Remark {Id = 3,Name = "测试备注3",Price = 90.12m },
 							new Remark {Id = 4,Name = "测试备注4",Price = 34.56m }
 						},
-					Desk = new Desk {
-						Id = "000",
-						QrCode = "111",
-						Name = "测试桌名",
-						Description = "测试桌子备注信息",
-						AreaType = HotelDAO.Models.AreaType.Normal,
-						ReciptPrinter = new Printer {
-							Id = 0,
-							Name = "Microsoft XPS Document Writer",
-							IpAddress = "127.0.0.1",
-							Usable = true
-						},
-						ServePrinter = new Printer {
-							Id = 1,
-							Name = "Microsoft XPS Document Writer",
-							IpAddress = "127.0.0.2",
-							Usable = true
-						}
+				Desk = new Desk {
+					Id = "000",
+					QrCode = "111",
+					Name = "测试桌名",
+					Description = "测试桌子备注信息",
+					AreaType = HotelDAO.Models.AreaType.Normal,
+					ReciptPrinter = new Printer {
+						Id = 0,
+						Name = "Microsoft XPS Document Writer",
+						IpAddress = "127.0.0.1",
+						Usable = true
 					},
-					DineMenus = new List<DineMenu> {
-							new DineMenu {
-								Status = HotelDAO.Models.DineMenuStatus.Normal,
-								Count = 10,
-								OriPrice = 56.78m,
-								Price = 12.34m,
-								RemarkPrice = 12.34m,
-								Remarks = new List<Remark> {
-											new Remark {Id = 0,Name = "测试备注1",Price = 12.34m },
-											new Remark {Id = 1,Name = "测试备注2",Price = 56.78m },
-											new Remark {Id = 2,Name = "测试备注3",Price = 90.12m },
-											new Remark {Id = 3,Name = "测试备注4",Price = 34.56m }
+					ServePrinter = new Printer {
+						Id = 1,
+						Name = "Microsoft XPS Document Writer",
+						IpAddress = "127.0.0.2",
+						Usable = true
+					}
+				},
+				DineMenus = new List<DineMenu> {
+						new DineMenu {
+							Status = HotelDAO.Models.DineMenuStatus.Normal,
+							Count = 10,
+							OriPrice = 56.78m,
+							Price = 12.34m,
+							RemarkPrice = 12.34m,
+							Remarks = new List<Remark> {
+										new Remark {Id = 0,Name = "测试备注1",Price = 12.34m },
+										new Remark {Id = 1,Name = "测试备注2",Price = 56.78m },
+										new Remark {Id = 2,Name = "测试备注3",Price = 90.12m },
+										new Remark {Id = 3,Name = "测试备注4",Price = 34.56m }
+									},
+							Menu = new Menu {
+								Id = $"00000",
+								Code = "test",
+								Name = $"测试套餐",
+								NameAbbr = $"测试0",
+								Unit = "份",
+								IsSetMeal = true,
+								Printer = new Printer {
+									Id = 2,
+									Name = "Microsoft XPS Document Writer",
+									IpAddress = "127.0.0.1",
+									Usable = true
+								},
+							},
+							SetMealClasses = new List<DineMenuSetMealClass> {
+								new DineMenuSetMealClass {
+									ClassName = "测试套餐分类1",
+									SetMealMenus = new List<DineMenuSetMealMenu> {
+										new DineMenuSetMealMenu {
+											Count = 2,
+											Menu = new Menu {
+												Id = $"00000",
+												Code = "test",
+												Name = $"测试套餐菜品1",
+												NameAbbr = $"测试1",
+												Unit = "份",
+												IsSetMeal = true,
+												Printer = new Printer {
+													Id = 2,
+													Name = "Microsoft XPS Document Writer",
+													IpAddress = "127.0.0.1",
+													Usable = true
+												},
+											}
 										},
-								Menu = new Menu {
-									Id = $"00000",
-									Code = "test",
-									Name = $"测试套餐",
-									NameAbbr = $"测试0",
-									Unit = "份",
-									IsSetMeal = true,
-									SetMealMenus = new List<SetMealMenu> {
-										new SetMealMenu {
-											Id = "10000",
-											Name = "测试套餐菜品1",
-											Count = 10
-										},
-										new SetMealMenu {
-											Id = "10001",
-											Name = "测试套餐菜品2",
-											Count = 10
-										},
-										new SetMealMenu {
-											Id = "10002",
-											Name = "测试套餐菜品3",
-											Count = 10
+										new DineMenuSetMealMenu {
+											Count = 5,
+											Menu = new Menu {
+												Id = $"00000",
+												Code = "test",
+												Name = $"测试套餐菜品2",
+												NameAbbr = $"测试2",
+												Unit = "份",
+												IsSetMeal = true,
+												Printer = new Printer {
+													Id = 2,
+													Name = "Microsoft XPS Document Writer",
+													IpAddress = "127.0.0.1",
+													Usable = true
+												},
+											}
 										}
-									},
-									Printer = new Printer {
-										Id = 2,
-										Name = "Microsoft XPS Document Writer",
-										IpAddress = "127.0.0.1",
-										Usable = true
-									},
+									}
+								},
+								new DineMenuSetMealClass {
+									ClassName = "测试套餐分类2",
+									SetMealMenus = new List<DineMenuSetMealMenu> {
+										new DineMenuSetMealMenu {
+											Count = 2,
+											Menu = new Menu {
+												Id = $"00000",
+												Code = "test",
+												Name = $"测试套餐菜品1",
+												NameAbbr = $"测试1",
+												Unit = "份",
+												IsSetMeal = true,
+												Printer = new Printer {
+													Id = 2,
+													Name = "Microsoft XPS Document Writer",
+													IpAddress = "127.0.0.1",
+													Usable = true
+												},
+											}
+										},
+										new DineMenuSetMealMenu {
+											Count = 5,
+											Menu = new Menu {
+												Id = $"00000",
+												Code = "test",
+												Name = $"测试套餐菜品2",
+												NameAbbr = $"测试2",
+												Unit = "份",
+												IsSetMeal = true,
+												Printer = new Printer {
+													Id = 2,
+													Name = "Microsoft XPS Document Writer",
+													IpAddress = "127.0.0.1",
+													Usable = true
+												},
+											}
+										}
+									}
 								}
 							}
-						},
-					DinePaidDetails = new List<DinePaidDetail> {
+						}
+					},
+				DinePaidDetails = new List<DinePaidDetail> {
 							new DinePaidDetail {
 								Price = 12.34m,
 								RecordId = "1234567890abcdeABCDE",
@@ -225,42 +289,40 @@ namespace OrderSystem.Controllers {
 								}
 							}
 						}
-				};
+			};
 
-				for(int i = 1; i <= 5; i++) {
-					Dine.DineMenus.Add(new DineMenu {
-						Status = HotelDAO.Models.DineMenuStatus.Normal,
-						Count = 10,
-						OriPrice = 56.78m,
-						Price = 12.34m,
-						RemarkPrice = 12.34m,
-						Remarks = new List<Remark> {
+			for(int i = 1; i <= 5; i++) {
+				Dine.DineMenus.Add(new DineMenu {
+					Status = HotelDAO.Models.DineMenuStatus.Normal,
+					Count = 10,
+					OriPrice = 56.78m,
+					Price = 12.34m,
+					RemarkPrice = 12.34m,
+					Remarks = new List<Remark> {
 									new Remark {Id = 0,Name = "测试备注1",Price = 12.34m },
 									new Remark {Id = 1,Name = "测试备注2",Price = 56.78m },
 									new Remark {Id = 2,Name = "测试备注3",Price = 90.12m },
 									new Remark {Id = 3,Name = "测试备注4",Price = 34.56m }
 								},
-						Menu = new Menu {
-							Id = $"0000{i}",
-							Code = "test",
-							Name = $"测试菜品名{i}",
-							NameAbbr = $"测试{i}",
-							Unit = "份",
-							IsSetMeal = false,
-							Printer = new Printer {
-								Id = 2,
-								Name = "Microsoft XPS Document Writer",
-								IpAddress = "127.0.0.1",
-								Usable = true
-							},
-							DepartmentName = $"测试部门名{i}"
-						}
-					});
-				}
+					Menu = new Menu {
+						Id = $"0000{i}",
+						Code = "test",
+						Name = $"测试菜品名{i}",
+						NameAbbr = $"测试{i}",
+						Unit = "份",
+						IsSetMeal = false,
+						Printer = new Printer {
+							Id = 2,
+							Name = "Microsoft XPS Document Writer",
+							IpAddress = "127.0.0.1",
+							Usable = true
+						},
+						DepartmentName = $"测试部门名{i}"
+					}
+				});
+			}
 
-				return Dine;
-			});
-
+			return Dine;
 		}
 
 		public async Task<JsonResult> GetShiftsForPrinting(int hotelId, List<int> ids, DateTime dateTime) {

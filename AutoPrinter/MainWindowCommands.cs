@@ -62,7 +62,14 @@ namespace AutoPrinter {
 				foreach(var dineMenu in dp.Dine.DineMenus) {
 					dineMenu.Menu.Printer.IpAddress = ipOrName;
 					dineMenu.Menu.Printer.Name = ipOrName;
+					foreach(var setMealClass in dineMenu.SetMealClasses) {
+						foreach(var setMealMenu in setMealClass.SetMealMenus) {
+							setMealMenu.Menu.Printer.IpAddress = ipOrName;
+							setMealMenu.Menu.Printer.Name = ipOrName;
+						}
+					}
 				}
+				
 
 				serverLog($"发送测试单命令", LogLevel.Info);
 

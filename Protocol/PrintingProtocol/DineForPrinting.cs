@@ -58,7 +58,20 @@ namespace Protocol.PrintingProtocol {
 		public Menu Menu { get; set; }
 		public Staff ReturnedWaiter { get; set; }
 		public string ReturnedReason { get; set; }
+		public List<DineMenuSetMealClass> SetMealClasses { get; set; } = new List<DineMenuSetMealClass>();
 	}
+
+	public class DineMenuSetMealClass {
+		public string ClassName { get; set; }
+		public List<DineMenuSetMealMenu> SetMealMenus { get; set; } = new List<DineMenuSetMealMenu>();
+	}
+
+	public class DineMenuSetMealMenu {
+		public int Count { get; set; }
+		public Menu Menu { get; set; }
+	}
+
+
 	public class Menu {
 		public string Id { get; set; }
 		public string Code { get; set; }
@@ -66,15 +79,10 @@ namespace Protocol.PrintingProtocol {
 		public string NameAbbr { get; set; }
 		public string Unit { get; set; }
 		public bool IsSetMeal { get; set; }
-		public List<SetMealMenu> SetMealMenus { get; set; } = new List<SetMealMenu>();
 		public string DepartmentName { get; set; }
 		public Printer Printer { get; set; }
 	}
-	public class SetMealMenu {
-		public string Id { get; set; }
-		public string Name { get; set; }
-		public int Count { get; set; }
-	}
+
 	public class DinePaidDetail {
 		public decimal Price { get; set; }
 		public string RecordId { get; set; }

@@ -8,9 +8,9 @@ namespace Protocol.PrintingProtocol {
 	}
 
 	public class Printer {
-		public int Id { get; set; }
+		public int? Id { get; set; }
 		public string Name { get; set; }
 		public string IpAddress { get; set; }
-		public bool Usable { get; set; }
+		public bool? Usable { get; set; }
 	}
 }

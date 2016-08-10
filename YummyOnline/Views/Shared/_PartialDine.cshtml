@@ -54,7 +54,14 @@
 		<div class="row no-padding" ng-repeat="menu in dine.DineMenus">
 			<div class="col-xs-6">
 				<span class="text-danger" ng-if="menu.Status==1">[已退]</span>
-				<span class="text-success" ng-if="menu.Status==2">[赠菜]</span>
+				<span class="text-success" ng-if="menu.Type==1">[特价]</span>
+				<span class="text-success" ng-if="menu.Type==2">[折扣]</span>
+				<span class="text-success" ng-if="menu.Type==3">[支付折扣]</span>
+				<span class="text-success" ng-if="menu.Type==4">[时段折扣]</span>
+				<span class="text-success" ng-if="menu.Type==5">[会员折扣]</span>
+				<span class="text-success" ng-if="menu.Type==6">[自定义折扣]</span>
+				<span class="text-success" ng-if="menu.Type==7">[套餐]</span>
+				<span class="text-success" ng-if="menu.Type==8">[赠菜]</span>
 				{{menu.Menu.Name}}
 				<span class="label label-default"
 					  ng-repeat="remark in menu.Remarks">

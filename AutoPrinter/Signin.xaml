@@ -5,15 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AutoPrinter"
         mc:Ignorable="d"
-        Title="YummyOnline自助打印" Height="353" Width="443" WindowStartupLocation="CenterScreen">
+        Title="YummyOnline自助打印" Height="278.1" Width="450" WindowStartupLocation="CenterScreen">
 	<Grid>
-		<Grid Margin="50,50,50,30">
+		<Grid Margin="50,10,50,30">
 			<TextBlock x:Name="textBlock" HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" Text="工号" VerticalAlignment="Top"/>
-			<TextBox x:Name="textBoxSigninName" Height="23" Margin="10,30,10,0" TextWrapping="Wrap" Text="001" VerticalAlignment="Top" KeyDown="textBoxSigninName_KeyDown"/>
+			<TextBox x:Name="textBoxSigninName" Height="23" Margin="10,30,10,0" TextWrapping="Wrap" VerticalAlignment="Top" KeyDown="textBoxSigninName_KeyDown"/>
 			<TextBlock x:Name="textBlock1" Margin="10,58,0,0" TextWrapping="Wrap" Text="密码" VerticalAlignment="Top" HorizontalAlignment="Left" Width="24"/>
-			<PasswordBox x:Name="passwordBox" Margin="10,78,10,0" VerticalAlignment="Top" Height="23" KeyDown="passwordBox_KeyDown" Password="12345"/>
-			<Button x:Name="buttonSignin" Content="登录" Margin="10,106,10,0" VerticalAlignment="Top" Click="buttonSignin_Click" Height="23"/>
-			
+			<PasswordBox x:Name="passwordBox" Margin="10,78,10,0" VerticalAlignment="Top" Height="23" KeyDown="passwordBox_KeyDown" />
+			<Button x:Name="buttonSignin" Content="登录" Margin="10,144,10,0" VerticalAlignment="Top" Click="buttonSignin_Click" Height="22"/>
+			<RadioButton x:Name="radioButtonIPPrinter" Content="网络直接打印模式" HorizontalAlignment="Left" Margin="10,106,0,0" VerticalAlignment="Top" IsChecked="True"/>
+			<RadioButton x:Name="radioButtonDriverPrinter" Content="驱动打印模式" HorizontalAlignment="Left" Margin="10,125,0,0" VerticalAlignment="Top"/>
+
 		</Grid>
 		<TextBlock x:Name="textBlockVersion" Margin="10,0,10,10" TextWrapping="Wrap" Text="Version" TextAlignment="Right" Height="15" VerticalAlignment="Bottom"/>
 

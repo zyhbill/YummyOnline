@@ -121,7 +121,8 @@ namespace OrderSystem {
 							Name = d.Menu.Department.Printer.Name,
 							IpAddress = d.Menu.Department.Printer.IpAddress,
 							Usable = d.Menu.Department.Printer.Usable
-						}
+						},
+						DepartmentName = d.Menu.Department.Name
 					},
 					ReturnedWaiter = new Protocol.PrintingProtocol.Staff {
 						Id = d.ReturnedWaiter.Id,
@@ -146,8 +147,13 @@ namespace OrderSystem {
 		}
 
 
-		public async Task<string> GetShiftPrinterIpAddress() {
-			return await ctx.HotelConfigs.Select(p => p.ShiftPrinter.IpAddress).FirstOrDefaultAsync();
+		public async Task<Protocol.PrintingProtocol.Printer> GetShiftPrinter() {
+			return await ctx.HotelConfigs.Select(p => new Protocol.PrintingProtocol.Printer {
+				Id = p.ShiftPrinter.Id,
+				Name = p.ShiftPrinter.Name,
+				IpAddress = p.ShiftPrinter.IpAddress,
+				Usable = p.ShiftPrinter.Usable
+			}).FirstOrDefaultAsync();
 		}
 		public async Task<List<Protocol.PrintingProtocol.Shift>> GetShiftsForPrinting(List<int> ids, DateTime dateTime) {
 			var dbShifts = await ctx.Shifts.Where(p => ids.Contains(p.Id) && SqlFunctions.DateDiff("day", p.DateTime, dateTime) == 0)

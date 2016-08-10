@@ -16,7 +16,7 @@ namespace OrderSystem.Controllers {
 			if(await UserManager.IsPhoneNumberDuplicated(phoneNumber)) {
 				return Json(new JsonError("此号码已注册"));
 			}
-			FunctionResult result = await generateSmsCodeAndSend(phoneNumber);
+			FunctionResult result = generateSmsCodeAndSend(phoneNumber);
 			if(!result.Succeeded) {
 				return Json(new JsonError(result.Message));
 			}
@@ -34,7 +34,7 @@ namespace OrderSystem.Controllers {
 			if(model.Password == null) {
 				return Json(new JsonError("密码不能为空"));
 			}
-			if(model.Password != model.PasswordAga) {
+			if(model.Password == model.PasswordAga) {
 				return Json(new JsonError("密码不一致"));
 			}
 			User user;
@@ -112,7 +112,7 @@ namespace OrderSystem.Controllers {
 			if(!await UserManager.IsPhoneNumberDuplicated(phoneNumber)) {
 				return Json(new JsonError("此号码未注册"));
 			}
-			FunctionResult result = await generateSmsCodeAndSend(phoneNumber);
+			FunctionResult result = generateSmsCodeAndSend(phoneNumber);
 			if(!result.Succeeded) {
 				return Json(new JsonError(result.Message));
 			}
@@ -137,7 +137,7 @@ namespace OrderSystem.Controllers {
 		/// </summary>
 		/// <param name="phoneNumber">手机号</param>
 		/// <returns>短信验证码</returns>
-		private async Task<FunctionResult> generateSmsCodeAndSend(string phoneNumber) {
+		private FunctionResult generateSmsCodeAndSend(string phoneNumber) {
 			DateTime? LastSmsDateTime = Session["LastSmsDateTime"] as DateTime?;
 			if(LastSmsDateTime.HasValue && (DateTime.Now - LastSmsDateTime.Value).TotalSeconds < 50) {
 				return new FunctionResult(false, "您还不能发送短信验证码");
@@ -151,7 +151,7 @@ namespace OrderSystem.Controllers {
 			Session["LastSmsDateTime"] = DateTime.Now;
 
 #if DEBUG
-			await YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Debug, phoneNumber + " ： " + code);
+			var _= YummyOnlineManager.RecordLog(Log.LogProgram.Identity, Log.LogLevel.Debug, phoneNumber + " ： " + code);
 #else
 			if(!Utility.SMSSender.Send(phoneNumber, code)) {
 				return new FunctionResult(false, "发送失败");

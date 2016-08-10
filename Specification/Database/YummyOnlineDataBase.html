@@ -50,6 +50,19 @@
 	<div class="container-fluid">
 		<h2>YummyOnline Database Specification</h2>
 		
+
+		<div class="alert alert-danger">
+			<p>加入IsPrintReciptAfterPayingOffline</p>
+			<p class="text-right">
+				<small>2016-7-29 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>加入随机立减功能</p>
+			<p class="text-right">
+				<small>2016-7-25 张朕煜</small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>加入随机立减功能</p>
 			<p class="text-right">
@@ -604,6 +617,12 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>IsPrintReciptAfterPayingOffline</td>
+				<td>bool</td>
+				<td>是否在线下支付后打印收银条</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>HasAutoPrinter</td>
 				<td>bit</td>
 				<td>是否需要AutoPrinter打印机</td>
@@ -1020,6 +1039,7 @@
 					<p>2 积分抵扣</p>
 					<p>3 其他支付方式（用户点餐时显示）</p>
 					<p>4 现金</p>
+					<p>5 随机立减</p>
 				</td>
 			</tr>
 			<tr>

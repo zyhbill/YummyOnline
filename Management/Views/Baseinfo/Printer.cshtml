@@ -28,7 +28,7 @@
                         <input type="number" ng-model="PrintElement.Rate" ng-change="Max()" />
                         <span ng-if="PrintElement.Rate!=0">100 积分 等于 {{(100/PrintElement.Rate).toFixed(0)}}元</span>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        选择风格:
+                        选择点菜系统风格:
                         <select ng-options="sytle.Name for sytle in PrintElement.Styles" ng-model="PrintElement.CurrentStyle"></select>
                     
                     </div>
@@ -66,6 +66,19 @@
                         <label>
                             <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="PrintElement.IsPayFirst" />
                             <span class="lbl">先支付</span>
+                        </label>
+
+                        <br />
+                        是否随机立减:
+                        <label>
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="PrintElement.NeedRandomPreference" />
+                            <span class="lbl">是</span>
+                        </label>
+                        &nbsp; &nbsp; &nbsp;
+                        客人线下支付完后是否打印收银条:
+                        <label>
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="PrintElement.IsPrintReciptAfterPayingOffline" />
+                            <span class="lbl">是</span>
                         </label>
                     </div>
                 </div>
@@ -146,7 +159,12 @@
                             <input type="file" name="button" id="button" />
                             上传支付完成图片
                             <input type="file" name="complete" id="complete" />
-                            <button class="btn btn-default" type="submit">上传</button>
+                            <br />
+                            <nobr>
+                                上传空图片
+                                <input type="file" name="null" id="null" />
+                                <button class="btn btn-default" type="submit">上传</button>
+                            </nobr>
                         </form>
                     </div>
                 </div>

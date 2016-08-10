@@ -19,6 +19,7 @@ using System.Data.OleDb;
 using System.Data;
 using System.Data.Entity.SqlServer;
 
+
 namespace Management.Controllers
 {
     public class BaseinfoController : BaseController
@@ -412,6 +413,18 @@ namespace Management.Controllers
                     var flag = Method.GetPicThumbnail(MenuPlace, MenuPlace, 200, 300, 50);
                     Method.SaveImg(menu.Id, image, Method.MyGetBaseUrl((int)HotelId));
                 }
+                else
+                {
+                    string BaseUrl = Method.MyGetBaseUrl((int)HotelId);
+                    if (Method.SearchFile(BaseUrl, Menu.Id + ".jpg"))
+                    {
+
+                    }
+                    else
+                    {
+                        menu.PicturePath = HotelId.ToString() + "/null.jpg";
+                    }
+                }
                 db.SaveChanges();
                 if(classes != null)
                 {
@@ -540,7 +553,7 @@ namespace Management.Controllers
                     Method.SaveImg(menu.Id, image, Method.MyGetBaseUrl((int)HotelId));
                 }else
                 {
-                    menu.PicturePath = HotelId.ToString() + "/none.jpg";
+                    menu.PicturePath = HotelId.ToString() + "/null.jpg";
                 }
                 db.SaveChanges();
                 if (Classes != null)
@@ -578,12 +591,19 @@ namespace Management.Controllers
             var menu = await db.Menus
                 .Include(m=>m.Classes)
                 .FirstOrDefaultAsync(m => m.Id == MenuId);
+            var Class = await db.MenuClasses.Where(d => d.Usable == true).ToListAsync();
             menu.Usable = false;
-            foreach(var i in menu.Classes)
-            {
-                menu.Classes.Remove(i);
-            }
             db.SaveChanges();
+            if (menu != null)
+            {
+                var ClassId = menu.Classes.Select(d => d.Id).ToList();
+                foreach (var i in ClassId)
+                {
+                    var temp = Class.Where(d => d.Id == i).FirstOrDefault();
+                    menu.Classes.Remove(temp);
+                    db.SaveChanges();
+                }
+            }
             return null;
         }
         /// <summary>
@@ -878,7 +898,14 @@ namespace Management.Controllers
                     var paths = await db.Menus.Where(m => m.Usable == true).ToListAsync();
                     foreach (var path in paths)
                     {
-                        path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/" + path.Id + ".jpg";
+                        if (Method.SearchFile(baseUrl, path.Id + ".jpg"))
+                        {
+                            path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/" + path.Id + ".jpg";
+                        }
+                        else
+                        {
+                            path.PicturePath = (Session["User"] as RStatus).HotelId.ToString() + "/null.jpg";
+                        }
                         db.SaveChanges();
                     }
                 }
@@ -894,16 +921,21 @@ namespace Management.Controllers
                     DataSet setObj = new DataSet();
                     adaObj.Fill(setObj);
                     conObj.Close();
+                    var Class = db.MenuClasses.Where(d => d.Usable == true).ToList();
+                    var Remarks = db.Remarks.ToList();
                     DataTable dt = setObj.Tables[0];
+                    int hotelId = (int)(Session["User"] as RStatus).HotelId;
                     foreach (DataRow row in dt.Rows)
                     {
                         try
                         {
-                            int hotelId = (int)(Session["User"] as RStatus).HotelId;
+                            
                             string Id = row[0].ToString();
                             Menu me = new Menu();
                             MenuPrice Mp = new MenuPrice();
                             var clean = await db.Menus
+                                .Include(m=>m.Remarks)
+                                .Include(m=>m.Classes)
                                 .Include(m => m.MenuPrice)
                                 .Where(m => m.Id == Id).FirstOrDefaultAsync();
                             if (clean == null)
@@ -914,7 +946,14 @@ namespace Management.Controllers
                                 me.Code = row[1].ToString();
                                 me.Name = row[2].ToString();
                                 me.NameAbbr = row[3].ToString();
-                                me.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
+                                if(Method.SearchFile(baseUrl, row[0].ToString() + ".jpg"))
+                                {
+                                    me.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
+                                }
+                                else
+                                {
+                                    me.PicturePath = hotelId.ToString() + "/null.jpg";
+                                }
                                 me.IsFixed = false;
                                 me.SupplyDate = 127;
                                 me.Unit = row[4].ToString();
@@ -927,8 +966,33 @@ namespace Management.Controllers
                                 me.Usable = true;
                                 me.IsSetMeal = false;
                                 me.DepartmentId = Convert.ToInt32(row[10].ToString());
+                                me.Classes = new List<MenuClass>();
+                                me.Remarks = new List<Remark>();
+                                me.EnglishName = row[15].ToString();
                                 db.Menus.Add(me);
                                 db.SaveChanges();
+                                var classes = row[16].ToString();
+                                if (classes != null)
+                                {
+                                    var ids = classes.Split(new char[] { '&' });
+                                    foreach(var i in ids)
+                                    {
+                                        var MenuClass = Class.Where(d => d.Id == i).FirstOrDefault();
+                                        me.Classes.Add(MenuClass);
+                                        db.SaveChanges();
+                                    }
+                                }
+                                var remarks = row[17].ToString();
+                                if (remarks != null)
+                                {
+                                    var ids = remarks.Split(new char[] { '&' });
+                                    foreach (var i in ids)
+                                    {
+                                        var MenuRemark = Remarks.Where(d => d.Id.ToString() == i).FirstOrDefault();
+                                        me.Remarks.Add(MenuRemark);
+                                        db.SaveChanges();
+                                    }
+                                }
                                 Mp.Id = Id;
                                 Mp.Price = Convert.ToDecimal(row[12].ToString());
                                 Mp.Points = Convert.ToInt32(row[14].ToString());
@@ -943,7 +1007,14 @@ namespace Management.Controllers
                                 clean.Code = row[1].ToString();
                                 clean.Name = row[2].ToString();
                                 clean.NameAbbr = row[3].ToString();
-                                clean.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
+                                if (Method.SearchFile(baseUrl, row[0].ToString() + ".jpg"))
+                                {
+                                    clean.PicturePath = hotelId.ToString() + "/" + row[0].ToString() + ".jpg";
+                                }
+                                else
+                                {
+                                    clean.PicturePath = hotelId.ToString() + "/null.jpg";
+                                }
                                 clean.IsFixed = false;
                                 clean.SupplyDate = 127;
                                 clean.Unit = row[4].ToString();
@@ -954,6 +1025,33 @@ namespace Management.Controllers
                                 clean.SpicyDegree = Convert.ToInt32(row[9].ToString());
                                 clean.Usable = true;
                                 clean.IsSetMeal = false;
+                                clean.EnglishName =  row[15].ToString();
+
+                                clean.Remarks.ToList().Clear();
+                                clean.Classes.ToList().Clear();
+                                db.SaveChanges();
+                                var classes = row[16].ToString();
+                                if (classes != null)
+                                {
+                                    var ids = classes.Split(new char[] { '&' });
+                                    foreach (var i in ids)
+                                    {
+                                        var MenuClass = Class.Where(d => d.Id == i).FirstOrDefault();
+                                        clean.Classes.Add(MenuClass);
+                                        db.SaveChanges();
+                                    }
+                                }
+                                var remarks = row[17].ToString();
+                                if (remarks != null)
+                                {
+                                    var ids = remarks.Split(new char[] { '&' });
+                                    foreach (var i in ids)
+                                    {
+                                        var MenuRemark = Remarks.Where(d => d.Id.ToString() == i).FirstOrDefault();
+                                        clean.Remarks.Add(MenuRemark);
+                                        db.SaveChanges();
+                                    }
+                                }
                                 clean.DepartmentId = Convert.ToInt32(row[10].ToString());
                                 Mp = await db.MenuPrice.Where(m => m.Id == Id).FirstOrDefaultAsync();
                                 Mp.Price = Convert.ToDecimal(row[12].ToString());
@@ -963,9 +1061,9 @@ namespace Management.Controllers
                                 db.SaveChanges();
                             }
                         }
-                        catch 
+                        catch(Exception e) 
                         {
-
+                            Console.Write(e);
                         }
                     }
                 }
@@ -1166,6 +1264,19 @@ namespace Management.Controllers
             return Json(new { Status = true});
         }
         /// <summary>
+        /// 切换是否显示
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <param name="IsShow"></param>
+        /// <returns></returns>
+        public async Task<JsonResult> AltShow(string Id)
+        {
+            var HotelManager = new HotelManager(ConnectingStr);
+            await HotelManager.ChangeShow(Id);
+            return null;
+        }
+
+        /// <summary>
         /// 获取套餐信息
         /// </summary>
         /// <returns></returns>
@@ -1287,7 +1398,9 @@ namespace Management.Controllers
             var IsPayFirst = await db.HotelConfigs.Select(h => h.IsPayFirst).FirstOrDefaultAsync();
             int HotelId = (int)(Session["User"] as RStatus).HotelId;
             var Style = await sysdb.Hotels.Where(d => d.Id == HotelId).Select(d => d.CssThemePath).FirstOrDefaultAsync();
-            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst , Style = Style });
+            var NeedRandomPreference = await db.HotelConfigs.Select(h => h.NeedRandomPreference).FirstOrDefaultAsync();
+            var IsPrintReciptAfterPayingOffline = await db.HotelConfigs.Select(h => h.IsPrintReciptAfterPayingOffline).FirstOrDefaultAsync();
+            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst , Style = Style , NeedRandomPreference = NeedRandomPreference , IsPrintReciptAfterPayingOffline = IsPrintReciptAfterPayingOffline });
         }
         /// <summary>
         /// 修改打印模式
@@ -1300,7 +1413,7 @@ namespace Management.Controllers
         /// <param name="IsPayFirst"></param>
         /// <param name="Style"></param>
         /// <returns></returns>
-        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int ShiftPrintId,bool IsPayFirst,int Style)
+        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int? ShiftPrintId,bool IsPayFirst,int Style ,bool NeedRandomPreference,bool IsPrintReciptAfterPayingOffline)
         {
             int HotelId = (int)(Session["User"] as RStatus).HotelId;
             var config = await db.HotelConfigs.FirstOrDefaultAsync();
@@ -1308,6 +1421,8 @@ namespace Management.Controllers
             config.ShiftPrinterId = ShiftPrintId;
             config.HasAutoPrinter = IsUsePrint;
             config.IsPayFirst = IsPayFirst;
+            config.NeedRandomPreference = NeedRandomPreference;
+            config.IsPrintReciptAfterPayingOffline = IsPrintReciptAfterPayingOffline;
             var font = await db.PrinterFormats.FirstOrDefaultAsync();
             font.KitchenOrderFontSize = Format.KitchenOrderFontSize;
             font.KitchenOrderSmallFontSize = Format.KitchenOrderSmallFontSize;
@@ -1344,6 +1459,7 @@ namespace Management.Controllers
                 HttpPostedFileBase logo = Request.Files["logo"];
                 HttpPostedFileBase button = Request.Files["button"];
                 HttpPostedFileBase complete = Request.Files["complete"];
+                HttpPostedFileBase Null = Request.Files["null"];
                 string baseUrl = Method.MyGetBaseUrl((int)(Session["User"] as RStatus).HotelId);
                 string OrderUrl = Method.GetBaseUrl((int)(Session["User"] as RStatus).HotelId);
                 if (!Directory.Exists(baseUrl))
@@ -1354,20 +1470,25 @@ namespace Management.Controllers
                 {
                     Directory.CreateDirectory(OrderUrl);
                 }
-                if (logo != null)
+                if (logo != null && logo.ContentLength!=0)
                 {
                     logo.SaveAs(baseUrl + "index.png");
                     logo.SaveAs(OrderUrl + "index.png");
                 }
-                if (button != null)
+                if (button != null && button.ContentLength != 0)
                 {
                     button.SaveAs(baseUrl + "btn-cart.png");
                     button.SaveAs(OrderUrl + "btn-cart.png");
                 }
-                if (complete != null)
+                if (complete != null && complete.ContentLength != 0)
                 {
                     complete.SaveAs(baseUrl + "completed.gif");
                     complete.SaveAs(OrderUrl + "completed.gif");
+                }
+                if (Null != null && Null.ContentLength != 0)
+                {
+                    Null.SaveAs(baseUrl + "null.jpg");
+                    Null.SaveAs(OrderUrl + "null.jpg");
                 }
                 return Json(new SuccessState());
             }

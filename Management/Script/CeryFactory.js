@@ -128,7 +128,7 @@
             Desk: {},
             PayMethods: [],
             UnpaidDines: [],
-            Discounts: [{ Name: "自定义", Discount: 1, IsSet: true }],
+            Discounts: [{ Name: "自定义", Discount: 1, IsSet: true,Type:0 }],
             OnSaleMenus: [],
             CurrentUser: {},
             CurrentDiscount: {},
@@ -146,12 +146,13 @@
             var deferred = $q.defer();
             $http.post('../Templates/getPay').success(function (data) {
                 _this.PayElements.UnpaidDines = data.Dines;
-                _this.PayElements.Discounts = [{ Name: "自定义", Discount: 1, IsSet: true }];
+                _this.PayElements.Discounts = [{ Name: "自定义", Discount: 1, IsSet: true ,Type:0}];
                 for (var i = 0; i < _this.PayElements.UnpaidDines.length; i++) {
                     _this.PayElements.UnpaidDines[i].Discount *= 100;
                 }
                 _this.PayElements.PayMethods = data.Pays;
                 for (var i = 0; i < data.Discounts.length; i++) {
+                    data.Discounts[i].Type = 1;
                     if (data.Discounts[i].Week == date.getDay()) _this.PayElements.Discounts.push(data.Discounts[i]);
                 }
                 for (var i = 0; i < _this.PayElements.Discounts.length; i++) {
@@ -254,11 +255,13 @@
         },
         reCalc: function () {
             //重新计算价钱
-            if (this.PayElements.CurrentDiscount.Discount > 0 && this.PayElements.CurrentDiscount.Discount < 100) {
+            this.PayElements.CurrentDine.DType = this.PayElements.CurrentDiscount.Type;
+            if (this.PayElements.CurrentDiscount.Discount >= 0 && this.PayElements.CurrentDiscount.Discount <= 100) {
                 this.PayElements.CurrentDine.DiscountName = this.PayElements.CurrentDiscount.Name;
                 this.PayElements.CurrentDine.Discount = this.PayElements.CurrentDiscount.Discount;
-            } else {
-                this.PayElements.CurrentDiscount.Discount = 100
+            }
+            else {
+                this.PayElements.CurrentDine.Discount = 100;
             }
             this.CalcPrice();
         },
@@ -283,6 +286,7 @@
         },
         getUser: function () {
             //获取登录用户
+            this.PayElements.CurrentUser.IsLogin = false;
             if (this.PayElements.CurrentUser.Id == null) {
                 this.PayElements.CurrentUser.Id = '匿名用户';
             }
@@ -381,8 +385,12 @@
             var deferred = $q.defer();
             var _this = this;
             var PayList = _this.PayElements.PayMethods.filter(function (x) { return x.Number }).map(function (x) { return { Id: x.Id, Type: x.Type, Number: x.Number } });
-            var DineInfo = { Id: _this.PayElements.CurrentDine.Id, Discount: _this.PayElements.CurrentDine.Discount, DiscountName: _this.PayElements.CurrentDine.DiscountName };
-            $http.post('../Templates/PayDine', { PayList: PayList, Dine: DineInfo, UserId: _this.PayElements.CurrentUser.Id }).success(function (data) {
+            var DineInfo = { Id: _this.PayElements.CurrentDine.Id, Discount: _this.PayElements.CurrentDine.Discount, DiscountName: _this.PayElements.CurrentDine.DiscountName, Type: _this.PayElements.CurrentDine.DType };
+            $http.post('../Templates/PayDine', {
+                PayList: PayList,
+                Dine: DineInfo,
+                UserId: _this.PayElements.CurrentUser.Id
+            }).success(function (data) {
                 if (data.Status) {
                     _this.PayElements.UnpaidDines = data.Dines;
                     for (var i = 0; i < _this.PayElements.UnpaidDines.length; i++) {
@@ -419,6 +427,7 @@
                 if (data.Status) {
                     _this.PayElements.CurrentUser = data.data;
                     _this.PayElements.CurrentUser.IsLogin = true;
+                    _this.PayElements.CurrentUser.VipLevel.VipDiscount.Type = 2;
                     if (_this.PayElements.CurrentUser.VipLevel) _this.PayElements.Discounts.push(_this.PayElements.CurrentUser.VipLevel.VipDiscount);
                     if (_this.PayElements.Discounts.length > temp) {
                         _this.PayElements.CurrentDiscount = _this.PayElements.Discounts[_this.PayElements.Discounts.length - 1];
@@ -1508,6 +1517,7 @@
                     x.Num = 0;
                     x.Gain = 0;
                     _this.HandElement.PayList.forEach(function (s) {
+                        if ((x.Type == 2 || x.Type == 0 || x.Type == 5) && x.Id == s.Id) x.Gain = s.Total;
                         if (x.Id == s.Id) x.Num = s.Total;
                     });
                 })

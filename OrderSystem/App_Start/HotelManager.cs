@@ -22,17 +22,7 @@ namespace OrderSystem {
 		}
 
 		public async Task<DinePaidDetail> GetDineOnlinePaidDetail(string dineId) {
-			Dine dine = await ctx.Dines
-				.Include(p => p.DinePaidDetails.Select(pp => pp.PayKind))
-				.FirstOrDefaultAsync(p => p.Id == dineId);
-			if(dine != null && dine.IsOnline) {
-				foreach(DinePaidDetail paidDetail in dine.DinePaidDetails) {
-					if(paidDetail.PayKind.Type == PayKindType.Online) {
-						return paidDetail;
-					}
-				}
-			}
-			return null;
+			return await ctx.DinePaidDetails.FirstOrDefaultAsync(p => p.DineId == dineId && p.PayKind.Type == PayKindType.Online);
 		}
 
 		public async Task<bool> IsDinePaid(string dineId) {

@@ -51,7 +51,20 @@
 		<h2>YummyOnline Database Specification</h2>
 		
 		<div class="alert alert-danger">
+			<p>加入IsOnlyInSetMeal</p>
+			<p>加入新的套餐表</p>
+			<p class="text-right">
+				<small>2016-8-10 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
 			<p>加入DineMenuType</p>
+			<p class="text-right">
+				<small>2016-7-30 张朕煜</small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>加入From</p>
 			<p class="text-right">
 				<small>2016-7-30 张朕煜</small>
 			</p>
@@ -383,6 +396,44 @@
 		</table>
 		<table class="table table-bordered table-hover table-condensed">
 			<tr>
+				<th>DineMenuSetMeals</th>
+				<th></th>
+				<th>套餐订单详情</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>DineMenuId</td>
+				<td>int</td>
+				<td>订单详情编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>ClassName</td>
+				<td>nvarchar(20)</td>
+				<td>套餐分类名</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>MenuId</td>
+				<td>nvarchar(6)</td>
+				<td>菜品编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Count</td>
+				<td>int</td>
+				<td>数量</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
 				<th>DinePaidDetails</th>
 				<th></th>
 				<th>支付详情表</th>
@@ -464,6 +515,18 @@
 				<td>
 					<p>0 堂吃</p>
 					<p>1 外卖</p>
+				</td>
+			</tr>
+			<tr>
+				<td>From</td>
+				<td>int</td>
+				<td>下单原始地点</td>
+				<td>
+					<p>0 顾客浏览器点餐</p>
+					<p>1 服务员浏览器</p>
+					<p>2 服务员PAD</p>
+					<p>3 服务员APP</p>
+					<p>4 后台管理系统</p>
 				</td>
 			</tr>
 			<tr>
@@ -973,35 +1036,15 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>IsOnlyInSetMeal</td>
+				<td>bit</td>
+				<td>是否仅在套餐中显示</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>Usable</td>
 				<td>bit</td>
 				<td>可用状态</td>
-				<td></td>
-			</tr>
-		</table>
-		<table class="table table-bordered table-hover table-condensed">
-			<tr>
-				<th>MenuSetMeals</th>
-				<th></th>
-				<th>套餐表</th>
-				<th></th>
-			</tr>
-			<tr class="primary-key">
-				<td>MenuId</td>
-				<td>nvarchar(6)</td>
-				<td>菜品号</td>
-				<td></td>
-			</tr>
-			<tr class="primary-key">
-				<td>MenuSetId</td>
-				<td>nvarchar(6)</td>
-				<td>套餐号</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Count</td>
-				<td>int</td>
-				<td>套餐里面单个菜的数量</td>
 				<td></td>
 			</tr>
 		</table>
@@ -1270,6 +1313,66 @@
 				<td></td>
 			</tr>
 		</table>
+		
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>SetMealClasses</th>
+				<th></th>
+				<th>套餐分类表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(20)</td>
+				<td>分类名称</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Count</td>
+				<td>int</td>
+				<td>该分类最大可以点的菜品数量</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>SetMealId</td>
+				<td>nvarchar(6)</td>
+				<td>分类中可以选择的菜品</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>SetMealClassMenus</th>
+				<th></th>
+				<th>套餐分类对应菜品多对多表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>SetMealClassId</td>
+				<td>int</td>
+				<td>套餐分类编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>MenuId</td>
+				<td>nvarchar(20)</td>
+				<td>分类对应的菜品编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Count</td>
+				<td>int</td>
+				<td>该菜品一次性点单数量</td>
+				<td></td>
+			</tr>
+		</table>
+
 		<table class="table table-bordered table-hover table-condensed">
 			<tr>
 				<th>Shifts</th>

@@ -69,10 +69,10 @@ namespace OrderSystem.Controllers {
 			string redirectUrl = $"{payKind.CompleteUrl}?Succeeded={true}&DineId={dine.Id}";
 
 			if(payKind.Type == PayKindType.Online) {
-				DinePaidDetail pointsPaidDetail = dine.DinePaidDetails.FirstOrDefault(p => p.PayKind.Type == PayKindType.Points);
-				// 如果实际需要支付的价格等于0，或者积分支付的价格等于实际应付的价格则直接判为支付成功
-				if(Math.Abs((double)(dine.Price - 0.00m)) < 0.01 ||
-					(pointsPaidDetail != null && Math.Abs((double)(dine.Price - pointsPaidDetail.Price)) < 0.01)) {
+				DinePaidDetail mainPaidDetail = await HotelManager.GetDineOnlinePaidDetail(dine.Id);
+
+				// 如果实际需要支付的价格等于0
+				if(Math.Abs((double)(mainPaidDetail.Price - 0.00m)) < 0.01) {
 					await onlinePayCompleted(dine.Id, null);
 				}
 				else {

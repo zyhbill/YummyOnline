@@ -192,8 +192,6 @@
         $http.post('/TimeDiscounts/AddTimeDiscounts', $scope.newTimeDiscount).then(function (response) {
             if (response.data.succeeded) {
                 refresh();
-                $scope.newTimeDiscount.from = null;
-                $scope.newTimeDiscount.to = null;
                 $scope.newTimeDiscount.week = null;
                 $scope.newTimeDiscount.discount = null;
                 $scope.newTimeDiscount.name = null;
@@ -480,7 +478,7 @@
         });
     }
 
-    $scope.search = function () {
+    $scope.search = function (type) {
         var temp = $scope.paykindnames.filter(function (x) { return x.IsChoose }).map(function (x) { return x.Id })
         console.log(temp);
         
@@ -493,8 +491,8 @@
          
             waiterid: $scope.waiterid,
             
-            payKindIds: temp
-         
+            payKindIds: temp,
+            Type :type
         }).then(function (response) {
             console.log($scope.paykindname);
             
@@ -585,9 +583,7 @@
         $http.post('/MenuOnSales/AddMenuOnSales', $scope.newMenuOnSale).then(function (response) {
             if (response.data.succeeded) {
                 refresh();
-                $scope.newMenuOnSale.id = null;
-                $scope.newMenuOnSale.onsaleweek = null;
-                $scope.newMenuOnSale.price = null;
+                $scope.newMenuOnSale = {};
             }
             else {
                 alert('请按要求输入！！！');

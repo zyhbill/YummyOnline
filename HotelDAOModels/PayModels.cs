@@ -8,7 +8,8 @@ namespace HotelDAO.Models {
 		Offline = 1,
 		Points = 2,
 		Other = 3,
-		Cash = 4
+		Cash = 4,
+		RandomPreference = 5
 	}
 	/// <summary>
 	/// 支付类型

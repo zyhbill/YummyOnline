@@ -77,14 +77,18 @@ namespace OrderSystem.Controllers {
 
 	public class OrderForPrintingController : BaseOrderSystemController {
 		public async Task<JsonResult> GetDineForPrinting(int hotelId, string dineId, List<int> dineMenuIds) {
-			if(dineId == "00000000000000") {
-				return Json(generateTestProtocol());
-			}
-
 			string connStr = await YummyOnlineManager.GetHotelConnectionStringById(hotelId);
 
 			var tHotel = new YummyOnlineManager().GetHotelForPrintingById(hotelId);
-			var tDine = new HotelManager(connStr).GetDineForPrintingById(dineId, dineMenuIds);
+
+			Task<Dine> tDine = null;
+			if(dineId == "00000000000000") {
+				tDine = generateTestDine();
+			}
+			else {
+				tDine = new HotelManager(connStr).GetDineForPrintingById(dineId, dineMenuIds);
+			}
+
 			var tPrinterFormat = new HotelManager(connStr).GetPrinterFormatForPrinting();
 			var tUser = new YummyOnlineManager().GetUserForPrintingById((await tDine).UserId);
 
@@ -96,18 +100,9 @@ namespace OrderSystem.Controllers {
 			});
 		}
 
-		private DineForPrinting generateTestProtocol() {
-			DineForPrinting p = new DineForPrinting {
-				Hotel = new Hotel {
-					Id = 1,
-					Name = "测试饭店名",
-					Address = "测试饭店地址",
-					OpenTime = new TimeSpan(8, 0, 0),
-					CloseTime = new TimeSpan(22, 0, 0),
-					Tel = "021-00000000",
-					Usable = true
-				},
-				Dine = new Dine {
+		private async Task<Dine> generateTestDine() {
+			return await Task<Dine>.Run(() => {
+				var Dine = new Dine {
 					Id = "00000000000000",
 					Status = HotelDAO.Models.DineStatus.Untreated,
 					Type = HotelDAO.Models.DineType.ToStay,
@@ -230,58 +225,42 @@ namespace OrderSystem.Controllers {
 								}
 							}
 						}
-				},
-				User = new User {
-					Id = "00000000",
-					Email = "test@test.test",
-					UserName = "测试用户名",
-					PhoneNumber = "12345678900"
-				},
-				PrinterFormat = new PrinterFormat {
-					PaperSize = 556,
-					Font = "宋体",
-					ColorDepth = 200,
-					ReciptBigFontSize = 25,
-					ReciptFontSize = 17,
-					ReciptSmallFontSize = 15,
-					ServeOrderFontSize = 19,
-					ServeOrderSmallFontSize = 19,
-					KitchenOrderFontSize = 19,
-					KitchenOrderSmallFontSize = 19
-				}
-			};
+				};
 
-			for(int i = 1; i <= 5; i++) {
-				p.Dine.DineMenus.Add(new DineMenu {
-					Status = HotelDAO.Models.DineMenuStatus.Normal,
-					Count = 10,
-					OriPrice = 56.78m,
-					Price = 12.34m,
-					RemarkPrice = 12.34m,
-					Remarks = new List<Remark> {
+				for(int i = 1; i <= 5; i++) {
+					Dine.DineMenus.Add(new DineMenu {
+						Status = HotelDAO.Models.DineMenuStatus.Normal,
+						Count = 10,
+						OriPrice = 56.78m,
+						Price = 12.34m,
+						RemarkPrice = 12.34m,
+						Remarks = new List<Remark> {
 									new Remark {Id = 0,Name = "测试备注1",Price = 12.34m },
 									new Remark {Id = 1,Name = "测试备注2",Price = 56.78m },
 									new Remark {Id = 2,Name = "测试备注3",Price = 90.12m },
 									new Remark {Id = 3,Name = "测试备注4",Price = 34.56m }
 								},
-					Menu = new Menu {
-						Id = $"0000{i}",
-						Code = "test",
-						Name = $"测试菜品名{i}",
-						NameAbbr = $"测试{i}",
-						Unit = "份",
-						IsSetMeal = false,
-						Printer = new Printer {
-							Id = 2,
-							Name = "Microsoft XPS Document Writer",
-							IpAddress = "127.0.0.1",
-							Usable = true
-						},
-					}
-				});
-			}
+						Menu = new Menu {
+							Id = $"0000{i}",
+							Code = "test",
+							Name = $"测试菜品名{i}",
+							NameAbbr = $"测试{i}",
+							Unit = "份",
+							IsSetMeal = false,
+							Printer = new Printer {
+								Id = 2,
+								Name = "Microsoft XPS Document Writer",
+								IpAddress = "127.0.0.1",
+								Usable = true
+							},
+							DepartmentName = $"测试部门名{i}"
+						}
+					});
+				}
 
-			return p;
+				return Dine;
+			});
+
 		}
 
 		public async Task<JsonResult> GetShiftsForPrinting(int hotelId, List<int> ids, DateTime dateTime) {
@@ -289,13 +268,13 @@ namespace OrderSystem.Controllers {
 			var manager = new HotelManager(connStr);
 
 			var tShifts = new HotelManager(connStr).GetShiftsForPrinting(ids, dateTime);
-			var tPrinterName = new HotelManager(connStr).GetShiftPrinterIpAddress();
+			var tPrinter = new HotelManager(connStr).GetShiftPrinter();
 			var tPrinterFormat = new HotelManager(connStr).GetPrinterFormatForPrinting();
 
 
 			return Json(new ShiftForPrinting {
 				Shifts = await tShifts,
-				PrinterIpAddress = await tPrinterName,
+				Printer = await tPrinter,
 				PrinterFormat = await tPrinterFormat
 			});
 		}

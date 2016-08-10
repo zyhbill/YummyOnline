@@ -33,7 +33,8 @@ namespace Management.Controllers
         /// <returns></returns>
         public async Task<JsonResult> GetSoldOut()
         {
-            var soldout = await db.Menus.Select(t => new
+            var soldout = await db.Menus
+                .Where(d=>d.Usable==true).Select(t => new
             {
                 t.Id,
                 

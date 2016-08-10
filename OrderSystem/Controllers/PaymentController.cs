@@ -80,7 +80,10 @@ namespace OrderSystem.Controllers {
 				}
 			}
 			else {
-				await requestPrintDine(dine.Id, new List<PrintType> { PrintType.Recipt });
+				HotelConfig config = await HotelManager.GetHotelConfig();
+				if(config.IsPrintReciptAfterPayingOffline) {
+					await requestPrintDine(dine.Id, new List<PrintType> { PrintType.Recipt });
+				}
 			}
 
 			return Json(new JsonSuccess(redirectUrl));

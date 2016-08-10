@@ -1,9 +1,39 @@
-﻿using System;
-using System.Net;
+﻿using Protocol.PrintingProtocol;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Printing;
 
 namespace AutoPrinter {
 	public abstract class BasePrinter {
+		public static List<string> GetPritners() {
+			List<string> printers = new List<string>();
+			foreach(string printer in PrinterSettings.InstalledPrinters) {
+				printers.Add(printer);
+			}
+			return printers;
+		}
+
+		/// <summary>
+		/// 处理直接网络打印字体大小
+		/// </summary>
+		protected void handleIPPrinterFormat(PrinterFormat format) {
+			format.PaperSize *= 2;
+
+			format.ReciptBigFontSize = format.ReciptBigFontSize * 2 + 1;
+			format.ReciptFontSize = format.ReciptFontSize * 2 + 1;
+			format.ReciptSmallFontSize = format.ReciptSmallFontSize * 2 + 1;
+
+			format.KitchenOrderFontSize = format.KitchenOrderFontSize * 2 + 1;
+			format.KitchenOrderSmallFontSize = format.KitchenOrderSmallFontSize * 2 + 1;
+
+			format.ServeOrderFontSize = format.ServeOrderFontSize * 2 + 1;
+			format.ServeOrderSmallFontSize = format.ServeOrderSmallFontSize * 2 + 1;
+
+			format.ShiftBigFontSize = format.ShiftBigFontSize * 2 + 1;
+			format.ShiftFontSize = format.ShiftFontSize * 2 + 1;
+			format.ShiftSmallFontSize = format.ShiftSmallFontSize * 2 + 1;
+		}
+		protected int maxHeight = 2000;
 		/// <summary>
 		/// 裁剪bmp至高度
 		/// </summary>

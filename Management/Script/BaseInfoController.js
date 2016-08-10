@@ -334,6 +334,8 @@ angular.module('Baseinfo', [])
     $scope.GetPath = function () {
         return option.method.WatchPath();
     }
+    $scope.Minus = function () { option.method.Minus(); }
+    $scope.Plus = function () { option.method.Plus(); }
     $scope.AddMenu = function () {
         var promise = option.method.AddMenu();
         promise.then(function (data) {
@@ -768,6 +770,9 @@ angular.module('Baseinfo', [])
         }, function (data) {
             console.log(data);
         })
+    }
+    $scope.AltShow = function (menu) {
+        MenuClass.AltShow(menu);
     }
     $scope.AddBigClass = function (level) {
         MenuClass.AddBigClass(level);

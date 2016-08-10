@@ -20,7 +20,15 @@
                     <tr ng-repeat="pay in HandElement.PayKinds">
                         <td>{{pay.Name}}</td>
                         <td>{{pay.Num.toFixed(2)}}</td>
-                        <td><input type="number" ng-model="pay.Gain" /></td>
+                        <td>
+                            
+                            <span ng-show="pay.Type == 1|| pay.Type==4">
+                                <input type="number" ng-model="pay.Gain" />
+                            </span>
+                            <span ng-show="pay.Type == 0|| pay.Type==2 || pay.Type==5 ">
+                                {{pay.Gain}}
+                            </span>
+                        </td>
                         <td>{{(pay.Gain-pay.Num).toFixed(2)}}</td>
                     </tr>
                 </tbody>

@@ -40,7 +40,14 @@ namespace Management.Controllers
             }
             else
             {
-                menu.Usable= !menu.Usable;
+                if(menu.Status == MenuStatus.Normal)
+                {
+                    menu.Status = MenuStatus.SellOut;
+                }
+                else
+                {
+                    menu.Status = MenuStatus.Normal;
+                }
                 await db.SaveChangesAsync();
                 return Json(new { succeeded = true });
             }
@@ -51,7 +58,7 @@ namespace Management.Controllers
             var linq = await db.Menus.Where(p => p.IsSetMeal == true && p.Usable == true).ToListAsync();
             for(int i=0;i<linq.Count();i++)
             {
-                linq[i].Usable = false;
+                linq[i].Status = MenuStatus.SellOut;
 
             }
             await db.SaveChangesAsync();
@@ -62,7 +69,7 @@ namespace Management.Controllers
             var linq = await db.Menus.Where(p => p.IsSetMeal == true && p.Usable == false).ToListAsync();
             for (int i = 0; i < linq.Count(); i++)
             {
-                linq[i].Usable = true;
+                linq[i].Status = MenuStatus.Normal;
 
             }
             await db.SaveChangesAsync();

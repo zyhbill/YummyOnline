@@ -71,8 +71,8 @@ namespace OrderSystem.Controllers {
 			if(payKind.Type == PayKindType.Online) {
 				DinePaidDetail mainPaidDetail = await HotelManager.GetDineOnlinePaidDetail(dine.Id);
 
-				// 如果实际需要支付的价格等于0
-				if(Math.Abs((double)(mainPaidDetail.Price - 0.00m)) < 0.01) {
+				// 如果实际需要支付的价格等于0则直接显示支付完成界面
+				if(mainPaidDetail.Price == 0) {
 					await onlinePayCompleted(dine.Id, null);
 				}
 				else {

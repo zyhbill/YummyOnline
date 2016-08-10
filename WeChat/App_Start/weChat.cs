@@ -138,7 +138,7 @@ namespace WeiPay
 
             string content = string.Empty;
             XmlDocument xd = new XmlDocument();
-            xd.LoadXml(xml);
+            xd.Load(xml);
             XmlNode xmlnode = xd.SelectSingleNode("xml/ToUserName");
             if (xmlnode != null)
                 this.ToUserName = xmlnode.InnerText;
@@ -238,7 +238,7 @@ namespace WeiPay
                                             {
                                                 //获取openid
 
-                                                ProcessMsgText("openid:\n"+FromUserName);
+                                                ProcessMsgText("openid:\n" + FromUserName);
                                                 break;
                                             }
                                         case "cli_myinfo":
@@ -423,7 +423,7 @@ namespace WeiPay
                         <Url><![CDATA[{6}]]></Url>
                         </item>
                         </Articles>
-                        </xml> ", FromUserName,ToUserName,Helper.convertTime2String(DateTime.Now),
+                        </xml> ", FromUserName, ToUserName, Helper.convertTime2String(DateTime.Now),
                            title, description, picurl, url);// <PicUrl><![CDATA[{5}]]></PicUrl> );
                 HttpContext.Current.Response.Write(bxml.ToString());
             }
@@ -458,7 +458,7 @@ namespace WeiPay
                         <Url><![CDATA[{6}]]></Url>
                         </item>
                         </Articles>
-                        </xml> ",FromUserName, ToUserName, Helper.convertTime2String(DateTime.Now),
+                        </xml> ", FromUserName, ToUserName, Helper.convertTime2String(DateTime.Now),
                            title, description, picurl, url);// <PicUrl><![CDATA[{5}]]></PicUrl> );
                 HttpContext.Current.Response.Write(bxml.ToString());
             }
@@ -495,112 +495,6 @@ namespace WeiPay
                  || URL == string.Empty)
                 URL = menu_url + WeChat_Base.access_token;
             HttpHelper.sendMsgByPost(URL, json);
-        }
-
-
-        /// <summary>
-        /// 以下test_xxxx函数均为测试函数
-        /// 使用完毕注意注释掉
-        /// </summary>
-        public void test_getAndResponseInfo()
-        {
-            string tmp = @"<xml>
-             <ToUserName><![CDATA[toUser]]></ToUserName>
-             <FromUserName><![CDATA[fromUser]]></FromUserName> 
-            <CreateTime>1348831860</CreateTime>
-             <MsgType><![CDATA[text]]></MsgType>
-             <Content><![CDATA[this is a test]]></Content>
-             <MsgId>1234567890123456</MsgId>
-             </xml>";
-            HandleMsg(tmp);
-            //ProcessMsgText("123");
-
-        }
-        public void test_responseNews()
-        {
-            string tmp = @"{
-                ""title"":""TOP10美味"",
-                            ""description"":""在线美味TOP10"",
-	                        ""picurl"":""../ res / img / A1006.jpg"",
-	                        ""url"":""http://114.215.107.208/weixin/wechat/wechat.aspx""
-                                }
-            ";
-            ProcessNews(tmp);
-
-        }
-        public void test_accesstoken()
-        {
-            HttpContext.Current.Response.Write(WeChat_Base.access_token);
-
-        }
-        public void test_sendMsgByGet()
-        {
-            HttpContext.Current.Response.Write(HttpHelper.sendMsgByGet("https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wxa6f547fa6bc50c20&secret=891aebd4347061f9fdcce8b5b76a247b"));
-        }
-        public void test_json()
-        {
-            //string json = @"{""button"":[
-            //                        {
-            //                            ""name"":""我"",
-            //                            ""sub_button"":[
-            //                                {
-            //                                    ""type"":""click"",
-            //                                    ""name"":""我的信息"",
-            //                                    ""key"":""cli_myinfo""
-            //                                },
-            //                                {
-            //                                    ""type"":""click"",
-            //                                    ""name"":""修改信息"",
-            //                                    ""key"":""cli_updateinfo""
-            //                                },
-            //                                {
-            //                                    ""type"":""click"",
-            //                                    ""name"":""历史订单"",
-            //                                    ""key"":""cli_historyinfo"",
-            //                                }]
-
-            //                        },
-            //                        {
-            //                           ""name"":""活动"",
-            //                            ""sub_button"":[
-            //                                {
-            //                                    ""type"":""click"",
-            //                                    ""name"":""所有餐厅"",
-            //                                    ""key"":""cli_all""
-            //                                },
-            //                                {
-            //                                    ""type"":""click"",
-            //                                    ""name"":""餐厅排行"",
-            //                                    ""key"":""cli_board""
-            //                                },
-            //                                {
-            //                                    ""type"":""click"",
-            //                                    ""name"":""附近的店"",
-            //                                    ""key"":""cli_near"",
-            //                                }]
-
-            //                        },
-            //                        {
-            //                            ""name"":""关于美味"",
-            //                            ""sub_button"":[
-            //                                {
-            //                                    ""type"":""click"",
-            //                                    ""name"":""我们公司"",
-            //                                    ""key"":""cli_com""
-            //                                },
-            //                                {
-            //                                    ""type"":""click"",
-            //                                    ""name"":""加盟活动"",
-            //                                    ""key"":""cli_comAct""
-            //                                }]
-
-            //                        }
-            //                       ]}";
-            //string tmp = "\"title\":\"{0}\",\"description\":{1},\"picurl\":{2},\"url\":{3}";
-            //string tmp2 = "{\"{0}\",\"{1}\",\"{2}\",\"{3}\"}";
-            string tmp1 = string.Format(templateString,
-                "123", "123", "123", "123");
-            HttpContext.Current.Response.Write("{" + tmp1 + "}");
         }
     }
 

@@ -9,15 +9,17 @@
 				ng-click="cancel()">
 			删除
 		</button>
-		<h4 class="modal-title">
+		<div class="h4 modal-title">
 			{{menu.Name}}
-			<button class="btn btn-xs btn-primary btn-circle"
-					ng-class="{active:setMealClasses == setMealFilter.ActiveClasses}"
-					ng-repeat="setMealClasses in menu.Addition.OrderedSetMealClasses"
-					ng-click="setMealFilter.ToggleSetMealSelected(setMealClasses)">
-				{{$index+1}}
-			</button>
-		</h4>
+			<div class="btn-group">
+				<button class="btn btn-xs btn-primary btn-circle"
+						ng-class="{active:setMealClasses == setMealFilter.ActiveClasses}"
+						ng-repeat="setMealClasses in menu.Addition.OrderedSetMealClasses"
+						ng-click="setMealFilter.ToggleSetMealSelected(setMealClasses)">
+					{{$index+1}}
+				</button>
+			</div>
+		</div>
 	</div>
 	<div class="modal-body setmeals-modal clearfix">
 		<div class="form-group">

@@ -209,3 +209,9 @@ nav {
 		.bar .bar-btn-group .btn-goto-payment {
 			margin-top: 4px;
 		}
+
+.modal-title .lead {
+	margin: 0;
+	font-size: 18px;
+	font-weight:500;
+}

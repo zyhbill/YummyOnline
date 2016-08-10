@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
-<title>ManagerAPI.md</title><link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,700italic,700,400&subset=latin,latin-ext' rel='stylesheet' type='text/css'><style type='text/css'>html, body {overflow-x: initial !important;}.CodeMirror { height: auto; }
+<title>ManagerAPI.md</title><style type='text/css'>html, body {overflow-x: initial !important;}.CodeMirror { height: auto; }
 .CodeMirror-scroll { overflow-y: hidden; overflow-x: auto; }
 .CodeMirror-lines { padding: 4px 0px; }
 .CodeMirror pre { }
@@ -20,7 +20,7 @@
 .cm-s-typora-default pre.cm-header2:not(.cm-atom) :not(.cm-overlay) { font-size: 1.4rem; line-height: 1.4rem; }
 .cm-s-typora-default .cm-atom, .cm-s-typora-default .cm-number { color: rgb(149, 132, 134); }
 .cm-s-typora-default .cm-table-row, .cm-s-typora-default .cm-block-start { font-family: monospace; }
-.cm-s-typora-default .cm-comment { color: rgb(74, 90, 159); font-family: monospace; }
+.cm-s-typora-default .cm-comment, .cm-s-typora-default .cm-code { color: rgb(74, 90, 159); font-family: monospace; }
 .cm-s-typora-default .cm-tag { color: rgb(169, 68, 66); }
 .cm-s-typora-default .cm-string { color: rgb(126, 134, 169); }
 .cm-s-typora-default .cm-link { color: rgb(196, 122, 15); text-decoration: underline; }
@@ -102,7 +102,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket { color: rgb(255, 34, 34); }
 
 
 html { font-size: 14px; }
-body { margin: 0px; padding: 0px; height: auto; bottom: 0px; top: 0px; left: 0px; right: 0px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 1rem; line-height: 1.42857; color: rgb(51, 51, 51); overflow-x: hidden; background-color: rgb(255, 255, 255); }
+body { margin: 0px; padding: 0px; height: auto; bottom: 0px; top: 0px; left: 0px; right: 0px; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 1rem; line-height: 1.42857; color: rgb(51, 51, 51); overflow-x: hidden; background-color: rgb(255, 255, 255); }
 a:active, a:hover { outline: 0px; }
 .in-text-selection, ::selection { text-shadow: none; background: rgb(181, 214, 252); }
 #write { margin: 0px auto; height: auto; width: inherit; word-break: normal; word-wrap: break-word; position: relative; padding-bottom: 70px; white-space: pre-wrap; }
@@ -121,15 +121,20 @@ input[type="checkbox"], input[type="radio"] { line-height: normal; padding: 0px;
 #write p, #write h1, #write h2, #write h3, #write h4, #write h5, #write h6, #write div, #write pre { width: inherit; }
 #write p, #write h1, #write h2, #write h3, #write h4, #write h5, #write h6 { position: relative; }
 h1 { font-size: 2rem; }
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.6rem; }
+h4 { font-size: 1.4rem; }
+h5 { font-size: 1.2rem; }
+h6 { font-size: 1rem; }
 p { -webkit-margin-before: 1rem; -webkit-margin-after: 1rem; -webkit-margin-start: 0px; -webkit-margin-end: 0px; }
 .mathjax-block { margin-top: 0px; margin-bottom: 0px; -webkit-margin-before: 0rem; -webkit-margin-after: 0rem; }
 .hidden { display: none; }
 .md-blockmeta { color: rgb(204, 204, 204); font-weight: bold; font-style: italic; }
 a { cursor: pointer; }
 #write input[type="checkbox"] { cursor: pointer; width: inherit; height: inherit; margin: 4px 0px 0px; }
-tr { page-break-inside: avoid; page-break-after: auto; }
+tr { break-inside: avoid; break-after: auto; }
 thead { display: table-header-group; }
-table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; page-break-inside: auto; text-align: left; }
+table { border-collapse: collapse; border-spacing: 0px; width: 100%; overflow: auto; break-inside: auto; text-align: left; }
 table.md-table td { min-width: 80px; }
 .CodeMirror-gutters { border-right-width: 0px; background-color: inherit; }
 .CodeMirror { text-align: left; }
@@ -139,14 +144,14 @@ table.md-table td { min-width: 80px; }
 div.hr:focus { cursor: none; }
 pre { white-space: pre-wrap; }
 .CodeMirror-gutters { margin-right: 4px; }
-.md-fences, pre.md-fences { font-size: 0.9rem; display: block; page-break-inside: avoid; text-align: left; overflow: visible; white-space: pre; position: relative !important; background: inherit; }
+.md-fences { font-size: 0.9rem; display: block; break-inside: avoid; text-align: left; overflow: visible; white-space: pre; position: relative !important; background: inherit; }
 .md-fences .CodeMirror.CodeMirror-wrap { top: -1.6em; margin-bottom: -1.6em; }
 .md-fences.mock-cm { white-space: pre-wrap; }
-.show-fences-line-number pre.md-fences { padding-left: 0px; }
-.show-fences-line-number pre.md-fences.mock-cm { padding-left: 40px; }
+.show-fences-line-number .md-fences { padding-left: 0px; }
+.show-fences-line-number .md-fences.mock-cm { padding-left: 40px; }
 .footnotes { color: rgb(136, 136, 136); font-size: 0.9rem; padding-top: 1em; padding-bottom: 1em; }
 .footnotes + .footnotes { margin-top: -1em; }
-.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; text-decoration: none; color: rgb(51, 51, 51); font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 1rem; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: normal; text-align: left; box-sizing: content-box; direction: ltr; background: transparent; }
+.md-reset { margin: 0px; padding: 0px; border: 0px; outline: 0px; vertical-align: top; text-decoration: none; color: rgb(51, 51, 51); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 1rem; text-shadow: none; float: none; position: static; width: auto; height: auto; white-space: nowrap; cursor: inherit; -webkit-tap-highlight-color: transparent; line-height: normal; font-weight: normal; text-align: left; box-sizing: content-box; direction: ltr; background: transparent; }
 li div { padding-top: 0px; }
 blockquote { margin: 1rem 0px; }
 li p, li .mathjax-block { margin: 0.5rem 0px; }
@@ -157,7 +162,7 @@ blockquote > :first-child { margin-top: 0px; }
 @media print { 
   html, body { height: 100%; }
   .typora-export * { -webkit-print-color-adjust: exact; }
-  h1, h2, h3, h4, h5, h6 { page-break-after: avoid; orphans: 2; }
+  h1, h2, h3, h4, h5, h6 { break-after: avoid-page; orphans: 2; }
   p { orphans: 4; }
   html.blink-to-pdf { font-size: 13px; }
   .typora-export #write { padding-left: 1cm; padding-right: 1cm; }
@@ -166,7 +171,7 @@ blockquote > :first-child { margin-top: 0px; }
 }
 .footnote-line { margin-top: 0.714em; font-size: 0.7em; }
 a img, img a { cursor: pointer; }
-#write pre.md-meta-block { font-size: 0.8rem; min-height: 2.86rem; white-space: pre-wrap; display: block; background: rgb(204, 204, 204); }
+pre.md-meta-block { font-size: 0.8rem; min-height: 2.86rem; white-space: pre-wrap; display: block; background: rgb(204, 204, 204); }
 p > .md-image:only-child { display: inline-block; width: 100%; text-align: center; }
 #write .MathJax_Display { margin: 0.8em 0px 0px; }
 .mathjax-block { white-space: pre; overflow: hidden; width: 100%; }
@@ -212,14 +217,13 @@ a.md-header-anchor.md-print-anchor { border: none !important; display: inline-bl
 .MathJax_SVG * { transition: none; }
 
 
-@font-face { font-family: 'Open Sans'; font-style: normal; font-weight: normal; src: local("Open Sans Regular"), url("file:///C:/Users/Fisher/AppData/Roaming/Typora/themes/github/400.woff") format("woff"); }
-@font-face { font-family: 'Open Sans'; font-style: italic; font-weight: normal; src: local("Open Sans Italic"), url("file:///C:/Users/Fisher/AppData/Roaming/Typora/themes/github/400i.woff") format("woff"); }
-@font-face { font-family: 'Open Sans'; font-style: normal; font-weight: bold; src: local("Open Sans Bold"), url("file:///C:/Users/Fisher/AppData/Roaming/Typora/themes/github/700.woff") format("woff"); }
-@font-face { font-family: 'Open Sans'; font-style: italic; font-weight: bold; src: local("Open Sans Bold Italic"), url("file:///C:/Users/Fisher/AppData/Roaming/Typora/themes/github/700i.woff") format("woff"); }
+@font-face { font-family: "Open Sans"; font-style: normal; font-weight: normal; }
+@font-face { font-family: "Open Sans"; font-style: italic; font-weight: normal; }
+@font-face { font-family: "Open Sans"; font-style: normal; font-weight: bold; }
+@font-face { font-family: "Open Sans"; font-style: italic; font-weight: bold; }
 html { font-size: 16px; }
-body { font-family: 'Open Sans', 微软雅黑; color: rgb(51, 51, 51); line-height: 1.6; }
-#write { max-width: 800px; margin: 0px auto; padding: 20px 30px 40px; }
-#write::after { height: 80px; }
+body { font-family: "Open Sans", "Clear Sans", "Helvetica Neue", Helvetica, Arial, sans-serif, 微软雅黑; color: rgb(51, 51, 51); line-height: 1.6; }
+#write { max-width: 860px; margin: 0px auto; padding: 20px 30px 100px; }
 #write > ul:first-child, #write > ol:first-child { margin-top: 30px; }
 body > :first-child { margin-top: 0px !important; }
 body > :last-child { margin-bottom: 0px !important; }
@@ -261,8 +265,8 @@ table tr td { border: 1px solid rgb(204, 204, 204); text-align: left; margin: 0p
 table tr th:first-child, table tr td:first-child { margin-top: 0px; }
 table tr th:last-child, table tr td:last-child { margin-bottom: 0px; }
 .CodeMirror-gutters { border-right-width: 1px; border-right-style: solid; border-right-color: rgb(221, 221, 221); }
-pre.md-fences, .md-fences, code, tt { border: 1px solid rgb(221, 221, 221); border-radius: 3px; font-family: Consolas, 'Liberation Mono', Courier, monospace, 微软雅黑; padding: 2px 4px 0px; font-size: 0.9em; background-color: rgb(248, 248, 248); }
-pre.md-fences, .md-fences { margin-bottom: 15px; margin-top: 15px; padding: 8px 1em 6px; }
+.md-fences, code, tt { border: 1px solid rgb(221, 221, 221); border-radius: 3px; font-family: Consolas, "Liberation Mono", Courier, monospace, 微软雅黑; padding: 2px 4px 0px; font-size: 0.9em; background-color: rgb(248, 248, 248); }
+.md-fences { margin-bottom: 15px; margin-top: 15px; padding: 8px 1em 6px; }
 .task-list { padding-left: 0px; }
 .task-list-item { padding-left: 32px; }
 .task-list-item input { top: 3px; left: 8px; }
@@ -270,7 +274,7 @@ pre.md-fences, .md-fences { margin-bottom: 15px; margin-top: 15px; padding: 8px 
 }
 @media print { 
   html { font-size: 13px; }
-  table, pre { page-break-inside: avoid; }
+  table, pre { break-inside: avoid; }
   pre { word-wrap: break-word; }
 }
 .md-fences { background-color: rgb(248, 248, 248); }
@@ -280,7 +284,7 @@ pre.md-fences, .md-fences { margin-bottom: 15px; margin-top: 15px; padding: 8px 
 #write > h4.md-focus::before { left: -1.5625rem; top: 0.285714rem; }
 #write > h5.md-focus::before { left: -1.5625rem; top: 0.285714rem; }
 #write > h6.md-focus::before { left: -1.5625rem; top: 0.285714rem; }
-.md-image > .md-meta { border: 1px solid rgb(221, 221, 221); border-radius: 3px; font-family: Consolas, 'Liberation Mono', Courier, monospace, 微软雅黑; padding: 2px 4px 0px; font-size: 0.9em; color: inherit; background-color: rgb(248, 248, 248); }
+.md-image > .md-meta { border: 1px solid rgb(221, 221, 221); border-radius: 3px; font-family: Consolas, "Liberation Mono", Courier, monospace, 微软雅黑; padding: 2px 4px 0px; font-size: 0.9em; color: inherit; background-color: rgb(248, 248, 248); }
 .md-tag { color: inherit; }
 .md-toc { margin-top: 20px; padding-bottom: 20px; }
 #typora-quick-open { border: 1px solid rgb(221, 221, 221); background-color: rgb(248, 248, 248); }
@@ -295,6 +299,6 @@ pre.md-fences, .md-fences { margin-bottom: 15px; margin-top: 15px; padding: 8px 
 </style>
 </head>
 <body class='typora-export ' >
-<div  id='write'  class = 'is-node'><h3><a name='header-c1' class='md-header-anchor '></a>收银台提交点单</h3><h4><a name='header-c6' class='md-header-anchor '></a>POST</h4><h4><a name='header-c7' class='md-header-anchor '></a>URL</h4><pre class='md-fences mock-cm' style='display:block;position:relative'>ordersystem.yummyonline.net/Payment/ManagerPay</pre><h4><a name='header-c9' class='md-header-anchor '></a>Parameters</h4><pre class="md-fences md-end-block"> <div class="CodeMirror cm-s-inner CodeMirror-wrap"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure">AخA</div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;">{</span></pre></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-string cm-property">"Cart"</span>: {</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string cm-property">"HeadCount"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">int</span> <span class="cm-variable">人数</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Price"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">float</span> <span class="cm-variable">支付的总价</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"PriceInPoints"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">float</span> <span class="cm-variable">积分支付价格</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Invoice"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">发票抬头</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"DeskId"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">桌号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"OrderedMenus"</span>:[{</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Id"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">菜品编号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Ordered"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">int</span> <span class="cm-variable">份数</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Remarks"</span>: [<span class="cm-operator">&lt;</span><span class="cm-variable">int</span> <span class="cm-variable">备注编号</span><span class="cm-operator">&gt;</span>, <span class="cm-meta">...</span>]</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span>}, <span class="cm-meta">...</span>]</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span>},</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-string">"CartAddition"</span>: {</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string cm-property">"Token"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">身份验证信息</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"HotelId"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">int</span> <span class="cm-variable">饭店号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"WaiterId"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">服务员号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"UserId"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">会员号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Discount"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">float</span> <span class="cm-variable">自定义折扣率</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"DiscountName"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">自定折扣名称</span><span class="cm-operator">&gt;</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span>}</span></pre><pre class=""><span style="padding-right: 0.1px;">}</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 509px;"></div></div></div></pre></div>
+<div  id='write'  class = 'is-node'><h3><a name='header-c1' class='md-header-anchor '></a>收银台提交点单</h3><h4><a name='header-c6' class='md-header-anchor '></a>POST</h4><h4><a name='header-c7' class='md-header-anchor '></a>URL</h4><pre class='md-fences mock-cm' style='display:block;position:relative'>ordersystem.yummyonline.net/Payment/ManagerPay</pre><h4><a name='header-c9' class='md-header-anchor '></a>Parameters</h4><pre class="md-fences md-end-block md-focus" lang=""> <div class="CodeMirror cm-s-inner CodeMirror-wrap CodeMirror-focused"><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 437px; left: 51.8281px;"></div><div class="CodeMirror-hscrollbar" style="left: 0px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; min-height: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre>x</pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"><div class="" style="position: relative;"><pre class=""><span style="padding-right: 0.1px;">{</span></pre></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-string cm-property">"Cart"</span>: {</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string cm-property">"HeadCount"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">int</span> <span class="cm-variable">人数</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Price"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">float</span> <span class="cm-variable">需要支付价格</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"PriceInPoints"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">float</span> <span class="cm-variable">积分支付价格</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Invoice"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">发票抬头</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"DeskId"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">桌号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"OrderedMenus"</span>:[{</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Id"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">菜品编号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Ordered"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">int</span> <span class="cm-variable">数量</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Remarks"</span>: [<span class="cm-operator">&lt;</span><span class="cm-variable">int</span> <span class="cm-variable">备注编号</span><span class="cm-operator">&gt;</span>, <span class="cm-meta">...</span>]</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"SetMealClasses"</span>: [{</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Id"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">int</span> <span class="cm-variable">套餐分类编号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"OrderedMenus"</span>: [{</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Id"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">菜品编号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Ordered"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">int</span> <span class="cm-variable">数量</span><span class="cm-operator">&gt;</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span>}, <span class="cm-meta">...</span>]</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-tab">    </span>}, <span class="cm-meta">...</span>]</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span>}, <span class="cm-meta">...</span>]</span></pre><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span>},</span></pre></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-string">"CartAddition"</span>: {</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string cm-property">"Token"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">身份验证信息</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"HotelId"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">int</span> <span class="cm-variable">饭店号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"WaiterId"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">服务员号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"UserId"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">会员号</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"Discount"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">float</span> <span class="cm-variable">自定义折扣率</span><span class="cm-operator">&gt;</span>,</span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span><span class="cm-tab">    </span><span class="cm-string">"DiscountName"</span>: <span class="cm-operator">&lt;</span><span class="cm-variable">string</span> <span class="cm-variable">自定折扣名称</span><span class="cm-operator">&gt;</span></span></pre><pre class=""><span style="padding-right: 0.1px;"><span class="cm-tab">    </span>}</span></pre><pre class=""><span style="padding-right: 0.1px;">}</span></pre></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 0px;"></div><div class="CodeMirror-gutters" style="display: none; height: 667px;"></div></div></div></pre></div>
 </body>
 </html>

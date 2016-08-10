@@ -102,16 +102,39 @@ waiter.yummyonline.net
 		"Price": <float>
 	}, ...],
 	"MenuSetMeals": [{
-		"MenuSetId": <string>,
-		"Count": <int>,
-		"Menu": {
-			"Id": <string>,
-			"Name": <string>,
-			"Price": <float>,
-			"Discount": <float>,
-			"Ordered": <int>
-		}
-	}, ...],
+		"SetMealId": <string 套餐编号>,
+		"Classes": [{
+			"Id": <int 套餐分类编号>,
+			"Name": <string 套餐分类名称>,
+			"Count": <int 套餐该分类中允许点的最大数量>,
+			"Menus": [{
+				"Id": <string>,
+                "Code": <string>,
+                "Name": <string>,
+                "EnglishName": <string>,
+                "NameAbbr": <string>,
+                "PicturePath": <string>,
+                "IsFixed": <bool>,
+                "SupplyDate": <int>,
+                "Unit": <string>,
+                "MinOrderCount": <int>,
+                "Ordered": <int>,
+                "Remarks": [{
+                    "Id": <int>,
+                    "Name": <string>,
+                    "Price": <float>
+                }, ...],
+                "MenuClasses": [<string>, ...],
+                "MenuPrice": {
+                    "ExcludePayDiscount": <bool>,
+                    "Price": <float>,
+                    "Discount": <float>,
+                    "Points": <int>
+                }
+			  }
+			}, ...]
+		}, ...]
+	}, ...]
 	"PayKind": {
 		"Id": <int>,
 		"Name": <string>,
@@ -294,6 +317,13 @@ waiter.yummyonline.net
 			"Id": <string 菜品编号>,
 			"Ordered": <int 数量>,
 			"Remarks": [<int 备注编号>, ...]
+			"SetMealClasses": [{
+				"Id": <int 套餐分类编号>,
+				"OrderedMenus": [{
+					"Id": <string 菜品编号>,
+					"Ordered": <int 数量>
+				}, ...]
+			}, ...]
 		}, ...]
 	},
 	"CartAddition": {
@@ -581,8 +611,25 @@ waiter.yummyonline.net
 			"Name": <string>,
 			"NameAbbr": <string>,
 			"PicturePath": <string>,
-			"Unit": <string>
+			"Unit": <string>,
+            "IsSetMeal": <bool>
 		},
+        "ReturnedReason": <string>,
+        "ReturnedWaiter": {
+        	"Id": <string>,
+            "Name": <string>,
+        },
+        "SetMealClasses": [{
+            "ClassName": <string 套餐分类名>,
+            "Menus": [{
+            	"Id": <string>,
+                "Code": <string>,
+                "Name": <string>,
+                "NameAbbr": <string>,
+                "PicturePath": <string>,
+                "Unit": <string>,
+            }, ...]
+        }, ...]
 	}, ...],
 	"DinePaidDetails": [{
 		"Price": <float>,

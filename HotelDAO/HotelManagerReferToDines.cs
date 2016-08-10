@@ -80,7 +80,7 @@ namespace HotelDAO {
 						d.Menu.Unit,
 						d.Menu.IsSetMeal
 					},
-					ReturnedWaiter = new {
+					ReturnedWaiter = d.ReturnedWaiter == null ? null : new {
 						d.ReturnedWaiter.Id,
 						d.ReturnedWaiter.Name
 					},

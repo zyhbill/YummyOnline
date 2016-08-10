@@ -107,8 +107,10 @@ namespace AutoPrinter {
 			}
 			printGrid55f(printerG, new string[] { "总计", priceAll.ToString() }, protocol.PrinterFormat.ReciptBigFontSize);
 
-			printerG.DrawStringLine($"{protocol.Dine.DiscountName}: {protocol.Dine.Discount * 10}折", protocol.PrinterFormat.ReciptFontSize);
-
+			if(protocol.Dine.Discount < 1) {
+				printerG.DrawStringLine($"{protocol.Dine.DiscountName}: {protocol.Dine.Discount * 10}折", protocol.PrinterFormat.ReciptFontSize);
+			}
+			
 			string paidWay = protocol.Dine.IsOnline ? "线上支付" : "线下支付";
 			printerG.DrawStringLine($"支付方式: {paidWay}", protocol.PrinterFormat.ReciptFontSize);
 			foreach(DinePaidDetail dinePaidDetail in protocol.Dine.DinePaidDetails) {

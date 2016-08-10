@@ -122,10 +122,6 @@ namespace OrderSystem.Controllers {
 			// 创建新订单
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
 			if(!result.Succeeded) {
-				if(await UserManager.IsInRoleAsync(user.Id, Role.Nemo)) {
-					await UserManager.DeleteAsync(user);
-					await YummyOnlineManager.RecordLog(YummyOnlineDAO.Models.Log.LogProgram.Identity, YummyOnlineDAO.Models.Log.LogLevel.Warning, $"Anonymous User Deleted {user.Id}, Via Manager");
-				}
 				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}, Host:{Request.UserHostAddress}", HttpPost.GetPostData(Request));
 				return Json(new JsonError(result.Message));
 			}

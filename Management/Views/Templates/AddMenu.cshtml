@@ -50,6 +50,7 @@
         </div><!--table over-->
     </div><!--col over-->
 </div><!--row over-->
+
 <script type="text/ng-template" id="ModalOpen.html">
     <div class="modal-header" ng-init="Initialize()">
         <h3 class="modal-title">
@@ -67,7 +68,8 @@
             切换
         </div>
     </div>
-    <div class="modal-body">s
+    <div class="modal-body">
+        s
         <div class="fakeloader"></div>
         <div class="container-fluid">
             <div class="row">
@@ -78,7 +80,7 @@
                     <uib-tabset active="active Justified" id="MenuLists" justified="true" class="bigfont">
                         <uib-tab index="0" heading="所有" ng-click="ChooseAll()">
                             <div class="MenuColumn clearfix MaxLength">
-                                <div class="MenuList" ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)"  ng-dblclick="AddSingle(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}">
+                                <div class="MenuList" ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-dblclick="AddSingle(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}">
                                     <div class="text-center bigfont">{{menu.NameAbbr}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
                                 </div>
                                 <div class="clean"></div>
@@ -96,7 +98,7 @@
                 </div>
                 <div class="col-xs-7" ng-show="OpenElements.Type==1">
                     <!--文字模式-->
-                    <input type="text" ng-model="OpenElements.FilterInfo" class="form-control menu-filter" placeholder="若要搜索,请输入名称或编号" ng-change="Filter()"/>
+                    <input type="text" ng-model="OpenElements.FilterInfo" class="form-control menu-filter" placeholder="若要搜索,请输入名称或编号" ng-change="Filter()" />
                     <span class="red  icon-remove  CleanOut" ng-click="CleanFilter()"></span>
                     <ul class="menuShow OpenList">
                         <li ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)">{{menu.Name}}</li>
@@ -224,7 +226,7 @@
             </div>
             <div class="col-xs-5"></div>
         </div>
-    </div> 
+    </div>
 </script>
 
 <script type="text/ng-template" id="ModelSetMeal.html">

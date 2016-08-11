@@ -882,7 +882,7 @@
                         SetMealClasses: x.SetMealClasses.map(function (xx) {
                             return {
                                 Id: xx.Id,
-                                OrderedMenus: xx.SetMealClassMenus.map(function (xxx) {
+                                OrderedMenus: xx.SetMealClassMenus.filter(function (xxx) { return xxx.OrderNum }).map(function (xxx) {
                                     return {
                                         Id: xxx.Id,
                                         Ordered: xxx.OrderNum
@@ -930,14 +930,15 @@
                         SetMealClasses: x.SetMealClasses.map(function (xx) {
                             return {
                                 Id: xx.Id,
-                                OrderedMenus: xx.SetMealClassMenus.map(function (xxx) {
+                                OrderedMenus: xx.SetMealClassMenus.filter(function (xxx) { return xxx.OrderNum }).map(function (xxx) {
                                     return {
                                         Id: xxx.Id,
                                         Ordered: xxx.OrderNum
                                     }
                                 })
                             }
-                        })
+                        }),
+                        Ordered:x.Num
                     }
                 } else {
                     return {
@@ -1099,7 +1100,7 @@
                 SendMenus: tempSendMenus
             };
             $http.post('../Templates/OpenReserve', {
-                OrderInfo: OrderInfo,
+                OrderInfo: OrderInfo,  
                 OpenDiscount: _this.OpenElements.CurrentDiscount,
                 Address: Address,
                 ShiftNum: _this.OpenElements.ShiftNum,

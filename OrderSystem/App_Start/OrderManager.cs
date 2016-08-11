@@ -26,7 +26,7 @@ namespace OrderSystem {
 			if(mainPaidDetail.PayKind == null) {
 				return new FunctionResult(false, "未找到该支付方式", $"No PayKind {cart.PayKindId}");
 			}
-			if(!mainPaidDetail.PayKind.Usable) {
+			if(addition.From == DineFrom.CustomerBrowser && !mainPaidDetail.PayKind.Usable) {
 				return new FunctionResult(false, $"{mainPaidDetail.PayKind.Name}不可用", $"PayKind Disabled {mainPaidDetail.PayKind.Id}");
 			}
 

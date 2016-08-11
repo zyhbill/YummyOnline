@@ -247,7 +247,6 @@ app.factory('cart', [
 										for (var m = 0; m < existedSetMealMenu.Addition.Ordered / setMealMenu.Count ; m++) {
 											this.AddSetMealMenu(setMealMenu, setMealClass);
 										}
-										console.log(setMeal)
 									}
 								}
 							}
@@ -306,7 +305,23 @@ app.factory('cart', [
 					this.OrderedMenus.push(menu);
 				}
 				if (menu.IsSetMeal) {
-					menu.Addition.OrderedSetMealClasses.push(angular.copy(menu.Addition.SetMeal.Classes));
+					var setMealClasses = angular.copy(menu.Addition.SetMeal.Classes)
+					menu.Addition.OrderedSetMealClasses.push(setMealClasses);
+
+					for (var i in setMealClasses) {
+						var setMealClass = setMealClasses[i];
+
+						var allMenuCount = 0;
+						for (var j in setMealClass.Menus) {
+							allMenuCount += setMealClass.Menus[j].Count;
+						}
+
+						if (allMenuCount == setMealClass.Count) {
+							for (var j in setMealClass.Menus) {
+								this.AddSetMealMenu(setMealClass.Menus[j], setMealClass);
+							}
+						}
+					}
 				}
 
 				for (var i in $dataSet.MenuClasses) {
@@ -508,7 +523,6 @@ app.factory('cart', [
 					}
 
 					if (this.OrderedMenus[i].IsSetMeal) {
-						console.log(this.OrderedMenus[i])
 						for (var j in this.OrderedMenus[i].Addition.OrderedSetMealClasses) {
 							var orderedSetMealClasses = this.OrderedMenus[i].Addition.OrderedSetMealClasses[j];
 
@@ -702,7 +716,6 @@ app.factory('setMealFilter', [
 					if (!setMeal.IsSetMeal)
 						continue;
 
-					console.log(setMeal.Addition.OrderedSetMealClasses);
 					for (var j in setMeal.Addition.OrderedSetMealClasses) {
 						var setMealClasses = setMeal.Addition.OrderedSetMealClasses[j];
 

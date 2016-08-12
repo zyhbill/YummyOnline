@@ -18,7 +18,7 @@ namespace YummyOnlineDAO.Models {
 		public string Title { get; set; }
 
 		[Required]
-		public string PictruePath { get; set; }
+		public string PicturePath { get; set; }
 
 		[Required]
 		public string Description { get; set; }

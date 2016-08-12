@@ -103,7 +103,7 @@
                                 <td class="text-right">{{(menu.Price*menu.Count).toFixed(2)}}</td>
                                 <td><span class="label label-success arrowed" ng-repeat="remark in menu.Remarks">{{remark.Name}}</span>&nbsp;</td>
                             </tr>
-                            <tr ng-repeat="menu in PayElements.CurrentDine.DineMenus|filter:{Status:2}">
+                            <tr ng-repeat="menu in PayElements.CurrentDine.DineMenus|filter:{Type:8}">
                                 <td><span class="red">送</span> {{menu.Menu.Name}}</td>
                                 <td class="text-right">{{menu.Count}}</td>
                                 <td class="text-right">{{(menu.OriPrice*menu.Count).toFixed(2)}}</td>

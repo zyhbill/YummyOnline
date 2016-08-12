@@ -38,5 +38,24 @@ namespace Management
         {
             return await ctx.PayKinds.Where(d => d.Type == PayKindType.Cash).Select(d => d.Id).FirstOrDefaultAsync();
         }
+
+        public async void ManageLog(string Message,Log.LogLevel Level = Log.LogLevel.Success,string Detail=null)
+        {
+            ctx.Logs.Add(new Log
+            {
+                DateTime = DateTime.Now,
+                Detail = Detail,
+                Message = Message,
+                Level = Level
+            });
+            await ctx.SaveChangesAsync();
+        }
+
+        public async Task ChangeShow (string Id)
+        {
+            var Class = await ctx.MenuClasses.FirstOrDefaultAsync(d => d.Id == Id);
+            Class.IsShow = !Class.IsShow;
+            await ctx.SaveChangesAsync();
+        }
     }
 }

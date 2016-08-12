@@ -38,7 +38,7 @@ namespace Management.Controllers
             {
                 
                 oriprice = oriprice + total[i].Dine.OriPrice;
-                price = price + total[i].Dine.Price;
+                price = price + total[i].Price;
                 
                 
             }

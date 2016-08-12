@@ -1436,6 +1436,7 @@ namespace Management.Controllers
             font.ShiftFontSize = Format.ShiftFontSize;
             font.ShiftSmallFontSize = Format.ShiftSmallFontSize;
             font.ColorDepth = Format.ColorDepth;
+            font.PaddingRight = Format.PaddingRight;
             db.SaveChanges();
             var hotel = sysdb.Hotels.Where(h => h.Id == HotelId).FirstOrDefault();
             if (Style == 0)

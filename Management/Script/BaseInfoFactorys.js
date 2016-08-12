@@ -1233,7 +1233,7 @@
                         ShiftFontSize: data.font.ShiftFontSize,
                         ShiftSmallFontSize: data.font.ShiftSmallFontSize,
                         ColorDepth: data.font.ColorDepth,
-                        PaddingRigh: data.font.PaddingRight
+                        PaddingRight: data.font.PaddingRight
                     }
                 }
                 if (data.Style == "default.css") {

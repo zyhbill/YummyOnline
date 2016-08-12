@@ -74,7 +74,7 @@ namespace AutoPrinter {
 							if(j == setMealMenus.Count - 1) {
 								tab = "\r└";
 							}
-							printGrid5122(printerG, new string[] {$"   {tab} {setMealMenus[j].Menu.Name}",
+							printGridRecipt(printerG, new string[] {$"   {tab} {setMealMenus[j].Menu.Name}",
 								setMealMenus[j].Count.ToString(),
 								null, null
 							}, protocol.PrinterFormat.ReciptFontSize);
@@ -110,7 +110,7 @@ namespace AutoPrinter {
 			if(protocol.Dine.Discount < 1) {
 				printerG.DrawStringLine($"{protocol.Dine.DiscountName}: {protocol.Dine.Discount * 10}折", protocol.PrinterFormat.ReciptFontSize);
 			}
-			
+
 			string paidWay = protocol.Dine.IsOnline ? "线上支付" : "线下支付";
 			printerG.DrawStringLine($"支付方式: {paidWay}", protocol.PrinterFormat.ReciptFontSize);
 			foreach(DinePaidDetail dinePaidDetail in protocol.Dine.DinePaidDetails) {
@@ -178,9 +178,8 @@ namespace AutoPrinter {
 							if(j == setMealMenus.Count - 1) {
 								tab = "\r└";
 							}
-							printGrid5122(printerG, new string[] {$"   {tab} {setMealMenus[j].Menu.Name}",
-								setMealMenus[j].Count.ToString(),
-								null, null
+							printGrid82(printerG, new string[] {$"   {tab} {setMealMenus[j].Menu.Name}",
+								setMealMenus[j].Count.ToString()
 							}, protocol.PrinterFormat.ServeOrderFontSize);
 						}
 					}
@@ -213,7 +212,7 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 根据Graphics绘制厨房单
 		/// </summary>
-		protected int drawKitchenOrder(Graphics g, DineForPrinting protocol, DineMenu dineMenu, SetMealMenu setMealMenu) {
+		protected int drawKitchenOrder(Graphics g, DineForPrinting protocol, DineMenu dineMenu, DineMenuSetMealMenu setMealMenu) {
 			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font, protocol.PrinterFormat.PaddingRight);
 
 			printerG.DrawStringLine(dineMenu.Menu.DepartmentName, protocol.PrinterFormat.KitchenOrderFontSize);

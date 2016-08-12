@@ -143,7 +143,7 @@ namespace AutoPrinter {
 		protected int drawServeOrder(Graphics g, DineForPrinting protocol) {
 			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font, protocol.PrinterFormat.PaddingRight);
 
-			printerG.DrawStringLine(protocol.Dine.Desk.ServeDepartmentName, protocol.PrinterFormat.ServeOrderSmallFontSize);
+			printerG.DrawStringLine(protocol.Dine.Desk.ServeDepartmentName, protocol.PrinterFormat.ServeOrderFontSize);
 
 			printerG.DrawStringLine($"单号: {protocol.Dine.Id}", protocol.PrinterFormat.ServeOrderSmallFontSize);
 			printerG.DrawStringLine($"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}", protocol.PrinterFormat.ServeOrderSmallFontSize);

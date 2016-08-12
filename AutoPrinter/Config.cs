@@ -192,7 +192,7 @@ namespace AutoPrinter {
 					Font = " 宋体",
 					ColorDepth = 55,
 					ReciptBigFontSize = 10,
-					ReciptFontSize = 8,
+					ReciptFontSize = 10,
 					ReciptSmallFontSize = 7,
 					KitchenOrderFontSize = 10,
 					KitchenOrderSmallFontSize = 8,
@@ -200,7 +200,8 @@ namespace AutoPrinter {
 					ServeOrderSmallFontSize = 8,
 					ShiftBigFontSize = 12,
 					ShiftFontSize = 8,
-					ShiftSmallFontSize = 7
+					ShiftSmallFontSize = 7,
+					PaddingRight = 0
 				}
 			};
 

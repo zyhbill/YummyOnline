@@ -24,6 +24,7 @@ namespace OrderSystem {
 				ShiftBigFontSize = p.ShiftBigFontSize,
 				ShiftFontSize = p.ShiftFontSize,
 				ShiftSmallFontSize = p.ShiftSmallFontSize,
+				PaddingRight = p.PaddingRight,
 			}).FirstOrDefaultAsync();
 		}
 		public async Task<Protocol.PrintingProtocol.Dine> GetDineForPrintingById(string dineId, List<int> dineMenuIds = null) {

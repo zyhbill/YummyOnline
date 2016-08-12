@@ -21,7 +21,7 @@ namespace AutoPrinter {
 		/// 根据Graphics绘制收银条
 		/// </summary>
 		protected int drawRecipt(Graphics g, DineForPrinting protocol, bool isFullDineMenus) {
-			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font);
+			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font, protocol.PrinterFormat.PaddingRight);
 
 			printerG.DrawStringLine($"欢迎光临{protocol.Hotel.Name}", protocol.PrinterFormat.ReciptBigFontSize, align: StringAlignment.Center);
 			printerG.DrawStringLine($"TEL: {protocol.Hotel.Tel}", protocol.PrinterFormat.ReciptSmallFontSize, align: StringAlignment.Center);
@@ -141,7 +141,7 @@ namespace AutoPrinter {
 		/// 根据Graphics绘制传菜单
 		/// </summary>
 		protected int drawServeOrder(Graphics g, DineForPrinting protocol) {
-			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font);
+			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font, protocol.PrinterFormat.PaddingRight);
 
 			printerG.DrawStringLine(protocol.Dine.Desk.ServeDepartmentName, protocol.PrinterFormat.ServeOrderSmallFontSize);
 
@@ -201,7 +201,7 @@ namespace AutoPrinter {
 		/// 根据Graphics绘制厨房单
 		/// </summary>
 		protected int drawKitchenOrder(Graphics g, DineForPrinting protocol, DineMenu dineMenu, SetMealMenu setMealMenu) {
-			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font);
+			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font, protocol.PrinterFormat.PaddingRight);
 
 			printerG.DrawStringLine(dineMenu.Menu.DepartmentName, protocol.PrinterFormat.KitchenOrderFontSize);
 

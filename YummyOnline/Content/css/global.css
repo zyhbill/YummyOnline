@@ -137,7 +137,8 @@ h6,
 
 	.waterfall-2,
 	.waterfall-3,
-	.waterfall-4 .waterfall-6 {
+	.waterfall-4,
+	.waterfall-6 {
 		-moz-column-count: auto;
 		-webkit-column-count: auto;
 		column-count: auto;

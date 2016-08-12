@@ -26,7 +26,7 @@ namespace OrderSystem {
 			if(mainPaidDetail.PayKind == null) {
 				return new FunctionResult(false, "未找到该支付方式", $"No PayKind {cart.PayKindId}");
 			}
-			if(!mainPaidDetail.PayKind.Usable) {
+			if(addition.From == DineFrom.CustomerBrowser && !mainPaidDetail.PayKind.Usable) {
 				return new FunctionResult(false, $"{mainPaidDetail.PayKind.Name}不可用", $"PayKind Disabled {mainPaidDetail.PayKind.Id}");
 			}
 
@@ -51,7 +51,10 @@ namespace OrderSystem {
 
 				DineMenus = new List<DineMenu>(),
 				Remarks = new List<Remark>(),
-				DinePaidDetails = new List<DinePaidDetail>()
+				DinePaidDetails = new List<DinePaidDetail>(),
+
+				BeginTime = addition.BeginTime ?? DateTime.Now,
+				From = addition.From
 			};
 
 			// 订单备注
@@ -115,25 +118,7 @@ namespace OrderSystem {
 				HotelConfig hotelConfig = await ctx.HotelConfigs.FirstOrDefaultAsync();
 				// 如果饭店支持随机立减
 				if(hotelConfig.NeedRandomPreference) {
-					PayKind randomPreferencePayKind = await ctx.PayKinds.FirstOrDefaultAsync(p => p.Type == PayKindType.RandomPreference && p.Usable == true);
-					if(randomPreferencePayKind != null) {
-						int top = (int)Math.Ceiling((double)mainPaidDetail.Price / 10);
-						Random random = new Random(DateTime.Now.Millisecond);
-						decimal randomPreferencePrice = random.Next(0, top + 1);
-
-						// 如果随机立减超过应付金额则全额支付
-						if(randomPreferencePrice > mainPaidDetail.Price) {
-							randomPreferencePrice = mainPaidDetail.Price;
-						}
-
-						if(randomPreferencePrice != 0) {
-							dine.DinePaidDetails.Add(new DinePaidDetail {
-								PayKind = randomPreferencePayKind,
-								Price = randomPreferencePrice
-							});
-							mainPaidDetail.Price -= randomPreferencePrice;
-						}
-					}
+					await handleRandomPreference(hotelConfig.Id, dine, mainPaidDetail);
 				}
 			}
 
@@ -398,6 +383,39 @@ namespace OrderSystem {
 			dine.DinePaidDetails.Add(pointsPaidDetail);
 
 			return new FunctionResult();
+		}
+
+		/// <summary>
+		/// 随机立减处理
+		/// </summary>
+		/// <returns></returns>
+		private async Task handleRandomPreference(int hotelId, Dine dine, DinePaidDetail mainPaidDetail) {
+			PayKind randomPreferencePayKind = await ctx.PayKinds.FirstOrDefaultAsync(p => p.Type == PayKindType.RandomPreference && p.Usable == true);
+			if(randomPreferencePayKind != null) {
+				int top = (int)Math.Ceiling(mainPaidDetail.Price / 50);
+
+				Random random = new Random(DateTime.Now.Millisecond);
+				decimal randomPrice = (decimal)random.NextDouble();
+				randomPrice *= top;
+				randomPrice = Math.Floor(randomPrice * 10) / 10;
+
+				//if(randomPrice == 0) {
+				//	randomPrice = 0.1m;
+				//}
+
+				// 如果随机立减超过应付金额则全额支付
+				if(randomPrice > mainPaidDetail.Price) {
+					randomPrice = mainPaidDetail.Price;
+				}
+				
+				if(randomPrice != 0) {
+					dine.DinePaidDetails.Add(new DinePaidDetail {
+						PayKind = randomPreferencePayKind,
+						Price = randomPrice
+					});
+					mainPaidDetail.Price -= randomPrice;
+				}
+			}
 		}
 
 		public async Task OfflinePayCompleted(string dineId) {

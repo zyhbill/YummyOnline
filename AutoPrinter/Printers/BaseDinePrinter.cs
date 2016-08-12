@@ -29,8 +29,8 @@ namespace AutoPrinter {
 			printerG.DrawStringLine($"收据", protocol.PrinterFormat.ReciptSmallFontSize, align: StringAlignment.Center);
 			printerG.TrimY(5);
 
-			printGrid55(printerG, new string[] { $"单号: {protocol.Dine.Id}", $"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}" }, protocol.PrinterFormat.ReciptFontSize);
-			printGrid55(printerG, new string[] { $"顾客: {protocol.User?.Id}", $"服务员: {protocol.Dine.Waiter.Name}" }, protocol.PrinterFormat.ReciptFontSize);
+			printerG.DrawStringLine($"单号: {protocol.Dine.Id}", protocol.PrinterFormat.ReciptFontSize);
+			printerG.DrawStringLine($"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}", protocol.PrinterFormat.ReciptFontSize);
 
 			if(protocol.Dine.Type == HotelDAO.Models.DineType.ToStay) {
 				printerG.DrawStringLine($"餐桌: {protocol.Dine.Desk.Name}", protocol.PrinterFormat.ReciptFontSize);
@@ -46,14 +46,14 @@ namespace AutoPrinter {
 
 			printHr(printerG);
 
-			printGrid5122(printerG, new string[] { "名称", "数量", "单价", "折后小计" }, protocol.PrinterFormat.ReciptFontSize);
+			printGridRecipt(printerG, new string[] { "名称", "数量", "单价", "折后小计" }, protocol.PrinterFormat.ReciptFontSize);
 
 			printHr(printerG);
 
 			decimal priceAll = 0m;
 			foreach(DineMenu dineMenu in protocol.Dine.DineMenus.Where(p => p.Status != HotelDAO.Models.DineMenuStatus.Returned)) {
 				// 打印具体菜品信息
-				printGrid5122(printerG, new string[] {
+				printGridRecipt(printerG, new string[] {
 					dineMenu.Menu.Name,
 					dineMenu.Count.ToString(),
 					dineMenu.OriPrice.ToString(),
@@ -70,7 +70,7 @@ namespace AutoPrinter {
 						if(i == setMealMenus.Count - 1) {
 							tab = '└';
 						}
-						printGrid5122(printerG, new string[] {
+						printGridRecipt(printerG, new string[] {
 							$"{tab} {setMealMenus[i].Name}",
 							setMealMenus[i].Count.ToString(),
 							null, null
@@ -85,7 +85,7 @@ namespace AutoPrinter {
 					if(i == dineMenu.Remarks.Count - 1) {
 						tab = '└';
 					}
-					printGrid5122(printerG, new string[] {
+					printGridRecipt(printerG, new string[] {
 						$"{tab} {remarks[i].Name}",
 						null,
 						0 == remarks[i].Price ? null : remarks[i].Price.ToString(),
@@ -102,6 +102,8 @@ namespace AutoPrinter {
 				priceAll = protocol.Dine.Price;
 			}
 			printGrid55f(printerG, new string[] { "总计", priceAll.ToString() }, protocol.PrinterFormat.ReciptBigFontSize);
+
+			printerG.DrawStringLine($"{protocol.Dine.DiscountName}: {protocol.Dine.Discount * 10}折", protocol.PrinterFormat.ReciptFontSize);
 
 			string paidWay = protocol.Dine.IsOnline ? "线上支付" : "线下支付";
 			printerG.DrawStringLine($"支付方式: {paidWay}", protocol.PrinterFormat.ReciptFontSize);
@@ -141,8 +143,11 @@ namespace AutoPrinter {
 		protected int drawServeOrder(Graphics g, DineForPrinting protocol) {
 			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font);
 
-			printGrid55(printerG, new string[] { $"单号: {protocol.Dine.Id}", $"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}" }, protocol.PrinterFormat.ServeOrderSmallFontSize);
-			printGrid55(printerG, new string[] { $"顾客: {protocol.User?.Id}", $"服务员: {protocol.Dine.Waiter.Name}" }, protocol.PrinterFormat.ServeOrderSmallFontSize);
+			printerG.DrawStringLine(protocol.Dine.Desk.ServeDepartmentName, protocol.PrinterFormat.ServeOrderSmallFontSize);
+
+			printerG.DrawStringLine($"单号: {protocol.Dine.Id}", protocol.PrinterFormat.ServeOrderSmallFontSize);
+			printerG.DrawStringLine($"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}", protocol.PrinterFormat.ServeOrderSmallFontSize);
+
 			printerG.DrawStringLine($"餐桌: {protocol.Dine.Desk.Name}", protocol.PrinterFormat.ServeOrderFontSize);
 
 			printHr(printerG);
@@ -199,7 +204,9 @@ namespace AutoPrinter {
 			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font);
 
 			printerG.DrawStringLine(dineMenu.Menu.DepartmentName, protocol.PrinterFormat.KitchenOrderFontSize);
-			printGrid55(printerG, new string[] { $"单号: {protocol.Dine.Id}", $"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}" }, protocol.PrinterFormat.KitchenOrderSmallFontSize);
+
+			printerG.DrawStringLine($"单号: {protocol.Dine.Id}", protocol.PrinterFormat.KitchenOrderSmallFontSize);
+			printerG.DrawStringLine($"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}", protocol.PrinterFormat.KitchenOrderSmallFontSize);
 
 			if(dineMenu.Status == HotelDAO.Models.DineMenuStatus.Returned) {
 				string returnStr = "退菜";

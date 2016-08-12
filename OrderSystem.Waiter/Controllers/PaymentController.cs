@@ -111,7 +111,9 @@ namespace OrderSystem.Waiter.Controllers {
 			CartAddition addition = new CartAddition {
 				WaiterId = User.Identity.GetUserId(),
 				Discount = cartAddition.Discount,
-				DiscountName = cartAddition.DiscountName
+				DiscountName = cartAddition.DiscountName,
+				BeginTime = cartAddition.BeginTime,
+				From = cartAddition.From
 			};
 
 			User user = await UserManager.FindByIdAsync(cartAddition.UserId);

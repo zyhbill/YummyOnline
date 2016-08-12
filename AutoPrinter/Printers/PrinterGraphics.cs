@@ -10,13 +10,15 @@ namespace AutoPrinter {
 
 		private int paperWidth { get; set; }
 		private string fontName { get; set; }
+		private int paddingRight { get; set; }
 		private float spacing { get; set; } = 0;
 
-		public PrinterGraphics(Graphics g, int paperWidth, string fontName) {
+		public PrinterGraphics(Graphics g, int paperWidth, string fontName, int paddingRight = 10) {
 			this.g = g;
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 			this.paperWidth = paperWidth;
 			this.fontName = fontName;
+			this.paddingRight = paddingRight;
 		}
 		public int GetHeight() {
 			return Convert.ToInt32(currY);
@@ -29,7 +31,7 @@ namespace AutoPrinter {
 		}
 
 		public void DrawStringLine(string text, float fontSize, Brush brush, bool wrapper = true, StringAlignment align = StringAlignment.Near) {
-			RectangleF areaRec = new RectangleF(currX, currY, paperWidth + fontSize, 100);
+			RectangleF areaRec = new RectangleF(currX, currY, paperWidth - paddingRight, 100);
 			Font font = new Font(fontName, fontSize);
 			StringFormat format = new StringFormat {
 				Alignment = align,
@@ -60,14 +62,14 @@ namespace AutoPrinter {
 		}
 		public void DrawStringLineLoop(string text, float fontSize) {
 			Font font = new Font(fontName, fontSize);
-			DrawStringLineLoop(text, fontSize, 100);
+			DrawStringLineLoop(text, fontSize, paperWidth);
 		}
 
 		public void DrawGrid(float[] ratios, string[] texts, float fontSize, Brush brush, StringAlignment[] aligns) {
 			Font font = new Font(fontName, fontSize);
 			float maxHeight = 0;
 			for(int i = 0; i < ratios.Length; i++) {
-				float width = paperWidth * ratios[i];
+				float width = (paperWidth - paddingRight) * ratios[i];
 				RectangleF areaRec = new RectangleF(currX, currY, width, 100);
 				StringFormat format = new StringFormat { Alignment = aligns[i] };
 				g.DrawString(texts[i], font, brush, areaRec, format);

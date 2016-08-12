@@ -84,7 +84,9 @@ namespace OrderSystem {
 						Name = p.Desk.Area.DepartmentServe.Printer.Name,
 						IpAddress = p.Desk.Area.DepartmentServe.Printer.IpAddress,
 						Usable = p.Desk.Area.DepartmentServe.Printer.Usable
-					}
+					},
+					ReciptDepartmentName = p.Desk.Area.DepartmentRecipt.Name,
+					ServeDepartmentName = p.Desk.Area.DepartmentServe.Name
 				},
 				DineMenus = p.DineMenus.Select(d => new Protocol.PrintingProtocol.DineMenu {
 					Id = d.Id,

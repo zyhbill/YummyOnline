@@ -45,6 +45,8 @@ namespace Protocol.PrintingProtocol {
 		public AreaType AreaType { get; set; }
 		public Printer ReciptPrinter { get; set; }
 		public Printer ServePrinter { get; set; }
+		public string ReciptDepartmentName { get; set; }
+		public string ServeDepartmentName { get; set; }
 	}
 
 	public class DineMenu {

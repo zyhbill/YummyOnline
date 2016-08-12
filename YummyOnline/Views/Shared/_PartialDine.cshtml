@@ -14,15 +14,18 @@
 			</div>
 		</div>
 
-		<div>
-			<span ng-if="dine.From==0">顾客点菜</span>
-			<span ng-if="dine.From==1">服务员浏览器</span>
-			<span ng-if="dine.From==2">服务员PAD</span>
-			<span ng-if="dine.From==3">服务员APP</span>
-			<span ng-if="dine.From==4">后台管理</span>
+		<div class="row no-padding">
+			<div class="col-xs-6">
+				{{dine.BeginTime | date:'yyyy/M/d HH:mm:ss'}}
+			</div>
+			<div class="col-xs-6 text-right">
+				<span ng-if="dine.From==0">顾客点菜</span>
+				<span ng-if="dine.From==1">服务员浏览器</span>
+				<span ng-if="dine.From==2">服务员PAD</span>
+				<span ng-if="dine.From==3">服务员APP</span>
+				<span ng-if="dine.From==4">后台管理</span>
+			</div>
 		</div>
-
-		<div>{{dine.BeginTime | date:'yyyy/M/d HH:mm:ss'}}</div>
 
 		<div class="row no-padding">
 			<div class="col-xs-6">

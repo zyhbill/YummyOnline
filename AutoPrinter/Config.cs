@@ -146,7 +146,9 @@ namespace AutoPrinter {
 							Name = ipOrName,
 							IpAddress = ipOrName,
 							Usable = true
-						}
+						},
+						ReciptDepartmentName = "测试收银部门名",
+						ServeDepartmentName = "测试传菜部门名"
 					},
 					DineMenus = new List<DineMenu> {
 						new DineMenu {
@@ -292,7 +294,7 @@ namespace AutoPrinter {
 					PaperSize = 278,
 					Font = "宋体",
 					ColorDepth = 55,
-					ReciptBigFontSize = 12,
+					ReciptBigFontSize = 10,
 					ReciptFontSize = 8,
 					ReciptSmallFontSize = 7,
 					KitchenOrderFontSize = 10,
@@ -309,7 +311,7 @@ namespace AutoPrinter {
 				p.Dine.DineMenus.Add(new DineMenu {
 					Status = HotelDAO.Models.DineMenuStatus.Normal,
 					Count = 10,
-					OriPrice = 56.78m,
+					OriPrice = 156.78m,
 					Price = 12.34m,
 					RemarkPrice = 12.34m,
 					Remarks = new List<Remark> {

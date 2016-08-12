@@ -1197,7 +1197,8 @@
                 ServeOrderSmallFontSize:0,
                 ShiftBigFontSize:0,
                 ShiftFontSize:0,
-                ShiftSmallFontSize:0
+                ShiftSmallFontSize: 0,
+                PaddingRight:0
             },
             UsePrint: true,
             IsPayFirst: true,
@@ -1231,7 +1232,8 @@
                         ShiftBigFontSize: data.font.ShiftBigFontSize,
                         ShiftFontSize: data.font.ShiftFontSize,
                         ShiftSmallFontSize: data.font.ShiftSmallFontSize,
-                        ColorDepth: data.font.ColorDepth
+                        ColorDepth: data.font.ColorDepth,
+                        PaddingRight: data.font.PaddingRight
                     }
                 }
                 if (data.Style == "default.css") {

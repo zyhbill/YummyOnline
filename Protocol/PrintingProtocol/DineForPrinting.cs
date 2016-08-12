@@ -130,6 +130,7 @@ namespace Protocol.PrintingProtocol {
 		public int ShiftBigFontSize { get; set; }
 		public int ShiftFontSize { get; set; }
 		public int ShiftSmallFontSize { get; set; }
+		public int PaddingRight { get; set; }
 	}
 
 	public class DineForPrinting {

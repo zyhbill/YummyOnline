@@ -393,5 +393,6 @@ namespace Management.ObjectClasses
         public int ShiftFontSize { get; set; }
         public int ShiftSmallFontSize { get; set; }
         public int ColorDepth { get; set; }
+        public int PaddingRight { get; set; }
     }
 }

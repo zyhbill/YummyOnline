@@ -16,7 +16,7 @@ namespace AutoPrinter {
 		}
 
 		protected int drawShift(Graphics g, ShiftForPrinting protocol) {
-			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font);
+			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font, protocol.PrinterFormat.PaddingRight);
 
 			decimal receivablePriceAll = 0, realPriceAll = 0;
 

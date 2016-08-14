@@ -148,7 +148,7 @@
 	</li>
 	@if(User.IsInRole(nameof(YummyOnlineDAO.Models.Role.SuperAdmin)) && Model.HasValue && Model.Value) {
 		<li class="list-group-item text-right" ng-show="dine.IsOnline && !dine.IsPaid">
-			<button class="btn btn-primary btn-sm" ng-click="weixinNotify(dine)">直接支付</button>
+			<button class="btn btn-primary btn-sm" confirm-class="btn-danger" confirm-click="weixinNotify(dine)">直接支付</button>
 		</li>
 	}
 </ul>

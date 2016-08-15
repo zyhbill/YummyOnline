@@ -21,6 +21,9 @@ namespace YummyOnline.Controllers {
 		public ActionResult _ViewDine() {
 			return View();
 		}
+		public ActionResult _ViewArticle() {
+			return View();
+		}
 
 		public async Task<JsonResult> GetHotelNames() {
 			List<Hotel> hotels = await YummyOnlineManager.GetHotels();
@@ -40,6 +43,7 @@ namespace YummyOnline.Controllers {
 					p.ConnectionString,
 					p.AdminConnectionString,
 					p.CssThemePath,
+					p.OrderSystemStyle,
 					p.CreateDate,
 					p.Tel,
 					p.Address,
@@ -53,6 +57,7 @@ namespace YummyOnline.Controllers {
 				p.Name,
 				p.ConnectionString,
 				p.CssThemePath,
+				p.OrderSystemStyle,
 				p.CreateDate,
 				p.Tel,
 				p.Address,
@@ -133,6 +138,10 @@ namespace YummyOnline.Controllers {
 			}
 
 			return Json(new JsonSuccess());
+		}
+
+		public async Task<JsonResult> GetArticles(int hotelId) {
+			return Json(await YummyOnlineManager.GetArticles(hotelId));
 		}
 	}
 }

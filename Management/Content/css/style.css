@@ -25,6 +25,17 @@
 }
 @media (min-width:992px){.modal-lg{width:85%}}
 
+.address{
+    cursor:pointer;
+}
+.UnChooseDine{
+    display:inline-block;
+    margin:0 10px;
+    cursor:pointer;
+}
+.pricing-box .price {
+    font-size:16px;
+}
 /*******************************************支付结账**********************************************************/
 .Pay-Title{
     padding-left:20px;
@@ -112,6 +123,10 @@ span.money{
 .loginBtn{
     height:50px;
     width:50px;
+}
+
+.minHeight{
+    min-height:30px;
 }
 /*********************************开桌***************************************************************/
 .openDesk{
@@ -224,7 +239,7 @@ span.money{
     bottom:0px;
 }
 #MenuLists>ul>li>a{
-    height:50px;
+    height:61px;
     font-size:14px;
     font-weight:bolder;
     overflow:hidden;

@@ -111,7 +111,9 @@ namespace OrderSystem.Waiter.Controllers {
 			CartAddition addition = new CartAddition {
 				WaiterId = User.Identity.GetUserId(),
 				Discount = cartAddition.Discount,
-				DiscountName = cartAddition.DiscountName
+				DiscountName = cartAddition.DiscountName,
+				BeginTime = cartAddition.BeginTime,
+				From = cartAddition.From
 			};
 
 			User user = await UserManager.FindByIdAsync(cartAddition.UserId);
@@ -121,6 +123,7 @@ namespace OrderSystem.Waiter.Controllers {
 			FunctionResult result = await OrderManager.CreateDine(cart, addition);
 			if(!result.Succeeded) {
 				await HotelManager.RecordLog(HotelDAO.Models.Log.LogLevel.Error, $"{result.Detail}, Host:{Request.UserHostAddress}", HttpPost.GetPostData(Request));
+				return result;
 			}
 
 			Dine dine = ((Dine)result.Data);

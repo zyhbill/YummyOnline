@@ -104,5 +104,44 @@
 				$scope.isLoading = false;
 			});
 		}
+
+		$scope.weixinNotify = function (dine) {
+			$http.post('/Hotel/WeixinNotify', {
+				HotelId: $scope.hotelId,
+				DineId: dine.Id
+			}).then(function (response) {
+				if (response.data.Succeeded) {
+					$scope.search();
+				} else {
+					toastr.error('支付失败');
+				}
+			});
+		}
+	}
+]).controller('ArticleCtrl', [
+	'$scope',
+	'$http',
+	'layout',
+	function ($scope, $http, $layout) {
+		$layout.Set('文章管理', '');
+
+		$scope.dines = [];
+		$http.post('/Hotel/GetHotelNames').then(function (response) {
+			$scope.hotels = response.data;
+			$scope.hotelId = $scope.hotels[0].Id;
+			refreshArticles($scope.hotelId);
+		});
+
+		function refreshArticles(hotelId) {
+			$http.post('/Hotel/GetArticles', {
+				HotelId: $scope.hotelId,
+			}).then(function (response) {
+				$scope.articles = response.data;
+			});
+		}
+
+		$scope.newArticle = {};
+		$scope.newArticle.PicturePath = 'http://static.yummyonline.net/';
+		$scope.newArticle.Body = 'http://static.yummyonline.net/';
 	}
 ])

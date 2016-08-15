@@ -46,34 +46,34 @@
             $scope.$apply();
         }
     });
-    $scope.OpenModel = function (desk) {
+    $scope.OpenModel = function (desk, area) {
         var myDesk = {};
         myDesk = { Id: desk.Id, Name: desk.Name };
-        //if (desk.Status == 1) {
-        //    var modalInstance = $uibModal.open({//打开支付
-        //        animation: $scope.animationsEnabled,
-        //        templateUrl: 'ModalPay.html',
-        //        controller: 'ModalPayCtrl',
-        //        backdrop: 'static',
-        //        size: 'lg',
-        //        resolve: {
-        //            option: {
-        //                desk: myDesk, method: Pay
-        //            }
-        //        }
-        //    });
-        //} else if (desk.Status == 0) {
-        var modalInstance = $uibModal.open({//打开开桌
-            animation: $scope.animationsEnabled,
-            templateUrl: 'ModalOpen.html',
-            controller: 'ModalOpenCtrl',
-            backdrop: 'static',
-            size: 'lg',
-            resolve: {
-                option: { desk: myDesk, method: Open, Pay: Pay }
-            }
-        });
-        //}
+        if (area.Type == 1) {
+            var modalInstance = $uibModal.open({//打开开桌
+                animation: $scope.animationsEnabled,
+                templateUrl: 'ModelReserve.html',
+                controller: 'ModalOpenCtrl',
+                backdrop: 'static',
+                size: 'lg',
+                resolve: {
+                    option: { desk: myDesk, method: Open, Pay: Pay }
+                }
+            });
+        }
+        else {
+            var modalInstance = $uibModal.open({//打开开桌
+                animation: $scope.animationsEnabled,
+                templateUrl: 'ModalOpen.html',
+                controller: 'ModalOpenCtrl',
+                backdrop: 'static',
+                size: 'lg',
+                resolve: {
+                    option: { desk: myDesk, method: Open, Pay: Pay }
+                }
+            });
+        }
+
     }
 }])
 .controller('ModalPayCtrl', function ($scope, $rootScope, $uibModalInstance, option) {
@@ -183,6 +183,28 @@
             console.log(data);
         })
     }
+    $scope.OpenReserveModel = function () {
+        var modalInstance = $uibModal.open({//打开开桌
+            animation: $scope.animationsEnabled,
+            templateUrl: 'ModelReservePhoneInfo.html',
+            controller: 'ModelReserveCtrl',
+            backdrop: 'static',
+            size: 'lg',
+            resolve: {
+                option: { method: option.method }
+            }
+        });
+    }
+    $scope.OpenReserve = function () {
+        var promise = option.method.OpenReserve();
+        promise.then(function (data) {
+            if (data.Status) {
+                $uibModalInstance.dismiss('cancel');
+            } else {
+                alert(data.ErrorMessage);
+            }
+        })
+    }
     $scope.CleanFilter = function () {
         option.method.CleanFilter();
     }
@@ -216,6 +238,31 @@
         option.method.KeepShift();
         $uibModalInstance.dismiss('cancel');
     }
+})
+.controller('ModelReserveCtrl', function ($scope, $rootScope, $uibModal, $uibModalInstance, $q, $timeout, option) {
+    $scope.ReserveInfo = option.method.ReserveInfo;
+    $scope.OpenElements = option.method.OpenElements;
+    $scope.ok = function () {
+        $uibModalInstance.dismiss('cancel');
+    }
+    $scope.SmartChoose = function () {
+        option.method.SmartChoose();
+    }
+    $scope.SetAddress = function (address, type) {
+        option.method.SetAddress(address, type);
+    }
+    $scope.cancel = function () {
+        option.method.ReserveInfo ={
+            Phone: "",
+            Address: "",
+            User: {}
+        }
+        $uibModalInstance.dismiss('cancel');
+    }
+    $scope.DeleteAddress = function (address) {
+        option.method.DeleteAddress(address);
+    }
+
 })
 .controller('ReturnCtrl', ['$scope', '$rootScope', '$uibModal', 'Returned', function ($scope, $rootScope, $uibModal, Returned) {
     $rootScope.FatherPage = "订单管理"; $rootScope.FatherPath = "#/ReturnMenu"; $rootScope.ChildPage = "退菜管理";
@@ -387,7 +434,7 @@
         }
     });
     $scope.unpaidAll = function () { return Order.unpaidAll(); }
-    $scope.OpenModel = function (desk) {
+    $scope.OpenModel = function (desk, area) {
         var myDesk = {};
         myDesk = { Id: desk.Id, Name: desk.Name };
         if (desk.Status == 1) {
@@ -406,13 +453,41 @@
         }
     }
 }])
+.controller('PayAllCtrl', ['$scope', '$rootScope', '$uibModal', 'SpePay', function ($scope, $rootScope, $uibModal, SpePay) {
+    $rootScope.FatherPage = "订单控制"; $rootScope.ChildPage = "外卖结账";
+    $scope.Initialize = function () {
+        SpePay.Initialize();
+    }
+    $scope.Element = SpePay.Element;
+    $scope.getUnPaidDines = function () {
+        SpePay.getUnPaidDines();
+    }
+    $scope.ChooseDine = function (dine) {
+        SpePay.ChooseDine(dine);
+    }
+    $scope.RemoveDine = function (dine) {
+        SpePay.RemoveDine(dine);
+    }
+    $scope.ChooseAll = function () {
+        SpePay.ChooseAll();
+    }
+    $scope.Account = function () {
+        return SpePay.Account();
+    }
+    $scope.Pay = function () {
+        SpePay.Pay();
+    }
+    $scope.Detail = function () {
+        SpePay.Detail();
+    }
+}])
 .controller('NotFound', ['$scope', '$rootScope', function ($scope, $rootScope) {
     //未找到页面
     $rootScope.FatherPage = "页面错误"; $rootScope.FatherPath = "#/404"; $rootScope.ChildPage = "未找到页面";
 }])
 .controller('BaseCtrl', ['$scope', '$rootScope', '$http', '$window', 'WebSocketService', function ($scope, $rootScope, $http, $window, WebSocketService) {
     //基础控制器
-    $scope.initialize = function (id, rate, pu, a, b, c, d,e) {
+    $scope.initialize = function (id, rate, pu, a, b, c, d, e) {
         $rootScope.HotelId = id; $rootScope.Rate = rate; $rootScope.PayUnder = pu;
         $rootScope.IsStaffPay = a == 1 ? true : false; $rootScope.IsStaffReturn = b == 1 ? true : false; $rootScope.IsStaffEdit = c == 1 ? true : false;
         $rootScope.WebSocketUrl = d;
@@ -551,10 +626,14 @@
     }
 }])
 .controller('ModalAddMenuCtrl', function ($scope, $rootScope, $uibModalInstance, option) {
-    option.method.getElements();
-    option.method.OpenElements.CurrentDine = option.CurDine;
-    option.method.OpenElements.CurrentDiscount.Discount = option.CurDine.Discount
-    $scope.OpenElements = option.method.OpenElements;
+    $scope.Initialize = function () {
+        var promise  =   option.method.getElements();
+        promise.then(function (data) {
+            $scope.OpenElements = option.method.OpenElements;
+            $scope.OpenElements.CurrentDine = option.CurDine;
+            $scope.OpenElements.CurrentDiscount.Discount = option.CurDine.Discount * 100;
+        })
+    }
     $scope.NumChange = function () { option.method.NumChange(); }
     $scope.SelectChange = function (menu) {
         option.method.SelectChange(menu);

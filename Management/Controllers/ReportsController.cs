@@ -100,7 +100,7 @@ namespace Management.Controllers
                 .Where(m => m.Usable == true)
                 .ToListAsync();
             var OriDineMenus = await db.DineMenus
-                .Where(d => dines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift))
+                .Where(d => dines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift))
                 .ToListAsync();
             var OriMenuClasses = await db.MenuClasses
                 .Where(d => d.Usable == true)
@@ -349,7 +349,7 @@ namespace Management.Controllers
             {
                 if (Menus != null)
                 {
-                    Ymenus = await db.DineMenus.Where(d => Ydines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift) && Menus.Contains(d.MenuId))
+                    Ymenus = await db.DineMenus.Where(d => Ydines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift) && Menus.Contains(d.MenuId))
                    .GroupBy(d => d.MenuId)
                    .Select(g => g.Key)
                    .ToListAsync();//年内菜品
@@ -430,7 +430,7 @@ namespace Management.Controllers
                 {
                     var sales = new SalesData();
                     var MenusId = Management.Models.Method.GetMenuIdByFather(p, db);//根据大类找到菜品
-                    Ymenus = await db.DineMenus.Where(d => Ydines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift) && MenusId.Contains(d.MenuId))
+                    Ymenus = await db.DineMenus.Where(d => Ydines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift) && MenusId.Contains(d.MenuId))
                             .GroupBy(d => d.MenuId)
                             .Select(g => g.Key)
                             .ToListAsync();//年内某类菜品
@@ -452,7 +452,7 @@ namespace Management.Controllers
                         var dines = await db.Dines.Where(d => d.IsPaid == true && string.Compare(d.Id, curDate) >= 0 && string.Compare(d.Id, nextDate) <= 0)
                           .Select(d => d.Id)
                           .ToListAsync();
-                        var temp = await db.DineMenus.Where(d => dines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift) && Ymenus.Contains(d.MenuId)).ToListAsync();
+                        var temp = await db.DineMenus.Where(d => dines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift) && Ymenus.Contains(d.MenuId)).ToListAsync();
                         int Num = 0;
                         if (temp.Count() != 0)
                         {
@@ -490,7 +490,7 @@ namespace Management.Controllers
                 {
                     var sales = new SalesData();
                     var MenusId = Management.Models.Method.GetMenuIdByChild(p, db);//根据大类找到菜品
-                    Ymenus = await db.DineMenus.Where(d => Ydines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift) && MenusId.Contains(d.MenuId))
+                    Ymenus = await db.DineMenus.Where(d => Ydines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift) && MenusId.Contains(d.MenuId))
                             .GroupBy(d => d.MenuId)
                             .Select(g => g.Key)
                             .ToListAsync();//年内某类菜品
@@ -512,7 +512,7 @@ namespace Management.Controllers
                         var dines = await db.Dines.Where(d => d.IsPaid == true && string.Compare(d.Id, curDate) >= 0 && string.Compare(d.Id, nextDate) <= 0)
                           .Select(d => d.Id)
                           .ToListAsync();
-                        var temp = await db.DineMenus.Where(d => dines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift) && Ymenus.Contains(d.MenuId)).ToListAsync();
+                        var temp = await db.DineMenus.Where(d => dines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift) && Ymenus.Contains(d.MenuId)).ToListAsync();
                         int Num = 0;
                         if (temp.Count() != 0)
                         {
@@ -698,7 +698,7 @@ namespace Management.Controllers
                         for (var j = 0; j < days[MonthIndex]; j++)
                         {
                             string day = year + month + (j + 1).ToString().PadLeft(2, '0');
-                            int num = DineMenus.Where(d => d.DineId.Substring(0, 6) == day && d.MenuId == i && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift))
+                            int num = DineMenus.Where(d => d.DineId.Substring(0, 6) == day && d.MenuId == i && (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift))
                                 .GroupBy(g => g.MenuId)
                                 .Select(g => g.Sum(gg => gg.Count))
                                 .FirstOrDefault();
@@ -743,7 +743,7 @@ namespace Management.Controllers
                     for (var j = 0; j < days[MonthIndex]; j++)
                     {
                         string day = year + month + (j + 1).ToString().PadLeft(2, '0');
-                        int num = DineMenus.Where(d => d.DineId.Substring(0, 6) == day && MenusId.Contains(d.MenuId) && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift))
+                        int num = DineMenus.Where(d => d.DineId.Substring(0, 6) == day && MenusId.Contains(d.MenuId) && (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift))
                             .GroupBy(g => g.DineId.Substring(0, 6))
                             .Select(g => g.Sum(gg => gg.Count))
                             .FirstOrDefault();
@@ -785,7 +785,7 @@ namespace Management.Controllers
                     for (var j = 0; j < days[MonthIndex]; j++)
                     {
                         string day = year + month + (j + 1).ToString().PadLeft(2, '0');
-                        int num = db.DineMenus.Where(d => d.DineId.Substring(0, 6) == day && MenusId.Contains(d.MenuId) && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift))
+                        int num = db.DineMenus.Where(d => d.DineId.Substring(0, 6) == day && MenusId.Contains(d.MenuId) && (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift))
                             .GroupBy(g => g.DineId.Substring(0, 6))
                             .Select(g => g.Sum(gg => gg.Count))
                             .FirstOrDefault();
@@ -923,7 +923,7 @@ namespace Management.Controllers
                 }
             }
             Menus = Menus.GroupBy(m => m).Select(g => g.Key).ToList();
-            var datas = await db.DineMenus.Where(d => dines.Contains(d.DineId) && Menus.Contains(d.MenuId) && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift))
+            var datas = await db.DineMenus.Where(d => dines.Contains(d.DineId) && Menus.Contains(d.MenuId) && (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift))
                 .GroupBy(d => d.MenuId)
                 .Select(g => new
                 {
@@ -962,7 +962,7 @@ namespace Management.Controllers
             var OriDineMenus = await db.DineMenus
                  .Include(d => d.Dine)
                  .Include(d => d.Menu.Classes)
-                 .Where(d => (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift) && dines.Contains(d.DineId))
+                 .Where(d => (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift) && dines.Contains(d.DineId))
                  .ToListAsync();
             var menus = OriDineMenus
                 .Select(d => d.MenuId)
@@ -1125,7 +1125,7 @@ namespace Management.Controllers
                    .Select(d => d.Id)
                    .ToListAsync();//该段时间内的区域订单
             }
-            var OrderMenus = await db.DineMenus.Where(d => dines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Status == DineMenuStatus.Gift))
+            var OrderMenus = await db.DineMenus.Where(d => dines.Contains(d.DineId) && (d.Status == DineMenuStatus.Normal || d.Type == DineMenuType.Gift))
                 .ToListAsync();
             var Classes = await db.MenuClasses.Where(m => m.Usable == true).ToListAsync();
             var OriMenus = await db.Menus
@@ -1193,15 +1193,12 @@ namespace Management.Controllers
 
         public async Task<JsonResult> GetInvoice()
         {
-            var Invoices = await db.Dines.Where(d => d.IsInvoiced == true&&SqlFunctions.DateDiff("day",DateTime.Now,d.BeginTime)==0).Select(d => new
-            {
-                d.DeskId,
-                d.Id,
-                d.Price,
-                d.OriPrice,
-                d.Invoice,
-                d.BeginTime
-            }).OrderBy(d=>d.BeginTime).ToListAsync();
+            var Invoices = await db.Invoices
+                .Include(d => d.Dine)
+                .Where(d => d.Dine.IsInvoiced == true&&
+                (SqlFunctions.DateDiff("day", DateTime.Now, d.Dine.BeginTime) >= 0 )&&
+                (SqlFunctions.DateDiff("day", DateTime.Now, d.Dine.BeginTime) <= 0))
+                .ToListAsync();
             return Json(new SuccessState(Invoices));
         }
 
@@ -1224,17 +1221,13 @@ namespace Management.Controllers
             {
                 EndTime = Convert.ToDateTime(End);
             }
-            var Invoices = await db.Dines.Where(d => d.IsInvoiced == true &&
-            SqlFunctions.DateDiff("day", BeginTime, d.BeginTime) >= 0&&
-            SqlFunctions.DateDiff("day", EndTime, d.BeginTime) <= 0)
-            .Select(d => new{
-                d.DeskId,
-                d.Id,
-                d.Price,
-                d.OriPrice,
-                d.Invoice,
-                d.BeginTime
-            }).OrderBy(d => d.BeginTime).ToListAsync();
+            var Invoices =
+                await db.Invoices
+                .Include(d => d.Dine)
+                .Where(d => d.Dine.IsInvoiced == true &&
+                  SqlFunctions.DateDiff("day", BeginTime, d.Dine.BeginTime) >= 0 &&
+                  SqlFunctions.DateDiff("day", EndTime, d.Dine.BeginTime) <= 0)
+                .ToListAsync();
             return Json(new SuccessState(Invoices));
 
         }

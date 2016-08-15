@@ -7,6 +7,11 @@
             ServiceDepartment: {},
             ReciptDepartment: {},
             newArea: {},
+            Types: [
+                { Name: '堂吃区域', Value: 0 },
+                { Name: '外卖区域', Value: 1 }
+            ],
+            CurrentType:0,
             isAjax: false
         },
         intialize: function () {
@@ -38,13 +43,14 @@
             this.AreaElement.isAjax = true;
             var _this = this;
             var deferred = $q.defer();
-            $http.post('../Baseinfo/AddArea', { area: _this.AreaElement.newArea }).success(function (data) {
+            $http.post('../Baseinfo/AddArea', { area: _this.AreaElement.newArea, Type:_this.AreaElement.CurrentType}).success(function (data) {
                 _this.AreaElement.isAjax = false;
                 if (data.Status) {
                     _this.AreaElement.newArea.DepartmentServeId = _this.AreaElement.ServiceDepartment.Id;
                     _this.AreaElement.newArea.DepartmentReciptId = _this.AreaElement.ReciptDepartment.Id;
                     _this.AreaElement.newArea.ReciptDepartment = _this.AreaElement.ReciptDepartment.Name;
                     _this.AreaElement.newArea.ServiceDepartment = _this.AreaElement.ServiceDepartment.Name;
+                    _this.AreaElement.newArea.Type = _this.AreaElement.CurrentType;
                     _this.AreaElement.Areas.push(_this.AreaElement.newArea);
                     _this.AreaElement.newArea = {};
                 } else {
@@ -90,7 +96,11 @@
             var _this = this;
             var deferred = $q.defer();
             this.AreaElement.isAjax = true;
-            $http.post('../Baseinfo/EditArea', { Area: area, OriginAreaId: OriId }).success(function (data) {
+            $http.post('../Baseinfo/EditArea', {
+                Area: area
+                , OriginAreaId: OriId
+                ,Type:_this.AreaElement.CurrentType
+            }).success(function (data) {
                 _this.AreaElement.isAjax = false;
                 deferred.resolve(data);
             }).error(function (data) {
@@ -931,6 +941,14 @@
                 }
             });
         },
+        AltShow: function (menu) {
+            menu.IsShow = !menu.IsShow;
+            $http.post('../Baseinfo/AltShow', {
+                Id: menu.Id
+            }).then(function (response) {
+
+            });
+        },
         AddClass: function (level, ParentId) {
             var _this = this;
             var deferred = $q.defer();
@@ -1179,10 +1197,13 @@
                 ServeOrderSmallFontSize:0,
                 ShiftBigFontSize:0,
                 ShiftFontSize:0,
-                ShiftSmallFontSize:0
+                ShiftSmallFontSize: 0,
+                PaddingRight:0
             },
             UsePrint: true,
-            IsPayFirst:true,
+            IsPayFirst: true,
+            NeedRandomPreference: true,
+            IsPrintReciptAfterPayingOffline:true,
             Rate:0
         },
         Initialize: function () {
@@ -1195,6 +1216,8 @@
                 })
                 if (data.font) _this.PrintElement.OldFormat = data.font;
                 _this.PrintElement.IsPayFirst = data.IsPayFirst;
+                _this.PrintElement.NeedRandomPreference = data.NeedRandomPreference;
+                _this.PrintElement.IsPrintReciptAfterPayingOffline = data.IsPrintReciptAfterPayingOffline;
                 if (data.font) {
                     _this.PrintElement.CurrentFont = { Name: data.font.Font };
                     _this.PrintElement.CurrentFormat = {
@@ -1208,7 +1231,9 @@
                         ServeOrderSmallFontSize: data.font.ServeOrderSmallFontSize,
                         ShiftBigFontSize: data.font.ShiftBigFontSize,
                         ShiftFontSize: data.font.ShiftFontSize,
-                        ShiftSmallFontSize: data.font.ShiftSmallFontSize
+                        ShiftSmallFontSize: data.font.ShiftSmallFontSize,
+                        ColorDepth: data.font.ColorDepth,
+                        PaddingRight: data.font.PaddingRight
                     }
                 }
                 if (data.Style == "default.css") {
@@ -1229,7 +1254,9 @@
                 IsUsePrint: _this.PrintElement.UsePrint,
                 ShiftPrintId: _this.PrintElement.CurrentPrinter.Id,
                 IsPayFirst: _this.PrintElement.IsPayFirst,
-                Style:_this.PrintElement.CurrentStyle.Id
+                Style: _this.PrintElement.CurrentStyle.Id,
+                NeedRandomPreference: _this.PrintElement.NeedRandomPreference,
+                IsPrintReciptAfterPayingOffline:_this.PrintElement.IsPrintReciptAfterPayingOffline
             }).success(function (data) {
                 $rootScope.IsPayFirst = _this.PrintElement.IsPayFirst;
                 alert("保存成功");

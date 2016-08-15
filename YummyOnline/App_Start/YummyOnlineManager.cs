@@ -249,5 +249,18 @@ namespace YummyOnline {
 			}).ToListAsync();
 		}
 		#endregion
+
+		public async Task<dynamic> GetArticles(int hotelId) {
+			return await ctx.Articles.Where(p => p.HotelId == hotelId).Select(p => new {
+				p.Id,
+				p.Title,
+				p.Description,
+				p.PicturePath,
+				p.Body,
+				p.DateTime,
+				p.Status
+			}).ToListAsync();
+		}
+
 	}
 }

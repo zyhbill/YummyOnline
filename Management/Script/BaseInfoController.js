@@ -61,6 +61,9 @@ angular.module('Baseinfo', [])
     var temp = angular.copy(option.CurArea);
     var originAreaId = $scope.CurrentArea.Id;
     $scope.AreaElement = option.method.AreaElement;
+    $scope.AreaElement.Types.forEach(function (x) {
+        if (x.Value == $scope.CurrentArea.Type) $scope.AreaElement.CurrentType = x.Value;
+    })
     $scope.SelectServiceChange = function () { option.method.SelectServiceChange($scope.CurrentArea) };
     $scope.SelectReciptChange = function () { option.method.SelectReciptChange($scope.CurrentArea) };
     $scope.EditArea = function () {
@@ -68,6 +71,7 @@ angular.module('Baseinfo', [])
         promise.then(
             function (data) {
                 $scope.AreaElement.isAjax = false;
+                $scope.CurrentArea.Type = $scope.AreaElement.CurrentType;
                 $uibModalInstance.dismiss('cancel');
             },
             function (data) {
@@ -84,6 +88,7 @@ angular.module('Baseinfo', [])
 .controller('ModalAreaAddCtrl', function ($scope, $rootScope, $uibModalInstance, $q, $timeout, option) {
     option.method.AreaElement.ServiceDepartment = {};
     option.method.AreaElement.ReciptDepartment = {};
+    option.method.AreaElement.CurrentType = 0;
     $scope.AreaElement = option.method.AreaElement;
     $scope.SelectServiceChange = function () { option.method.SelectServiceChange($scope.AreaElement.newArea) };
     $scope.SelectReciptChange = function () { option.method.SelectReciptChange($scope.AreaElement.newArea) };
@@ -329,6 +334,8 @@ angular.module('Baseinfo', [])
     $scope.GetPath = function () {
         return option.method.WatchPath();
     }
+    $scope.Minus = function () { option.method.Minus(); }
+    $scope.Plus = function () { option.method.Plus(); }
     $scope.AddMenu = function () {
         var promise = option.method.AddMenu();
         promise.then(function (data) {
@@ -763,6 +770,9 @@ angular.module('Baseinfo', [])
         }, function (data) {
             console.log(data);
         })
+    }
+    $scope.AltShow = function (menu) {
+        MenuClass.AltShow(menu);
     }
     $scope.AddBigClass = function (level) {
         MenuClass.AddBigClass(level);

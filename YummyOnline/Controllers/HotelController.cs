@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using Utility;
 using YummyOnline.Utility;
 using YummyOnlineDAO.Models;
 
@@ -18,6 +19,9 @@ namespace YummyOnline.Controllers {
 			return View();
 		}
 		public ActionResult _ViewDine() {
+			return View();
+		}
+		public ActionResult _ViewArticle() {
 			return View();
 		}
 
@@ -39,6 +43,7 @@ namespace YummyOnline.Controllers {
 					p.ConnectionString,
 					p.AdminConnectionString,
 					p.CssThemePath,
+					p.OrderSystemStyle,
 					p.CreateDate,
 					p.Tel,
 					p.Address,
@@ -52,6 +57,7 @@ namespace YummyOnline.Controllers {
 				p.Name,
 				p.ConnectionString,
 				p.CssThemePath,
+				p.OrderSystemStyle,
 				p.CreateDate,
 				p.Tel,
 				p.Address,
@@ -110,6 +116,32 @@ namespace YummyOnline.Controllers {
 			}
 
 			return Json(dines);
+		}
+
+		[Authorize(Roles = nameof(Role.SuperAdmin))]
+		public async Task<JsonResult> WeixinNotify(int hotelId, string dineId) {
+			NetworkNotifyViewModels model = new NetworkNotifyViewModels {
+				HotelId = hotelId,
+				DineId = dineId,
+				RecordId = $"SystemTestNotify{DateTime.Now.ToString("yyyyMMddHHmmssffff")}"
+			};
+			string notifyInfo = Newtonsoft.Json.JsonConvert.SerializeObject(model);
+			string encryptedInfo = DesCryptography.DesEncrypt(notifyInfo);
+
+			string url = (await YummyOnlineManager.GetSystemConfig()).OrderSystemUrl;
+			string result = await HttpPost.PostAsync($"{url}/Payment/OnlineNotify", new {
+				EncryptedInfo = encryptedInfo
+			});
+
+			if(result == null) {
+				return Json(new JsonError());
+			}
+
+			return Json(new JsonSuccess());
+		}
+
+		public async Task<JsonResult> GetArticles(int hotelId) {
+			return Json(await YummyOnlineManager.GetArticles(hotelId));
 		}
 	}
 }

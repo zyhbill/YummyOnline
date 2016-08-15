@@ -1,7 +1,6 @@
 ﻿@{
     Layout = null;
 }
-
 <link href="../Content/css/style.css" rel="stylesheet" />
 <div class="row">
     <div class="col-xm-12">
@@ -15,17 +14,18 @@
                 </li>
             </ul>
             <div class="tab-content">
-                <div  id="Home" class="tab-pane in active">
+                <div id="Home" class="tab-pane in active">
                     <div class="desk" ng-repeat="desk in SysElements.Desks|filter:{Status:1}" ng-click="OpenModel(desk)">
                         <h4 ng-if="desk.Status"><img src="~/Content/images/eating.png" class="img-responsive"></h4>
-                        <p ng-if="desk.Status" class="text-danger text-center">{{desk.Id}}</p>
+                        <p ng-if="desk.Status" class="text-danger text-center">
+                            {{desk.Id}}
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div><!--ROW END-->
-
 
 <script type="text/ng-template" id="ModalPay.html">
     <div class="modal-header" ng-init="initialize()">
@@ -103,7 +103,7 @@
                                 <td class="text-right">{{(menu.Price*menu.Count).toFixed(2)}}</td>
                                 <td><span class="label label-success arrowed" ng-repeat="remark in menu.Remarks">{{remark.Name}}</span>&nbsp;</td>
                             </tr>
-                            <tr ng-repeat="menu in PayElements.CurrentDine.DineMenus|filter:{Status:2}">
+                            <tr ng-repeat="menu in PayElements.CurrentDine.DineMenus|filter:{Type:8}">
                                 <td><span class="red">送</span> {{menu.Menu.Name}}</td>
                                 <td class="text-right">{{menu.Count}}</td>
                                 <td class="text-right">{{(menu.OriPrice*menu.Count).toFixed(2)}}</td>

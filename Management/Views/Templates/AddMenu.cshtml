@@ -51,9 +51,9 @@
     </div><!--col over-->
 </div><!--row over-->
 <script type="text/ng-template" id="ModalOpen.html">
-    <div class="modal-header">
+    <div class="modal-header" ng-init="Initialize()">
         <h3 class="modal-title">
-            <div class=" form-inline" ng-init="initialize()">
+            <div class="form-inline">
                 加菜
                 <div class="form-group openDesk">
                     <label>订单号:{{OpenElements.CurrentDine.Id}}</label>
@@ -79,7 +79,7 @@
                         <uib-tab index="0" heading="所有" ng-click="ChooseAll()">
                             <div class="MenuColumn clearfix MaxLength">
                                 <div class="MenuList" ng-repeat="menu in OpenElements.OriMenus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)"  ng-dblclick="AddSingle(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}">
-                                    <div class="text-center bigfont">{{menu.Name}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
+                                    <div class="text-center bigfont">{{menu.NameAbbr}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
                                 </div>
                                 <div class="clean"></div>
                             </div>
@@ -87,7 +87,7 @@
                         <uib-tab ng-repeat="class in OpenElements.Classes" index="{{$index + 1}}" heading="{{class.Name}}" ng-click="MenuFilter(class.Id)">
                             <div class="MenuColumn clearfix MaxLength">
                                 <div class="MenuList" ng-repeat="menu in OpenElements.Menus|filter:{$:OpenElements.CurrentFilter}" ng-click="SelectChange(menu)" ng-class="{MenuOrdered:menu.Class,CurrentClick:menu.Click}" ng-dblclick="AddSingle(menu)">
-                                    <div class="text-center bigfont">{{menu.Name}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
+                                    <div class="text-center bigfont">{{menu.NameAbbr}}<span class="MenuPrice red">{{menu.MenuPrice.Price|currency:'￥'}}</span></div>
                                 </div>
                                 <div class="clean"></div>
                             </div>
@@ -124,7 +124,7 @@
                                     <td><span class="label label-success arrowed" ng-repeat="remark in oldmenu.Remarks">{{remark.Name}}</span>&nbsp;</td>
                                     <td>原有</td>
                                 </tr>
-                                <tr ng-repeat="oldmenu in OpenElements.CurrentDine.DineMenus|filter:{Status:2}">
+                                <tr ng-repeat="oldmenu in OpenElements.CurrentDine.DineMenus|filter:{Type:8}">
                                     <td>{{oldmenu.Menu.Name}}</td>
                                     <td class="text-right">{{oldmenu.Count}}</td>
                                     <td class="text-right">{{(oldmenu.OriPrice * oldmenu.Count).toFixed(2)}}</td>
@@ -183,7 +183,6 @@
                             </tbody>
                         </table>
                     </div><!-- /.table-responsive -->
-                   
                     <div class="col-xs-12">
                         <h2 class="text-danger">新增金额:{{account()}}</h2>
                     </div>

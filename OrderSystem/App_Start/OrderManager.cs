@@ -26,7 +26,7 @@ namespace OrderSystem {
 			if(mainPaidDetail.PayKind == null) {
 				return new FunctionResult(false, "未找到该支付方式", $"No PayKind {cart.PayKindId}");
 			}
-			if(!mainPaidDetail.PayKind.Usable) {
+			if(addition.From == DineFrom.CustomerBrowser && !mainPaidDetail.PayKind.Usable) {
 				return new FunctionResult(false, $"{mainPaidDetail.PayKind.Name}不可用", $"PayKind Disabled {mainPaidDetail.PayKind.Id}");
 			}
 
@@ -51,7 +51,10 @@ namespace OrderSystem {
 
 				DineMenus = new List<DineMenu>(),
 				Remarks = new List<Remark>(),
-				DinePaidDetails = new List<DinePaidDetail>()
+				DinePaidDetails = new List<DinePaidDetail>(),
+
+				BeginTime = addition.BeginTime ?? DateTime.Now,
+				From = addition.From
 			};
 
 			// 订单备注
@@ -110,14 +113,27 @@ namespace OrderSystem {
 				}
 			}
 
+			// 随机立减
+			if(mainPaidDetail.PayKind.Type == PayKindType.Online) {
+				HotelConfig hotelConfig = await ctx.HotelConfigs.FirstOrDefaultAsync();
+				// 如果饭店支持随机立减
+				if(hotelConfig.NeedRandomPreference) {
+					await handleRandomPreference(hotelConfig.Id, dine, mainPaidDetail);
+				}
+			}
+
 			// 如果是线上支付，则添加DinePaidDetail信息，否则不添加，交给收银系统处理
 			if(mainPaidDetail.PayKind.Type == PayKindType.Online) {
 				dine.DinePaidDetails.Add(mainPaidDetail);
 			}
 
+
 			// 订单发票
 			if(cart.Invoice != null) {
-				dine.Invoice = cart.Invoice;
+				dine.Invoices.Add(new Invoice {
+					Price = dine.Price,
+					Title = cart.Invoice
+				});
 			}
 
 			ctx.Dines.Add(dine);
@@ -236,7 +252,7 @@ namespace OrderSystem {
 
 					Menu = menu,
 					Remarks = new List<Remark>(),
-					Status = menuExtensionWithGift.IsGift ? DineMenuStatus.Gift : DineMenuStatus.Normal
+					Type = menuExtensionWithGift.IsGift ? DineMenuType.Gift : DineMenuType.None
 				};
 
 				if(!menuExtensionWithGift.IsGift) {
@@ -369,6 +385,39 @@ namespace OrderSystem {
 			return new FunctionResult();
 		}
 
+		/// <summary>
+		/// 随机立减处理
+		/// </summary>
+		/// <returns></returns>
+		private async Task handleRandomPreference(int hotelId, Dine dine, DinePaidDetail mainPaidDetail) {
+			PayKind randomPreferencePayKind = await ctx.PayKinds.FirstOrDefaultAsync(p => p.Type == PayKindType.RandomPreference && p.Usable == true);
+			if(randomPreferencePayKind != null) {
+				int top = (int)Math.Ceiling(mainPaidDetail.Price / 50);
+
+				Random random = new Random(DateTime.Now.Millisecond);
+				decimal randomPrice = (decimal)random.NextDouble();
+				randomPrice *= top;
+				randomPrice = Math.Floor(randomPrice * 10) / 10;
+
+				//if(randomPrice == 0) {
+				//	randomPrice = 0.1m;
+				//}
+
+				// 如果随机立减超过应付金额则全额支付
+				if(randomPrice > mainPaidDetail.Price) {
+					randomPrice = mainPaidDetail.Price;
+				}
+				
+				if(randomPrice != 0) {
+					dine.DinePaidDetails.Add(new DinePaidDetail {
+						PayKind = randomPreferencePayKind,
+						Price = randomPrice
+					});
+					mainPaidDetail.Price -= randomPrice;
+				}
+			}
+		}
+
 		public async Task OfflinePayCompleted(string dineId) {
 			Dine dine = await ctx.Dines.FirstOrDefaultAsync(p => p.Id == dineId);
 			dine.IsPaid = true;
@@ -418,7 +467,14 @@ namespace OrderSystem {
 			await ctx.SaveChangesAsync();
 		}
 		private async Task changeCustomerPoints(Dine dine) {
-			DinePaidDetail pointsPaidDetail = await ctx.DinePaidDetails.FirstOrDefaultAsync(p => p.Dine.Id == dine.Id && p.PayKind.Type == PayKindType.Points);
+			// 用户总平台消费金额
+			var yummyonlineCtx = new YummyOnlineContext();
+			User user = await yummyonlineCtx.Users.FirstOrDefaultAsync(p => p.Id == dine.UserId);
+			if(user == null) {
+				return;
+			}
+			user.Price += dine.Price;
+			await yummyonlineCtx.SaveChangesAsync();
 
 			Customer customer = await ctx.Customers.FirstOrDefaultAsync(p => p.Id == dine.UserId);
 			// 如果用户不存在或者是匿名用户
@@ -426,6 +482,7 @@ namespace OrderSystem {
 				return;
 			}
 			// 如果使用的积分支付
+			DinePaidDetail pointsPaidDetail = await ctx.DinePaidDetails.FirstOrDefaultAsync(p => p.Dine.Id == dine.Id && p.PayKind.Type == PayKindType.Points);
 			if(pointsPaidDetail != null) {
 				HotelConfig config = await ctx.HotelConfigs.FirstOrDefaultAsync();
 				customer.Points -= Convert.ToInt32((double)pointsPaidDetail.Price / config.PointsRatio);

@@ -23,5 +23,7 @@ namespace YummyOnlineDAO.Models {
 		public DbSet<MenuGather> MenuGathers { get; set; }
 		public DbSet<Nutrition> Nutritions { get; set; }
 		public DbSet<Flavor> Flavors { get; set; }
-	}
+        public DbSet<Article> Articles { get; set; }
+
+    }
 }

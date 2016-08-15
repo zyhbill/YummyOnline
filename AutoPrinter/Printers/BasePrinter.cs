@@ -1,14 +1,39 @@
-﻿using System;
-using System.Net;
+﻿using Protocol.PrintingProtocol;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Printing;
 
 namespace AutoPrinter {
 	public abstract class BasePrinter {
-		public BasePrinter(Action<IPEndPoint, Exception> errorDelegate) {
-			this.errorDelegate = errorDelegate;
+		public static List<string> GetPritners() {
+			List<string> printers = new List<string>();
+			foreach(string printer in PrinterSettings.InstalledPrinters) {
+				printers.Add(printer);
+			}
+			return printers;
 		}
-		protected Action<IPEndPoint, Exception> errorDelegate;
 
+		/// <summary>
+		/// 处理直接网络打印字体大小
+		/// </summary>
+		protected void handleIPPrinterFormat(PrinterFormat format) {
+			format.PaperSize *= 2;
+
+			format.ReciptBigFontSize = format.ReciptBigFontSize * 2 + 1;
+			format.ReciptFontSize = format.ReciptFontSize * 2 + 1;
+			format.ReciptSmallFontSize = format.ReciptSmallFontSize * 2 + 1;
+
+			format.KitchenOrderFontSize = format.KitchenOrderFontSize * 2 + 1;
+			format.KitchenOrderSmallFontSize = format.KitchenOrderSmallFontSize * 2 + 1;
+
+			format.ServeOrderFontSize = format.ServeOrderFontSize * 2 + 1;
+			format.ServeOrderSmallFontSize = format.ServeOrderSmallFontSize * 2 + 1;
+
+			format.ShiftBigFontSize = format.ShiftBigFontSize * 2 + 1;
+			format.ShiftFontSize = format.ShiftFontSize * 2 + 1;
+			format.ShiftSmallFontSize = format.ShiftSmallFontSize * 2 + 1;
+		}
+		protected int maxHeight = 2000;
 		/// <summary>
 		/// 裁剪bmp至高度
 		/// </summary>
@@ -40,8 +65,8 @@ namespace AutoPrinter {
 				fontSize,
 				new StringAlignment[] { StringAlignment.Near, StringAlignment.Center });
 		}
-		protected void printGrid5122(PrinterGraphics printer, string[] texts, float fontSize) {
-			printer.DrawGrid(new float[] { 0.5f, 0.1f, 0.2f, 0.2f },
+		protected void printGridRecipt(PrinterGraphics printer, string[] texts, float fontSize) {
+			printer.DrawGrid(new float[] { 0.38f, 0.16f, 0.2f, 0.26f },
 				texts,
 				fontSize,
 				new StringAlignment[] { StringAlignment.Near, StringAlignment.Near, StringAlignment.Far, StringAlignment.Far });
@@ -60,7 +85,7 @@ namespace AutoPrinter {
 		protected void printEnd(PrinterGraphics printer) {
 			printer.TrimY(10);
 			printer.DrawStringLineLoop("*", 8);
-			printer.TrimY(10);
+			printer.TrimY(100);
 		}
 	}
 }

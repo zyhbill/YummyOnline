@@ -8,11 +8,11 @@
             Phone: "",
             PassWord: ""
         },
-        KeyInfo:{
+        KeyInfo: {
             Time: 60,
             Key: null,
             IsReget: true,
-            IsFirst:true
+            IsFirst: true
         },
         GetCookies: function () {
             //获取cookies
@@ -47,7 +47,7 @@
             });
             return deferred.promise;   // 返回承诺，这里返回的不是数据，而是API
         },
-        GetKey: function(){
+        GetKey: function () {
             var _this = this;
             $http.post('../Login/GetKey', {
                 Phone: _this.Hotel.Phone
@@ -77,8 +77,8 @@
             $http.post('../Login/Register', {
                 Name: _this.Hotel.Name,
                 Phone: _this.Hotel.Phone,
-                Password:_this.Hotel.PassWord,
-                Key:_this.KeyInfo.Key
+                Password: _this.Hotel.PassWord,
+                Key: _this.KeyInfo.Key
             }).success(function (data) {
                 deferred.resolve(data);
             }).error(function (data) {
@@ -128,7 +128,7 @@
             Desk: {},
             PayMethods: [],
             UnpaidDines: [],
-            Discounts: [{ Name: "自定义", Discount: 1, IsSet: true }],
+            Discounts: [{ Name: "自定义", Discount: 1, IsSet: true,Type:0 }],
             OnSaleMenus: [],
             CurrentUser: {},
             CurrentDiscount: {},
@@ -146,12 +146,13 @@
             var deferred = $q.defer();
             $http.post('../Templates/getPay').success(function (data) {
                 _this.PayElements.UnpaidDines = data.Dines;
-                _this.PayElements.Discounts = [{ Name: "自定义", Discount: 1, IsSet: true }];
+                _this.PayElements.Discounts = [{ Name: "自定义", Discount: 1, IsSet: true ,Type:0}];
                 for (var i = 0; i < _this.PayElements.UnpaidDines.length; i++) {
                     _this.PayElements.UnpaidDines[i].Discount *= 100;
                 }
                 _this.PayElements.PayMethods = data.Pays;
                 for (var i = 0; i < data.Discounts.length; i++) {
+                    data.Discounts[i].Type = 1;
                     if (data.Discounts[i].Week == date.getDay()) _this.PayElements.Discounts.push(data.Discounts[i]);
                 }
                 for (var i = 0; i < _this.PayElements.Discounts.length; i++) {
@@ -254,11 +255,13 @@
         },
         reCalc: function () {
             //重新计算价钱
-            if (this.PayElements.CurrentDiscount.Discount > 0 && this.PayElements.CurrentDiscount.Discount < 100) {
+            this.PayElements.CurrentDine.DType = this.PayElements.CurrentDiscount.Type;
+            if (this.PayElements.CurrentDiscount.Discount >= 0 && this.PayElements.CurrentDiscount.Discount <= 100) {
                 this.PayElements.CurrentDine.DiscountName = this.PayElements.CurrentDiscount.Name;
                 this.PayElements.CurrentDine.Discount = this.PayElements.CurrentDiscount.Discount;
-            } else {
-                this.PayElements.CurrentDiscount.Discount = 100
+            }
+            else {
+                this.PayElements.CurrentDine.Discount = 100;
             }
             this.CalcPrice();
         },
@@ -268,6 +271,7 @@
                 if (this.PayElements.CurrentDine.Id == '当前桌台没有点单') {//当前是空单，默认是找到
                     this.PayElements.CurrentDine = $filter('filter')(this.PayElements.UnpaidDines, { DeskId: this.PayElements.Desk.Id })[0];
                     this.PayElements.CurrentDine.isChoose = true;
+                    this.PayElements.CurrentDiscount.Discount = this.PayElements.CurrentDine.Discount;
                     this.PayElements.CurrentUser.Id = this.PayElements.CurrentDine.UserId;
                     this.Login();
                 } else if (this.PayElements.CurrentDine.DeskId != this.PayElements.Desk.Id) {//换桌之后默认自动匹配
@@ -282,6 +286,7 @@
         },
         getUser: function () {
             //获取登录用户
+            this.PayElements.CurrentUser.IsLogin = false;
             if (this.PayElements.CurrentUser.Id == null) {
                 this.PayElements.CurrentUser.Id = '匿名用户';
             }
@@ -306,6 +311,7 @@
             else if (kind.Type != 4) {
                 var nowPrice = this.PayElements.PayMethods.filter(function (x) { return x.Number }).map(function (x) { return x.Number }).reduce(function (a, b) { return +a + +b; }, 0);
                 var cash = this.PayElements.PayMethods.filter(function (x) { return x.Type == 4 }).map(function (x) { return x.Number }).reduce(function (a, b) { return +a + +b; }, 0);
+                if (!cash) cash = 0;
                 nowPrice -= kind.Number;
                 nowPrice -= cash;
                 var UnpaidPrice = this.PriceAll() - nowPrice;//出现金外未支付的金额
@@ -379,8 +385,12 @@
             var deferred = $q.defer();
             var _this = this;
             var PayList = _this.PayElements.PayMethods.filter(function (x) { return x.Number }).map(function (x) { return { Id: x.Id, Type: x.Type, Number: x.Number } });
-            var DineInfo = { Id: _this.PayElements.CurrentDine.Id, Discount: _this.PayElements.CurrentDine.Discount, DiscountName: _this.PayElements.CurrentDine.DiscountName };
-            $http.post('../Templates/PayDine', { PayList: PayList, Dine: DineInfo, UserId: _this.PayElements.CurrentUser.Id }).success(function (data) {
+            var DineInfo = { Id: _this.PayElements.CurrentDine.Id, Discount: _this.PayElements.CurrentDine.Discount, DiscountName: _this.PayElements.CurrentDine.DiscountName, Type: _this.PayElements.CurrentDine.DType };
+            $http.post('../Templates/PayDine', {
+                PayList: PayList,
+                Dine: DineInfo,
+                UserId: _this.PayElements.CurrentUser.Id
+            }).success(function (data) {
                 if (data.Status) {
                     _this.PayElements.UnpaidDines = data.Dines;
                     for (var i = 0; i < _this.PayElements.UnpaidDines.length; i++) {
@@ -417,6 +427,7 @@
                 if (data.Status) {
                     _this.PayElements.CurrentUser = data.data;
                     _this.PayElements.CurrentUser.IsLogin = true;
+                    _this.PayElements.CurrentUser.VipLevel.VipDiscount.Type = 2;
                     if (_this.PayElements.CurrentUser.VipLevel) _this.PayElements.Discounts.push(_this.PayElements.CurrentUser.VipLevel.VipDiscount);
                     if (_this.PayElements.Discounts.length > temp) {
                         _this.PayElements.CurrentDiscount = _this.PayElements.Discounts[_this.PayElements.Discounts.length - 1];
@@ -457,10 +468,10 @@
         },
         Recipt: function () {
             var _this = this;
-            $http.post('../Templates/RePrint',{
-                DineId:_this.PayElements.CurrentDine.Id,
-                Type:0
-            } ).success(function (data) {
+            $http.post('../Templates/RePrint', {
+                DineId: _this.PayElements.CurrentDine.Id,
+                Type: 0
+            }).success(function (data) {
                 $.gritter.add({
                     title: '提醒',
                     text: '收银已打印！',
@@ -474,10 +485,10 @@
         },
         Kitchen: function () {
             var _this = this;
-            $http.post('../Templates/RePrint',{
-                DineId:_this.PayElements.CurrentDine.Id,
-                Type:0
-            } ).success(function (data) {
+            $http.post('../Templates/RePrint', {
+                DineId: _this.PayElements.CurrentDine.Id,
+                Type: 0
+            }).success(function (data) {
                 $.gritter.add({
                     title: '提醒',
                     text: '厨房已打印！',
@@ -499,7 +510,7 @@
             Menus: [],
             CurrentDine: {},
             OrderMenus: [],
-            FilterDesk:""
+            FilterDesk: ""
         },
         Initialize: function () {
             var _this = this;
@@ -514,14 +525,103 @@
     }
     return service;
 }])
+.factory('SpePay', ['$http', '$q', '$filter', '$rootScope', function ($http, $q, $filter, $rootScope) {
+    var service = {
+        Element: {
+            TakeOutDeskes: [],
+            UnPaidDines: [],
+            CurrentDesk: {},
+            ChooseDines:[],
+            UnChooseDines: [],
+            SearchDines: [],
+            PayKinds: [],
+            CurrentPay:{},
+            Cash:"",
+        },
+        Initialize: function () {
+            var _this = this;
+            this.Element.CurrentDesk = {};
+            _this.Element.ChooseDines = [];
+            _this.Element.UnChooseDines = [];
+            _this.Element.SearchDines = [];
+            this.Element.CurrentPay = {};
+            _this.Element.Cash = "";
+            $http.post('../Templates/getSpePayEle').then(function (response) {
+                _this.Element.TakeOutDeskes = response.data.Data.Desks;
+                _this.Element.PayKinds = response.data.Data.PayKinds;
+                _this.Element.UnPaidDines = response.data.Data.Dines;
+                _this.Element.CurrentPay = _this.Element.PayKinds[0];
+            });
+        },
+        getUnPaidDines: function () {
+            var _this = this;
+            this.Element.UnChooseDines = this.Element.UnPaidDines.filter(function (x) { return x.DeskId == _this.Element.CurrentDesk.Id });
+            _this.Element.SearchDines = [];
+        },
+        ChooseDine: function (dine) {
+            var _this = this;
+            this.Element.ChooseDines.push(angular.copy(dine));
+            this.Element.UnChooseDines.forEach(function (x,index) {
+                if (x.Id == dine.Id) _this.Element.UnChooseDines.splice(index, 1);
+            })
+        },
+        RemoveDine: function (dine) {
+            var _this = this;
+            this.Element.UnChooseDines.push(angular.copy(dine));
+            this.Element.ChooseDines.forEach(function (x, index) {
+                if (x.Id == dine.Id) _this.Element.ChooseDines.splice(index, 1);
+            })
+        },
+        ChooseAll: function () {
+            var _this = this;
+            this.Element.UnChooseDines.forEach(function (x) {
+                _this.Element.ChooseDines.push(angular.copy(x));
+            })
+            this.Element.UnChooseDines = [];
+        },
+        Pay: function () {
+            var _this = this;
+            var DineIds  = this.Element.ChooseDines.map(function(x){return x.Id});
+            $http.post('../Templates/SpecialPay', {
+                Price: _this.Element.Cash,
+                DineIds: DineIds,
+                Id:_this.Element.CurrentPay.Id
+            }).then(function (response) {
+                if (response.data.Status) {
+                    swal("支付已完成!", "原价:" + $filter('currency')(_this.Account(), "￥", 0.00) +
+                     ",已付:" + $filter('currency')(_this.Element.Cash, "￥", 0.00) +
+                     ",找零:" + $filter('currency')(_this.Element.Cash - _this.Account(), "￥", 0.00), "success")
+                    _this.Element.TakeOutDeskes = response.data.Data.Desks;
+                    _this.Element.UnPaidDines = response.data.Data.Dines;
+                    _this.Element.CurrentDesk = {};
+                    _this.Element.ChooseDines = [];
+                    _this.Element.UnChooseDines = [];
+                    _this.Element.SearchDines = [];
+                    _this.Element.CurrentPay = _this.Element.PayKinds[0];
+                    _this.Element.Cash = "";
+                }
+                else {
+                    alert(response.data.ErrorMessage);
+                }
+            });
+        },
+        Account: function () {
+            return this.Element.ChooseDines.map(function (x) { return x.Price }).reduce(function (a, b) { return +a + +b }, 0);
+        },
+        Detail: function () {
+            this.Element.SearchDines = angular.copy(this.Element.ChooseDines);
+        }
+    }
+    return service;
+}])
 .factory('Open', ['$http', '$q', '$filter', '$rootScope', '$cookies', function ($http, $q, $filter, $rootScope, $cookies) {
     var temp = 0;
     var service = {
         OpenElements: {
-            Type: $cookies.get('Type')||0,
+            Type: $cookies.get('Type') || 0,
             Discounts: [{ Name: "自定义", Discount: 1, IsSet: true }],
             Classes: [],
-            OriMenus:[],
+            OriMenus: [],
             Menus: [],
             CurrentUser: { Number: 1 },
             CurrentDesk: {},
@@ -529,14 +629,22 @@
             OrderMenus: [],
             CurrentMenu: {},
             CurrentMenuRemarks: [],
-            CurrentDine:{},
+            CurrentDine: {},
             FilterInfo: "",
             CurrentFilter: "",
             allchoose: true,
-            CurrentNum:0,
-            isAjax:false
+            CurrentNum: 0,
+            ShiftNum:0,
+            isAjax: false
         },
-        tempRemarks:[],
+        tempRemarks: [],
+        ReserveInfo: {
+            Phone: "",
+            Address: "",
+            User: {},
+            NewAddress: "",
+            IsChoose: false
+        },
         getElements: function () {
             var _this = this;
             var date = new Date();
@@ -610,7 +718,7 @@
             if (this.OpenElements.CurrentMenu.Num < this.OpenElements.CurrentMenu.MinOrderCount) this.OpenElements.CurrentMenu.Num = this.OpenElements.CurrentMenu.MinOrderCount
         },
         SelectChange: function (menu) {
-            this.OpenElements.OriMenus.forEach(function (x) { x.Click = false;})
+            this.OpenElements.OriMenus.forEach(function (x) { x.Click = false; })
             this.OpenElements.Menus.forEach(function (x) { x.Click = false; });
             menu.Click = true;
             this.OpenElements.CurrentMenu = menu;
@@ -635,7 +743,7 @@
             this.OpenElements.FilterInfo = "";
             this.OpenElements.CurrentFilter = "";
         },
-        AddSingle:function(menu){
+        AddSingle: function (menu) {
             var _this = this;
             var temp = angular.copy(menu);
             temp.Remarks = [];
@@ -746,7 +854,7 @@
                 }
             }
         },
-        AddDineMenu:function(){
+        AddDineMenu: function () {
             var _this = this;
             var deferred = $q.defer();
             var temp = {
@@ -814,14 +922,14 @@
             this.OpenElements.Menus = this.OpenElements.OriMenus.filter(function (x) {
                 var flag = false;
                 x.Classes.forEach(function (xx) {
-                    if (xx.Id == ClassId) { flag = true; return;}
+                    if (xx.Id == ClassId) { flag = true; return; }
                 })
                 return flag;
             })
             this.OpenElements.allchoose = false;
             this.OpenElements.Classes.forEach(function (x) {
                 x.Current = false;
-                if (x.Id == ClassId) { x.Current = true;}
+                if (x.Id == ClassId) { x.Current = true; }
             })
         },
         ShiftType: function () {
@@ -835,7 +943,7 @@
         KeepShift: function () {
             var _this = this;
             var expireDate = new Date();
-            if (typeof($cookies.get('Type')) != undefined) {
+            if (typeof ($cookies.get('Type')) != undefined) {
                 if ($cookies.get('Type') != this.OpenElements.Type) {
                     bootbox.confirm({
                         buttons: {
@@ -894,6 +1002,129 @@
         },
         CheckAddNum: function (menu) {
             if (menu.Num < menu.MinOrderCount) menu.Num = menu.MinOrderCount;
+        },
+        OpenReserve: function () {
+            var re = /^1\d{10}$/;
+            if (!re.test(this.ReserveInfo.Phone)) {
+                alert("请输入手机");
+                return;
+            }
+            var Address = "";
+            if (this.ReserveInfo.IsChoose) {
+                Address = this.ReserveInfo.NewAddress;
+            } else {
+                Address = this.ReserveInfo.User.UserAddresses.filter(function (x) { return x.IsChoose }).map(function (x) { return x.Address })[0];
+            }
+            if (!Address) {
+                alert("请选择地址");
+                return;
+            }
+            $(".fakeloader").fakeLoader({
+                timeToHide: 3000,
+                bgColor: "#34495e",
+                spinner: "spinner3"
+            });
+            var _this = this;
+            var deferred = $q.defer();
+            var tempOrderedMenus = this.OpenElements.OrderMenus.filter(function (x) { return !x.IsSend }).map(function (x) {
+                return { Id: x.Id, Ordered: x.Num, Remarks: x.Remarks.map(function (x) { return x.Id }) }
+            })
+            var tempSendMenus = this.OpenElements.OrderMenus.filter(function (x) { return x.IsSend }).map(function (x) {
+                return { Id: x.Id, Ordered: x.Num, Remarks: x.Remarks.map(function (x) { return x.Id }) }
+            })
+            var OrderInfo = {
+                HeadCount: this.OpenElements.CurrentUser.Number,
+                Price: this.AccountPrice(),
+                Desk: this.OpenElements.CurrentDesk,
+                OrderedMenus: tempOrderedMenus,
+                SendMenus: tempSendMenus
+            };
+            $http.post('../Templates/OpenReserve', {
+                OrderInfo: OrderInfo,
+                OpenDiscount: _this.OpenElements.CurrentDiscount,
+                Address: Address,
+                ShiftNum: _this.OpenElements.ShiftNum,
+                Phone: _this.ReserveInfo.Phone
+            }).success(function (data) {
+                if (data.Status) {
+                    _this.ReserveInfo = {
+                        Phone: "",
+                        Address: "",
+                        User: {},
+                        NewAddress: "",
+                        IsChoose: false
+                    };
+                }
+                deferred.resolve(data);
+            }).error(function (data) {
+                alert("错误");
+                deferred.reject(data);
+            })
+            return deferred.promise;
+
+        },
+        SmartChoose: function () {
+            var _this = this;
+            var last_gritter;
+            $http.post('../Templates/SmartChoose', {
+                Phone: _this.ReserveInfo.Phone
+            }).then(function (response) {
+                _this.ReserveInfo.User = response.data.Data[0];
+                if (_this.ReserveInfo.User.UserAddresses.length==0) {
+                      if (last_gritter) $.gritter.remove(last_gritter);
+                      last_gritter = $.gritter.add({
+                            title: '未找到!',
+                            text: '未找到外卖地址，请新增地址',
+                            class_name: 'gritter-warning gritter-center'
+                        });
+                } else {
+                    if (last_gritter) $.gritter.remove(last_gritter);
+                    last_gritter = $.gritter.add({
+                        title: '找到!',
+                        text: '找到' + _this.ReserveInfo.User.UserAddresses.length+ '项，请选择',
+                        class_name: 'gritter-success gritter-center'
+                    });
+                }
+            })
+        },
+        SetAddress: function (address, type) {
+            if (type == 0) {
+                this.ReserveInfo.IsChoose = false;
+                if (this.ReserveInfo.User.UserAddresses) {
+                    this.ReserveInfo.User.UserAddresses.forEach(function (x) {
+                        x.IsChoose = false;
+                    })
+                }
+                address.IsChoose = true;
+            }
+            else if (type == 1) {
+                this.ReserveInfo.IsChoose = true;
+                if (this.ReserveInfo.User.UserAddresses) {
+                    this.ReserveInfo.User.UserAddresses.forEach(function (x) {
+                        x.IsChoose = false;
+                    })
+                }
+            }
+        },
+        DeleteAddress: function (address) {
+            var _this = this;
+            swal({
+                title: "确定删除"+address.Address+"?",
+                text: "删除后将不能找回",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#D0D0D0",
+                confirmButtonText: "是, 更换!",
+                cancelButtonText: "否, 保留!",
+                closeOnConfirm: true
+            }, function () {
+                $http.post('../Templates/DeleteAddress', {
+                    UserId: _this.ReserveInfo.User.Id,
+                    Address: address.Address
+                }).then(function (response) {
+                    _this.ReserveInfo.User = response.data.Data[0];
+                })
+            });
         }
     }
     return service;
@@ -906,8 +1137,8 @@
             UnpaidDines: [],
             CurrentDine: {},
             CurrentReason: {},
-            isAjax:false,
-            Reasons:[]
+            isAjax: false,
+            Reasons: []
         },
         getElements: function () {
             var _this = this;
@@ -962,31 +1193,39 @@
                     var reason = $('.radio').find('input:checked').attr('data-description');
                     if (result) {
                         swal({
-                           title: "确定删除此菜品?",
-                           text: "你将不可恢复此项删除菜品，请谨慎操作!",
-                           type: "warning",
-                           showCancelButton: true,
-                           confirmButtonColor: "#D0D0D0",
-                           confirmButtonText: "是, 删除!",
-                           cancelButtonText: "否, 保留!",
-                           closeOnConfirm: false
+                            title: "确定删除此菜品?",
+                            text: "你将不可恢复此项删除菜品，请谨慎操作!",
+                            type: "warning",
+                            showCancelButton: true,
+                            confirmButtonColor: "#D0D0D0",
+                            confirmButtonText: "是, 删除!",
+                            cancelButtonText: "否, 保留!",
+                            closeOnConfirm: false
                         }, function () {
-                           $http.post('../Templates/ReturnMenu', {
-                               DineId: _this.ReturnElements.CurrentDine.Id,
-                               Id: menu.Id,
-                               Reason: reason
-                           }).success(function (data) {
-                               if (data.Status) {
-                                   _this.ReturnElements.Desks = data.Desks.filter(function (x) { return x.Status });
-                                   _this.ReturnElements.UnpaidDines = data.Dines;
-                                   swal("删除成功!", "此项菜品已经删除请重新进入支付页面.", "success");
-                               } else {
-                                   console.log("数据错误");
-                               }
-                           }).error(function (data) {
-                               console.log(data);
-                           });
-                       }
+                            $http.post('../Templates/ReturnMenu', {
+                                DineId: _this.ReturnElements.CurrentDine.Id,
+                                Id: menu.Id,
+                                Reason: reason
+                            }).success(function (data) {
+                                if (data.Status) {
+                                    _this.ReturnElements.Desks = data.Desks.filter(function (x) { return x.Status });
+                                    _this.ReturnElements.UnpaidDines = data.Dines;
+                                    var Id = _this.ReturnElements.CurrentDine.Id;
+                                    _this.ReturnElements.CurrentDine = {};
+                                    if (_this.ReturnElements.UnpaidDines.length > 0) {
+                                        _this.ReturnElements.UnpaidDines.forEach(function (x) {
+                                            if (x.Id == Id) _this.ReturnElements.CurrentDine = x;
+                                        })
+                                    }
+                                    console.log(_this.ReturnElements.UnpaidDines);
+                                    swal("删除成功!", "此项菜品已经删除请重新进入支付页面.", "success");
+                                } else {
+                                    console.log("数据错误");
+                                }
+                            }).error(function (data) {
+                                console.log(data);
+                            });
+                        }
                        );
                     }
                 },
@@ -1073,7 +1312,7 @@
                     })
                 }
             });
-           
+
         }
     }
     return service;
@@ -1264,7 +1503,7 @@
             NumberStart: 1,
             NumberBegin: 1,
             Numbers: [],
-            isAjax:false
+            isAjax: false
         },
         getElement: function () {
             var _this = this;
@@ -1278,6 +1517,7 @@
                     x.Num = 0;
                     x.Gain = 0;
                     _this.HandElement.PayList.forEach(function (s) {
+                        if ((x.Type == 2 || x.Type == 0 || x.Type == 5) && x.Id == s.Id) x.Gain = s.Total;
                         if (x.Id == s.Id) x.Num = s.Total;
                     });
                 })
@@ -1287,10 +1527,10 @@
             })
             return deferred.promise;
         },
-        getNumbers:function(){
+        getNumbers: function () {
             var _this = this;
             $http.post('../Templates/GetNumbers', {
-                Time:_this.HandElement.Time
+                Time: _this.HandElement.Time
             }).success(function (data) {
                 data.Numbers.forEach(function (x) { x.IsChoose = true; });
                 _this.HandElement.Numbers = data.Numbers;
@@ -1302,13 +1542,12 @@
             var price = this.HandElement.PayKinds.filter(function (x) { return x.Num }).map(function (x) { return x.Num }).reduce(function (a, b) { return +a + +b }, 0);
             if (price > 0) {
                 var profit = this.HandElement.PayKinds.filter(function (x) { return x.Gain }).map(function (x) { return { Id: x.Id, Num: x.Gain } });
-                var nowPrice = profit.map(function(x){return x.Num}).reduce(function (a, b) { return +a + +b; }, 0);
+                var nowPrice = profit.map(function (x) { return x.Num }).reduce(function (a, b) { return +a + +b; }, 0);
                 if (!_this.HandElement.isAjax) {
-                    _this.HandElement.isAjax = true;
                     if (price * 0.95 >= nowPrice) {
                         swal({
                             title: "确认交接",
-                            text: "金额相差10%，请确认交接!",
+                            text: "金额相差5%以上，请确认交接!",
                             type: "warning",
                             showCancelButton: true,
                             confirmButtonColor: "#D0D0D0",
@@ -1316,7 +1555,6 @@
                             cancelButtonText: "否, 保留!",
                             closeOnConfirm: false
                         }, function () {
-                            _this.HandElement.isAjax = false;
                             $http.post('../Templates/CheckOut', {
                                 Profit: profit
                             }).success(function (data) {
@@ -1335,6 +1573,7 @@
                         }
                       );
                     } else {
+                        _this.HandElement.isAjax = true;
                         $http.post('../Templates/CheckOut', {
                             Profit: profit
                         }).success(function (data) {
@@ -1376,7 +1615,7 @@
     var service = {
         RePrinterElement: {
             UnShiftDines: [],
-            CurrentDeskId:"",
+            CurrentDeskId: "",
         },
         Initialize: function () {
             var _this = this;
@@ -1387,7 +1626,7 @@
         },
         RePrintDine: function (dine) {
             var _this = this;
-            $http.post('../Templates/RePrintDine', {Id:dine.Id}).then(function (response) {
+            $http.post('../Templates/RePrintDine', { Id: dine.Id }).then(function (response) {
 
             })
         }
@@ -1398,12 +1637,12 @@
 var GetReason = function (Reasons) {
     var result = '<div class ="control-group"><p>请选择退菜理由</p>';
     for (var i = 0; i < Reasons.length; i++) {
-         result += '<div class="radio">'
-						+ '<label>'
-						    + '<input name="form-field-radio" type="radio" class="ace" data-description="' + Reasons[i].Description + '" />'
-						    + '<span class="lbl">' + Reasons[i].Description + '</span>'
-						+ '</label>'
-					+ '</div>'
+        result += '<div class="radio">'
+                       + '<label>'
+                           + '<input name="form-field-radio" type="radio" class="ace" data-description="' + Reasons[i].Description + '" />'
+                           + '<span class="lbl">' + Reasons[i].Description + '</span>'
+                       + '</label>'
+                   + '</div>'
     }
     result += '</div>';
     return result;

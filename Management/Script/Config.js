@@ -123,6 +123,9 @@
     }).when('/RePrinter', {
         templateUrl: '/Templates/RePrinter',
         controller: 'RePrinterCtrl'
+    }).when('/PayAll', {
+        templateUrl: '/Templates/PayAll',
+        controller: 'PayAllCtrl'
     }).when('/Invoice', {
         templateUrl: '/Reports/Invoice',
         controller: 'InvoiceCtrl'

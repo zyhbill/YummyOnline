@@ -5,17 +5,17 @@
 	'cart',
 	'menuFilter',
 	function ($scope, $rootScope, $modal, $cart, $menuFilter) {
-		//$scope.showMenuModal = function (menu) {
-		//	$modal.open({
-		//		templateUrl: 'menuModal.html',
-		//		controller: 'MenuCtrl',
-		//		resolve: {
-		//			menu: function () {
-		//				return menu;
-		//			}
-		//		}
-		//	});
-		//}
+		$scope.showMenuModal = function (menu) {
+			$modal.open({
+				templateUrl: 'menuModal.html',
+				controller: 'MenuModalCtrl',
+				resolve: {
+					menu: function () {
+						return menu;
+					}
+				}
+			});
+		}
 
 		$scope.showSetMealsModal = function (menu) {
 			$modal.open({
@@ -34,7 +34,7 @@
 	}
 ]);
 
-app.controller('SetMealsCtrl', [
+app.controller('MenuModalCtrl', [
 	'$scope',
 	'$uibModalInstance',
 	'menu',
@@ -46,17 +46,17 @@ app.controller('SetMealsCtrl', [
 	}
 ]);
 
-//app.controller('MenuCtrl', [
-//	'$scope',
-//	'$uibModalInstance',
-//	'menu',
-//	function ($scope, $modalInstance, $menu) {
-//		$scope.showedMenu = $menu;
-//		$scope.close = function () {
-//			$modalInstance.dismiss();
-//		};
-//	}
-//]);
+app.controller('SetMealsCtrl', [
+	'$scope',
+	'$uibModalInstance',
+	'menu',
+	function ($scope, $modalInstance, $menu) {
+		$scope.menu = $menu;
+		$scope.close = function () {
+			$modalInstance.dismiss();
+		};
+	}
+]);
 
 app.controller('CartCtrl', [
 	'$scope',

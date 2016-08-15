@@ -11,8 +11,9 @@ namespace OrderSystem {
 	public partial class HotelManager {
 		public async Task<Protocol.PrintingProtocol.PrinterFormat> GetPrinterFormatForPrinting() {
 			return await ctx.PrinterFormats.Select(p => new Protocol.PrintingProtocol.PrinterFormat {
-				Font = p.Font,
 				PaperSize = p.PaperSize,
+				Font = p.Font,
+				ColorDepth = p.ColorDepth,
 				ReciptBigFontSize = p.ReciptBigFontSize,
 				ReciptFontSize = p.ReciptFontSize,
 				ReciptSmallFontSize = p.ReciptSmallFontSize,
@@ -23,6 +24,7 @@ namespace OrderSystem {
 				ShiftBigFontSize = p.ShiftBigFontSize,
 				ShiftFontSize = p.ShiftFontSize,
 				ShiftSmallFontSize = p.ShiftSmallFontSize,
+				PaddingRight = p.PaddingRight,
 			}).FirstOrDefaultAsync();
 		}
 		public async Task<Protocol.PrintingProtocol.Dine> GetDineForPrintingById(string dineId, List<int> dineMenuIds = null) {
@@ -94,7 +96,9 @@ namespace OrderSystem {
 						Name = p.Desk.Area.DepartmentServe.Printer.Name,
 						IpAddress = p.Desk.Area.DepartmentServe.Printer.IpAddress,
 						Usable = p.Desk.Area.DepartmentServe.Printer.Usable
-					}
+					},
+					ReciptDepartmentName = p.Desk.Area.DepartmentRecipt.Name,
+					ServeDepartmentName = p.Desk.Area.DepartmentServe.Name
 				},
 				DineMenus = p.DineMenus.Select(d => new Protocol.PrintingProtocol.DineMenu {
 					Id = d.Id,
@@ -120,7 +124,8 @@ namespace OrderSystem {
 							Name = d.Menu.Department.Printer.Name,
 							IpAddress = d.Menu.Department.Printer.IpAddress,
 							Usable = d.Menu.Department.Printer.Usable
-						}
+						},
+						DepartmentName = d.Menu.Department.Name
 					},
 					ReturnedWaiter = new Protocol.PrintingProtocol.Staff {
 						Id = d.ReturnedWaiter.Id,
@@ -145,8 +150,13 @@ namespace OrderSystem {
 		}
 
 
-		public async Task<string> GetShiftPrinterIpAddress() {
-			return await ctx.HotelConfigs.Select(p => p.ShiftPrinter.IpAddress).FirstOrDefaultAsync();
+		public async Task<Protocol.PrintingProtocol.Printer> GetShiftPrinter() {
+			return await ctx.HotelConfigs.Select(p => new Protocol.PrintingProtocol.Printer {
+				Id = p.ShiftPrinter.Id,
+				Name = p.ShiftPrinter.Name,
+				IpAddress = p.ShiftPrinter.IpAddress,
+				Usable = p.ShiftPrinter.Usable
+			}).FirstOrDefaultAsync();
 		}
 		public async Task<List<Protocol.PrintingProtocol.Shift>> GetShiftsForPrinting(List<int> ids, DateTime dateTime) {
 			var dbShifts = await ctx.Shifts.Where(p => ids.Contains(p.Id) && SqlFunctions.DateDiff("day", p.DateTime, dateTime) == 0)

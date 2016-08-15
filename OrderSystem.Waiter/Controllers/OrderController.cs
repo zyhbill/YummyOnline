@@ -68,7 +68,8 @@ namespace OrderSystem.Waiter.Controllers {
 			string connStr = CurrHotel.ConnectionString;
 
 			var tAreas = new HotelManager(connStr).GetAreas();
-			var tPayKinds = new HotelManager(connStr).GetFormatedPayKinds(new List<PayKindType> { PayKindType.Points, PayKindType.Offline, PayKindType.Online, PayKindType.Cash });
+			var tPayKinds = new HotelManager(connStr).GetFormatedPayKinds(new List<PayKindType> {
+				PayKindType.Points, PayKindType.Offline, PayKindType.Online, PayKindType.Cash ,PayKindType.RandomPreference});
 			var tRemarks = new HotelManager(connStr).GetRemarks();
 			var tStaffs = new HotelManager(connStr).GetStaffs();
 			var tSellOutMenus = new HotelManager(connStr).GetFormatedMenus(MenuStatus.SellOut);
@@ -82,12 +83,24 @@ namespace OrderSystem.Waiter.Controllers {
 			};
 			return Json(result);
 		}
+		public async Task<JsonResult> GetHotelConfig() {
+			return Json(DynamicsCombination.CombineDynamics(await HotelManager.GetHotelConfig(), new {
+				CurrHotel.Name,
+				CurrHotel.Address,
+				CurrHotel.Tel,
+				CurrHotel.OpenTime,
+				CurrHotel.CloseTime
+			}));
+		}
 
 		public async Task<JsonResult> GetCurrentDines(string deskId) {
 			return Json(await HotelManager.GetHistoryDines(User.Identity.GetUserId(), deskId));
 		}
 		public async Task<JsonResult> GetHistoryDines() {
 			return Json(await HotelManager.GetHistoryDines(User.Identity.GetUserId()));
+		}
+		public async Task<JsonResult> GetAllHistoryDines() {
+			return Json(await HotelManager.GetHistoryDines());
 		}
 
 		public async Task<JsonResult> GetDineById(string dineId) {
@@ -97,7 +110,7 @@ namespace OrderSystem.Waiter.Controllers {
 		public async Task<JsonResult> ShiftDines() {
 			await HotelManager.ShiftDines();
 			return Json(new JsonSuccess());
-		} 
+		}
 		public async Task<JsonResult> ToggleMenuStatus(string menuId, MenuStatus status) {
 			if(!await HotelManager.ToggleMenuStatus(menuId, status)) {
 				return Json(new JsonError());

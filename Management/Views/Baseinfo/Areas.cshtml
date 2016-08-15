@@ -1,7 +1,6 @@
 ﻿@{
     Layout = null;
 }
-
 <link href="../Content/css/style.css" rel="stylesheet" />
 <div class="row" ng-init="intialize()">
     <div class="col-xs-12">
@@ -16,6 +15,7 @@
                         <i class="icon-comment bigger-110"></i>
                         描述
                     </th>
+                    <th>功能</th>
                     <th></th>
                 </tr>
             </thead>
@@ -26,6 +26,10 @@
                     <td>{{area.ReciptDepartment}}</td>
                     <td>{{area.ServiceDepartment}}</td>
                     <td class="hidden-480">{{area.Description}}</td>
+                    <td>
+                        <span class="label label-lg label-yellow arrowed-in" ng-show="area.Type==0">堂吃区域</span>
+                        <span class="label label-lg label-purple arrowed" ng-show="area.Type==1">外卖区域</span>
+                    </td>
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
                             <button class="btn btn-xs btn-info" ng-click="OpenEditModel(area)">
@@ -71,9 +75,8 @@
     </div><!--col over-->
 </div><!--row over-->
 
-
 <script type="text/ng-template" id="ModalAreaEdit.html">
-    <form ng-submit="EditArea()">
+    <form ng-submit="EditArea()" >
         <div class="modal-header">
             <h3 class="modal-title">
                 修改区域信息
@@ -128,17 +131,27 @@
                         <p>
                             描述:<textarea class="autosize-transition form-control" ng-model="CurrentArea.Description"></textarea>
                         </p>
+                        <div class="control-group">
+                            <label class="control-label bolder blue">区域功能</label>
+
+                            <div class="radio" ng-repeat="type in AreaElement.Types">
+                                <label>
+                                    <input name="form-field-radio" type="radio" class="ace" ng-model="AreaElement.CurrentType" ng-value="type.Value">
+                                    <span class="lbl">{{type.Name}}</span>
+                                </label>
+                            </div>
+
+                        </div>
                     </div>
                 </div><!-- row end  -->
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" type="submit"ng-disabled="AreaElement.isAjax"><img src="../../Content/images/loading.gif" ng-if="AreaElement.isAjax" style="vertical-align:middle;" />保存</button>
+            <button class="btn btn-primary" type="submit" ng-disabled="AreaElement.isAjax"><img src="../../Content/images/loading.gif" ng-if="AreaElement.isAjax" style="vertical-align:middle;" />保存</button>
             <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
         </div>
     </form>
 </script>
-
 <script type="text/ng-template" id="ModalAreaAdd.html">
     <form ng-submit="AddArea()">
         <div class="modal-header">
@@ -195,6 +208,19 @@
                         <p>
                             描述:<textarea class="autosize-transition form-control" ng-model="AreaElement.newArea.Description"></textarea>
                         </p>
+
+                        <div class="control-group">
+                            <label class="control-label bolder blue">区域功能</label>
+
+                            <div class="radio" ng-repeat="type in AreaElement.Types">
+                                <label>
+                                    <input name="form-field-radio" type="radio" class="ace" ng-model="AreaElement.CurrentType" ng-value="type.Value">
+                                    <span class="lbl">{{type.Name}}</span>
+                                </label>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div><!-- row end  -->
             </div>
@@ -205,4 +231,3 @@
         </div>
     </form>
 </script>
-

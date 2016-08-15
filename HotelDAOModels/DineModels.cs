@@ -54,6 +54,13 @@ namespace HotelDAO.Models {
 		/// </summary>
 		Custom = 4
 	}
+	public enum DineFrom {
+		CustomerBrowser = 0,
+		WaiterBrowser = 1,
+		WaiterPad = 2,
+		WaiterApp = 3,
+		Manager = 4
+	}
 
 	/// <summary>
 	/// 订单
@@ -65,11 +72,12 @@ namespace HotelDAO.Models {
 		/// <summary>
 		/// 订单状态
 		/// </summary>
-		public DineStatus Status { get; set; } = DineStatus.Untreated;
+		public DineStatus Status { get; set; }
 		/// <summary>
 		/// 订单类型
 		/// </summary>
 		public DineType Type { get; set; }
+		public DineFrom From { get; set; }
 		/// <summary>
 		/// 人数
 		/// </summary>
@@ -90,12 +98,7 @@ namespace HotelDAO.Models {
 		/// 是否已经打印发票
 		/// </summary>
 		public bool IsInvoiced { get; set; }
-		[MaxLength(20)]
-		public string Invoice { get; set; }
-		[MaxLength(20)]
-		public string Footer { get; set; }
 
-		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 		public DateTime BeginTime { get; set; }
 		/// <summary>
 		///  是否为线上支付
@@ -127,6 +130,7 @@ namespace HotelDAO.Models {
 		public ICollection<Remark> Remarks { get; set; }
 		public ICollection<DineMenu> DineMenus { get; set; }
 		public ICollection<DinePaidDetail> DinePaidDetails { get; set; }
+		public ICollection<Invoice> Invoices { get; set; }
 		public TakeOut TakeOut { get; set; }
 	}
 
@@ -138,7 +142,8 @@ namespace HotelDAO.Models {
 		TimeDiscount = 4,
 		VipDiscount = 5,
 		CustomDiscount = 6,
-		SetMeal = 7
+		SetMeal = 7,
+		Gift = 8
 	}
 	public enum DineMenuStatus {
 		/// <summary>

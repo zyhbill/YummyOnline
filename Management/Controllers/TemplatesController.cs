@@ -64,7 +64,10 @@ namespace Management.Controllers
             return View("RePrinter");
         }
 
-        
+        public ActionResult PayAll()
+        {
+            return View("PayAll");
+        }
         /// <summary>
         /// 获取信息
         /// </summary>
@@ -73,7 +76,8 @@ namespace Management.Controllers
         {
             using (var db = new HotelContext(Session["ConnectString"] as string))
             {
-                var Areas = await db.Areas.Where(area => area.Usable == true).ToListAsync();
+                var Areas = await db.Areas.Where(area => area.Usable == true)
+                    .ToListAsync();
                 var Desks = await db.Desks.Where(d => d.Usable == true)
                     .Select(d => new
                     {
@@ -115,7 +119,8 @@ namespace Management.Controllers
                             RemarkPrice = dd.RemarkPrice,
                             Remarks = dd.Remarks,
                             ReturnedWaiterId = dd.ReturnedWaiterId,
-                            Status = dd.Status
+                            Status = dd.Status,
+                            Type = dd.Type
                         }),
                         Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
                         d.DeskId,
@@ -189,19 +194,31 @@ namespace Management.Controllers
             var dine = await db.Dines.Where(d => d.Id == Dine.Id)
                 .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
                 .FirstOrDefaultAsync();
+            var HtManage = new HotelManager(ConnectingStr);
+            var NowDay = DateTime.Now.DayOfWeek;
+            var SpecialMenus = await db.MenuOnSales.Where(d => d.OnSaleWeek == NowDay).ToListAsync();
             foreach (var menu in dine.DineMenus)
             {
                 if (menu.Status == DineMenuStatus.Normal)
                 {
-                    if (menu.Menu.MenuPrice.ExcludePayDiscount)
-                    {//不打折
-                        totalPrcie += menu.OriPrice * menu.Count + menu.RemarkPrice;
+                    var temp = SpecialMenus.Where(d => d.Id == menu.MenuId).FirstOrDefault();
+                    if (temp != null)
+                    {
+                        totalPrcie += temp.Price;
                     }
                     else
-                    {//整单打折
-                        totalPrcie += menu.OriPrice * menu.Count * (decimal)(Dine.Discount * 1.0 / 100) + menu.RemarkPrice;
+                    {
+                        if (menu.Menu.MenuPrice.ExcludePayDiscount)
+                        {//不打折
+                            totalPrcie += menu.OriPrice * menu.Count + menu.RemarkPrice;
+                        }
+                        else
+                        {//整单打折
+                            totalPrcie += menu.OriPrice * menu.Count * (decimal)(Dine.Discount * 1.0 / 100) + menu.RemarkPrice;
+                        }
                     }
                 }
+
             }
             decimal PayTotal = 0;//总共价格
             decimal Point = 0;//积分
@@ -233,6 +250,12 @@ namespace Management.Controllers
                 {
                     customer.Points -= (int)Point;
                     customer.Points += (int)(PayExceptPoint);
+                }
+                var SysCustomer = await sysdb.Users.FirstOrDefaultAsync(d => d.Id == UserId);
+                if (SysCustomer != null)
+                {
+                    SysCustomer.Price += totalPrcie;
+                    await sysdb.SaveChangesAsync();
                 }
 
             }
@@ -267,6 +290,12 @@ namespace Management.Controllers
                             customer.Points += (int)(totalPrcie - Point);
                         }
                     }
+                    var SysCustomer = await sysdb.Users.FirstOrDefaultAsync(d => d.Id == UserId);
+                    if (SysCustomer != null)
+                    {
+                        SysCustomer.Price += totalPrcie;
+                        await sysdb.SaveChangesAsync();
+                    }
                     dine.Change = charge;
                 }
                 else
@@ -274,26 +303,58 @@ namespace Management.Controllers
                     return Json(new ErrorState("找零金额不能大于现金金额"));
                 }
             }
-            if (Dine.Discount != 100)
+            dine.Price = totalPrcie;
+            dine.Discount = Dine.Discount * 1.0 / 100;
+            if (Dine.Type == 0 || Dine.Type == null)
             {
-                dine.Price = totalPrcie;
-                dine.Discount = Dine.Discount * 1.0 / 100;
                 dine.DiscountType = DiscountType.Custom;
-                dine.DiscountName = Dine.DiscountName;
+
+            }
+            else if (Dine.Type == 1)
+            {
+                dine.DiscountType = DiscountType.Time;
+            }
+            else if (Dine.Type == 2)
+            {
+                dine.DiscountType = DiscountType.Vip;
+            }
+            dine.DiscountName = Dine.DiscountName;
+            foreach (var i in dine.DineMenus)
+            {
+                if (i.Status == DineMenuStatus.Normal)
+                {
+                    var temp = SpecialMenus.Where(d => d.Id == i.MenuId).FirstOrDefault();
+                    if (temp != null)
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if (i.Menu.MenuPrice.ExcludePayDiscount)
+                        {
+
+                        }
+                        else
+                        {
+                            i.Price = i.OriPrice * (decimal)(Dine.Discount * 1.0 / 100);
+                        }
+                    }
+                }
             }
             dine.IsPaid = true;
             db.SaveChanges();
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                if (isprint) {
+                if (isprint)
+                {
                     if (dine.Status == DineStatus.Printed)
                     {
                         MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, dine.Id, new List<int>(), new List<PrintType>() { PrintType.Recipt }));
                     }
                     else
                     {
-                        MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, dine.Id, new List<int>(), new List<PrintType>() { PrintType.Recipt,PrintType.KitchenOrder,PrintType.ServeOrder }));
+                        MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, dine.Id, new List<int>(), new List<PrintType>() { PrintType.Recipt, PrintType.KitchenOrder, PrintType.ServeOrder }));
                     }
                 }
             }
@@ -301,6 +362,8 @@ namespace Management.Controllers
             {
 
             }
+
+            HtManage.ManageLog($"HotelId: {(Session["User"] as RStatus).HotelId.ToString()},DineId:{dine.Id} compeleted");
             MvcApplication.client.Send(new NewDineInformProtocol((int)(Session["User"] as RStatus).HotelId, dine.Id, true));
             var CurDesk = dine.DeskId;
             var CleanDeskDine = db.Dines.Where(d => d.IsPaid == false && d.IsOnline == false && d.DeskId == CurDesk).Count();
@@ -352,7 +415,7 @@ namespace Management.Controllers
                 .Include(m => m.Classes)
                 .Include(m => m.Remarks)
                 .Include(m => m.MenuPrice)
-                .Select(m => new { m.Id, m.Name, m.Code, m.MinOrderCount, m.PicturePath, m.Remarks, m.MenuPrice, m.Classes,m.EnglishName })
+                .Select(m => new { m.Id, m.Name, m.Code, m.MinOrderCount, m.PicturePath, m.Remarks, m.MenuPrice, m.Classes, m.EnglishName, m.NameAbbr })
                 .ToListAsync();
             var specials = await db.MenuOnSales.ToListAsync();
             foreach (var i in menus)
@@ -366,7 +429,7 @@ namespace Management.Controllers
                     }
                 }
             }
-            var Classes = await db.MenuClasses.Where(m => m.Usable == true && m.Level == 0).ToListAsync();
+            var Classes = await db.MenuClasses.Where(m => m.Usable == true && m.IsShow == true).ToListAsync();
             return JsonConvert.SerializeObject(new { Menus = menus, Discounts = Discounts, Classes = Classes }, setting);
         }
         /// <summary>
@@ -413,7 +476,8 @@ namespace Management.Controllers
                 Discount = (float)OpenDiscount.Discount / 100;
                 DiscountName = "自定义";
             }
-            var result = await Method.postHttp("http://ordersystem.yummyonline.net/Payment/ManagerPay",
+            var openUrl = sysdb.SystemConfigs.FirstOrDefault()?.OrderSystemUrl;
+            var result = await Method.postHttp(openUrl + "/Payment/ManagerPay",
                 new
                 {
                     Cart = new
@@ -458,7 +522,7 @@ namespace Management.Controllers
         /// <returns></returns>
         public async Task<JsonResult> getReturn()
         {
-            var Desk = await db.Desks.Where(d => d.Usable).OrderBy(d=>d.Order).Select(d => new { d.Id, d.Name, d.Status }).ToListAsync();
+            var Desk = await db.Desks.Where(d => d.Usable).OrderBy(d => d.Order).Select(d => new { d.Id, d.Name, d.Status }).ToListAsync();
             var UnpaidDines = await db.Dines
                     .Include(p => p.DineMenus.Select(pp => pp.Remarks))
                     .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
@@ -468,7 +532,18 @@ namespace Management.Controllers
                         d.Discount,
                         d.DiscountName,
                         d.Id,
-                        d.DineMenus,
+                        DineMenus = d.DineMenus.Select(dd => new
+                        {
+                            dd.Id,
+                            dd.Menu.Name,
+                            dd.OriPrice,
+                            dd.Price,
+                            dd.RemarkPrice,
+                            dd.Count,
+                            dd.Status,
+                            dd.Type,
+                            Remarks = dd.Remarks
+                        }),
                         Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
                         d.BeginTime,
                         d.DeskId,
@@ -497,6 +572,8 @@ namespace Management.Controllers
             }
             db.Dines.Remove(DltDine);
             db.SaveChanges();
+            var HtManager = new HotelManager(ConnectingStr);
+            HtManager.ManageLog($"HotelId: {(Session["User"] as RStatus).HotelId.ToString()},DineId:{DltDine.Id} Returned");
             var desks = await db.Dines.Where(d => d.DeskId == DeskId && d.IsPaid == false && d.IsOnline == false).ToListAsync();
             if (desks.Count() == 0)
             {
@@ -514,6 +591,7 @@ namespace Management.Controllers
         /// <returns></returns>
         public async Task<JsonResult> ReturnMenu(string DineId, int Id, string Reason)
         {
+            var HtManager = new HotelManager(ConnectingStr);
             string ClerkId = (Session["User"] as RStatus).ClerkId;
             if (ClerkId == "") return Json(new ErrorState("服务员不正确"));
             var Dine = db.Dines.Where(d => d.Id == DineId);
@@ -571,10 +649,11 @@ namespace Management.Controllers
                 mn.Count--;
             }
             db.SaveChanges();
+            HtManager.ManageLog($"HotelId: {(Session["User"] as RStatus).HotelId.ToString()}, DineId:{DineId} Id:{Id}", HotelDAO.Models.Log.LogLevel.Warning, $"ClerkId: {ClerkId}");
             try
             {
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
-                if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>() { Id }, new List<PrintType>() { PrintType.KitchenOrder }));
+                if (isprint && dn.Status == DineStatus.Printed) MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, DineId, new List<int>() { Id }, new List<PrintType>() { PrintType.KitchenOrder }));
             }
             catch
             {
@@ -582,24 +661,35 @@ namespace Management.Controllers
             }
             var Desk = await db.Desks.Where(d => d.Usable).Select(d => new { d.Id, d.Name, d.Status }).ToListAsync();
             var UnpaidDines = await db.Dines
-                   .Include(p => p.DineMenus.Select(pp => pp.Remarks))
-                   .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
-                   .Where(order => order.IsPaid == false && order.IsOnline == false)
-                   .Select(d => new
-                   {
-                       d.Discount,
-                       d.DiscountName,
-                       d.Id,
-                       d.DineMenus,
-                       Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
-                       d.BeginTime,
-                       d.DeskId,
-                       d.Remarks,
-                       d.HeadCount,
-                       d.UserId,
-                       d.OriPrice,
-                       d.Price
-                   }).ToListAsync();
+                    .Include(p => p.DineMenus.Select(pp => pp.Remarks))
+                    .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
+                    .Where(order => order.IsPaid == false && order.IsOnline == false)
+                    .Select(d => new
+                    {
+                        d.Discount,
+                        d.DiscountName,
+                        d.Id,
+                        DineMenus = d.DineMenus.Select(dd => new
+                        {
+                            dd.Id,
+                            dd.Menu.Name,
+                            dd.OriPrice,
+                            dd.Price,
+                            dd.RemarkPrice,
+                            dd.Count,
+                            dd.Status,
+                            dd.Type,
+                            Remarks = dd.Remarks
+                        }),
+                        Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
+                        d.BeginTime,
+                        d.DeskId,
+                        d.Remarks,
+                        d.HeadCount,
+                        d.UserId,
+                        d.OriPrice,
+                        d.Price
+                    }).ToListAsync();
             return Json(new { Status = true, Dines = UnpaidDines, Desks = Desk });
         }
         /// <summary>
@@ -608,7 +698,7 @@ namespace Management.Controllers
         /// <returns></returns>
         public async Task<JsonResult> GetConbine()
         {
-            var Desks = await db.Desks.Where(d => d.Status == DeskStatus.Used && d.Usable == true).OrderBy(d=>d.Order).ToListAsync();
+            var Desks = await db.Desks.Where(d => d.Status == DeskStatus.Used && d.Usable == true).OrderBy(d => d.Order).ToListAsync();
             var Dines = await db.Dines.Where(order => order.IsPaid == false && order.IsOnline == false)
                 .Select(dine => new { dine.Id, dine.DeskId }).ToListAsync();
             return Json(new { Desks = Desks, Dines = Dines });
@@ -654,7 +744,7 @@ namespace Management.Controllers
             targetDine.Price = allPrice;
             targetDine.OriPrice = allOPrice;
             db.SaveChanges();
-            var Desks = await db.Desks.Where(d => d.Status == DeskStatus.Used && d.Usable == true).OrderBy(d=>d.Order).ToListAsync();
+            var Desks = await db.Desks.Where(d => d.Status == DeskStatus.Used && d.Usable == true).OrderBy(d => d.Order).ToListAsync();
             var Dines = await db.Dines.Where(d => d.IsOnline == false && d.IsPaid == false).Select(dine => new { dine.Id, dine.DeskId }).ToListAsync();
             return Json(new { Desks = Desks, Dines = Dines });
         }
@@ -666,7 +756,7 @@ namespace Management.Controllers
         {
             var Desks = await db.Desks
                 .Where(d => d.Status == DeskStatus.Used && d.Usable == true)
-                .OrderBy(d=>d.Order).ToListAsync();
+                .OrderBy(d => d.Order).ToListAsync();
             var Dines = await db.Dines.Where(d => d.IsOnline == false && d.IsPaid == false)
                 .Select(dine => new { dine.Id, dine.DeskId }).ToListAsync();
             var TotalDesk = await db.Desks.Where(d => d.Usable == true).ToListAsync();
@@ -778,7 +868,7 @@ namespace Management.Controllers
             {
                 Date = Convert.ToDateTime(Time);
             }
-            MvcApplication.client.Send(new RequestPrintShiftsProtocol((int)(Session["User"] as RStatus).HotelId,frequencies,Date));
+            MvcApplication.client.Send(new RequestPrintShiftsProtocol((int)(Session["User"] as RStatus).HotelId, frequencies, Date));
             return null;
         }
         /// <summary>
@@ -790,7 +880,7 @@ namespace Management.Controllers
         {
             int Id = 1;
             var Now = DateTime.Now;
-            var dines = await db.Dines.Where(d => d.IsPaid == true && d.Status != DineStatus.Shifted)
+            var dines = await db.Dines.Where(d => d.Status != DineStatus.Shifted)
                 .ToListAsync();
             var DineIds = dines.Select(d => d.Id);
             var PayList = await db.DinePaidDetails.Where(d => DineIds.Contains(d.DineId))
@@ -824,6 +914,12 @@ namespace Management.Controllers
             {
                 dine.Status = DineStatus.Shifted;
                 db.SaveChanges();
+            }
+            var Desks = await db.Desks.Where(d => d.Usable == true).ToListAsync();
+            foreach (var i in Desks)
+            {
+                i.Status = DeskStatus.StandBy;
+                await db.SaveChangesAsync();
             }
             MvcApplication.client.Send(new RequestPrintShiftsProtocol((int)(Session["User"] as RStatus).HotelId, new List<int>() { Id }, DateTime.Now));
             return Json(new SuccessState());
@@ -860,12 +956,12 @@ namespace Management.Controllers
                       Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
                       d.BeginTime,
                       d.DeskId,
-                      Desk = db.Desks.Where(dd=>dd.Id==d.DeskId).FirstOrDefault(),
+                      Desk = db.Desks.Where(dd => dd.Id == d.DeskId).FirstOrDefault(),
                       d.HeadCount,
                       d.UserId,
                       d.OriPrice,
                       d.Price
-                  }).OrderBy(d=>d.Desk.Order).ToListAsync();
+                  }).OrderBy(d => d.Desk.Order).ToListAsync();
             var menus = await db.Menus
                 .Where(m => m.Status == MenuStatus.Normal && m.Usable == true)
                 .Include(m => m.Remarks)
@@ -936,7 +1032,7 @@ namespace Management.Controllers
                     {
                         temp.Price = 0;
                         temp.RemarkPrice = 0;
-                        temp.Status = DineMenuStatus.Gift;
+                        temp.Type = DineMenuType.Gift;
                     }
                     else
                     {
@@ -950,6 +1046,43 @@ namespace Management.Controllers
                         {
                             temp.Price = menu.MenuPrice.Price * (decimal)dine.Discount;
                         }
+                        var serMenu = await db.MenuOnSales.Where(d => d.Id == menu.Id).FirstOrDefaultAsync();
+                        var SetMeal = await db.MenuSetMeals.Where(d => d.MenuSetId == menu.Id).FirstOrDefaultAsync();
+                        if (dine.DiscountType == DiscountType.None)
+                        {
+                            if (SetMeal != null)
+                            {
+                                temp.Type = DineMenuType.SetMeal;
+                            }
+                            else if (serMenu != null)
+                            {
+                                temp.Type = DineMenuType.OnSale;
+                            }
+                            else
+                            {
+                                temp.Type = DineMenuType.None;
+                            }
+                        }
+                        else
+                        {
+                            if (dine.DiscountType == DiscountType.PayKind)
+                            {
+                                temp.Type = DineMenuType.PayKindDiscount;
+                            }
+                            else if (dine.DiscountType == DiscountType.Custom)
+                            {
+                                temp.Type = DineMenuType.CustomDiscount;
+                            }
+                            else if (dine.DiscountType == DiscountType.Time)
+                            {
+                                temp.Type = DineMenuType.TimeDiscount;
+                            }
+                            else if (dine.DiscountType == DiscountType.Vip)
+                            {
+                                temp.Type = DineMenuType.VipDiscount;
+                            }
+                        }
+
                         if (i.Remarks != null)
                         {
                             temp.RemarkPrice = await db.Remarks
@@ -985,7 +1118,7 @@ namespace Management.Controllers
                 var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
                 if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId
                     , dine.Id, menus
-                    , new List<PrintType>() { PrintType.KitchenOrder, PrintType.ServeOrder ,PrintType.Recipt}));
+                    , new List<PrintType>() { PrintType.KitchenOrder, PrintType.ServeOrder, PrintType.Recipt }));
             }
             catch
             {
@@ -1042,13 +1175,14 @@ namespace Management.Controllers
         /// 获取补打印信息
         /// </summary>
         /// <returns></returns>
-        public  async Task<JsonResult> getRePrinter()
+        public async Task<JsonResult> getRePrinter()
         {
             var UnShiftDine = await db.Dines
                     .Include(p => p.DineMenus.Select(pp => pp.Remarks))
                     .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
-                    .Where(d=>d.Status!=DineStatus.Shifted)
-                    .Select(d => new {
+                    .Where(d => d.Status != DineStatus.Shifted)
+                    .Select(d => new
+                    {
                         d.Discount,
                         d.DiscountName,
                         d.Id,
@@ -1092,5 +1226,243 @@ namespace Management.Controllers
             }
             return null;
         }
+        /// <summary>
+        /// 智能获取地址
+        /// </summary>
+        /// <param name="Phone"></param>
+        /// <returns></returns>
+        public async Task<JsonResult> SmartChoose(string Phone)
+        {
+            var User = await sysdb.Users
+                .Include(u => u.UserAddresses)
+                .Where(u => u.PhoneNumber == Phone)
+                .ToListAsync();
+            if (User == null)
+            {
+                var NUser = new YummyOnlineDAO.Models.User()
+                {
+                    PhoneNumber = Phone
+                };
+                sysdb.Users.Add(NUser);
+                await db.SaveChangesAsync();
+                return Json(new SuccessState(NUser));
+            }
+            else
+            {
+                return Json(new SuccessState(User));
+            }
+        }
+        /// <summary>
+        /// 删除用户地址
+        /// </summary>
+        /// <param name="UserId"></param>
+        /// <param name="Address"></param>
+        /// <returns></returns>
+        public async Task<JsonResult> DeleteAddress(string UserId, string Address)
+        {
+            var Addresses = await sysdb.UserAddresses.Where(d => d.UserId == UserId && d.Address == Address).FirstOrDefaultAsync();
+            sysdb.UserAddresses.Remove(Addresses);
+            await sysdb.SaveChangesAsync();
+            var User = await sysdb.Users
+               .Include(u => u.UserAddresses)
+               .Where(u => u.Id == UserId)
+               .ToListAsync();
+            return Json(new SuccessState(User));
+        }
+
+        public async Task<JsonResult> OpenReserve(OpenInfo OrderInfo, OpenDiscount OpenDiscount, string Address, string ShiftNum, string Phone)
+        {
+            if (OpenDiscount.Discount > 100 || OpenDiscount.Discount <= 0) { return Json(new { Succeeded = false, ErrorMessage = "别逗了，我哪来那么多钱" }); }
+            int HotelId = (int)(Session["User"] as RStatus).HotelId;
+            string ClerkId = (Session["User"] as RStatus).ClerkId;
+            string Token = await sysdb.SystemConfigs.Select(s => s.Token).FirstOrDefaultAsync();
+            var ht = new HotelContext(Session["ConnectString"] as string);
+            int PayKindId = await ht.PayKinds
+                                .Where(p => p.Usable == true && p.Type == PayKindType.Cash)
+                                .Select(p => p.Id)
+                                .FirstOrDefaultAsync();
+            string DiscountName = null;
+            float? Discount = null;
+            if (OpenDiscount.IsSet != null)
+            {
+                //自定义打折方案
+                Discount = (float)OpenDiscount.Discount / 100;
+                DiscountName = "自定义";
+            }
+            var User = await sysdb.Users.Where(d => d.PhoneNumber == Phone).FirstOrDefaultAsync();
+            if (User == null)
+            {
+                User = new User()
+                {
+                    PhoneNumber = Phone
+                };
+                sysdb.Users.Add(User);
+                await sysdb.SaveChangesAsync();
+            }
+            var address = await sysdb.UserAddresses.Where(d => d.UserId == User.Id && d.Address == Address).FirstOrDefaultAsync();
+            if (address == null)
+            {
+                sysdb.UserAddresses.Add(new UserAddress()
+                {
+                    UserId = User.Id,
+                    Address = Address
+                });
+                await sysdb.SaveChangesAsync();
+            }
+            var openUrl = sysdb.SystemConfigs.FirstOrDefault()?.OrderSystemUrl;
+            var result = await Method.postHttp(openUrl + "/Payment/ManagerPay",
+                new
+                {
+                    Cart = new
+                    {
+                        HeadCount = OrderInfo.HeadCount,
+                        Price = OrderInfo.Price,
+                        PriceInPoints = 0,
+                        Invoice = "",
+                        DeskId = OrderInfo.Desk.Id,
+                        PayKind = new { Id = PayKindId },
+                        OrderedMenus = OrderInfo.OrderedMenus
+                    },
+                    CartAddition = new
+                    {
+                        Token = Token,
+                        HotelId = HotelId,
+                        WaiterId = ClerkId,
+                        UserId = User.Id,
+                        Discount = Discount,
+                        DiscountName = DiscountName,
+                        GiftMenus = OrderInfo.SendMenus,
+                        DineType = 1
+                    }
+                });
+            PostData pd = JsonConvert.DeserializeObject<PostData>(result);
+            if (pd.Succeeded)
+            {
+                db.TakeOuts.Add(new TakeOut()
+                {
+                    DineId = pd.Data,
+                    Address = Address,
+                    RecordId = ShiftNum
+                });
+                await db.SaveChangesAsync();
+                try
+                {
+                    var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
+                    if (isprint) MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, pd.Data, new List<int>(), new List<PrintType>() { PrintType.Recipt, PrintType.KitchenOrder, PrintType.ServeOrder }));
+                }
+                catch
+                {
+
+                }
+            }
+            return Json(new SuccessState());
+        }
+
+        /// <summary>
+        /// 获取外卖统一支付的信息
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> getSpePayEle()
+        {
+            var HotelManager = new HotelManager(ConnectingStr);
+            var Desks = await HotelManager.GetTakeOutDeskes();
+            var DeskIds = Desks.Select(d => d.Id);
+            List<Dine> Dines = new List<Dine>();
+            if (DeskIds.Count() > 0)
+            {
+
+                Dines = await db.Dines
+                    .Include(d => d.DineMenus.Select(dd => dd.Menu.MenuPrice))
+                    .Include(d => d.DineMenus.Select(dd => dd.Remarks))
+                    .Include(d => d.TakeOut)
+                    .Where(d => DeskIds.Contains(d.DeskId) && d.IsPaid == false).ToListAsync();
+            }
+            var PayKinds = await HotelManager.GetOfflinePayKinds();
+            return Json(new SuccessState(new { Dines = Dines, Desks = Desks, PayKinds = PayKinds }));
+        }
+
+
+        public async Task<JsonResult> SpecialPay(decimal Price, List<string> DineIds, int Id)
+        {
+            var HotelManager = new HotelManager(ConnectingStr);
+            var UnPaidDines = await db.Dines.Where(d => DineIds.Contains(d.Id)).ToListAsync();
+            decimal priceAll = 0;
+            var myDesks = await db.Desks.Where(d => d.Usable == true).ToListAsync();
+            var myDines = await db.Dines.Where(d => d.IsPaid == false && d.IsOnline == false).ToListAsync();
+            if (UnPaidDines == null || UnPaidDines.Count == 0)
+            {
+                return Json(new ErrorState("未选择订单"));
+            }
+            else
+            {
+                foreach (var i in UnPaidDines)
+                {
+                    priceAll += i.Price;
+                }
+            }
+            if (priceAll > Price)
+            {
+                return Json(new ErrorState("付款金额不够"));
+            }
+            else
+            {
+                var isprint = await db.HotelConfigs.Select(h => h.HasAutoPrinter).FirstOrDefaultAsync();
+                for (var i = 0; i < UnPaidDines.Count(); i++)
+                {
+                    db.DinePaidDetails.Add(new DinePaidDetail
+                    {
+                        DineId = UnPaidDines[i].Id,
+                        PayKindId = Id,
+                        Price = UnPaidDines[i].Price
+                    });
+
+                    UnPaidDines[i].IsPaid = true;
+                    MvcApplication.client.Send(new NewDineInformProtocol((int)(Session["User"] as RStatus).HotelId, UnPaidDines[i].Id, true));
+                    await db.SaveChangesAsync();
+                    var CurDesk = UnPaidDines[i].DeskId;
+                    var CleanDeskDine = myDines.Where(d => d.DeskId == CurDesk && d.IsPaid == false).Count();
+                    if (CleanDeskDine == 0)
+                    {
+                        var CleanDesk = myDesks.FirstOrDefault(d => d.Id == CurDesk);
+                        CleanDesk.Status = DeskStatus.StandBy;
+                        await db.SaveChangesAsync();
+                        await MvcApplication.ws.SendToClient((int)(Session["User"] as RStatus).HotelId, "desk");
+                    }
+                    try
+                    {
+                        if (isprint)
+                        {
+                            if (UnPaidDines[i].Status == DineStatus.Printed)
+                            {
+                                MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, UnPaidDines[i].Id, new List<int>(), new List<PrintType>() { PrintType.Recipt }));
+                            }
+                            else
+                            {
+                                MvcApplication.client.Send(new RequestPrintDineProtocol((int)(Session["User"] as RStatus).HotelId, UnPaidDines[i].Id, new List<int>(), new List<PrintType>() { PrintType.Recipt, PrintType.KitchenOrder, PrintType.ServeOrder }));
+                            }
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
+            }
+            var Desks = await HotelManager.GetTakeOutDeskes();
+            var DeskIds = Desks.Select(d => d.Id);
+            List<Dine> Dines = new List<Dine>();
+            if (DeskIds.Count() > 0)
+            {
+
+                Dines = await db.Dines
+                    .Include(d => d.DineMenus.Select(dd => dd.Menu.MenuPrice))
+                    .Include(d => d.DineMenus.Select(dd => dd.Remarks))
+                    .Include(d => d.TakeOut)
+                    .Where(d => DeskIds.Contains(d.DeskId) && d.IsPaid == false).ToListAsync();
+            }
+            return Json(new SuccessState(new { Dines = Dines, Desks = Desks }));
+        }
+
     }
 }

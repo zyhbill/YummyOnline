@@ -303,6 +303,7 @@
     <Content Include="Views\Hotel\_ViewDine.cshtml" />
     <Content Include="Views\Database\_ViewBackup.cshtml" />
     <Content Include="Views\Users\_ViewHotelAdmin.cshtml" />
+    <Content Include="Views\Hotel\_ViewArticle.cshtml" />
     <None Include="Web.CompanyServer.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,4 +1,5 @@
 ﻿using HotelDAO.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -32,6 +33,8 @@ namespace OrderSystem.Models {
 		public DineType DineType { get; set; }
 		public double? Discount { get; set; }
 		public string DiscountName { get; set; }
+		public DateTime? BeginTime { get; set; }
+		public DineFrom From { get; set; }
 		public List<MenuExtension> GiftMenus { get; set; } = new List<MenuExtension>();
 	}
 
@@ -40,6 +43,8 @@ namespace OrderSystem.Models {
 		public string UserId { get; set; }
 		public double? Discount { get; set; }
 		public string DiscountName { get; set; }
+		public DateTime? BeginTime { get; set; }
+		public DineFrom From { get; set; }
 	}
 
 	public class ManagerCartAddition {

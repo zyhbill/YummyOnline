@@ -45,8 +45,10 @@ namespace Protocol.PrintingProtocol {
 		public AreaType AreaType { get; set; }
 		public Printer ReciptPrinter { get; set; }
 		public Printer ServePrinter { get; set; }
+		public string ReciptDepartmentName { get; set; }
+		public string ServeDepartmentName { get; set; }
 	}
-	
+
 	public class DineMenu {
 		public int Id { get; set; }
 		public DineMenuStatus Status { get; set; }
@@ -67,6 +69,7 @@ namespace Protocol.PrintingProtocol {
 		public string Unit { get; set; }
 		public bool IsSetMeal { get; set; }
 		public List<SetMealMenu> SetMealMenus { get; set; } = new List<SetMealMenu>();
+		public string DepartmentName { get; set; }
 		public Printer Printer { get; set; }
 	}
 	public class SetMealMenu {
@@ -108,6 +111,7 @@ namespace Protocol.PrintingProtocol {
 	public class PrinterFormat {
 		public int PaperSize { get; set; }
 		public string Font { get; set; }
+		public int ColorDepth { get; set; }
 		public int ReciptBigFontSize { get; set; }
 		public int ReciptFontSize { get; set; }
 		public int ReciptSmallFontSize { get; set; }
@@ -118,6 +122,7 @@ namespace Protocol.PrintingProtocol {
 		public int ShiftBigFontSize { get; set; }
 		public int ShiftFontSize { get; set; }
 		public int ShiftSmallFontSize { get; set; }
+		public int PaddingRight { get; set; }
 	}
 
 	public class DineForPrinting {

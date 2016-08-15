@@ -46,7 +46,8 @@ namespace YummyOnline {
 
 		public async Task InitializeHotel(int hotelId, string adminId) {
 			ctx.HotelConfigs.Add(new HotelConfig {
-				Id = hotelId
+				Id = hotelId,
+				IsPrintReciptAfterPayingOffline = true
 			});
 
 			ctx.PayKinds.Add(new PayKind {
@@ -77,6 +78,12 @@ namespace YummyOnline {
 				Discount = 1,
 				CompleteUrl = "/Payment/Complete"
 			});
+			ctx.PayKinds.Add(new PayKind {
+				Name = "随机立减",
+				Type = PayKindType.RandomPreference,
+				Usable = true,
+				Discount = 1,
+			});
 
 			Staff staff = new Staff {
 				Id = adminId,
@@ -97,15 +104,19 @@ namespace YummyOnline {
 			ctx.Staffs.Add(staff);
 
 			ctx.PrinterFormats.Add(new PrinterFormat {
-				Font = "宋体",
 				PaperSize = 278,
+				Font = "宋体",
+				ColorDepth = 55,
 				ReciptBigFontSize = 12,
 				ReciptFontSize = 8,
 				ReciptSmallFontSize = 7,
-				KitchenOrderFontSize = 9,
-				KitchenOrderSmallFontSize = 9,
-				ServeOrderFontSize = 9,
-				ServeOrderSmallFontSize = 9
+				KitchenOrderFontSize = 10,
+				KitchenOrderSmallFontSize = 8,
+				ServeOrderFontSize = 10,
+				ServeOrderSmallFontSize = 8,
+				ShiftBigFontSize = 12,
+				ShiftFontSize = 8,
+				ShiftSmallFontSize = 7
 			});
 			await ctx.SaveChangesAsync();
 		}

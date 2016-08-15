@@ -8,4 +8,8 @@
 		templateUrl: '/Hotel/_ViewDine',
 		controller: 'DineCtrl'
 	})
+	.when('/Article/', {
+		templateUrl: '/Hotel/_ViewArticle',
+		controller: 'ArticleCtrl'
+	})
 });

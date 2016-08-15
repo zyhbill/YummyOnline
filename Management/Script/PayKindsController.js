@@ -192,8 +192,6 @@
         $http.post('/TimeDiscounts/AddTimeDiscounts', $scope.newTimeDiscount).then(function (response) {
             if (response.data.succeeded) {
                 refresh();
-                $scope.newTimeDiscount.from = null;
-                $scope.newTimeDiscount.to = null;
                 $scope.newTimeDiscount.week = null;
                 $scope.newTimeDiscount.discount = null;
                 $scope.newTimeDiscount.name = null;
@@ -469,14 +467,18 @@
     }
     
     $scope.putInvoice = function () {
-        var invoice = $scope.nowDine.Invoice;
-        var Id = $scope.nowDine.Id
-        $http.post('/DinePaidDetails/putInvoice', { Id: Id, Invoice: invoice }).then(function (response) {
+        var invoice = $scope.nowDine.Title;
+        var price = $scope.nowDine.InvoicePrice;
+        var Id = $scope.nowDine.Id;
+        console.log(invoice);
+        console.log(price);
+        $http.post('/DinePaidDetails/putInvoice', { Id: Id, Invoice: invoice,Price:price }).then(function (response) {
             alert('录入成功');
+            refresh();
         });
     }
 
-    $scope.search = function () {
+    $scope.search = function (type) {
         var temp = $scope.paykindnames.filter(function (x) { return x.IsChoose }).map(function (x) { return x.Id })
         console.log(temp);
         
@@ -489,8 +491,8 @@
          
             waiterid: $scope.waiterid,
             
-            payKindIds: temp
-         
+            payKindIds: temp,
+            Type :type
         }).then(function (response) {
             console.log($scope.paykindname);
             
@@ -581,9 +583,7 @@
         $http.post('/MenuOnSales/AddMenuOnSales', $scope.newMenuOnSale).then(function (response) {
             if (response.data.succeeded) {
                 refresh();
-                $scope.newMenuOnSale.id = null;
-                $scope.newMenuOnSale.onsaleweek = null;
-                $scope.newMenuOnSale.price = null;
+                $scope.newMenuOnSale = {};
             }
             else {
                 alert('请按要求输入！！！');

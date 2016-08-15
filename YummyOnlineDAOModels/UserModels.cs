@@ -33,7 +33,10 @@ namespace YummyOnlineDAO.Models {
 		public string Email { get; set; }
 		[MaxLength(20)]
 		public string UserName { get; set; }
+		public string WeChatOpenId { get; set; }
 		public string PasswordHash { get; set; }
+
+		public decimal Price { get; set; }
 
 		public bool Confirmed { get; set; }
 		public bool IsSendRecommedation { get; set; }

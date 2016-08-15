@@ -125,6 +125,8 @@ namespace Management.Controllers
                 var rs = new YummyOnlineContext();
                 var repeat = rs.Hotels.Where(h => h.Tel == Phone && h.Usable==true).FirstOrDefault();
                 if(repeat != null) return Json(new ErrorState("该号码已被注册"));
+                var Staff = rs.Staffs.Where(d => d.SigninName == Phone).FirstOrDefault();
+                if(Staff!=null) return Json(new ErrorState("该号码已被注册"));
                 var NewHotel = new Hotel
                 {
                     Address = "默认",
@@ -148,7 +150,8 @@ namespace Management.Controllers
                     CreateDate = DateTime.Now,
                     PasswordHash = ps,
                     PhoneNumber = Phone,
-                    SigninName = Phone
+                    SigninName = Phone,
+                    IsHotelAdmin=true
                 });
                 rs.SaveChanges();
                 return Json(new SuccessState());

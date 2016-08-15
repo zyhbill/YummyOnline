@@ -38,7 +38,7 @@
 }
 
 	.section-category .list-group {
-		margin-bottom: 0;
+		margin-bottom: 50px;
 	}
 
 		.section-category .list-group .list-group-item {
@@ -166,29 +166,29 @@
 				margin-right: 55px;
 			}
 
-.section-menu-fashion .media-body .meal-bottom .meal-price {
-	float: right;
-	width: 55px;
-	text-align: right;
-}
+			.section-menu-fashion .media-body .meal-bottom .meal-price {
+				float: right;
+				width: 55px;
+				text-align: right;
+			}
 
-.section-menu-fashion .media-body .meal-bottom .meal-on-sale {
-	display: inline-block;
-	padding: 0 5px;
-	border-radius: 2px;
-	font-size: 3px;
-}
+			.section-menu-fashion .media-body .meal-bottom .meal-on-sale {
+				display: inline-block;
+				padding: 0 5px;
+				border-radius: 2px;
+				font-size: 3px;
+			}
 
-.section-menu-fashion .media-body .meal-bottom .cart-control {
-	position: absolute;
-	top: -22px;
-	right: 10px;
-}
+			.section-menu-fashion .media-body .meal-bottom .cart-control {
+				position: absolute;
+				top: -22px;
+				right: 10px;
+			}
 
-	.section-menu-fashion .media-body .meal-bottom .cart-control .btn-cart-num {
-		margin: 0 5px;
-		font-size: 18px;
-	}
+				.section-menu-fashion .media-body .meal-bottom .cart-control .btn-cart-num {
+					margin: 0 5px;
+					font-size: 18px;
+				}
 
 
 .section-menu-simple {

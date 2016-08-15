@@ -241,7 +241,7 @@ namespace OrderSystem.Controllers {
 		/// 在线支付完成
 		/// </summary>
 		/// <param name="dineId">订单号</param>
-		/// <param name="recordId">附加信息</param>
+		/// <param name="recordId">附加信息    </param>
 		/// <returns></returns>
 		private async Task onlinePayCompleted(string dineId, string recordId) {
 			bool isPaid = await HotelManager.IsDinePaid(dineId);
@@ -253,8 +253,9 @@ namespace OrderSystem.Controllers {
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dineId, true);
 
 			HotelConfig config = await HotelManager.GetHotelConfig();
-			for(int i = 0; i < config.PrintingReciptTimes; i++) {
-				await requestPrintDine(dineId, new List<PrintType> { PrintType.Recipt, PrintType.ServeOrder, PrintType.KitchenOrder });
+			await requestPrintDine(dineId, new List<PrintType> { PrintType.Recipt, PrintType.ServeOrder, PrintType.KitchenOrder });
+			for(int i = 0; i < config.PrintingReciptTimes - 1; i++) {
+				await requestPrintDine(dineId, new List<PrintType> { PrintType.Recipt });
 			}
 		}
 	}

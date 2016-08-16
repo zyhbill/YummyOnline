@@ -464,3 +464,13 @@
         }
     }
 })
+.directive('tool', function () {
+    return {
+        scope: {
+
+        },
+        link: function (scope, element, attr) {
+            element.tooltip();
+        }
+    }
+})

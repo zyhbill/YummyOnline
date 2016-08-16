@@ -47,8 +47,8 @@
 
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" type="button" ng-click="addMenuOnSale(menuOnSale)" data-dismiss="modal">添加</button>
-                    <button class="btn btn-warning" type="button" data-dismiss="modal">取消</button>
+                    <button class="btn btn-primary tooltip-success" type="button" ng-click="addMenuOnSale(menuOnSale)" data-dismiss="modal">添加</button>
+                    <button class="btn btn-warning tooltip-success" type="button" data-dismiss="modal">取消</button>
                 </div>
 
             </div><!-- /.modal-content -->
@@ -88,19 +88,19 @@
                 
             </td>
             <td>
-                <button type="button" class="btn btn-minier btn-primary dropdown-toggle" ng-click="altMenuOnSale(menuOnSale)" ng-if="!menuOnSale.isAlt">
+                <button type="button" class="btn btn-minier btn-primary dropdown-toggle tooltip-success" data-rel="tooltip" data-placement="bottom" title="修改特价" tool  ng-click="altMenuOnSale(menuOnSale)" ng-if="!menuOnSale.isAlt">
                     @*修改*@
                     <i class="icon-edit icon-on-right bigger-110"></i>
                 </button>
-                <button type="button" class="btn btn-minier btn-success dropdown-toggle" ng-if="menuOnSale.isAlt" ng-click="finishaltMenuOnSale(menuOnSale)">
+                <button type="button" class="btn btn-minier btn-success dropdown-toggle tooltip-success" data-rel="tooltip" data-placement="bottom" title="保存特价" tool ng-if="menuOnSale.isAlt" ng-click="finishaltMenuOnSale(menuOnSale)">
                     @*完成*@
                     <i class="icon-ok icon-on-right bigger-110"></i>
                 </button>
-                <button type="button" class="btn btn-minier btn-danger dropdown-toggle" ng-click="altMenuOnSale(menuOnSale)" ng-if="menuOnSale.isAlt">
+                <button type="button" class="btn btn-minier btn-danger dropdown-toggle tooltip-success" data-rel="tooltip" data-placement="bottom" title="取消修改特价" tool ng-click="altMenuOnSale(menuOnSale)" ng-if="menuOnSale.isAlt">
                     @*取消*@
                     <i class="icon-remove icon-on-right bigger-110"></i>
                 </button>
-                <button type="button" class="btn btn-minier btn-danger dropdown-toggle" ng-click="delete(menuOnSale)">
+                <button type="button" class="btn btn-minier btn-danger dropdown-toggle tooltip-success" data-rel="tooltip" data-placement="bottom" title="删除特价" tool ng-click="delete(menuOnSale)">
                     @*删除*@
                     <i class="icon-trash icon-on-right bigger-110"></i>
                 </button>

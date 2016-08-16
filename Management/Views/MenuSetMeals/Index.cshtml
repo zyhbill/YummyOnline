@@ -32,11 +32,11 @@
                 </span>
             </td>
             <td>
-                <button type="button" class="btn btn-minier btn-danger dropdown-toggle" ng-click="switch(menuSetMeal)" ng-if="menuSetMeal.Usable">
+                <button type="button" class="btn btn-minier btn-danger dropdown-toggle tooltip-success" data-rel="tooltip" data-placement="bottom" title="禁用套餐" tool  ng-click="switch(menuSetMeal)" ng-if="menuSetMeal.Usable">
                     @*禁用*@
                     <i class="icon-ban-circle icon-on-right bigger-110"></i>
                 </button>
-                <button type="button" class="btn btn-minier btn-success dropdown-toggle" ng-click="switch(menuSetMeal)" ng-if="!menuSetMeal.Usable">
+                <button type="button" class="btn btn-minier btn-success dropdown-toggle tooltip-success" data-rel="tooltip" data-placement="bottom" title="启用套餐" tool  ng-click="switch(menuSetMeal)" ng-if="!menuSetMeal.Usable">
                     @*启用*@
                     <i class="icon-ok-circle icon-on-right bigger-110"></i>
                 </button>

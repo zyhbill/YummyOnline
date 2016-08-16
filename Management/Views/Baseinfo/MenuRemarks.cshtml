@@ -18,10 +18,10 @@
                     <td>{{remark.Price.toFixed(2)}}</td>
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                            <button class="btn btn-xs btn-info" ng-click="OpenEditModel(remark)">
+                            <button class="btn btn-xs btn-info tooltip-success" data-rel="tooltip" data-placement="bottom" title="修改备注" tool ng-click="OpenEditModel(remark)">
                                 <i class="icon-edit bigger-120"></i>
                             </button>
-                            <button class="btn btn-xs btn-danger" ng-click="DeleteRemark(remark)">
+                            <button class="btn btn-xs btn-danger tooltip-success" data-rel="tooltip" data-placement="bottom" title="删除备注" tool ng-click="DeleteRemark(remark)">
                                 <i class="icon-trash bigger-120"></i>
                             </button>
                         </div>

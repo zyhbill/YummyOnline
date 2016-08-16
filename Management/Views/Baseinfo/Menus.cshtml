@@ -36,10 +36,10 @@
 
                         <td>
                             <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                                <button class="btn btn-xs btn-info" ng-click="OpenEditModel(menu)">
+                                <button class="btn btn-xs btn-info tooltip-success" data-rel="tooltip" data-placement="bottom" title="菜品详情" tool ng-click="OpenEditModel(menu)">
                                     <i class="icon-edit bigger-120"></i>
                                 </button>
-                                <button class="btn btn-xs btn-danger" ng-click="DeleteMenu(menu)">
+                                <button class="btn btn-xs btn-danger tooltip-success" data-rel="tooltip" data-placement="bottom" title="删除菜品" tool ng-click="DeleteMenu(menu)">
                                     <i class="icon-trash bigger-120"></i>
                                 </button>
                             </div>
@@ -50,14 +50,14 @@
                                     </button>
                                     <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">
                                         <li>
-                                            <a href="javascript:;" class="tooltip-success" data-rel="tooltip" title="编辑" ng-click="OpenEditModel(menu)">
+                                            <a href="javascript:;" class="tooltip-success" data-rel="tooltip" title="编辑" tool  ng-click="OpenEditModel(menu)">
                                                 <span class="green">
                                                     <i class="icon-edit bigger-120"></i>
                                                 </span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="javascript:;" class="tooltip-error" data-rel="tooltip" title="删除" ng-click="DeleteMenu(menu)">
+                                            <a href="javascript:;" class="tooltip-error" data-rel="tooltip" title="删除" tool ng-click="DeleteMenu(menu)">
                                                 <span class="red">
                                                     <i class="icon-trash bigger-120"></i>
                                                 </span>
@@ -237,15 +237,15 @@
                         <div class="checkbox">
                             供应日期:<br />
                             <label>
-                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[0]" />
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[6]" />
                                 <span class="lbl">星期一</span>
                             </label>
                             <label>
-                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[1]" />
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[5]" />
                                 <span class="lbl">星期二</span>
                             </label>
                             <label>
-                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[2]" />
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[4]" />
                                 <span class="lbl">星期三</span>
                             </label>
                             <label>
@@ -253,15 +253,15 @@
                                 <span class="lbl">星期四</span>
                             </label>
                             <label>
-                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[4]" />
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[2]" />
                                 <span class="lbl">星期五</span>
                             </label>
                             <label>
-                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[5]" />
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[1]" />
                                 <span class="lbl">星期六</span>
                             </label>
                             <label>
-                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[6]" />
+                                <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="MenuElement.Supply[0]" />
                                 <span class="lbl">星期日</span>
                             </label>
                         </div><!--checkbox end-->

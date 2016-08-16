@@ -35,15 +35,15 @@
                     <input ng-if="hotel.isAlt" type="text"  ng-model="hotel.CloseTime" />
                 </td>
                 <td>
-                    <button type="button" class="btn btn-minier btn-primary dropdown-toggle"  ng-click="altHotel(hotel)" ng-if="!hotel.isAlt">
+                    <button type="button" class="btn btn-minier btn-primary dropdown-toggle tooltip-success"  data-rel="tooltip" data-placement="bottom" title="修改信息" tool ng-click="altHotel(hotel)" ng-if="!hotel.isAlt">
                         @*修改*@
                         <i class="icon-edit icon-on-right bigger-110"></i>
                     </button>
-                    <button type="button" class="btn btn-minier btn-success dropdown-toggle"  ng-if="hotel.isAlt" ng-click="finishaltHotel(hotel)">
+                    <button type="button" class="btn btn-minier btn-success dropdown-toggle tooltip-success" data-rel="tooltip" data-placement="bottom" title="保存修改" tool  ng-if="hotel.isAlt" ng-click="finishaltHotel(hotel)">
                         @*完成*@
                         <i class="icon-ok icon-on-right bigger-110"></i>
                     </button>
-                    <button type="button" class="btn btn-minier btn-danger dropdown-toggle"  ng-click="altHotel(hotel)" ng-if="hotel.isAlt">
+                    <button type="button" class="btn btn-minier btn-danger dropdown-toggle tooltip-success" data-rel="tooltip" data-placement="bottom" title="取消修改" tool  ng-click="altHotel(hotel)" ng-if="hotel.isAlt">
                         @*取消*@
                         <i class="icon-remove icon-on-right bigger-110"></i>
                     </button>

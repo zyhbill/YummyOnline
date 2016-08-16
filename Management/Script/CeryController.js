@@ -416,11 +416,40 @@
         RePrinter.Initialize();
     }
     $scope.RePrinterElement = RePrinter.RePrinterElement;
-    $scope.RePrintDine = function (dine) {
-        RePrinter.RePrintDine(dine);
+    $scope.Detail = function (dine) {
+        RePrinter.RePrinterElement.CurrentDine = dine;
+        var modalInstance = $uibModal.open({//打开支付
+            animation: $scope.animationsEnabled,
+            templateUrl: 'ModalDetail.html',
+            controller: 'ModalDetailCtrl',
+            backdrop: 'static',
+            size: 'sm',
+            resolve: {
+                option: {
+                    method:RePrinter,CurDine:dine
+                }
+            }
+        });
     }
-
+    $scope.GetPaid = function () {
+        RePrinter.GetPaid();
+    }
+    $scope.GetUnpaid = function () {
+        RePrinter.GetUnpaid();
+    }
 }])
+.controller('ModalDetailCtrl', function ($scope, $rootScope, $uibModalInstance, $q, $timeout, option) {
+    $scope.RePrinterElement = option.method.RePrinterElement;
+    $scope.cancel = function () {
+        $uibModalInstance.dismiss('cancel');
+    }
+    $scope.RePrintDine = function (dine) {
+        option.method.RePrintDine(dine);
+    }
+    $scope.initialize = function () {
+        option.method.GetDetail();
+    }
+})
 .controller('TakeOutCtrl', ['$scope', '$rootScope', '$uibModal', 'Order', 'Pay', function ($scope, $rootScope, $uibModal, Order, Pay) {
     //点单
     $rootScope.FatherPage = "店小二营业"; $rootScope.FatherPath = "#/CheckOut"; $rootScope.ChildPage = "结账";

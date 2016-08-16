@@ -1616,6 +1616,7 @@
         RePrinterElement: {
             UnShiftDines: [],
             CurrentDeskId: "",
+            CurrentDine:{},
         },
         Initialize: function () {
             var _this = this;
@@ -1628,6 +1629,26 @@
             var _this = this;
             $http.post('../Templates/RePrintDine', { Id: dine.Id }).then(function (response) {
 
+            })
+        },
+        GetDetail: function () {
+            var _this = this;
+            $http.post('../Templates/GetDineDetail', {
+                DineId: _this.RePrinterElement.CurrentDine.Id
+            }).then(function (response) {
+                _this.RePrinterElement.CurrentDine.DineMenus = response.data.Data;
+            });
+        },
+        GetPaid: function () {
+            var _this = this;
+            $http.post('../Templates/GetPaid').then(function (response) {
+                _this.RePrinterElement.UnShiftDines = response.data.Data;
+            })
+        },
+        GetUnpaid: function () {
+            var _this = this;
+            $http.post('../Templates/GetUnpaid').then(function (response) {
+                _this.RePrinterElement.UnShiftDines = response.data.Data;
             })
         }
     }

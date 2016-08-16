@@ -1178,39 +1178,154 @@ namespace Management.Controllers
         public async Task<JsonResult> getRePrinter()
         {
             var UnShiftDine = await db.Dines
+                    .Include(p=>p.DinePaidDetails.Select(pp=>pp.PayKind))
+                    .Include(p => p.Desk.Area)
+                    .Include(p=>p.Waiter)
+                    .Include(p=>p.Clerk)
                     .Include(p => p.DineMenus.Select(pp => pp.Remarks))
                     .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
-                    .Where(d => d.Status != DineStatus.Shifted)
+                    .Where(d => d.Status != DineStatus.Shifted && SqlFunctions.DateDiff("day",d.BeginTime ,DateTime.Now)==0)
                     .Select(d => new
                     {
-                        d.Discount,
-                        d.DiscountName,
-                        d.Id,
-                        DineMenus = d.DineMenus.Select(dd => new
-                        {
-                            Count = dd.Count,
-                            DineId = dd.DineId,
-                            Id = dd.Id,
-                            Menu = dd.Menu,
-                            MenuId = dd.MenuId,
-                            OriPrice = dd.OriPrice,
-                            Price = dd.Price,
-                            RemarkPrice = dd.RemarkPrice,
-                            Remarks = dd.Remarks,
-                            ReturnedWaiterId = dd.ReturnedWaiterId,
-                            Status = dd.Status
-                        }),
-                        Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
-                        d.DeskId,
-                        d.UserId,
-                        d.OriPrice,
-                        d.Price,
-                        d.Status,
-                        d.IsPaid
+                       d.Id,
+                       d.DeskId,
+                       AreaName  = d.Desk.Area.Name,
+                       WaiterName = d.Waiter.Name,
+                       ClerkName = d.Clerk.Name,
+                       d.HeadCount,
+                       d.BeginTime,
+                       d.IsPaid,
+                       PayKinds = d.DinePaidDetails.Select(dd=>new {
+                           dd.PayKindId,
+                           dd.PayKind.Name,
+                           dd.Price,
+                       }),
+                       Paid = d.DinePaidDetails.Select(p=> new { 
+                          Price  = (decimal?)p.Price
+                       }).Sum(p=> p.Price ),
+                       Consume = d.OriPrice,
+                       DiscountPrice = d.OriPrice - d.Price,
+                       Gift = d.DineMenus.Where(dd=>dd.Status==DineMenuStatus.Gift).Select(dd=>new { Count = dd.Count , Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice}).Sum(dd=>dd.Price*dd.Count + dd.RemarkPrice),
+                       Returned = d.DineMenus.Where(dd => dd.Status == DineMenuStatus.Returned).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
+                       d.IsInvoiced,
+                       Discount = d.Discount * 100
                     })
                     .ToListAsync();
             return Json(new { UnShiftDine = UnShiftDine });
         }
+
+
+        public async Task<JsonResult> GetDineDetail(string DineId)
+        {
+            var DineMenus = await db.DineMenus
+                .Include(d=>d.Menu.MenuPrice)
+                .Include(d=>d.Remarks)
+                .Where(d => d.DineId == DineId)
+                .Select(d => new
+                {
+                    d.MenuId,
+                    d.Menu.Name,
+                    d.Count,
+                    d.OriPrice,
+                    d.Price,
+                    Discount =  (d.Price  /d.OriPrice)*100
+                })
+                .ToListAsync();
+            return Json(new JsonSuccess(DineMenus));
+        }
+
+        /// <summary>
+        /// 获取已支付的当日点单
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> GetPaid()
+        {
+            var PaidDines = await db.Dines
+                    .Include(p => p.DinePaidDetails.Select(pp => pp.PayKind))
+                    .Include(p => p.Desk.Area)
+                    .Include(p => p.Waiter)
+                    .Include(p => p.Clerk)
+                    .Include(p => p.DineMenus.Select(pp => pp.Remarks))
+                    .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
+                    .Where(d => d.Status != DineStatus.Shifted && SqlFunctions.DateDiff("day", d.BeginTime, DateTime.Now) == 0 && d.IsPaid == true)
+                    .Select(d => new
+                    {
+                        d.Id,
+                        d.DeskId,
+                        AreaName = d.Desk.Area.Name,
+                        WaiterName = d.Waiter.Name,
+                        ClerkName = d.Clerk.Name,
+                        d.HeadCount,
+                        d.BeginTime,
+                        d.IsPaid,
+                        PayKinds = d.DinePaidDetails.Select(dd => new {
+                            dd.PayKindId,
+                            dd.PayKind.Name,
+                            dd.Price,
+                        }),
+                        Paid = d.DinePaidDetails.Select(p => new {
+                            Price = (decimal?)p.Price
+                        }).Sum(p => p.Price),
+                        Consume = d.OriPrice,
+                        DiscountPrice = d.OriPrice - d.Price,
+                        Gift = d.DineMenus.Where(dd => dd.Status == DineMenuStatus.Gift).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
+                        Returned = d.DineMenus.Where(dd => dd.Status == DineMenuStatus.Returned).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
+                        d.IsInvoiced,
+                        Discount = d.Discount * 100
+                    })
+                    .ToListAsync();
+
+            return Json(new JsonSuccess(PaidDines));
+        }
+        /// <summary>
+        /// 获取未知付的当日点单
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> GetUnpaid()
+        {
+            var UnPaidDines = await db.Dines
+                    .Include(p => p.DinePaidDetails.Select(pp => pp.PayKind))
+                    .Include(p => p.Desk.Area)
+                    .Include(p => p.Waiter)
+                    .Include(p => p.Clerk)
+                    .Include(p => p.DineMenus.Select(pp => pp.Remarks))
+                    .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
+                    .Where(d => d.Status != DineStatus.Shifted && SqlFunctions.DateDiff("day", d.BeginTime, DateTime.Now) == 0 && d.IsPaid == false)
+                    .Select(d => new
+                    {
+                        d.Id,
+                        d.DeskId,
+                        AreaName = d.Desk.Area.Name,
+                        WaiterName = d.Waiter.Name,
+                        ClerkName = d.Clerk.Name,
+                        d.HeadCount,
+                        d.BeginTime,
+                        d.IsPaid,
+                        PayKinds = d.DinePaidDetails.Select(dd => new {
+                            dd.PayKindId,
+                            dd.PayKind.Name,
+                            dd.Price,
+                        }),
+                        Paid = d.DinePaidDetails.Select(p => new {
+                            Price = (decimal?)p.Price
+                        }).Sum(p => p.Price),
+                        Consume = d.OriPrice,
+                        DiscountPrice = d.OriPrice - d.Price,
+                        Gift = d.DineMenus.Where(dd => dd.Status == DineMenuStatus.Gift).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
+                        Returned = d.DineMenus.Where(dd => dd.Status == DineMenuStatus.Returned).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
+                        d.IsInvoiced,
+                        Discount = d.Discount * 100
+                    })
+                    .ToListAsync();
+
+            return Json(new JsonSuccess(UnPaidDines));
+        }
+
+
+
+
+
+
         /// <summary>
         /// 补打印订单
         /// </summary>

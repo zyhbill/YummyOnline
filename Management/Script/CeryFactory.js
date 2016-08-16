@@ -470,7 +470,7 @@
             var _this = this;
             $http.post('../Templates/RePrint', {
                 DineId: _this.PayElements.CurrentDine.Id,
-                Type: 0
+                Type: 1
             }).success(function (data) {
                 $.gritter.add({
                     title: '提醒',

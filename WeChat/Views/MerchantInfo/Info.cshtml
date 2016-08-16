@@ -1,0 +1,40 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Info</title>
+    <link rel="stylesheet" href="~/node_modules/weui/dist/style/weui.css" />
+    <link rel="stylesheet" href="~/node_modules/weui/dist/style/weui.min.css" />
+</head>
+<body>
+    <div>
+        <article class="weui_article">
+            <h1>@ViewData["title"]</h1>
+            <section>
+                <h2 class="title">@ViewData["des"]</h2>
+                <section>
+                    <h3></h3>        
+                    <p>
+                       @Html.Raw(ViewData["body"]);
+                    </p>
+                </section>
+                @*<section>
+                    <h3>1.2 节标题</h3>
+                    <p>
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    </p>
+                </section>*@
+            </section>
+        </article>
+
+    </div>
+</body>
+</html>

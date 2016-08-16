@@ -458,6 +458,7 @@
     <Content Include="Senparc.Weixin-v13.7.5\Senparc.Weixin-v13.7.5.chw" />
     <Content Include="Views\History\History.cshtml" />
     <Content Include="Views\MerchantInfo\MerchantInfo.cshtml" />
+    <Content Include="Views\MerchantInfo\Info.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

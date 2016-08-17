@@ -151,46 +151,62 @@ namespace OrderSystem {
 
 
 		public async Task<Protocol.PrintingProtocol.Printer> GetShiftPrinter() {
-			return await ctx.HotelConfigs.Select(p => new Protocol.PrintingProtocol.Printer {
+			return await ctx.HotelConfigs.Select(p => p.ShiftPrinter == null ? null : new Protocol.PrintingProtocol.Printer {
 				Id = p.ShiftPrinter.Id,
 				Name = p.ShiftPrinter.Name,
 				IpAddress = p.ShiftPrinter.IpAddress,
 				Usable = p.ShiftPrinter.Usable
 			}).FirstOrDefaultAsync();
 		}
+
+		public async Task<List<Protocol.PrintingProtocol.PayKindShift>> GetPayKindShiftsForPrinting(List<int> ids, DateTime dateTime) {
+			List<Protocol.PrintingProtocol.PayKindShift> payKindShifts = await ctx.PayKindShifts
+				.Where(p => ids.Contains(p.Id) && SqlFunctions.DateDiff("day", p.DateTime, dateTime) == 0)
+				.GroupBy(p => p.Id).Select(p => new Protocol.PrintingProtocol.PayKindShift {
+					Id = p.Key,
+					DateTime = p.Select(a => a.DateTime).FirstOrDefault(),
+					PayKindShiftDetails = p.Select(d => new Protocol.PrintingProtocol.PayKindShiftDetail {
+						PayKind = d.PayKind.Name,
+						RealPrice = d.RealPrice,
+						ReceivablePrice = d.ReceivablePrice
+					}).ToList()
+				}).ToListAsync();
+
+			return payKindShifts;
+		}
+
 		public async Task<List<Protocol.PrintingProtocol.Shift>> GetShiftsForPrinting(List<int> ids, DateTime dateTime) {
-			var dbShifts = await ctx.PayKindShifts.Where(p => ids.Contains(p.Id) && SqlFunctions.DateDiff("day", p.DateTime, dateTime) == 0)
-				.Select(p => new {
-					p.Id,
-					p.DateTime,
-					p.PayKind.Name,
-					p.ReceivablePrice,
-					p.RealPrice
-				})
-				.ToListAsync();
-
-			List<Protocol.PrintingProtocol.Shift> shifts = new List<Protocol.PrintingProtocol.Shift>();
-
-			while(dbShifts.Count != 0) {
-				Protocol.PrintingProtocol.Shift shift = new Protocol.PrintingProtocol.Shift {
-					Id = dbShifts[0].Id,
-					DateTime = dbShifts[0].DateTime,
-					ShiftDetails = new List<Protocol.PrintingProtocol.ShiftDetail>()
-				};
-				shift.ShiftDetails = dbShifts
-					.Where(p => p.Id == shift.Id && p.DateTime == shift.DateTime)
-					.Select(p => new Protocol.PrintingProtocol.ShiftDetail {
-						PayKind = p.Name,
-						RealPrice = p.RealPrice,
-						ReceivablePrice = p.ReceivablePrice
-					}).ToList();
-
-				dbShifts.RemoveAll(p => p.Id == shift.Id && p.DateTime == shift.DateTime);
-
-				shifts.Add(shift);
-			}
+			List<Protocol.PrintingProtocol.Shift> shifts = await ctx.Shifts.Select(p => new Protocol.PrintingProtocol.Shift {
+				Id = p.Id,
+				DateTime = p.DateTime,
+				AveragePrice = p.AveragePrice,
+				CustomerCount = p.CustomerCount,
+				DeskCount = p.DeskCount,
+				GiftPrice = p.GiftPrice,
+				OriPrice = p.OriPrice,
+				PreferencePrice = p.PreferencePrice,
+				Price = p.Price,
+				ReturnedPrice = p.ReturnedPrice,
+				ToGoPrice = p.ToGoPrice,
+				ToStayPrice = p.ToStayPrice
+			}).ToListAsync();
 
 			return shifts;
+		}
+
+		public async Task<List<Protocol.PrintingProtocol.MenuClassShift>> GetMenuClassShiftsForPrinting(List<int> ids, DateTime dateTime) {
+			List<Protocol.PrintingProtocol.MenuClassShift> menuClassShifts = await ctx.MenuClassShifts
+				.Where(p => ids.Contains(p.Id) && SqlFunctions.DateDiff("day", p.DateTime, dateTime) == 0)
+				.GroupBy(p => p.Id).Select(p => new Protocol.PrintingProtocol.MenuClassShift {
+					Id = p.Key,
+					DateTime = p.Select(a => a.DateTime).FirstOrDefault(),
+					MenuClassShiftDetails = p.Select(d => new Protocol.PrintingProtocol.MenuClassShiftDetail {
+						MenuClass = d.MenuClass.Name,
+						Price = d.Price
+					}).ToList()
+				}).ToListAsync();
+
+			return menuClassShifts;
 		}
 
 		public async Task<List<Protocol.PrintingProtocol.Printer>> GetPrinters() {

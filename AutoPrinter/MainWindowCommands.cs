@@ -48,6 +48,7 @@ namespace AutoPrinter {
 		/// </summary>
 		async Task printRemoteTest(List<PrintType> printTypes, string ipOrName) {
 			DineForPrinting dp = null;
+			ShiftForPrinting sp = null;
 			try {
 				serverLog($"开始测试, 打印机: {ipOrName}", LogLevel.Info);
 				dp = await getDineForPrinting("00000000000000");
@@ -77,35 +78,23 @@ namespace AutoPrinter {
 
 				serverLog($"发送测试单命令成功", LogLevel.Success);
 				printCompleted("00000000000000");
+
+
+				sp = await getShiftsForPrinting(null, DateTime.Now);
+				if(sp == null) {
+					serverLog("获取交接班信息失败，请检查网络设置", LogLevel.Error);
+					return;
+				}
+				ShiftPrinter shiftPrinter = new ShiftPrinter();
+				serverLog($"发送打印测试交接班命令", LogLevel.Info);
+
+				await shiftPrinter.Print(sp);
+
+				serverLog($"发送打印测试交接班命令成功", LogLevel.Success);
 			}
 			catch(Exception e) {
-				serverLog($"无法打印测试单, 错误信息: {e}", LogLevel.Error);
+				serverLog($"无法打印测试交接班, 错误信息: {e}", LogLevel.Error);
 				remoteLog(Log.LogLevel.Error, $"Online Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
-			}
-		}
-		/// <summary>
-		/// 打印本地测试
-		/// </summary>
-		async Task printLocalTest(List<PrintType> printTypes, string ipOrName) {
-			DineForPrinting dp = Config.GetTestProtocol(ipOrName);
-			try {
-				serverLog($"开始本地测试, 打印机: {ipOrName}", LogLevel.Info);
-				serverLog($"发送本地测试单命令", LogLevel.Info);
-
-				if(Config.IsIPPrinter) {
-					DinePrinter dinePrinter = new DinePrinter();
-					await dinePrinter.Print(dp, printTypes, true);
-				}
-				else {
-					DineDriverPrinter dineDriverPrinter = new DineDriverPrinter();
-					dineDriverPrinter.Print(dp, printTypes, true);
-				}
-
-				serverLog($"发送本地测试单命令成功", LogLevel.Success);
-			}
-			catch(Exception e) {
-				serverLog($"无法打印本地测试单, 错误信息: {e.Message}", LogLevel.Error);
-				remoteLog(Log.LogLevel.Error, $"Local Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 			}
 		}
 		/// <summary>

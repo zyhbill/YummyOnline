@@ -1400,7 +1400,8 @@ namespace Management.Controllers
             var Style = await sysdb.Hotels.Where(d => d.Id == HotelId).Select(d => d.CssThemePath).FirstOrDefaultAsync();
             var NeedRandomPreference = await db.HotelConfigs.Select(h => h.NeedRandomPreference).FirstOrDefaultAsync();
             var IsPrintReciptAfterPayingOffline = await db.HotelConfigs.Select(h => h.IsPrintReciptAfterPayingOffline).FirstOrDefaultAsync();
-            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst , Style = Style , NeedRandomPreference = NeedRandomPreference , IsPrintReciptAfterPayingOffline = IsPrintReciptAfterPayingOffline });
+            var PrintingReciptTimes = await db.HotelConfigs.Select(h => h.PrintingReciptTimes).FirstOrDefaultAsync();
+            return Json(new { Rate = rate, Printers = printers, Format = format , AccountPrint = AccountPrint , font = font , IsUsePrinter = IsUsePrinter , IsPayFirst = IsPayFirst , Style = Style , NeedRandomPreference = NeedRandomPreference , IsPrintReciptAfterPayingOffline = IsPrintReciptAfterPayingOffline, PrintingReciptTimes= PrintingReciptTimes });
         }
         /// <summary>
         /// 修改打印模式
@@ -1413,7 +1414,7 @@ namespace Management.Controllers
         /// <param name="IsPayFirst"></param>
         /// <param name="Style"></param>
         /// <returns></returns>
-        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int? ShiftPrintId,bool IsPayFirst,int Style ,bool NeedRandomPreference,bool IsPrintReciptAfterPayingOffline)
+        public async Task<JsonResult> ChangePrintFormat(Format Format,string Font,int Rate,bool IsUsePrint,int? ShiftPrintId,bool IsPayFirst,int Style ,bool NeedRandomPreference,bool IsPrintReciptAfterPayingOffline,int PrintingReciptTimes)
         {
             int HotelId = (int)(Session["User"] as RStatus).HotelId;
             var config = await db.HotelConfigs.FirstOrDefaultAsync();
@@ -1423,6 +1424,7 @@ namespace Management.Controllers
             config.IsPayFirst = IsPayFirst;
             config.NeedRandomPreference = NeedRandomPreference;
             config.IsPrintReciptAfterPayingOffline = IsPrintReciptAfterPayingOffline;
+            config.PrintingReciptTimes = PrintingReciptTimes;
             var font = await db.PrinterFormats.FirstOrDefaultAsync();
             font.KitchenOrderFontSize = Format.KitchenOrderFontSize;
             font.KitchenOrderSmallFontSize = Format.KitchenOrderSmallFontSize;

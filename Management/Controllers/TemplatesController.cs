@@ -841,7 +841,7 @@ namespace Management.Controllers
             {
                 Date = Convert.ToDateTime(Time);
             }
-            var Numbers = await db.Shifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, Date) == 0)
+            var Numbers = await db.PayKindShifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, Date) == 0)
                 .GroupBy(d => d.Id)
                 .Select(d => new
                 {
@@ -893,14 +893,14 @@ namespace Management.Controllers
                 .ToListAsync();
             if (Profit != null)
             {
-                var Day = db.Shifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, DateTime.Now) == 0).ToList();
+                var Day = db.PayKindShifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, DateTime.Now) == 0).ToList();
                 if (Day.Count != 0)
                 {
                     Id = Day.Max(d => d.Id) + 1;
                 }
                 foreach (var pft in Profit)
                 {
-                    db.Shifts.Add(new Shift
+                    db.PayKindShifts.Add(new PayKindShift
                     {
                         DateTime = Now,
                         PayKindId = pft.Id,
@@ -925,6 +925,27 @@ namespace Management.Controllers
             MvcApplication.client.Send(new RequestPrintShiftsProtocol((int)(Session["User"] as RStatus).HotelId, new List<int>() { Id }, DateTime.Now));
             return Json(new SuccessState());
         }
+
+        /// <summary>
+        /// 交接班预览
+        /// </summary>
+        /// <returns></returns>
+        public async Task<JsonResult> Review()
+        {
+            var DineIds = await db.Dines
+                .Where(d => SqlFunctions.DateDiff("day", d.BeginTime, DateTime.Now) == 0 && d.IsPaid == true&&d.Status!=DineStatus.Shifted)
+                .Select(d=>d.Id)
+                .ToListAsync();
+
+
+
+
+
+
+        }
+
+
+
         /// <summary>
         /// 获取加菜信息
         /// </summary>

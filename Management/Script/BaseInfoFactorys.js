@@ -1204,7 +1204,8 @@
             UsePrint: true,
             IsPayFirst: true,
             NeedRandomPreference: true,
-            IsPrintReciptAfterPayingOffline:true,
+            IsPrintReciptAfterPayingOffline: true,
+            PrintingReciptTimes:1,
             Rate:0
         },
         Initialize: function () {
@@ -1219,6 +1220,7 @@
                 _this.PrintElement.IsPayFirst = data.IsPayFirst;
                 _this.PrintElement.NeedRandomPreference = data.NeedRandomPreference;
                 _this.PrintElement.IsPrintReciptAfterPayingOffline = data.IsPrintReciptAfterPayingOffline;
+                _this.PrintElement.PrintingReciptTimes = data.PrintingReciptTimes;
                 if (data.font) {
                     _this.PrintElement.CurrentFont = { Name: data.font.Font };
                     _this.PrintElement.CurrentFormat = {
@@ -1257,7 +1259,8 @@
                 IsPayFirst: _this.PrintElement.IsPayFirst,
                 Style: _this.PrintElement.CurrentStyle.Id,
                 NeedRandomPreference: _this.PrintElement.NeedRandomPreference,
-                IsPrintReciptAfterPayingOffline:_this.PrintElement.IsPrintReciptAfterPayingOffline
+                IsPrintReciptAfterPayingOffline: _this.PrintElement.IsPrintReciptAfterPayingOffline,
+                PrintingReciptTimes: _this.PrintElement.PrintingReciptTimes
             }).success(function (data) {
                 $rootScope.IsPayFirst = _this.PrintElement.IsPayFirst;
                 alert("保存成功");

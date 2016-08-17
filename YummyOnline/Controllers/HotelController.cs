@@ -148,5 +148,9 @@ namespace YummyOnline.Controllers {
 			await YummyOnlineManager.AddArticle(model, User.Identity.Name);
 			return Json(new JsonSuccess());
 		}
+		public async Task<JsonResult> RemoveArticle(int id) {
+			await YummyOnlineManager.RemoveArticle(id);
+			return Json(new JsonSuccess());
+		}
 	}
 }

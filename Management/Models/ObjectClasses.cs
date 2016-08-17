@@ -395,4 +395,17 @@ namespace Management.ObjectClasses
         public int ColorDepth { get; set; }
         public int PaddingRight { get; set; }
     }
+
+    public class ShiftDetails
+    {
+        public decimal OriPrice { get; set; } = 0;
+        public decimal EetIn { get; set; } = 0;
+        public decimal TakeOut { get; set; } = 0;
+        public decimal Price { get; set; } = 0;
+        public decimal Gift { get; set; } = 0;
+        public decimal Returned { get; set; } = 0;
+        public decimal Count { get; set; } = 0;
+        public decimal HeadCounts { get; set; } = 0;
+        public decimal Cpi { get; set; } = 0;
+    }
 }

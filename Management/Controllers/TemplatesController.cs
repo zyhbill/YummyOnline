@@ -933,12 +933,36 @@ namespace Management.Controllers
         public async Task<JsonResult> Review()
         {
             var DineIds = await db.Dines
+                .Include(d=>d.Desk.Area)
+                .Include(d=>d.DinePaidDetails.Select(dd=>dd.PayKind))
+                .Include(d=>d.DineMenus.Select(dd=>dd.Menu.MenuPrice))
                 .Where(d => SqlFunctions.DateDiff("day", d.BeginTime, DateTime.Now) == 0 && d.IsPaid == true&&d.Status!=DineStatus.Shifted)
-                .Select(d=>d.Id)
                 .ToListAsync();
+            var ShiftDetails = new ShiftDetails();
+            ShiftDetails.OriPrice = DineIds.Sum(d => d.OriPrice);
+            ShiftDetails.Price = DineIds.Sum(d => d.Price);
+            ShiftDetails.TakeOut = DineIds.Where(d=>d.Desk.Area.Type==AreaType.TakeOut).Sum(d => d.Price);
+            ShiftDetails.EetIn = DineIds.Where(d => d.Desk.Area.Type == AreaType.Normal).Sum(d => d.Price);
+            ShiftDetails.Gift = DineIds.Select(d => new
+            {
+                Gift = d.DineMenus.Where(dd => dd.Type == DineMenuType.Gift).Sum(dd => dd.Count * dd.Price + dd.RemarkPrice)
+            })
+            .Sum(d => d.Gift);
+            ShiftDetails.Returned = DineIds.Select(d => new
+            {
+                Returned = d.DineMenus.Where(dd => dd.Status ==DineMenuStatus.Returned).Sum(dd => dd.Count * dd.Price + dd.RemarkPrice)
+            })
+            .Sum(d => d.Returned);
+            ShiftDetails.Count = DineIds.Count();
+            ShiftDetails.HeadCounts = DineIds.Sum(d => d.HeadCount);
+            if(DineIds.Sum(d => d.HeadCount) != 0)
+            {
+                ShiftDetails.Cpi = DineIds.Sum(d => d.Price) / DineIds.Sum(d => d.HeadCount);
+            }
+            db.Shifts.Add(new Shift
+            {
 
-
-
+            })
 
 
 

@@ -153,11 +153,7 @@ namespace HotelDAO.Models {
 		/// <summary>
 		/// 退回
 		/// </summary>
-		Returned = 1,
-		/// <summary>
-		/// 赠菜
-		/// </summary>
-		Gift = 2
+		Returned = 1
 	}
 	/// <summary>
 	/// 订单菜品详情，一对多表

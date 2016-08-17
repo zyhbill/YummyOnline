@@ -251,7 +251,12 @@ namespace OrderSystem.Controllers {
 			}
 			await OrderManager.OnlinePayCompleted(dineId, recordId);
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dineId, true);
+
+			HotelConfig config = await HotelManager.GetHotelConfig();
 			await requestPrintDine(dineId, new List<PrintType> { PrintType.Recipt, PrintType.ServeOrder, PrintType.KitchenOrder });
+			for(int i = 0; i < config.PrintingReciptTimes - 1; i++) {
+				await requestPrintDine(dineId, new List<PrintType> { PrintType.Recipt });
+			}
 		}
 	}
 }

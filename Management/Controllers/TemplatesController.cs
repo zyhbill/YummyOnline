@@ -880,7 +880,7 @@ namespace Management.Controllers
         {
             int Id = 1;
             var Now = DateTime.Now;
-            var dines = await db.Dines.Where(d => d.Status != DineStatus.Shifted&&d.IsPaid==true)
+            var dines = await db.Dines.Where(d => d.Status != DineStatus.Shifted)
                 .ToListAsync();
             var DineIds = dines.Select(d => d.Id);
             var PayList = await db.DinePaidDetails.Where(d => DineIds.Contains(d.DineId))

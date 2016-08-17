@@ -10,6 +10,7 @@
 				<th>名称</th>
 				<th>连接字符串</th>
 				<th>CSS文件名</th>
+				<th>点菜系统样式</th>
 				<th>创建日期</th>
 				<th>电话</th>
 				<th>地址</th>
@@ -33,6 +34,10 @@
 						</button>
 					</td>
 					<td>{{hotel.CssThemePath}}</td>
+					<td>
+						<span ng-if="hotel.OrderSystemStyle == 0">传统</span>
+						<span ng-if="hotel.OrderSystemStyle == 1">时尚</span>
+					</td>
 					<td>{{hotel.CreateDate | date:'yyyy/M/d HH:mm:ss'}}</td>
 					<td>{{hotel.Tel}}</td>
 					<td>{{hotel.Address}}</td>

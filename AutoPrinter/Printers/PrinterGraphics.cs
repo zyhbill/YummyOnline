@@ -13,7 +13,7 @@ namespace AutoPrinter {
 		private int paddingRight { get; set; }
 		private float spacing { get; set; } = 0;
 
-		public PrinterGraphics(Graphics g, int paperWidth, string fontName, int paddingRight = 10) {
+		public PrinterGraphics(Graphics g, int paperWidth, string fontName, int paddingRight) {
 			this.g = g;
 			g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
 			this.paperWidth = paperWidth;

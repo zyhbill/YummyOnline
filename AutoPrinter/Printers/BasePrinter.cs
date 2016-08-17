@@ -66,7 +66,7 @@ namespace AutoPrinter {
 				new StringAlignment[] { StringAlignment.Near, StringAlignment.Center });
 		}
 		protected void printGridRecipt(PrinterGraphics printer, string[] texts, float fontSize) {
-			printer.DrawGrid(new float[] { 0.38f, 0.16f, 0.16f, 0.3f },
+			printer.DrawGrid(new float[] { 0.38f, 0.16f, 0.2f, 0.26f },
 				texts,
 				fontSize,
 				new StringAlignment[] { StringAlignment.Near, StringAlignment.Near, StringAlignment.Far, StringAlignment.Far });

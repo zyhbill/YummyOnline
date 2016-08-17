@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using Utility;
 using YummyOnline.Utility;
 using YummyOnlineDAO.Models;
+using YummyOnline.Models;
 
 namespace YummyOnline.Controllers {
 	[Authorize(Roles = nameof(Role.Admin))]
@@ -19,6 +20,9 @@ namespace YummyOnline.Controllers {
 			return View();
 		}
 		public ActionResult _ViewDine() {
+			return View();
+		}
+		public ActionResult _ViewArticle() {
 			return View();
 		}
 
@@ -40,6 +44,7 @@ namespace YummyOnline.Controllers {
 					p.ConnectionString,
 					p.AdminConnectionString,
 					p.CssThemePath,
+					p.OrderSystemStyle,
 					p.CreateDate,
 					p.Tel,
 					p.Address,
@@ -53,6 +58,7 @@ namespace YummyOnline.Controllers {
 				p.Name,
 				p.ConnectionString,
 				p.CssThemePath,
+				p.OrderSystemStyle,
 				p.CreateDate,
 				p.Tel,
 				p.Address,
@@ -132,6 +138,14 @@ namespace YummyOnline.Controllers {
 				return Json(new JsonError());
 			}
 
+			return Json(new JsonSuccess());
+		}
+
+		public async Task<JsonResult> GetArticles(int? hotelId) {
+			return Json(await YummyOnlineManager.GetArticles(hotelId));
+		}
+		public async Task<JsonResult> AddArticle(ArticleViewModel model) {
+			await YummyOnlineManager.AddArticle(model, User.Identity.Name);
 			return Json(new JsonSuccess());
 		}
 	}

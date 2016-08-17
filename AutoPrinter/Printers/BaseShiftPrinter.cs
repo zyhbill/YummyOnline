@@ -19,7 +19,7 @@ namespace AutoPrinter {
 			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font, protocol.PrinterFormat.PaddingRight);
 
 			printerG.DrawStringLine($"交接班", protocol.PrinterFormat.ShiftBigFontSize, align: StringAlignment.Center);
-			
+
 			decimal receivablePriceAll = 0, realPriceAll = 0;
 
 			foreach(Shift shift in protocol.Shifts) {
@@ -40,11 +40,23 @@ namespace AutoPrinter {
 				printHr(printerG);
 
 				printerG.DrawStringLine("付款明细:", protocol.PrinterFormat.ShiftFontSize);
-				printGrid433(printerG, new string[] { "支付名称", "应收", "实收" }, protocol.PrinterFormat.ShiftSmallFontSize);
+				if(shift.Id == 0) {
+					printGrid55f(printerG, new string[] { "支付名称", "应收" }, protocol.PrinterFormat.ShiftSmallFontSize);
+				}
+				else {
+					printGrid433(printerG, new string[] { "支付名称", "应收", "实收" }, protocol.PrinterFormat.ShiftSmallFontSize);
+				}
+
 				foreach(PayKindShiftDetail detail in protocol.PayKindShifts.FirstOrDefault(p => p.Id == shift.Id).PayKindShiftDetails) {
 					receivablePriceAll += detail.ReceivablePrice;
 					realPriceAll += detail.RealPrice;
-					printGrid433(printerG, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}", $"￥{detail.RealPrice}" }, protocol.PrinterFormat.ShiftFontSize);
+
+					if(shift.Id == 0) {
+						printGrid55f(printerG, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}" }, protocol.PrinterFormat.ShiftFontSize);
+					}
+					else {
+						printGrid433(printerG, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}", $"￥{detail.RealPrice}" }, protocol.PrinterFormat.ShiftFontSize);
+					}
 				}
 
 				printHr(printerG);
@@ -62,8 +74,10 @@ namespace AutoPrinter {
 
 			printerG.DrawStringLine("总计:", protocol.PrinterFormat.ShiftSmallFontSize);
 			printGrid55f(printerG, new string[] { "应收", $"￥{receivablePriceAll}" }, protocol.PrinterFormat.ShiftFontSize);
-			printGrid55f(printerG, new string[] { "实收", $"￥{realPriceAll}" }, protocol.PrinterFormat.ShiftFontSize);
-			printGrid55f(printerG, new string[] { "盈亏", $"￥{(realPriceAll - receivablePriceAll)}" }, protocol.PrinterFormat.ShiftFontSize);
+			if(!protocol.Shifts.Exists(p => p.Id == 0)) {
+				printGrid55f(printerG, new string[] { "实收", $"￥{realPriceAll}" }, protocol.PrinterFormat.ShiftFontSize);
+				printGrid55f(printerG, new string[] { "盈亏", $"￥{(realPriceAll - receivablePriceAll)}" }, protocol.PrinterFormat.ShiftFontSize);
+			}
 
 			printEnd(printerG);
 

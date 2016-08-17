@@ -312,7 +312,7 @@ namespace OrderSystem.Controllers {
 					ToStayPrice = 12.34m,
 				});
 				shift.Add(new Shift {
-					Id = -2,
+					Id = 0,
 					DateTime = DateTime.Now,
 					AveragePrice = 12.34m,
 					CustomerCount = 8,
@@ -360,7 +360,7 @@ namespace OrderSystem.Controllers {
 					}
 				});
 				shift.Add(new PayKindShift {
-					Id = -2,
+					Id = 0,
 					DateTime = DateTime.Now,
 					PayKindShiftDetails = new List<PayKindShiftDetail> {
 						new PayKindShiftDetail {
@@ -416,7 +416,7 @@ namespace OrderSystem.Controllers {
 					}
 				});
 				shift.Add(new MenuClassShift {
-					Id = -2,
+					Id = 0,
 					DateTime = DateTime.Now,
 					MenuClassShiftDetails = new List<MenuClassShiftDetail> {
 						new MenuClassShiftDetail {

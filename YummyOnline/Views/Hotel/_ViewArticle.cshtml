@@ -1,11 +1,25 @@
-﻿<div class="box">
-	<div class="box-body">
-		<div class="form-group">
-			<select class="form-control" ng-model="hotelId" ng-change="refreshArticles(hotelId)" convert-to-number>
-				<option ng-repeat="hotel in hotels" value="{{hotel.Id}}">{{hotel.Name}} ({{hotel.Id}})</option>
-			</select>
-		</div>
+﻿
+<script type="text/ng-template" id="imageModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">插入图片</h3>
+	</div>
+	<div class="modal-body">
+		<input type="text" class="form-control" ng-model="newImagePath">
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger" ng-click="cancel()">取消</button>
+		<button class="btn btn-primary" ng-click="ok()">插入</button>
+	</div>
+</script>
 
+<div class="box">
+	<div class="box-body">
+		<select class="form-control" ng-model="hotelId" ng-change="refreshArticles(hotelId)" convert-to-number>
+			<option ng-repeat="hotel in hotels" value="{{hotel.Id}}">
+				{{hotel.Name}}
+				{{hotel.Id}}
+			</option>
+		</select>
 	</div>
 	<div class="table-responsive">
 		<table class="table no-margin">
@@ -14,7 +28,7 @@
 				<th>标题</th>
 				<th>简介</th>
 				<th>图片链接</th>
-				<th>正文链接</th>
+				<th>正文</th>
 				<th>创建日期</th>
 				<th>状态</th>
 				<th class="shrink text-right"></th>
@@ -24,7 +38,7 @@
 				<td>{{article.Title}}</td>
 				<td>{{article.Description}}</td>
 				<td><a ng-href="{{article.PicturePath}}">{{article.PicturePath}}</a></td>
-				<td><a ng-href="{{article.Body}}">{{article.Body}}</a></td>
+				<td>{{article.Body}}</td>
 				<td class="shrink">{{article.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
 				<td class="shrink">
 					<span class="danger" ng-if="article.Status == 0">审核未通过</span>
@@ -56,8 +70,74 @@
 			<input class="form-control" type="text" ng-model="newArticle.PicturePath" />
 		</div>
 		<div class="form-group">
-			<label>正文链接</label>
-			<input class="form-control" type="text" ng-model="newArticle.Body" />
+			<label>正文</label>
+			<div class="form-group">
+				<div class="btn-toolbar">
+					<div class="btn-group">
+						<div class="btn-group">
+							<button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+								<i class="fa fa-fw fa-header"></i>
+								<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu">
+								<li><a style="font-size:9px;" href="javascript:;" ng-click="setFontSize(9)">9px</a></li>
+								<li><a style="font-size:10px;" href="javascript:;" ng-click="setFontSize(10)">10px</a></li>
+								<li><a style="font-size:12px;" href="javascript:;" ng-click="setFontSize(12)">12px</a></li>
+								<li><a style="font-size:14px;" href="javascript:;" ng-click="setFontSize(14)">14px</a></li>
+								<li><a style="font-size:16px;" href="javascript:;" ng-click="setFontSize(16)">16px</a></li>
+								<li><a style="font-size:18px;" href="javascript:;" ng-click="setFontSize(18)">18px</a></li>
+								<li><a style="font-size:24px;" href="javascript:;" ng-click="setFontSize(24)">24px</a></li>
+								<li><a style="font-size:32px;" href="javascript:;" ng-click="setFontSize(32)">32px</a></li>
+							</ul>
+						</div>
+						<button class="btn btn-default" id="colorpicker">
+							<i class="fa fa-fw fa-font"></i>
+						</button>
+					</div>
+					<div class="btn-group">
+						<button class="btn btn-default" ng-click="exec('bold')">
+							<i class="fa fa-fw fa-bold"></i>
+						</button>
+						<button class="btn btn-default" ng-click="exec('underline')">
+							<i class="fa fa-fw fa-underline"></i>
+						</button>
+						<button class="btn btn-default" ng-click="exec('italic')">
+							<i class="fa fa-fw fa-italic"></i>
+						</button>
+						<button class="btn btn-default" ng-click="exec('strikethrough')">
+							<i class="fa fa-fw fa-strikethrough"></i>
+						</button>
+						<button class="btn btn-default" ng-click="exec('removeformat')">
+							<i class="fa fa-fw fa-eraser"></i>
+						</button>
+					</div>
+					<div class="btn-group">
+						<button class="btn btn-default" ng-click="exec('justifyleft')">
+							<i class="fa fa-fw fa-align-left"></i>
+						</button>
+						<button class="btn btn-default" ng-click="exec('justifycenter')">
+							<i class="fa fa-fw fa-align-center"></i>
+						</button>
+						<button class="btn btn-default" ng-click="exec('justifyright')">
+							<i class="fa fa-fw fa-align-right"></i>
+						</button>
+					</div>
+					<div class="btn-group">
+						<button class="btn btn-default" ng-click="exec('insertorderedlist')">
+							<i class="fa fa-fw fa-list-ol"></i>
+						</button>
+						<button class="btn btn-default" ng-click="exec('insertunorderedlist')">
+							<i class="fa fa-fw fa-list-ul"></i>
+						</button>
+					</div>
+					<div class="btn-group">
+						<button class="btn btn-default" ng-click="showImageModal()">
+							<i class="fa fa-fw fa-picture-o"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+			<textarea id="article-body"></textarea>
 		</div>
 		<div class="text-right">
 			<button class="btn btn-primary" confirm-class="btn-danger" confirm-click="add()">添加</button>

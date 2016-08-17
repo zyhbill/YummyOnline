@@ -121,18 +121,23 @@
 ]).controller('ArticleCtrl', [
 	'$scope',
 	'$http',
+	'$uibModal',
 	'layout',
-	function ($scope, $http, $layout) {
+	function ($scope, $http, $modal, $layout) {
 		$layout.Set('文章管理', '');
 
 		$scope.dines = [];
 		$http.post('/Hotel/GetHotelNames').then(function (response) {
 			$scope.hotels = response.data;
+			$scope.hotels.push({
+				Id: null,
+				Name: 'YummyOnline'
+			});
 			$scope.hotelId = $scope.hotels[0].Id;
-			refreshArticles($scope.hotelId);
+			$scope.refreshArticles($scope.hotelId);
 		});
 
-		function refreshArticles(hotelId) {
+		$scope.refreshArticles = function (hotelId) {
 			$http.post('/Hotel/GetArticles', {
 				HotelId: $scope.hotelId,
 			}).then(function (response) {
@@ -142,6 +147,100 @@
 
 		$scope.newArticle = {};
 		$scope.newArticle.PicturePath = 'http://static.yummyonline.net/';
-		$scope.newArticle.Body = 'http://static.yummyonline.net/';
+
+		var editor;
+		KindEditor.ready(function (K) {
+			editor = K.create('#article-body', {
+				resizeType: 1,
+				allowPreviewEmoticons: false,
+				allowImageUpload: false,
+				themesPath: '/content/css/lib/',
+				items: [],
+			});
+
+			$('div.ke-toolbar').remove();
+
+			var colorpicker;
+			K('#colorpicker').bind('click', function (e) {
+				e.stopPropagation();
+				if (colorpicker) {
+					colorpicker.remove();
+					colorpicker = null;
+					return;
+				}
+				var colorpickerPos = K('#colorpicker').pos();
+				colorpicker = K.colorpicker({
+					x: colorpickerPos.x,
+					y: colorpickerPos.y + K('#colorpicker').height(),
+					z: 19811214,
+					selectedColor: 'default',
+					noColor: '无颜色',
+					click: function (color) {
+						editor.exec('forecolor', color);
+						editor.focus();
+						colorpicker.remove();
+						colorpicker = null;
+					}
+				});
+			});
+			K(document).click(function () {
+				if (colorpicker) {
+					colorpicker.remove();
+					colorpicker = null;
+				}
+			});
+		});
+
+		$scope.setFontSize = function (size) {
+			editor.exec('fontsize', size + 'px');
+			editor.focus();
+		}
+		$scope.exec = function (cmd) {
+			editor.exec(cmd);
+			editor.focus();
+		}
+
+		$scope.showImageModal = function (menu) {
+			$modal.open({
+				templateUrl: 'imageModal.html',
+				controller: 'ImageModalCtrl',
+				resolve: {
+					editor: function () {
+						return editor;
+					}
+				}
+			});
+		}
+
+		$scope.add = function () {
+			console.log(editor.html())
+			$http.post('/Hotel/AddArticle', {
+				Title: $scope.newArticle.Title,
+				PicturePath: $scope.newArticle.PicturePath,
+				Description: $scope.newArticle.Description,
+				Body: $scope.newArticle.Body,
+				HotelId: $scope.hotelId
+			}).then(function (response) {
+				if (response.data.Succeeded) {
+
+				}
+			});
+		}
 	}
-])
+]);
+
+app.controller('ImageModalCtrl', [
+	'$scope',
+	'$uibModalInstance',
+	'editor',
+	function ($scope, $modalInstance, $editor) {
+		$scope.newImagePath = 'http://static.yummyonline.net/'
+		$scope.cancel = function () {
+			$modalInstance.dismiss();
+		};
+		$scope.ok = function () {
+			$editor.exec('insertimage', $scope.newImagePath);
+			$modalInstance.dismiss();
+		};
+	}
+]);

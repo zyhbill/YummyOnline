@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using Utility;
 using YummyOnline.Utility;
 using YummyOnlineDAO.Models;
+using YummyOnline.Models;
 
 namespace YummyOnline.Controllers {
 	[Authorize(Roles = nameof(Role.Admin))]
@@ -140,8 +141,12 @@ namespace YummyOnline.Controllers {
 			return Json(new JsonSuccess());
 		}
 
-		public async Task<JsonResult> GetArticles(int hotelId) {
+		public async Task<JsonResult> GetArticles(int? hotelId) {
 			return Json(await YummyOnlineManager.GetArticles(hotelId));
+		}
+		public async Task<JsonResult> AddArticle(ArticleViewModel model) {
+			await YummyOnlineManager.AddArticle(model, User.Identity.Name);
+			return Json(new JsonSuccess());
 		}
 	}
 }

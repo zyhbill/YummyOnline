@@ -5,6 +5,7 @@ using System.Data.Entity.SqlServer;
 using System.Linq;
 using System.Threading.Tasks;
 using YummyOnlineDAO.Models;
+using YummyOnline.Models;
 using Utility;
 
 namespace YummyOnline {
@@ -250,7 +251,7 @@ namespace YummyOnline {
 		}
 		#endregion
 
-		public async Task<dynamic> GetArticles(int hotelId) {
+		public async Task<dynamic> GetArticles(int? hotelId) {
 			return await ctx.Articles.Where(p => p.HotelId == hotelId).Select(p => new {
 				p.Id,
 				p.Title,
@@ -261,6 +262,17 @@ namespace YummyOnline {
 				p.Status
 			}).ToListAsync();
 		}
-
+		public async Task AddArticle(ArticleViewModel model, string userId) {
+			Article article = new Article {
+				Title = model.Title,
+				Description = model.Description,
+				PicturePath = model.PicturePath,
+				Body = model.Body,
+				HotelId = model.HotelId,
+				UserId = userId
+			};
+			ctx.Articles.Add(article);
+			await ctx.SaveChangesAsync();
+		}
 	}
 }

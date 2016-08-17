@@ -900,7 +900,7 @@ namespace Management.Controllers
                 }
                 foreach (var pft in Profit)
                 {
-                    db.Shifts.Add(new Shift
+                    db.Shifts.Add(new PayKindShift
                     {
                         DateTime = Now,
                         PayKindId = pft.Id,

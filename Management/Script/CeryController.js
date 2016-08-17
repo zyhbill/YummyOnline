@@ -411,7 +411,7 @@
     }
 })
 .controller('RePrinterCtrl', ['$scope', '$rootScope', '$uibModal', 'RePrinter', function ($scope, $rootScope, $uibModal, RePrinter) {
-    $rootScope.FatherPage = "店小二营业"; $rootScope.ChildPage = "订单补打";
+    $rootScope.FatherPage = "店小二营业"; $rootScope.ChildPage = "当日订单查询";
     $scope.Initialize = function () {
         RePrinter.Initialize();
     }

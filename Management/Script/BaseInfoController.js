@@ -58,8 +58,17 @@ angular.module('Baseinfo', [])
 }])
 .controller('ModalAreaEditCtrl', function ($scope, $rootScope, $uibModalInstance, $q, $timeout, option) {
     $scope.CurrentArea = option.CurArea;
+    //console.log($scope.CurrentArea);
     var temp = angular.copy(option.CurArea);
     var originAreaId = $scope.CurrentArea.Id;
+
+    $scope.Initialize = function () {
+        option.method.AreaElement.Departments.forEach(function (x) {
+            if (x.Id == $scope.CurrentArea.DepartmentReciptId) option.method.AreaElement.ReciptDepartment = x;
+            if (x.Id == $scope.CurrentArea.DepartmentServeId) option.method.AreaElement.ServiceDepartment = x;
+        })
+    }
+
     $scope.AreaElement = option.method.AreaElement;
     $scope.AreaElement.Types.forEach(function (x) {
         if (x.Value == $scope.CurrentArea.Type) $scope.AreaElement.CurrentType = x.Value;

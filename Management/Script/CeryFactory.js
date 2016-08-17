@@ -1593,7 +1593,8 @@
                 }
             }
             else {
-                alert("金额为0不用交接");
+                $http.post('../Templates/CleanDesk');
+                alert("金额为0不用交接,已清空桌台");
             }
             return deferred.promise;
         },

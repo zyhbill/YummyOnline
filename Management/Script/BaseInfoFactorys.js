@@ -12,7 +12,8 @@
                 { Name: '外卖区域', Value: 1 }
             ],
             CurrentType:0,
-            isAjax: false
+            isAjax: false,
+            CurArea:{}
         },
         intialize: function () {
             var _this = this;

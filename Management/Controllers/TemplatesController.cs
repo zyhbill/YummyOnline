@@ -910,6 +910,7 @@ namespace Management.Controllers
                     });
                 }
             }
+            dines = await db.Dines.Where(d => d.Status != DineStatus.Shifted).ToListAsync();
             foreach (var dine in dines)
             {
                 dine.Status = DineStatus.Shifted;
@@ -1579,5 +1580,30 @@ namespace Management.Controllers
             return Json(new SuccessState(new { Dines = Dines, Desks = Desks }));
         }
 
+
+
+
+        public async Task<JsonResult> CleanDesk()
+        {
+            var dines = await db.Dines.Where(d => d.Status != DineStatus.Shifted).ToListAsync();
+            if (dines != null)
+            {
+                foreach(var i in dines)
+                {
+                    i.Status = DineStatus.Shifted;
+                    await db.SaveChangesAsync();
+                }
+            }
+            var desks = await db.Desks.Where(d => d.Usable == true).ToListAsync();
+            if (desks != null)
+            {
+                foreach (var i in desks)
+                {
+                    i.Status = DeskStatus.StandBy;
+                    await db.SaveChangesAsync();
+                }
+            }
+            return null;
+        }
     }
 }

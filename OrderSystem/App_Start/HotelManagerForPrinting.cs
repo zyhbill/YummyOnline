@@ -159,7 +159,7 @@ namespace OrderSystem {
 			}).FirstOrDefaultAsync();
 		}
 		public async Task<List<Protocol.PrintingProtocol.Shift>> GetShiftsForPrinting(List<int> ids, DateTime dateTime) {
-			var dbShifts = await ctx.Shifts.Where(p => ids.Contains(p.Id) && SqlFunctions.DateDiff("day", p.DateTime, dateTime) == 0)
+			var dbShifts = await ctx.PayKindShifts.Where(p => ids.Contains(p.Id) && SqlFunctions.DateDiff("day", p.DateTime, dateTime) == 0)
 				.Select(p => new {
 					p.Id,
 					p.DateTime,

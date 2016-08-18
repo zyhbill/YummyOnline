@@ -155,50 +155,14 @@
 				allowPreviewEmoticons: false,
 				allowImageUpload: false,
 				themesPath: '/content/css/lib/',
-				items: [],
-			});
-
-			$('div.ke-toolbar').remove();
-
-			var colorpicker;
-			$('#colorpicker').bind('click', function (e) {
-				e.stopPropagation();
-				if (colorpicker) {
-					colorpicker.remove();
-					colorpicker = null;
-					return;
-				}
-				var colorpickerPos = K('#colorpicker').pos();
-				colorpicker = K.colorpicker({
-					x: colorpickerPos.x,
-					y: colorpickerPos.y + K('#colorpicker').height(),
-					z: 19811214,
-					selectedColor: 'default',
-					noColor: '无颜色',
-					click: function (color) {
-						editor.exec('forecolor', color);
-						editor.focus();
-						colorpicker.remove();
-						colorpicker = null;
-					}
-				});
-			});
-			$(document).click(function () {
-				if (colorpicker) {
-					colorpicker.remove();
-					colorpicker = null;
-				}
+				items: [
+					'formatblock', 'fontsize', 'forecolor', 'hilitecolor', '|',
+					'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|',
+					'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript', 'superscript', '|',
+					'bold', 'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat'
+				],
 			});
 		});
-
-		$scope.setFontSize = function (size) {
-			editor.exec('fontsize', size + 'px');
-			editor.focus();
-		}
-		$scope.exec = function (cmd) {
-			editor.exec(cmd);
-			editor.focus();
-		}
 
 		$scope.showImageModal = function () {
 			$modal.open({

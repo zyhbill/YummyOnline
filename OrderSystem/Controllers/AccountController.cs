@@ -34,7 +34,7 @@ namespace OrderSystem.Controllers {
 			if(model.Password == null) {
 				return Json(new JsonError("密码不能为空"));
 			}
-			if(model.Password == model.PasswordAga) {
+			if(model.Password != model.PasswordAga) {
 				return Json(new JsonError("密码不一致"));
 			}
 			User user;

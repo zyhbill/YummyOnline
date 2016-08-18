@@ -46,24 +46,29 @@ namespace AutoPrinter {
 				else {
 					printGrid433(printerG, new string[] { "支付名称", "应收", "实收" }, protocol.PrinterFormat.ShiftSmallFontSize);
 				}
+				PayKindShift payKindShift = protocol.PayKindShifts.FirstOrDefault(p => p.Id == shift.Id);
+				if(payKindShift != null) {
+					foreach(PayKindShiftDetail detail in payKindShift.PayKindShiftDetails) {
+						receivablePriceAll += detail.ReceivablePrice;
+						realPriceAll += detail.RealPrice;
 
-				foreach(PayKindShiftDetail detail in protocol.PayKindShifts.FirstOrDefault(p => p.Id == shift.Id).PayKindShiftDetails) {
-					receivablePriceAll += detail.ReceivablePrice;
-					realPriceAll += detail.RealPrice;
-
-					if(shift.Id == 0) {
-						printGrid55f(printerG, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}" }, protocol.PrinterFormat.ShiftFontSize);
-					}
-					else {
-						printGrid433(printerG, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}", $"￥{detail.RealPrice}" }, protocol.PrinterFormat.ShiftFontSize);
+						if(shift.Id == 0) {
+							printGrid55f(printerG, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}" }, protocol.PrinterFormat.ShiftFontSize);
+						}
+						else {
+							printGrid433(printerG, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}", $"￥{detail.RealPrice}" }, protocol.PrinterFormat.ShiftFontSize);
+						}
 					}
 				}
-
+				
 				printHr(printerG);
 
 				printerG.DrawStringLine("菜品类统计:", protocol.PrinterFormat.ShiftFontSize);
-				foreach(MenuClassShiftDetail detail in protocol.MenuClassShifts.FirstOrDefault(p => p.Id == shift.Id).MenuClassShiftDetails) {
-					printGrid55f(printerG, new string[] { detail.MenuClass, $"￥{detail.Price}" }, protocol.PrinterFormat.ShiftFontSize);
+				MenuClassShift menuClassShift = protocol.MenuClassShifts.FirstOrDefault(p => p.Id == shift.Id);
+				if(menuClassShift != null) {
+					foreach(MenuClassShiftDetail detail in menuClassShift.MenuClassShiftDetails) {
+						printGrid55f(printerG, new string[] { detail.MenuClass, $"￥{detail.Price}" }, protocol.PrinterFormat.ShiftFontSize);
+					}
 				}
 
 				printerG.TrimY(10);

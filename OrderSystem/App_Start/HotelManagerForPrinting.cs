@@ -176,7 +176,9 @@ namespace OrderSystem {
 		}
 
 		public async Task<List<Protocol.PrintingProtocol.Shift>> GetShiftsForPrinting(List<int> ids, DateTime dateTime) {
-			List<Protocol.PrintingProtocol.Shift> shifts = await ctx.Shifts.Select(p => new Protocol.PrintingProtocol.Shift {
+			List<Protocol.PrintingProtocol.Shift> shifts = await ctx.Shifts
+				.Where(p => ids.Contains(p.Id) && SqlFunctions.DateDiff("day", p.DateTime, dateTime) == 0)
+				.Select(p => new Protocol.PrintingProtocol.Shift {
 				Id = p.Id,
 				DateTime = p.DateTime,
 				AveragePrice = p.AveragePrice,

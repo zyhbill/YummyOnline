@@ -70,7 +70,7 @@
             <div class="widget-body clearfix">
                 <ul class="Class checkbox">
                     <li ng-repeat="num in HandElement.Numbers track by $index">
-                        <label>
+                        <label ng-if="num.Id!=0">
                             <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="num.IsChoose" />
                             <span class="lbl">第{{num.Id}}班</span>
                         </label>

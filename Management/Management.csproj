@@ -363,6 +363,7 @@
     <Content Include="Views\Baseinfo\Printer.cshtml" />
     <Content Include="Views\Baseinfo\ReSoldOut.cshtml" />
     <Content Include="Views\Reports\Invoice.cshtml" />
+    <Content Include="Views\Templates\DailyDetail.cshtml" />
     <None Include="Views\Templates\Error-500.cshtml" />
     <Content Include="Web.config" />
   </ItemGroup>

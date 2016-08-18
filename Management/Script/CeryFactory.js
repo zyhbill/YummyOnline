@@ -1499,6 +1499,8 @@
         HandElement: {
             PayList: [],
             PayKinds: [],
+            PayDetails: {},
+            ClassDetails:[],
             Time: null,
             NumberStart: 1,
             NumberBegin: 1,
@@ -1512,6 +1514,8 @@
                 console.log(data);
                 _this.HandElement.PayList = data.PayList;
                 _this.HandElement.PayKinds = data.PayKinds;
+                _this.HandElement.PayDetails = data.PayDetails;
+                _this.HandElement.ClassDetails = data.ClassDetails;
                 _this.getNumbers();
                 _this.HandElement.PayKinds.forEach(function (x) {
                     x.Num = 0;
@@ -1532,7 +1536,7 @@
             $http.post('../Templates/GetNumbers', {
                 Time: _this.HandElement.Time
             }).success(function (data) {
-                data.Numbers.forEach(function (x) { x.IsChoose = true; });
+                data.Numbers.forEach(function (x) { if(x.Id!=0) x.IsChoose = true; });
                 _this.HandElement.Numbers = data.Numbers;
             })
         },
@@ -1608,6 +1612,13 @@
             }).error(function (data) {
                 console.log(data);
             })
+        },
+        PrintDetail: function () {
+            var _this = this;
+            $http.post('../Templates/Review', {
+            }).then(function (response) {
+
+            });
         }
     }
     return service;

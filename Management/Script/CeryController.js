@@ -395,6 +395,34 @@
         });
     }
 }])
+.controller('DailyDetailCtrl', ['$scope', '$rootScope', '$uibModal', 'HandOut', function ($scope, $rootScope, $uibModal, HandOut) {
+    $rootScope.FatherPage = "结账系统管理"; $rootScope.ChildPage = "当日交接班明细";
+    $scope.initialize = function () {
+        var promise = HandOut.getElement();
+        promise.then(function (data) {
+            $scope.HandElement = HandOut.HandElement;
+        }, function (data) {
+            console.log(data);
+        })
+    }
+    $scope.PrintDetail = function () {
+        HandOut.PrintDetail();
+    }
+    $scope.rePrint = function () {
+        var modalInstance = $uibModal.open({//打开支付
+            animation: $scope.animationsEnabled,
+            templateUrl: 'ModelPrint.html',
+            controller: 'ModelPrintCtrl',
+            backdrop: 'static',
+            size: 'lg',
+            resolve: {
+                option: {
+                    HandOut: HandOut
+                }
+            }
+        });
+    }
+}])
 .controller('ModelPrintCtrl', function ($scope, $rootScope, $uibModalInstance, $q, $timeout, option) {
     $scope.cancel = function () {
         $uibModalInstance.dismiss('cancel');

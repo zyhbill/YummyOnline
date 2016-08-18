@@ -1,0 +1,155 @@
+﻿@{
+    Layout = null;
+}
+<link href="../FrameWorks/assets/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<link href="../Content/css/Reporter.css" rel="stylesheet" />
+<link href="../Content/css/style.css" rel="stylesheet" />
+
+<div class="row" ng-init="initialize()">
+    <div class="col-xs-6">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover nomargin">
+                <thead>
+                    <tr>
+                        <th>支付方式</th>
+                        <th>应收</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="pay in HandElement.PayKinds">
+                        <td>{{pay.Name}}</td>
+                        <td class="text-right">{{pay.Num|currency:'￥'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-xs-6" ng-show="HandElement.ClassDetails.length>0">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover nomargin">
+                <thead>
+                    <tr>
+                        <th>类别名称</th>
+                        <th>金额</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="class in HandElement.ClassDetails">
+                        <td>{{class.ClassName}}</td>
+                        <td class="text-right">{{class.Price|currency:'￥'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-xs-12">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered table-hover nomargin">
+                <thead>
+                    <tr>
+                        <th class="text-center">名称</th>
+                        <th class="text-center">金额</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>累计消费</td>
+                        <td class="text-right">{{HandElement.PayDetails.OriPrice|currency:'￥'}}</td>
+                    </tr>
+                    <tr>
+                        <td>累计堂吃</td>
+                        <td class="text-right">{{HandElement.PayDetails.EatIn|currency:'￥'}}</td>
+                    </tr>
+                    <tr>
+                        <td>累计外卖</td>
+                        <td class="text-right">{{HandElement.PayDetails.TakeOut|currency:'￥'}}</td>
+                    </tr>
+                    <tr>
+                        <td>累计应付</td>
+                        <td class="text-right">{{HandElement.PayDetails.Price|currency:'￥'}}</td>
+                    </tr>
+                    <tr>
+                        <td>累计优惠</td>
+                        <td class="text-right">{{HandElement.PayDetails.Discount|currency:'￥'}}</td>
+                    </tr>
+                    <tr>
+                        <td>累计赠菜</td>
+                        <td class="text-right">{{HandElement.PayDetails.Gift|currency:'￥'}}</td>
+                    </tr>
+                    <tr>
+                        <td>累计退菜</td>
+                        <td class="text-right">{{HandElement.PayDetails.Returned|currency:'￥'}}</td>
+                    </tr>
+                    <tr>
+                        <td>累计桌数</td>
+                        <td class="text-right">{{HandElement.PayDetails.Count}}</td>
+                    </tr>
+                    <tr>
+                        <td>累计人数</td>
+                        <td class="text-right">{{HandElement.PayDetails.HeadCounts}}</td>
+                    </tr>
+                    <tr>
+                        <td>人均消费</td>
+                        <td class="text-right">{{HandElement.PayDetails.Cpi|currency:'￥'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <button class="btn btn-app btn-light btn-xs" ng-click="PrintDetail()">
+        <i class="icon-print bigger-160"></i>
+        打印明细
+    </button>
+    <button class="btn btn-app btn-light btn-xs" ng-click="rePrint()">
+        <i class="icon-print bigger-160"></i>
+        补打印
+    </button>
+</div>
+
+
+<script type="text/ng-template" id="ModelPrint.html">
+    <div class="modal-header" ng-init="initialize()">
+        <h3 class="modal-title">
+            <div class="form-inline" ng-init="initialize()">
+                打印
+            </div>
+        </h3>
+    </div>
+    <div class="modal-body clearfix">
+        <div class="control-group">
+            <label class="control-label">选择时间:</label>
+            <div class="controls">
+                <div class="input-prepend input-group">
+                    <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                    <input type="text" style="width:600px;" name="reservation" id="reservation" class="form-control" dateday time="HandElement.Time" value="@DateTime.Now.ToString("yyyy-MM-dd")" change="getNumbers()" />
+                </div>
+            </div>
+        </div>
+        <div class="widget-box half">
+            <div class="widget-header">
+                <h4 class="smaller">选择班次</h4>
+            </div>
+            <div class="widget-body clearfix">
+                <ul class="Class checkbox">
+                    <li ng-repeat="num in HandElement.Numbers track by $index">
+                        <label ng-if="num.Id!=0">
+                            <input name="form-field-checkbox" class="ace ace-checkbox-2" type="checkbox" ng-model="num.IsChoose" />
+                            <span class="lbl">第{{num.Id}}班</span>
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="clean"></div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="Print()">打印</button>
+        <button class="btn btn-warning" type="button" ng-click="cancel()">取消</button>
+    </div>
+</script>
+
+<script src="../FrameWorks/assets/js/date-time/bootstrap-datetimepicker.min.js"></script>
+<script src="../FrameWorks/assets/js/date-time/locales/bootstrap-datetimepicker.zh-CN.js" charset="utf-8"></script>

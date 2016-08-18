@@ -399,13 +399,20 @@ namespace Management.ObjectClasses
     public class ShiftDetails
     {
         public decimal OriPrice { get; set; } = 0;
-        public decimal EetIn { get; set; } = 0;
+        public decimal EatIn { get; set; } = 0;
         public decimal TakeOut { get; set; } = 0;
         public decimal Price { get; set; } = 0;
+        public decimal Discount { get; set; } = 0;
         public decimal Gift { get; set; } = 0;
         public decimal Returned { get; set; } = 0;
-        public decimal Count { get; set; } = 0;
-        public decimal HeadCounts { get; set; } = 0;
+        public int Count { get; set; } = 0;
+        public int HeadCounts { get; set; } = 0;
         public decimal Cpi { get; set; } = 0;
+    }
+
+    public class ClassDetails
+    {
+        public string ClassName { get; set; }
+        public decimal Price { get; set; } = 0;
     }
 }

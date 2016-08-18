@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HotelDAO.Models {
-	public class PayKindShift {
+	public class Shift {
 		[Key, Column(Order = 0)]
 		public int Id { get; set; }
 		[Key, Column(Order = 1)]
@@ -37,7 +37,7 @@ namespace HotelDAO.Models {
 		[Key, Column(Order = 1)]
 		public DateTime DateTime { get; set; }
 		[Key, Column(Order = 2), ForeignKey(nameof(MenuClass))]
-		public int MenuClassId { get; set; }
+		public string MenuClassId { get; set; }
 		public MenuClass MenuClass { get; set; }
 		public decimal Price { get; set; }
 	}

@@ -129,6 +129,9 @@
     }).when('/Invoice', {
         templateUrl: '/Reports/Invoice',
         controller: 'InvoiceCtrl'
+    }).when('/DailyDetail', {
+        templateUrl: '/Templates/DailyDetail',
+        controller: 'DailyDetailCtrl'
     }).otherwise({
         redirectTo: '/404'
     });

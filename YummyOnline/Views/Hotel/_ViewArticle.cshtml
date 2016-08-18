@@ -12,6 +12,29 @@
 	</div>
 </script>
 
+<script type="text/ng-template" id="linkModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">插入链接</h3>
+	</div>
+	<div class="modal-body">
+		<input type="text" class="form-control" ng-model="newLinkPath">
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger" ng-click="cancel()">取消</button>
+		<button class="btn btn-primary" ng-click="ok()">插入</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="articleBodyModal.html">
+	<div class="modal-header">
+		<button class="close" ng-click="close()"><span>&times;</span></button>
+		<h3 class="modal-title">{{article.Title}}</h3>
+	</div>
+	<div class="modal-body">
+		<div ng-bind-html="article.Body|to_trusted"></div>
+	</div>
+</script>
+
 <div class="box">
 	<div class="box-body">
 		<select class="form-control" ng-model="hotelId" ng-change="refreshArticles(hotelId)" convert-to-number>
@@ -30,20 +53,17 @@
 				<th>图片链接</th>
 				<th>正文</th>
 				<th>创建日期</th>
-				<th>状态</th>
 				<th class="shrink text-right"></th>
 			</tr>
 			<tr ng-repeat="article in articles">
 				<td class="shrink">{{article.Id}}</td>
 				<td>{{article.Title}}</td>
 				<td>{{article.Description}}</td>
-				<td><a ng-href="{{article.PicturePath}}">{{article.PicturePath}}</a></td>
-				<td>{{article.Body}}</td>
-				<td class="shrink">{{article.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+				<td><a href="javascript:;" target="_blank" ng-href="{{article.PicturePath}}">{{article.PicturePath}}</a></td>
 				<td class="shrink">
-					<span class="danger" ng-if="article.Status == 0">审核未通过</span>
-					<span class="success" ng-if="article.Status == 1">审核通过</span>
+					<button class="btn btn-default" ng-click="showArticleBodyModal(article)">预览</button>
 				</td>
+				<td class="shrink">{{article.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
 				<td>
 					<button class="btn btn-danger" confirm-click="remove(article)">删除</button>
 				</td>
@@ -92,6 +112,7 @@
 						</div>
 						<button class="btn btn-default" id="colorpicker">
 							<i class="fa fa-fw fa-font"></i>
+							<span class="caret"></span>
 						</button>
 					</div>
 					<div class="btn-group">
@@ -133,6 +154,9 @@
 					<div class="btn-group">
 						<button class="btn btn-default" ng-click="showImageModal()">
 							<i class="fa fa-fw fa-picture-o"></i>
+						</button>
+						<button class="btn btn-default" ng-click="showLinkModal()">
+							<i class="fa fa-fw fa-link"></i>
 						</button>
 					</div>
 				</div>

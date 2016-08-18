@@ -149,8 +149,8 @@
 		$scope.newArticle.PicturePath = 'http://static.yummyonline.net/';
 
 		var editor;
-		KindEditor.ready(function (K) {
-			editor = K.create('#article-body', {
+		$(document).ready(function () {
+			editor = KindEditor.create('#article-body', {
 				resizeType: 1,
 				allowPreviewEmoticons: false,
 				allowImageUpload: false,
@@ -161,7 +161,7 @@
 			$('div.ke-toolbar').remove();
 
 			var colorpicker;
-			K('#colorpicker').bind('click', function (e) {
+			$('#colorpicker').bind('click', function (e) {
 				e.stopPropagation();
 				if (colorpicker) {
 					colorpicker.remove();
@@ -183,7 +183,7 @@
 					}
 				});
 			});
-			K(document).click(function () {
+			$(document).click(function () {
 				if (colorpicker) {
 					colorpicker.remove();
 					colorpicker = null;

@@ -21,7 +21,7 @@ namespace WeChat.Controllers
             Session["id"] = article;
             var yummonlineManager = new YummyOnlineManager();
             var ctx = new YummyOnlineContext();
-            var result = ctx.Articles.Where(d => d.Id == article && d.Status == ArticleStatus.Granted).Select(s => new { s.Body,s.Title,s.Description});
+            var result = ctx.Articles.Where(d=>d.Id==article).Select(s => new { s.Body,s.Title,s.Description});
             foreach (var i in result)
             {
                 ViewData["body"] = i.Body;

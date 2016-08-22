@@ -30,23 +30,52 @@ namespace MessageHandle
 
                 case "Points":
                     {
-                        var strongResposeMessage = CreateResponseMessage<ResponseMessageText>();
-                        strongResposeMessage.Content = Points();
-                        reponseMessage = strongResposeMessage;
-
+                        var strongResposeMessageF = CreateResponseMessage<ResponseMessageNews>();
+                        var strongResposeMessageT = CreateResponseMessage<ResponseMessageText>();
+                        if (isUser() == false)
+                        {
+                            strongResposeMessageF.Articles.Add(new Article()
+                            {
+                                Title = "会员绑定",
+                                Description = "会员绑定",
+                                PicUrl = "http://m2.biz.itc.cn/pic/new/f/57/23/Img3832357_f.jpg",
+                                Url = "http://wechatplatform.yummyonline.net/login/login/?openid=" + WeixinOpenId
+                            });
+                            reponseMessage = strongResposeMessageF;
+                        }
+                        else
+                        {
+                            strongResposeMessageT.Content = Points();
+                            reponseMessage = strongResposeMessageT;
+                        }
                     }
                     break;
                 case "History":
                     {
                         var strongResposeMessage = CreateResponseMessage<ResponseMessageNews>();
-                        strongResposeMessage.Articles.Add(new Article()
+                        if (isUser() == false)
                         {
-                            Title = "查看历史订单",
-                            Description = "历史订单",
-                            PicUrl = "http://img.ivsky.com/img/tupian/pre/201012/04/katong_meishi-010.jpg",
-                            Url = "http://wechatplatform.yummyonline.net/history/history/?openid=" + WeixinOpenId
-                        });
-                        reponseMessage = strongResposeMessage;
+                            strongResposeMessage.Articles.Add(new Article()
+                            {
+                                Title = "会员绑定",
+                                Description = "会员绑定",
+                                PicUrl = "http://m2.biz.itc.cn/pic/new/f/57/23/Img3832357_f.jpg",
+                                Url = "http://wechatplatform.yummyonline.net/login/login/?openid=" + WeixinOpenId
+                            });
+                            reponseMessage = strongResposeMessage;
+                        }
+                        else
+                        {
+                            strongResposeMessage.Articles.Add(new Article()
+                            {
+                                Title = "查看历史订单",
+                                Description = "历史订单",
+                                PicUrl = "http://img.ivsky.com/img/tupian/pre/201012/04/katong_meishi-010.jpg",
+                                Url = "http://wechatplatform.yummyonline.net/history/history/?openid=" + WeixinOpenId
+                            });
+                            reponseMessage = strongResposeMessage;
+                        }
+
                     }
                     break;
                 default:
@@ -81,13 +110,25 @@ namespace MessageHandle
                 points += HotelManager.GetUserPointById(result.Id);
             }
             var end = new StringBuilder();
-            end.AppendFormat("您的总积分： {0}",points);
+            end.AppendFormat("您的总积分： {0}", points);
             //end.AppendLine("\r\n");
             //end.AppendFormat("");
             return end.ToString();//string.Format("您的积分：{0}", points);
 
         }
 
+        //判断用户openid是否存在
+        public bool isUser()
+        {
+            var yummonlineManager = new YummyOnlineManager();
+            var wechatid = WeixinOpenId;
+            var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
+            var result = ctx.Users.Where(p => p.WeChatOpenId == wechatid).Select(d => new { d.Id }).FirstOrDefault();
+            if (result == null)
+                return false;
+            else
+                return true;
+        }
 
         //关注事件
         public override IResponseMessageBase OnEvent_SubscribeRequest(RequestMessageEvent_Subscribe requestMessage)

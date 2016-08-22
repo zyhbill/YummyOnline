@@ -14,16 +14,16 @@
                         {{menu.Name}}
                         <div class="pull-right action-buttons">
                             <a href="javascript:;" ng-click="AltShow(menu)">
-                                <i class="icon-lock red bigger-130 tooltip-success" data-rel="tooltip" data-placement="bottom" title="取消显示分类" tool ng-show="menu.IsShow"></i>
-                                <i class="icon-unlock green bigger-130 tooltip-success" data-rel="tooltip" data-placement="bottom" title="显示分类" tool  ng-show="!menu.IsShow"></i>
+                                <i class="icon-lock red bigger-130 tooltip-success" data-rel="tooltip" data-placement="left" title="取消显示分类" tool ng-show="menu.IsShow"></i>
+                                <i class="icon-unlock green bigger-130 tooltip-success" data-rel="tooltip" data-placement="left" title="显示分类" tool  ng-show="!menu.IsShow"></i>
                             </a>
-                            <a class="purple tooltip-success" href="javascript:;" data-rel="tooltip" data-placement="bottom" title="添加分类" tool ng-click="Add(menu)">
+                            <a class="purple tooltip-success" href="javascript:;" data-rel="tooltip" data-placement="left" title="添加分类" tool ng-click="Add(menu)">
                                 <i class="icon-plus-sign bigger-130"></i>
                             </a>
-                            <a class="blue tooltip-success" href="javascript:;" data-rel="tooltip" data-placement="bottom" title="修改分类" tool ng-click="Edit(menu)">
+                            <a class="blue tooltip-success" href="javascript:;" data-rel="tooltip" data-placement="left" title="修改分类" tool ng-click="Edit(menu)">
                                 <i class="icon-pencil bigger-130"></i>
                             </a>
-                            <a class="red tooltip-success" href="javascript:;" ng-if="menu.IsLeaf" data-rel="tooltip" data-placement="bottom" title="删除分类" tool ng-click="DeleteMenuClass(menu)">
+                            <a class="red tooltip-success" href="javascript:;" ng-if="menu.IsLeaf" data-rel="tooltip" data-placement="left" title="删除分类" tool ng-click="DeleteMenuClass(menu)">
                                 <i class="icon-trash bigger-130"></i>
                             </a>
                         </div>
@@ -32,10 +32,10 @@
                         <form class="form-control">
                             <input type="text" ng-model="menu.Name" />
                             <div class="pull-right action-buttons">
-                                <a class="purple tooltip-success" href="javascript:;" data-rel="tooltip" data-placement="bottom" title="保存修改分类" tool ng-click="EditMenu(menu)">
+                                <a class="purple tooltip-success" href="javascript:;" data-rel="tooltip" data-placement="left" title="保存修改分类" tool ng-click="EditMenu(menu)">
                                     <i class="icon-save bigger-130"></i>
                                 </a>
-                                <a class="red tooltip-success" href="javascript:;" data-rel="tooltip" data-placement="bottom" title="取消修改分类" tool ng-click="CancelEdit(menu)">
+                                <a class="red tooltip-success" href="javascript:;" data-rel="tooltip" data-placement="left" title="取消修改分类" tool ng-click="CancelEdit(menu)">
                                     <i class="icon-remove bigger-130"></i>
                                 </a>
                             </div>
@@ -71,8 +71,8 @@
                                 {{submenu.Name}}
                                 <div class="pull-right action-buttons">
                                     <a href="javascript:;" ng-click="AltShow(submenu)">
-                                        <i class="icon-lock red bigger-130" ng-show="submenu.IsShow"></i>
-                                        <i class="icon-unlock green bigger-130" ng-show="!submenu.IsShow"></i>
+                                        <i class="icon-lock red bigger-130 tooltip-success" data-rel="tooltip" data-placement="left" title="取消显示分类"  ng-show="submenu.IsShow"></i>
+                                        <i class="icon-unlock green bigger-130 tooltip-success" data-rel="tooltip" data-placement="left" title="显示分类"  ng-show="!submenu.IsShow"></i>
                                     </a>
                                     <a class="purple" href="javascript:;" ng-click="Add(submenu)">
                                         <i class="icon-plus-sign bigger-130"></i>

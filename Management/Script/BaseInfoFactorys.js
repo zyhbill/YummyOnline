@@ -1289,6 +1289,21 @@
                     alert("更新失败");
                 }
             });
+        },
+        setNormal: function () {
+            $http.post('../Baseinfo/SetPayModel', {
+                Type: 0
+            });
+        },
+        setInt: function () {
+            $http.post('../Baseinfo/SetPayModel', {
+                Type: 1
+            });
+        },
+        setFloor: function () {
+            $http.post('../Baseinfo/SetPayModel', {
+                Type: 2
+            });
         }
     }
     return service;

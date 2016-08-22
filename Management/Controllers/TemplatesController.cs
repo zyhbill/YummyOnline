@@ -857,7 +857,7 @@ namespace Management.Controllers
                 PayDetails.Cpi = Dines.Sum(d => d.Price) / Dines.Sum(d => d.HeadCount);
             }
             var ClassDetails = new List<ClassDetails>();
-            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.Level == 1).ToListAsync();
+            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.IsShow==true).ToListAsync();
             var DineIds = Dines.Select(d => d.Id).ToList();
             var DineMenus = await db.DineMenus.Where(d => DineIds.Contains(d.DineId)).ToListAsync();
             foreach (var i in MenuClasses)
@@ -1005,7 +1005,7 @@ namespace Management.Controllers
                 PreferencePrice = ShiftDetails.OriPrice - ShiftDetails.Price
             });
             await db.SaveChangesAsync();
-            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.Level == 1).Select(d => d.Id).ToListAsync();
+            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.IsShow==true).Select(d => d.Id).ToListAsync();
             var ClassShift = await db.MenuClassShifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, DateTime.Now) == 0 && d.Id == 0).ToListAsync();
             DineIds = Dines.Select(d => d.Id).ToList();
             var DineMenus = await db.DineMenus.Where(d => DineIds.Contains(d.DineId)).ToListAsync();
@@ -1099,7 +1099,7 @@ namespace Management.Controllers
                 PreferencePrice = ShiftDetails.OriPrice - ShiftDetails.Price
             });
             await db.SaveChangesAsync();
-            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.Level == 1).Select(d => d.Id).ToListAsync();
+            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.IsShow==true).Select(d => d.Id).ToListAsync();
             var ClassShift = await db.MenuClassShifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, DateTime.Now) == 0 && d.Id == 0).ToListAsync();
             var DineIds = Dines.Select(d => d.Id).ToList();
             var DineMenus = await db.DineMenus.Where(d => DineIds.Contains(d.DineId)).ToListAsync();

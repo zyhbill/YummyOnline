@@ -872,4 +872,13 @@ angular.module('Baseinfo', [])
     $scope.Max = function () {
         if ($scope.PrintElement.Rate <= 0) $scope.PrintElement.Rate = 0;
     }
+    $scope.setNormal = function () {
+        Print.setNormal();
+    }
+    $scope.setInt = function () {
+        Print.setInt();
+    }
+    $scope.setFloor = function () {
+        Print.setFloor();
+    }
 }])

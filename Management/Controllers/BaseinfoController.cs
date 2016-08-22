@@ -1497,5 +1497,24 @@ namespace Management.Controllers
             }
             return Json(new ErrorState("请选择文件"));
         }
+
+        public async Task<JsonResult> SetPayModel(int Type)
+        {
+            var Config = await db.HotelConfigs.FirstOrDefaultAsync();
+            if (Type == 0)
+            {
+                Config.TrimZero = TrimZero.Fen;
+            }
+            else if (Type == 1)
+            {
+                Config.TrimZero = TrimZero.Yuan;
+            }
+            else
+            {
+                Config.TrimZero = TrimZero.None;
+            }
+            await db.SaveChangesAsync();
+            return null;
+        }
     }
 }

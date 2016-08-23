@@ -24,7 +24,6 @@ namespace AutoPrinter {
 			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font, protocol.PrinterFormat.PaddingRight);
 
 			printerG.DrawStringLine($"欢迎光临{protocol.Hotel.Name}", protocol.PrinterFormat.ReciptBigFontSize, align: StringAlignment.Center);
-			printerG.DrawStringLine($"TEL: {protocol.Hotel.Tel}", protocol.PrinterFormat.ReciptSmallFontSize, align: StringAlignment.Center);
 			printerG.DrawStringLine($"{protocol.Hotel.Address}", protocol.PrinterFormat.ReciptSmallFontSize, align: StringAlignment.Center);
 			printerG.DrawStringLine($"收据", protocol.PrinterFormat.ReciptSmallFontSize, align: StringAlignment.Center);
 			printerG.TrimY(5);
@@ -122,6 +121,10 @@ namespace AutoPrinter {
 			else {
 				printerG.DrawStringLine("未支付", protocol.PrinterFormat.ReciptFontSize);
 			}
+
+			printerG.DrawStringLine($"订餐电话: {protocol.Hotel.Tel}", protocol.PrinterFormat.ReciptFontSize);
+			printerG.DrawStringLine("此小票恕不做开发票凭据，如需开票请用餐后立即与收银台联系，过时不候！", protocol.PrinterFormat.ReciptFontSize);
+			printerG.DrawStringLine("上海乔曦信息技术有限公司竭诚为您服务021-66601020", protocol.PrinterFormat.ReciptFontSize);
 
 			printEnd(printerG);
 

@@ -5,6 +5,7 @@ using Protocol.PrintingProtocol;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -85,10 +86,17 @@ namespace AutoPrinter {
 					serverLog("获取交接班信息失败，请检查网络设置", LogLevel.Error);
 					return;
 				}
-				ShiftPrinter shiftPrinter = new ShiftPrinter();
+
 				serverLog($"发送打印测试交接班命令", LogLevel.Info);
 
-				await shiftPrinter.Print(sp);
+				if(Config.IsIPPrinter) {
+					ShiftPrinter shiftPrinter = new ShiftPrinter();
+					await shiftPrinter.Print(sp);
+				}
+				else {
+					ShiftDriverPrinter shiftDriverPrinter = new ShiftDriverPrinter();
+					shiftDriverPrinter.Printer(sp);
+				}
 
 				serverLog($"发送打印测试交接班命令成功", LogLevel.Success);
 			}
@@ -100,24 +108,42 @@ namespace AutoPrinter {
 		/// <summary>
 		/// 打印交接班
 		/// </summary>
-		async Task printShifts(List<int> Ids, DateTime dateTime) {
+		async Task printShifts(List<int> ids, DateTime dateTime) {
+			if(ids == null) {
+				ids = new List<int>();
+			}
+			StringBuilder idStr = new StringBuilder();
+			foreach(int id in ids) {
+				idStr.Append($"{id} ");
+			}
+
 			ShiftForPrinting sp = null;
+
 			try {
-				sp = await getShiftsForPrinting(Ids, dateTime);
+				sp = await getShiftsForPrinting(ids, dateTime);
 				if(sp == null) {
 					serverLog("获取交接班信息失败，请检查网络设置", LogLevel.Error);
 					return;
 				}
-				ShiftPrinter shiftPrinter = new ShiftPrinter();
+
 				serverLog($"发送打印命令 交接班", LogLevel.Info);
 
-				await shiftPrinter.Print(sp);
+				if(Config.IsIPPrinter) {
+					ShiftPrinter shiftPrinter = new ShiftPrinter();
+					await shiftPrinter.Print(sp);
+				}
+				else {
+					ShiftDriverPrinter shiftDriverPrinter = new ShiftDriverPrinter();
+					shiftDriverPrinter.Printer(sp);
+				}
 
 				serverLog($"发送命令成功 交接班", LogLevel.Success);
+				
+				remoteLog(Log.LogLevel.Success, $"PrintShifts Completed, Ids: {idStr}, DateTime: {dateTime.ToString("yyyy-MM-dd")}");
 			}
 			catch(Exception e) {
 				serverLog($"无法打印 交接班, 错误信息: {e.Message}", LogLevel.Error);
-				remoteLog(Log.LogLevel.Error, $"ShiftInfos, {e.Message}", $"Data: {JsonConvert.SerializeObject(sp)}, Error: {e}");
+				remoteLog(Log.LogLevel.Error, $"Shifts Ids: {idStr}, DateTime: {dateTime.ToString("yyyy-MM-dd")}, {e.Message}", $"Data: {JsonConvert.SerializeObject(sp)}, Error: {e}");
 			}
 		}
 

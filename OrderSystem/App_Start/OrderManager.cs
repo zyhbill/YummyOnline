@@ -399,9 +399,9 @@ namespace OrderSystem {
 				randomPrice *= top;
 				randomPrice = Math.Floor(randomPrice * 10) / 10;
 
-				//if(randomPrice == 0) {
-				//	randomPrice = 0.1m;
-				//}
+				if(randomPrice == 0) {
+					randomPrice = 0.1m;
+				}
 
 				// 如果随机立减超过应付金额则全额支付
 				if(randomPrice > mainPaidDetail.Price) {

@@ -31,6 +31,8 @@ namespace AutoPrinter {
 			printerG.DrawStringLine($"单号: {protocol.Dine.Id}", protocol.PrinterFormat.ReciptFontSize);
 			printerG.DrawStringLine($"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}", protocol.PrinterFormat.ReciptFontSize);
 
+			printGrid55(printerG, new string[] { $"顾客: {protocol.User?.Id}", $"服务员: {protocol.Dine.Waiter.Name}" }, protocol.PrinterFormat.ReciptFontSize);
+
 			if(protocol.Dine.Type == HotelDAO.Models.DineType.ToStay) {
 				printerG.DrawStringLine($"餐桌: {protocol.Dine.Desk.Name}", protocol.PrinterFormat.ReciptFontSize + 2);
 			}

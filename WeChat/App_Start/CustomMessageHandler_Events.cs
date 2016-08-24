@@ -7,6 +7,11 @@ using System.Web;
 using System.Web.Configuration;
 using WeChat;
 using System.Text;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using Newtonsoft;
+using WeiPay;
+using System;
 
 namespace MessageHandle
 {
@@ -20,14 +25,6 @@ namespace MessageHandle
             IResponseMessageBase reponseMessage = null;
             switch (requestMessage.EventKey)
             {
-                case "Openid":
-                    {
-                        var strongResposeMessage = CreateResponseMessage<ResponseMessageText>();
-                        strongResposeMessage.Content = "尊敬的用户，您好";
-                        reponseMessage = strongResposeMessage;
-                    }
-                    break;
-
                 case "Points":
                     {
                         var strongResposeMessageF = CreateResponseMessage<ResponseMessageNews>();
@@ -78,6 +75,23 @@ namespace MessageHandle
 
                     }
                     break;
+
+                case "Product":
+                    {
+                        var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
+                        strongResponseMessage.Content = product();
+                        reponseMessage = strongResponseMessage;
+                    }
+                    break;
+
+                case "Contact":
+                    {
+                        var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
+                        strongResponseMessage.Content =contact();
+                        reponseMessage = strongResponseMessage;
+                    }
+                    break;
+
                 default:
                     {
                         var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
@@ -116,6 +130,31 @@ namespace MessageHandle
             return end.ToString();//string.Format("您的积分：{0}", points);
 
         }
+        //产品介绍
+        public string product()
+        {
+            var end = new StringBuilder();
+            end.AppendLine("\r\n");
+            end.AppendLine("请输入下列数字");
+            end.AppendLine("1.店小二系统总图");
+            end.AppendLine("2.店小二版本种类");
+            end.AppendLine("3.店小二介绍");
+            end.AppendLine("4.店掌柜");
+            end.AppendLine("5.云掌柜");
+            return end.ToString();
+        }
+
+        //联系方式
+        public string contact()
+        {
+            var end = new StringBuilder();
+            end.AppendLine("\r\n");
+            end.AppendLine("电话：021-6660 1020");
+            end.AppendLine("传真：021-6660 1020");
+            end.AppendLine("邮箱：choice_dxe@163.com");
+            end.AppendLine("地址：上海市虹口区花园路66弄1号602室");
+            return end.ToString();
+        }
 
         //判断用户openid是否存在
         public bool isUser()
@@ -124,6 +163,18 @@ namespace MessageHandle
             var wechatid = WeixinOpenId;
             var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
             var result = ctx.Users.Where(p => p.WeChatOpenId == wechatid).Select(d => new { d.Id }).FirstOrDefault();
+            if (result == null)
+                return false;
+            else
+                return true;
+        }
+
+        //判断用户userID是否存在
+        public bool isUserID(string userid)
+        {
+            var yummonlineManager = new YummyOnlineManager();
+            var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
+            var result = ctx.Users.Where(p => p.Id == userid).Select(d => new { d.WeChatOpenId }).FirstOrDefault();
             if (result == null)
                 return false;
             else
@@ -142,6 +193,67 @@ namespace MessageHandle
                 Url = "http://wechatplatform.yummyonline.net/login/login/?openid=" + WeixinOpenId
             });
             return responseMessage;
+        }
+
+        //发送模板消息
+        //POST
+        public JObject Notice()
+        {
+            if (isUser() == false)
+            {
+                return null;
+            }
+            else
+            {
+                JObject relJson = DineID();
+                string pay = relJson["Price"].ToString();
+                string time = relJson["BeginTime"].ToString();
+                string userid = relJson["UserId"].ToString();
+                if (isUserID(userid) == false)
+                    return null;
+                else
+                {
+                    string url = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=ACCESS_TOKEN";
+                    var templatdID = "ZdG4C7FzuHV_NiZ57al_XweuFHAvfMWhpqVmDhqA5wI";
+                    JObject json = new JObject();
+                    json.Add(new JProperty("touser", WeixinOpenId));
+                    json.Add(new JProperty("template_id", templatdID));
+                    json.Add(new JProperty("url", url));
+                    JObject payData = new JObject();
+                    payData.Add(new JProperty("value", pay));//消费金额
+                    payData.Add(new JProperty("color", "#173177"));
+                    JObject addressData = new JObject();
+                    addressData.Add(new JProperty("value", "店小二"));//消费地址
+                    addressData.Add(new JProperty("color", "#173177"));
+                    JObject timeData = new JObject();
+                    timeData.Add(new JProperty("value", time));//消费时间
+                    timeData.Add(new JProperty("color", "#173177"));
+                    JObject remarkData = new JObject();
+                    remarkData.Add(new JProperty("value", "欢迎再次光临！"));
+                    remarkData.Add(new JProperty("color", "#173177"));
+                    JObject data = new JObject();
+                    data.Add(new JProperty("keynote1", payData));
+                    data.Add(new JProperty("keynote2", addressData));
+                    data.Add(new JProperty("keynote3", timeData));
+                    data.Add(new JProperty("keynote4", remarkData));
+                    json.Add(new JProperty("data", data));
+                    var js = HttpHelper.sendMsgByPost(url, json.ToString());
+                    JObject jn = new JObject(js);
+                    return jn;
+                }
+            }
+        }
+
+        //根据订单号获取点单
+        public JObject DineID()
+        {
+            string URL = "waiter.yummyonline.net";
+            string url_ = URL + "/Order/GetDineById";
+            JObject json = new JObject();
+            //json.Add(new JProperty("DineID", DineID));//获取订单号DineID
+            var result = HttpHelper.sendMsgByPost(url_, json.ToString());
+            JObject resJson = new JObject(result);
+            return resJson;
         }
     }
 }

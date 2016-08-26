@@ -34,12 +34,12 @@ namespace OrderSystem.Controllers {
 			if(model.Password == null) {
 				return Json(new JsonError("密码不能为空"));
 			}
-			if(model.Password == model.PasswordAga) {
+			if(model.Password != model.PasswordAga) {
 				return Json(new JsonError("密码不一致"));
 			}
 			User user;
 			bool succeeded;
-			if(await SigninManager.IsAuthenticated()) {
+			if(await SigninManager.IsAuthenticated() && await UserManager.IsInRoleAsync(User.Identity.GetUserId(), Role.Nemo)) {
 				user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
 				user.PhoneNumber = model.PhoneNumber;
 				user.UserName = model.PhoneNumber;

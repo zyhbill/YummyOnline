@@ -149,58 +149,22 @@
 		$scope.newArticle.PicturePath = 'http://static.yummyonline.net/';
 
 		var editor;
-		KindEditor.ready(function (K) {
-			editor = K.create('#article-body', {
+		$(document).ready(function () {
+			editor = KindEditor.create('#article-body', {
 				resizeType: 1,
 				allowPreviewEmoticons: false,
 				allowImageUpload: false,
 				themesPath: '/content/css/lib/',
-				items: [],
-			});
-
-			$('div.ke-toolbar').remove();
-
-			var colorpicker;
-			K('#colorpicker').bind('click', function (e) {
-				e.stopPropagation();
-				if (colorpicker) {
-					colorpicker.remove();
-					colorpicker = null;
-					return;
-				}
-				var colorpickerPos = K('#colorpicker').pos();
-				colorpicker = K.colorpicker({
-					x: colorpickerPos.x,
-					y: colorpickerPos.y + K('#colorpicker').height(),
-					z: 19811214,
-					selectedColor: 'default',
-					noColor: '无颜色',
-					click: function (color) {
-						editor.exec('forecolor', color);
-						editor.focus();
-						colorpicker.remove();
-						colorpicker = null;
-					}
-				});
-			});
-			K(document).click(function () {
-				if (colorpicker) {
-					colorpicker.remove();
-					colorpicker = null;
-				}
+				items: [
+					'formatblock', 'fontsize', 'forecolor', 'hilitecolor', '|',
+					'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|',
+					'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript', 'superscript', '|',
+					'bold', 'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat'
+				],
 			});
 		});
 
-		$scope.setFontSize = function (size) {
-			editor.exec('fontsize', size + 'px');
-			editor.focus();
-		}
-		$scope.exec = function (cmd) {
-			editor.exec(cmd);
-			editor.focus();
-		}
-
-		$scope.showImageModal = function (menu) {
+		$scope.showImageModal = function () {
 			$modal.open({
 				templateUrl: 'imageModal.html',
 				controller: 'ImageModalCtrl',
@@ -211,18 +175,52 @@
 				}
 			});
 		}
+		$scope.showLinkModal = function () {
+			$modal.open({
+				templateUrl: 'linkModal.html',
+				controller: 'LinkModalCtrl',
+				resolve: {
+					editor: function () {
+						return editor;
+					}
+				}
+			});
+		}
+		$scope.showArticleBodyModal = function (article) {
+			$modal.open({
+				templateUrl: 'articleBodyModal.html',
+				controller: 'ArticleBodyModalCtrl',
+				resolve: {
+					article: function () {
+						return article;
+					}
+				}
+			});
+		}
 
 		$scope.add = function () {
-			console.log(editor.html())
 			$http.post('/Hotel/AddArticle', {
 				Title: $scope.newArticle.Title,
 				PicturePath: $scope.newArticle.PicturePath,
 				Description: $scope.newArticle.Description,
-				Body: $scope.newArticle.Body,
+				Body: editor.html(),
 				HotelId: $scope.hotelId
 			}).then(function (response) {
 				if (response.data.Succeeded) {
-
+					$scope.refreshArticles($scope.hotelId);
+				} else {
+					toastr.error(response.data.ErrorMessage);
+				}
+			});
+		}
+		$scope.remove = function (article) {
+			$http.post('/Hotel/RemoveArticle', {
+				Id: article.Id
+			}).then(function (response) {
+				if (response.data.Succeeded) {
+					$scope.refreshArticles($scope.hotelId);
+				} else {
+					toastr.error(response.data.ErrorMessage);
 				}
 			});
 		}
@@ -240,6 +238,35 @@ app.controller('ImageModalCtrl', [
 		};
 		$scope.ok = function () {
 			$editor.exec('insertimage', $scope.newImagePath);
+			$modalInstance.dismiss();
+		};
+	}
+]);
+
+app.controller('LinkModalCtrl', [
+	'$scope',
+	'$uibModalInstance',
+	'editor',
+	function ($scope, $modalInstance, $editor) {
+		$scope.newLinkPath = 'http://static.yummyonline.net/'
+		$scope.cancel = function () {
+			$modalInstance.dismiss();
+		};
+		$scope.ok = function () {
+			$editor.exec('createlink', $scope.newLinkPath, '_blank');
+			$modalInstance.dismiss();
+		};
+	}
+]);
+
+app.controller('ArticleBodyModalCtrl', [
+	'$scope',
+	'$uibModalInstance',
+	'article',
+	function ($scope, $modalInstance, $article) {
+		$scope.article = $article;
+
+		$scope.close = function () {
 			$modalInstance.dismiss();
 		};
 	}

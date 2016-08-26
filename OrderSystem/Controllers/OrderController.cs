@@ -101,7 +101,7 @@ namespace OrderSystem.Controllers {
 		}
 
 		private async Task<Dine> generateTestDine() {
-			return await Task<Dine>.Run(() => {
+			return await Task.Run(() => {
 				var Dine = new Dine {
 					Id = "00000000000000",
 					Status = HotelDAO.Models.DineStatus.Untreated,
@@ -257,25 +257,188 @@ namespace OrderSystem.Controllers {
 						}
 					});
 				}
-
 				return Dine;
 			});
-
 		}
 
 		public async Task<JsonResult> GetShiftsForPrinting(int hotelId, List<int> ids, DateTime dateTime) {
 			string connStr = await YummyOnlineManager.GetHotelConnectionStringById(hotelId);
 			var manager = new HotelManager(connStr);
 
-			var tShifts = new HotelManager(connStr).GetShiftsForPrinting(ids, dateTime);
+			Task<List<Shift>> tShifts = null;
+			Task<List<PayKindShift>> tPayKindShifts = null;
+			Task<List<MenuClassShift>> tMenuClassShifts = null;
+
+			if(ids == null || ids.Count == 0) {
+				tShifts = generateTestShift();
+				tPayKindShifts = generateTestPayKindShift();
+				tMenuClassShifts = generateTestMenuClassShift();
+			}
+			else {
+				tShifts = new HotelManager(connStr).GetShiftsForPrinting(ids, dateTime);
+				tPayKindShifts = new HotelManager(connStr).GetPayKindShiftsForPrinting(ids, dateTime);
+				tMenuClassShifts = new HotelManager(connStr).GetMenuClassShiftsForPrinting(ids, dateTime);
+			}
+
 			var tPrinter = new HotelManager(connStr).GetShiftPrinter();
 			var tPrinterFormat = new HotelManager(connStr).GetPrinterFormatForPrinting();
 
 
 			return Json(new ShiftForPrinting {
 				Shifts = await tShifts,
+				PayKindShifts = await tPayKindShifts,
+				MenuClassShifts = await tMenuClassShifts,
 				Printer = await tPrinter,
 				PrinterFormat = await tPrinterFormat
+			});
+		}
+
+		private Task<List<Shift>> generateTestShift() {
+			return Task.Run(() => {
+				List<Shift> shift = new List<Shift>();
+
+				shift.Add(new Shift {
+					Id = -1,
+					DateTime = DateTime.Now,
+					AveragePrice = 12.34m,
+					CustomerCount = 8,
+					DeskCount = 9,
+					GiftPrice = 12.34m,
+					OriPrice = 12.34m,
+					PreferencePrice = 12.34m,
+					Price = 12.34m,
+					ReturnedPrice = 12.34m,
+					ToGoPrice = 12.34m,
+					ToStayPrice = 12.34m,
+				});
+				shift.Add(new Shift {
+					Id = 0,
+					DateTime = DateTime.Now,
+					AveragePrice = 12.34m,
+					CustomerCount = 8,
+					DeskCount = 9,
+					GiftPrice = 12.34m,
+					OriPrice = 12.34m,
+					PreferencePrice = 12.34m,
+					Price = 12.34m,
+					ReturnedPrice = 12.34m,
+					ToGoPrice = 12.34m,
+					ToStayPrice = 12.34m,
+				});
+
+				return shift;
+			});
+		}
+		private Task<List<PayKindShift>> generateTestPayKindShift() {
+			return Task.Run(() => {
+				List<PayKindShift> shift = new List<PayKindShift>();
+
+				shift.Add(new PayKindShift {
+					Id = -1,
+					DateTime = DateTime.Now,
+					PayKindShiftDetails = new List<PayKindShiftDetail> {
+						new PayKindShiftDetail {
+							PayKind = "测试支付1",
+							RealPrice = 12.34m,
+							ReceivablePrice= 56.78m
+						},
+						new PayKindShiftDetail {
+							PayKind = "测试支付2",
+							RealPrice = 12.34m,
+							ReceivablePrice= 56.78m
+						},
+						new PayKindShiftDetail {
+							PayKind = "测试支付3",
+							RealPrice = 12.34m,
+							ReceivablePrice= 56.78m
+						},
+						new PayKindShiftDetail {
+							PayKind = "测试支付4",
+							RealPrice = 12.34m,
+							ReceivablePrice= 56.78m
+						},
+					}
+				});
+				shift.Add(new PayKindShift {
+					Id = 0,
+					DateTime = DateTime.Now,
+					PayKindShiftDetails = new List<PayKindShiftDetail> {
+						new PayKindShiftDetail {
+							PayKind = "测试支付1",
+							RealPrice = 12.34m,
+							ReceivablePrice= 56.78m
+						},
+						new PayKindShiftDetail {
+							PayKind = "测试支付2",
+							RealPrice = 12.34m,
+							ReceivablePrice= 56.78m
+						},
+						new PayKindShiftDetail {
+							PayKind = "测试支付3",
+							RealPrice = 12.34m,
+							ReceivablePrice= 56.78m
+						},
+						new PayKindShiftDetail {
+							PayKind = "测试支付4",
+							RealPrice = 12.34m,
+							ReceivablePrice= 56.78m
+						},
+					}
+				});
+
+				return shift;
+			});
+		}
+		private Task<List<MenuClassShift>> generateTestMenuClassShift() {
+			return Task.Run(() => {
+				List<MenuClassShift> shift = new List<MenuClassShift>();
+
+				shift.Add(new MenuClassShift {
+					Id = -1,
+					DateTime = DateTime.Now,
+					MenuClassShiftDetails = new List<MenuClassShiftDetail> {
+						new MenuClassShiftDetail {
+							MenuClass = "测试分类1",
+							Price=12.34m
+						},
+						new MenuClassShiftDetail {
+							MenuClass = "测试分类2",
+							Price=12.34m
+						},
+						new MenuClassShiftDetail {
+							MenuClass = "测试分类3",
+							Price=12.34m
+						},
+						new MenuClassShiftDetail {
+							MenuClass = "测试分类4",
+							Price=12.34m
+						},
+					}
+				});
+				shift.Add(new MenuClassShift {
+					Id = 0,
+					DateTime = DateTime.Now,
+					MenuClassShiftDetails = new List<MenuClassShiftDetail> {
+						new MenuClassShiftDetail {
+							MenuClass = "测试分类1",
+							Price=12.34m
+						},
+						new MenuClassShiftDetail {
+							MenuClass = "测试分类2",
+							Price=12.34m
+						},
+						new MenuClassShiftDetail {
+							MenuClass = "测试分类3",
+							Price=12.34m
+						},
+						new MenuClassShiftDetail {
+							MenuClass = "测试分类4",
+							Price=12.34m
+						},
+					}
+				});
+
+				return shift;
 			});
 		}
 

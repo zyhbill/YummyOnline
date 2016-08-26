@@ -274,5 +274,10 @@ namespace YummyOnline {
 			ctx.Articles.Add(article);
 			await ctx.SaveChangesAsync();
 		}
+		public async Task RemoveArticle(int id) {
+			Article article = await ctx.Articles.FirstOrDefaultAsync(p => p.Id == id);
+			ctx.Articles.Remove(article);
+			await ctx.SaveChangesAsync();
+		}
 	}
 }

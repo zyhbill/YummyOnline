@@ -54,8 +54,7 @@
 			</Grid.ColumnDefinitions>
 
 			<Button x:Name="buttonTestRemoteDines" Content="远程订单测试" HorizontalAlignment="Left" Margin="10,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestRemoteDines_Click"/>
-			<Button x:Name="buttonTestLocalDines" Content="本地订单测试" HorizontalAlignment="Left" Margin="116,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonTestLocalDines_Click"/>
-			<Button x:Name="buttonConnectPrinter" Content="预连接打印机" HorizontalAlignment="Left" Margin="222,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonConnectPrinter_Click" />
+			<Button x:Name="buttonConnectPrinter" Content="预连接打印机" HorizontalAlignment="Left" Margin="116,147,0,0" VerticalAlignment="Top" Width="101" Height="23" Click="buttonConnectPrinter_Click" />
 			<GroupBox x:Name="groupBox" Header="测试设置" Margin="10,10,10,38">
 				<Grid Margin="0,0,0,0">
 					<TextBlock x:Name="textBlockIP" HorizontalAlignment="Left" Margin="10,11,0,0" TextWrapping="Wrap" Text="IP:" VerticalAlignment="Top"/>

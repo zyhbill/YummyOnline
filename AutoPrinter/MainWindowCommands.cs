@@ -5,6 +5,7 @@ using Protocol.PrintingProtocol;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -48,6 +49,7 @@ namespace AutoPrinter {
 		/// </summary>
 		async Task printRemoteTest(List<PrintType> printTypes, string ipOrName) {
 			DineForPrinting dp = null;
+			ShiftForPrinting sp = null;
 			try {
 				serverLog($"开始测试, 打印机: {ipOrName}", LogLevel.Info);
 				dp = await getDineForPrinting("00000000000000");
@@ -77,58 +79,71 @@ namespace AutoPrinter {
 
 				serverLog($"发送测试单命令成功", LogLevel.Success);
 				printCompleted("00000000000000");
-			}
-			catch(Exception e) {
-				serverLog($"无法打印测试单, 错误信息: {e}", LogLevel.Error);
-				remoteLog(Log.LogLevel.Error, $"Online Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
-			}
-		}
-		/// <summary>
-		/// 打印本地测试
-		/// </summary>
-		async Task printLocalTest(List<PrintType> printTypes, string ipOrName) {
-			DineForPrinting dp = Config.GetTestProtocol(ipOrName);
-			try {
-				serverLog($"开始本地测试, 打印机: {ipOrName}", LogLevel.Info);
-				serverLog($"发送本地测试单命令", LogLevel.Info);
+
+
+				sp = await getShiftsForPrinting(null, DateTime.Now);
+				if(sp == null) {
+					serverLog("获取交接班信息失败，请检查网络设置", LogLevel.Error);
+					return;
+				}
+
+				serverLog($"发送打印测试交接班命令", LogLevel.Info);
 
 				if(Config.IsIPPrinter) {
-					DinePrinter dinePrinter = new DinePrinter();
-					await dinePrinter.Print(dp, printTypes, true);
+					ShiftPrinter shiftPrinter = new ShiftPrinter();
+					await shiftPrinter.Print(sp);
 				}
 				else {
-					DineDriverPrinter dineDriverPrinter = new DineDriverPrinter();
-					dineDriverPrinter.Print(dp, printTypes, true);
+					ShiftDriverPrinter shiftDriverPrinter = new ShiftDriverPrinter();
+					shiftDriverPrinter.Printer(sp);
 				}
 
-				serverLog($"发送本地测试单命令成功", LogLevel.Success);
+				serverLog($"发送打印测试交接班命令成功", LogLevel.Success);
 			}
 			catch(Exception e) {
-				serverLog($"无法打印本地测试单, 错误信息: {e.Message}", LogLevel.Error);
-				remoteLog(Log.LogLevel.Error, $"Local Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
+				serverLog($"无法打印测试交接班, 错误信息: {e}", LogLevel.Error);
+				remoteLog(Log.LogLevel.Error, $"Online Test, {e.Message}", $"Data: {JsonConvert.SerializeObject(dp)}, Error: {e}");
 			}
 		}
 		/// <summary>
 		/// 打印交接班
 		/// </summary>
-		async Task printShifts(List<int> Ids, DateTime dateTime) {
+		async Task printShifts(List<int> ids, DateTime dateTime) {
+			if(ids == null) {
+				ids = new List<int>();
+			}
+			StringBuilder idStr = new StringBuilder();
+			foreach(int id in ids) {
+				idStr.Append($"{id} ");
+			}
+
 			ShiftForPrinting sp = null;
+
 			try {
-				sp = await getShiftsForPrinting(Ids, dateTime);
+				sp = await getShiftsForPrinting(ids, dateTime);
 				if(sp == null) {
 					serverLog("获取交接班信息失败，请检查网络设置", LogLevel.Error);
 					return;
 				}
-				ShiftPrinter shiftPrinter = new ShiftPrinter();
+
 				serverLog($"发送打印命令 交接班", LogLevel.Info);
 
-				await shiftPrinter.Print(sp);
+				if(Config.IsIPPrinter) {
+					ShiftPrinter shiftPrinter = new ShiftPrinter();
+					await shiftPrinter.Print(sp);
+				}
+				else {
+					ShiftDriverPrinter shiftDriverPrinter = new ShiftDriverPrinter();
+					shiftDriverPrinter.Printer(sp);
+				}
 
 				serverLog($"发送命令成功 交接班", LogLevel.Success);
+				
+				remoteLog(Log.LogLevel.Success, $"PrintShifts Completed, Ids: {idStr}, DateTime: {dateTime.ToString("yyyy-MM-dd")}");
 			}
 			catch(Exception e) {
 				serverLog($"无法打印 交接班, 错误信息: {e.Message}", LogLevel.Error);
-				remoteLog(Log.LogLevel.Error, $"ShiftInfos, {e.Message}", $"Data: {JsonConvert.SerializeObject(sp)}, Error: {e}");
+				remoteLog(Log.LogLevel.Error, $"Shifts Ids: {idStr}, DateTime: {dateTime.ToString("yyyy-MM-dd")}, {e.Message}", $"Data: {JsonConvert.SerializeObject(sp)}, Error: {e}");
 			}
 		}
 

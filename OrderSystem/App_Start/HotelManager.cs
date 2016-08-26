@@ -10,7 +10,7 @@ namespace OrderSystem {
 		public HotelManager(string connString) : base(connString) { }
 
 		public async Task<Desk> GetDeskByQrCode(string qrCode) {
-			return await ctx.Desks.FirstOrDefaultAsync(p => p.QrCode == qrCode);
+			return await ctx.Desks.Include(p => p.Area).FirstOrDefaultAsync(p => p.QrCode == qrCode);
 		}
 
 		public async Task<PayKind> GetPayKindById(int payKindId) {

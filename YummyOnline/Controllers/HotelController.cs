@@ -96,6 +96,9 @@ namespace YummyOnline.Controllers {
 			string staffId = await YummyOnlineManager.GetHotelAdminId(hotelId);
 			HotelManager hotelManager = new HotelManager(newHotel.AdminConnectionString);
 			await hotelManager.InitializeHotel(hotelId, staffId);
+
+			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"Hotel {hotelId} Created");
+
 			return Json(new JsonSuccess());
 		}
 
@@ -138,6 +141,8 @@ namespace YummyOnline.Controllers {
 				return Json(new JsonError());
 			}
 
+			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"Weixin Hotel {hotelId}, DineId {dineId} Notified");
+
 			return Json(new JsonSuccess());
 		}
 
@@ -146,6 +151,12 @@ namespace YummyOnline.Controllers {
 		}
 		public async Task<JsonResult> AddArticle(ArticleViewModel model) {
 			await YummyOnlineManager.AddArticle(model, User.Identity.Name);
+			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"Article Hotel {model.HotelId}, Title {model.Title} Created");
+			return Json(new JsonSuccess());
+		}
+		public async Task<JsonResult> RemoveArticle(int id) {
+			await YummyOnlineManager.RemoveArticle(id);
+			await YummyOnlineManager.RecordLog(Log.LogProgram.System, Log.LogLevel.Success, $"Article {id} Removed");
 			return Json(new JsonSuccess());
 		}
 	}

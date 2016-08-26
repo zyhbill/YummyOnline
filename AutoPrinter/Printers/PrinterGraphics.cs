@@ -30,9 +30,9 @@ namespace AutoPrinter {
 			currY += y;
 		}
 
-		public void DrawStringLine(string text, float fontSize, Brush brush, bool wrapper = true, StringAlignment align = StringAlignment.Near) {
+		public void DrawStringLine(string text, float fontSize, Brush brush, bool wrapper = true, StringAlignment align = StringAlignment.Near, FontStyle style = FontStyle.Regular) {
 			RectangleF areaRec = new RectangleF(currX, currY, paperWidth - paddingRight, 100);
-			Font font = new Font(fontName, fontSize);
+			Font font = new Font(fontName, fontSize, style);
 			StringFormat format = new StringFormat {
 				Alignment = align,
 				FormatFlags = wrapper ? 0 : StringFormatFlags.NoWrap
@@ -49,8 +49,8 @@ namespace AutoPrinter {
 				currY += spacing + g.MeasureString(text, font).Height;
 			}
 		}
-		public void DrawStringLine(string text, float fontSize, bool wrapper = true, StringAlignment align = StringAlignment.Near) {
-			DrawStringLine(text, fontSize, Brushes.Black, wrapper, align);
+		public void DrawStringLine(string text, float fontSize, bool wrapper = true, StringAlignment align = StringAlignment.Near, FontStyle style = FontStyle.Regular) {
+			DrawStringLine(text, fontSize, Brushes.Black, wrapper, align, style);
 		}
 
 		public void DrawStringLineLoop(string text, float fontSize, int loop) {

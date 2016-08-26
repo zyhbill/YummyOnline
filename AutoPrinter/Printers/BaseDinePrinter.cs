@@ -24,7 +24,6 @@ namespace AutoPrinter {
 			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font, protocol.PrinterFormat.PaddingRight);
 
 			printerG.DrawStringLine($"欢迎光临{protocol.Hotel.Name}", protocol.PrinterFormat.ReciptBigFontSize, align: StringAlignment.Center);
-			printerG.DrawStringLine($"TEL: {protocol.Hotel.Tel}", protocol.PrinterFormat.ReciptSmallFontSize, align: StringAlignment.Center);
 			printerG.DrawStringLine($"{protocol.Hotel.Address}", protocol.PrinterFormat.ReciptSmallFontSize, align: StringAlignment.Center);
 			printerG.DrawStringLine($"收据", protocol.PrinterFormat.ReciptSmallFontSize, align: StringAlignment.Center);
 			printerG.TrimY(5);
@@ -32,8 +31,10 @@ namespace AutoPrinter {
 			printerG.DrawStringLine($"单号: {protocol.Dine.Id}", protocol.PrinterFormat.ReciptFontSize);
 			printerG.DrawStringLine($"时间: {protocol.Dine.BeginTime.ToString("M-d HH:mm")}", protocol.PrinterFormat.ReciptFontSize);
 
+			printGrid55(printerG, new string[] { $"顾客: {protocol.User?.Id}", $"服务员: {protocol.Dine.Waiter.Name}" }, protocol.PrinterFormat.ReciptFontSize);
+
 			if(protocol.Dine.Type == HotelDAO.Models.DineType.ToStay) {
-				printerG.DrawStringLine($"餐桌: {protocol.Dine.Desk.Name}", protocol.PrinterFormat.ReciptFontSize);
+				printerG.DrawStringLine($"餐桌: {protocol.Dine.Desk.Name}", protocol.PrinterFormat.ReciptFontSize + 2);
 			}
 			else if(protocol.Dine.Type == HotelDAO.Models.DineType.ToGo) {
 				printerG.DrawStringLine($"外卖: {protocol.Dine.Desk.Name}", protocol.PrinterFormat.ReciptBigFontSize);
@@ -122,6 +123,12 @@ namespace AutoPrinter {
 			else {
 				printerG.DrawStringLine("未支付", protocol.PrinterFormat.ReciptFontSize);
 			}
+
+			printHr(printerG);
+
+			printerG.DrawStringLine($"订餐电话: {protocol.Hotel.Tel}", protocol.PrinterFormat.ReciptFontSize, style: FontStyle.Bold);
+			printerG.DrawStringLine("此小票恕不做开发票凭据，如需开票请用餐后立即与收银台联系，过时不候！", protocol.PrinterFormat.ReciptFontSize, style: FontStyle.Bold);
+			printerG.DrawStringLine("[上海乔曦信息技术有限公司竭诚为您服务021-66601020]", protocol.PrinterFormat.ReciptSmallFontSize);
 
 			printEnd(printerG);
 

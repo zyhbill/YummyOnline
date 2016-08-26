@@ -94,16 +94,6 @@ namespace AutoPrinter {
 			}
 		}
 
-		private async void buttonTestLocalDines_Click(object sender, RoutedEventArgs e) {
-			if(Config.IsIPPrinter) {
-				await printLocalTest(getCheckedPrintTypes(), textBoxIP.Text);
-			}
-			else {
-				await printLocalTest(getCheckedPrintTypes(), comboBox.SelectedItem.ToString());
-			}
-
-		}
-
 		private async void buttonConnectPrinter_Click(object sender, RoutedEventArgs e) {
 			await IPPrinter.GetInstance().Connect(IPAddress.Parse(textBoxIP.Text));
 		}
@@ -142,7 +132,6 @@ namespace AutoPrinter {
 			IPAddress ip;
 			if(IPAddress.TryParse(textBoxIP.Text, out ip)) {
 				buttonConnectPrinter.IsEnabled = true;
-				buttonTestLocalDines.IsEnabled = true;
 				buttonTestRemoteDines.IsEnabled = true;
 
 				Config.HistoryIPAddress = textBoxIP.Text;
@@ -150,7 +139,6 @@ namespace AutoPrinter {
 			}
 			else {
 				buttonConnectPrinter.IsEnabled = false;
-				buttonTestLocalDines.IsEnabled = false;
 				buttonTestRemoteDines.IsEnabled = false;
 			}
 		}

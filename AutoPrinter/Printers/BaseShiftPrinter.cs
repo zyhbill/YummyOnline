@@ -18,26 +18,71 @@ namespace AutoPrinter {
 		protected int drawShift(Graphics g, ShiftForPrinting protocol) {
 			PrinterGraphics printerG = new PrinterGraphics(g, protocol.PrinterFormat.PaperSize, protocol.PrinterFormat.Font, protocol.PrinterFormat.PaddingRight);
 
+			printerG.DrawStringLine($"交接班", protocol.PrinterFormat.ShiftBigFontSize, align: StringAlignment.Center);
+
 			decimal receivablePriceAll = 0, realPriceAll = 0;
 
-			printerG.DrawStringLine($"交接班", protocol.PrinterFormat.ShiftBigFontSize, align: StringAlignment.Center);
 			foreach(Shift shift in protocol.Shifts) {
 				printerG.DrawStringLine($"班次: {shift.Id}", protocol.PrinterFormat.ShiftFontSize);
 				printerG.DrawStringLine($"时间: {shift.DateTime.ToString("yyyy-MM-dd HH:mm:ss")}", protocol.PrinterFormat.ShiftFontSize);
 
-				printGrid433(printerG, new string[] { "支付名称", "应收", "实收" }, protocol.PrinterFormat.ShiftSmallFontSize);
-				foreach(ShiftDetail detail in shift.ShiftDetails) {
-					receivablePriceAll += detail.ReceivablePrice;
-					realPriceAll += detail.RealPrice;
-					printGrid433(printerG, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}", $"￥{detail.RealPrice}" }, protocol.PrinterFormat.ShiftFontSize);
-				}
+				printGrid55f(printerG, new string[] { "累计消费", $"￥{shift.OriPrice}" }, protocol.PrinterFormat.ShiftFontSize);
+				printGrid55f(printerG, new string[] { "累计堂吃", $"￥{shift.ToStayPrice}" }, protocol.PrinterFormat.ShiftFontSize);
+				printGrid55f(printerG, new string[] { "累计外卖", $"￥{shift.ToGoPrice}" }, protocol.PrinterFormat.ShiftFontSize);
+				printGrid55f(printerG, new string[] { "累计应付", $"￥{shift.Price}" }, protocol.PrinterFormat.ShiftFontSize);
+				printGrid55f(printerG, new string[] { "累计优惠", $"￥{shift.PreferencePrice}" }, protocol.PrinterFormat.ShiftFontSize);
+				printGrid55f(printerG, new string[] { "累计赠菜", $"￥{shift.GiftPrice}" }, protocol.PrinterFormat.ShiftFontSize);
+				printGrid55f(printerG, new string[] { "累计退菜", $"￥{shift.ReturnedPrice}" }, protocol.PrinterFormat.ShiftFontSize);
+				printGrid55f(printerG, new string[] { "累计桌数", shift.DeskCount.ToString() }, protocol.PrinterFormat.ShiftFontSize);
+				printGrid55f(printerG, new string[] { "累计人数", shift.CustomerCount.ToString() }, protocol.PrinterFormat.ShiftFontSize);
+				printGrid55f(printerG, new string[] { "人均消费", $"￥{shift.AveragePrice}" }, protocol.PrinterFormat.ShiftFontSize);
+
 				printHr(printerG);
+
+				printerG.DrawStringLine("付款明细:", protocol.PrinterFormat.ShiftFontSize);
+				if(shift.Id == 0) {
+					printGrid55f(printerG, new string[] { "支付名称", "应收" }, protocol.PrinterFormat.ShiftSmallFontSize);
+				}
+				else {
+					printGrid433(printerG, new string[] { "支付名称", "应收", "实收" }, protocol.PrinterFormat.ShiftSmallFontSize);
+				}
+				PayKindShift payKindShift = protocol.PayKindShifts.FirstOrDefault(p => p.Id == shift.Id);
+				if(payKindShift != null) {
+					foreach(PayKindShiftDetail detail in payKindShift.PayKindShiftDetails) {
+						receivablePriceAll += detail.ReceivablePrice;
+						realPriceAll += detail.RealPrice;
+
+						if(shift.Id == 0) {
+							printGrid55f(printerG, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}" }, protocol.PrinterFormat.ShiftFontSize);
+						}
+						else {
+							printGrid433(printerG, new string[] { detail.PayKind, $"￥{detail.ReceivablePrice}", $"￥{detail.RealPrice}" }, protocol.PrinterFormat.ShiftFontSize);
+						}
+					}
+				}
+				
+				printHr(printerG);
+
+				printerG.DrawStringLine("菜品类统计:", protocol.PrinterFormat.ShiftFontSize);
+				MenuClassShift menuClassShift = protocol.MenuClassShifts.FirstOrDefault(p => p.Id == shift.Id);
+				if(menuClassShift != null) {
+					foreach(MenuClassShiftDetail detail in menuClassShift.MenuClassShiftDetails) {
+						printGrid55f(printerG, new string[] { detail.MenuClass, $"￥{detail.Price}" }, protocol.PrinterFormat.ShiftFontSize);
+					}
+				}
+
+				printerG.TrimY(10);
+				printHr(printerG);
+				printHr(printerG);
+				printerG.TrimY(10);
 			}
 
 			printerG.DrawStringLine("总计:", protocol.PrinterFormat.ShiftSmallFontSize);
 			printGrid55f(printerG, new string[] { "应收", $"￥{receivablePriceAll}" }, protocol.PrinterFormat.ShiftFontSize);
-			printGrid55f(printerG, new string[] { "实收", $"￥{realPriceAll}" }, protocol.PrinterFormat.ShiftFontSize);
-			printGrid55f(printerG, new string[] { "盈亏", $"￥{(realPriceAll - receivablePriceAll)}" }, protocol.PrinterFormat.ShiftFontSize);
+			if(!protocol.Shifts.Exists(p => p.Id == 0)) {
+				printGrid55f(printerG, new string[] { "实收", $"￥{realPriceAll}" }, protocol.PrinterFormat.ShiftFontSize);
+				printGrid55f(printerG, new string[] { "盈亏", $"￥{(realPriceAll - receivablePriceAll)}" }, protocol.PrinterFormat.ShiftFontSize);
+			}
 
 			printEnd(printerG);
 

@@ -1512,7 +1512,7 @@ namespace Management.Controllers
                         }).Sum(p => p.Price),
                         Consume = d.OriPrice,
                         DiscountPrice = d.OriPrice - d.Price,
-                        Gift = d.DineMenus.Where(dd => dd.Status == DineMenuStatus.Gift).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
+                        Gift = d.DineMenus.Where(dd => dd.Type == DineMenuType.Gift).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
                         Returned = d.DineMenus.Where(dd => dd.Status == DineMenuStatus.Returned).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
                         d.IsInvoiced,
                         Discount = d.Discount * 100
@@ -1578,7 +1578,7 @@ namespace Management.Controllers
                         }).Sum(p => p.Price),
                         Consume = d.OriPrice,
                         DiscountPrice = d.OriPrice - d.Price,
-                        Gift = d.DineMenus.Where(dd => dd.Status == DineMenuStatus.Gift).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
+                        Gift = d.DineMenus.Where(dd =>  dd.Type == DineMenuType.Gift).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
                         Returned = d.DineMenus.Where(dd => dd.Status == DineMenuStatus.Returned).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
                         d.IsInvoiced,
                         Discount = d.Discount * 100
@@ -1624,7 +1624,7 @@ namespace Management.Controllers
                         }).Sum(p => p.Price),
                         Consume = d.OriPrice,
                         DiscountPrice = d.OriPrice - d.Price,
-                        Gift = d.DineMenus.Where(dd => dd.Status == DineMenuStatus.Gift).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
+                        Gift = d.DineMenus.Where(dd => dd.Type == DineMenuType.Gift).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
                         Returned = d.DineMenus.Where(dd => dd.Status == DineMenuStatus.Returned).Select(dd => new { Count = dd.Count, Price = (decimal?)dd.Price, RemarkPrice = (decimal?)dd.RemarkPrice }).Sum(dd => dd.Price * dd.Count + dd.RemarkPrice),
                         d.IsInvoiced,
                         Discount = d.Discount * 100

@@ -241,7 +241,7 @@ namespace Management.Controllers
                         d.DinePaidDetails,
                         d.IsInvoiced,
                         ReturnPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Returned).Sum(dd => dd.Price * dd.Count),
-                        GiftPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Status == DineMenuStatus.Gift).Sum(dd => dd.OriPrice * dd.Count)
+                        GiftPrice = DineMenus.Where(dd => dd.DineId == d.Id && dd.Type == DineMenuType.Gift).Sum(dd => dd.OriPrice * dd.Count)
                     }).ToList();
 
                     var UnSum = new

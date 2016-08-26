@@ -343,6 +343,17 @@ namespace OrderSystem {
 			cartPrice = cartPrice ?? 0;
 			cartPrice = Math.Floor(cartPrice.Value * trim) / trim;
 
+			foreach(DineMenu dineMenu in dine.DineMenus) {
+				var menuOnSale = await ctx.MenuOnSales.FirstOrDefaultAsync(p => p.Id == dineMenu.Menu.Id);
+				if(menuOnSale == null)
+					continue;
+
+				if(menuOnSale.MinPrice > dine.OriPrice - dineMenu.OriPrice) {
+					return new FunctionResult(false, $"{dineMenu.Menu.Name} 不满最低消费￥{menuOnSale.MinPrice}",
+						$"MenuOnSale Price Error, MenuId: {dineMenu.Menu.Id}, Dine OriPrice: {dine.OriPrice}");
+				}
+			}
+
 			// 检测前端计算的金额与后台计算的金额是否相同，如果前端金额为null则检测
 			if(Math.Abs(dine.Price - cartPrice.Value) > 0.01m) {
 				return new FunctionResult(false, "金额有误",

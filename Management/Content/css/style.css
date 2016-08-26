@@ -120,6 +120,10 @@ span.money{
     display:inline-block;
     width:35%;
 }
+.passowrd{
+    width:200px;
+    display:inline-block;
+}
 .loginBtn{
     height:50px;
     width:50px;
@@ -144,7 +148,7 @@ span.money{
     width:120px;
 }
 .userLogin-password{
-    width:50px;
+    width:150px;
 }
 .chosen-choices{
     min-height: 28px;

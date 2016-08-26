@@ -54,6 +54,11 @@ namespace Management.Controllers
             return View("HandOut");
         }
 
+        public ActionResult HandOutHistory()
+        {
+            return View("HandOutHistory");
+        }
+
         public ActionResult AddMenu()
         {
             return View("AddMenu");
@@ -106,7 +111,7 @@ namespace Management.Controllers
             var Dines = db.Dines
                     .Include(p => p.DineMenus.Select(pp => pp.Remarks))
                     .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
-                    .Where(order => order.IsPaid == false && order.IsOnline == false)
+                    .Where(order => order.IsPaid == false && order.IsOnline == false&&order.Status!= DineStatus.Shifted)
                     .Select(d => new
                     {
                         d.Discount,
@@ -181,7 +186,7 @@ namespace Management.Controllers
                 db.SaveChanges();
                 var us = db.Customers.Where(c => c.Id == Id).Include(p => p.VipLevel.VipDiscount);
                 var data = await us.FirstOrDefaultAsync();
-                return Json(new { Status = true, data = data });
+                return Json(new { Status = true, data = data, phone = lg.PhoneNumber });
             }
         }
         /// <summary>
@@ -453,7 +458,7 @@ namespace Management.Controllers
             string Id = lg.Id;
             var us = db.Customers.Where(c => c.Id == Id).Include(p => p.VipLevel.VipDiscount);
             var data = await us.FirstOrDefaultAsync();
-            return Json(new { Status = true, data = data });
+            return Json(new { Status = true, data = data, phone = lg.PhoneNumber });
         }
         /// <summary>
         /// 开桌
@@ -857,7 +862,7 @@ namespace Management.Controllers
                 PayDetails.Cpi = Dines.Sum(d => d.Price) / Dines.Sum(d => d.HeadCount);
             }
             var ClassDetails = new List<ClassDetails>();
-            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.IsShow==true).ToListAsync();
+            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.IsShow == true).ToListAsync();
             var DineIds = Dines.Select(d => d.Id).ToList();
             var DineMenus = await db.DineMenus.Where(d => DineIds.Contains(d.DineId)).ToListAsync();
             foreach (var i in MenuClasses)
@@ -1005,7 +1010,7 @@ namespace Management.Controllers
                 PreferencePrice = ShiftDetails.OriPrice - ShiftDetails.Price
             });
             await db.SaveChangesAsync();
-            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.IsShow==true).Select(d => d.Id).ToListAsync();
+            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.IsShow == true).Select(d => d.Id).ToListAsync();
             var ClassShift = await db.MenuClassShifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, DateTime.Now) == 0 && d.Id == 0).ToListAsync();
             DineIds = Dines.Select(d => d.Id).ToList();
             var DineMenus = await db.DineMenus.Where(d => DineIds.Contains(d.DineId)).ToListAsync();
@@ -1043,6 +1048,64 @@ namespace Management.Controllers
             MvcApplication.client.Send(new RequestPrintShiftsProtocol((int)(Session["User"] as RStatus).HotelId, new List<int>() { Id }, DateTime.Now));
             return Json(new SuccessState());
         }
+
+        /// <summary>
+        /// 交接班历史预览
+        /// </summary>
+        /// <param name="Time"></param>
+        /// <param name="frequencies"></param>
+        /// <returns></returns>
+        public async Task<JsonResult> SearchShiftByTime(string Time, List<int> frequencies)
+        {
+            DateTime Date;
+            if (Time == null)
+            {
+                Date = DateTime.Now;
+            }
+            else
+            {
+                Date = Convert.ToDateTime(Time);
+            }
+            var Details = await db.Shifts.Where(d => frequencies.Contains(d.Id) && SqlFunctions.DateDiff("day", Date, d.DateTime) == 0)
+                .ToListAsync();
+            var ShiftDetails = new ShiftDetails();
+            ShiftDetails.Count = Details.Sum(d => d.DeskCount);
+            ShiftDetails.Cpi = Details.Sum(d => d.AveragePrice) / frequencies.Count();
+            ShiftDetails.Discount = Details.Sum(d => d.PreferencePrice);
+            ShiftDetails.EatIn = Details.Sum(d => d.ToStayPrice);
+            ShiftDetails.TakeOut = Details.Sum(d => d.ToGoPrice);
+            ShiftDetails.Returned = Details.Sum(d => d.ReturnedPrice);
+            ShiftDetails.Gift = Details.Sum(d => d.GiftPrice);
+            ShiftDetails.HeadCounts = Details.Sum(d => d.CustomerCount);
+            ShiftDetails.OriPrice = Details.Sum(d => d.OriPrice);
+            ShiftDetails.Price = Details.Sum(d => d.Price);
+
+            var PayKinds = await db.PayKindShifts
+                .Include(d => d.PayKind)
+                .Where(d => frequencies.Contains(d.Id) && SqlFunctions.DateDiff("day", Date, d.DateTime) == 0)
+                .GroupBy(d => d.PayKindId)
+                .Select(d => new
+                {
+                    Name = d.Select(dd => dd.PayKind.Name).FirstOrDefault(),
+                    Num = d.Select(dd => new { Price = (decimal?)dd.RealPrice }).Sum(dd => dd.Price)
+                })
+                .ToListAsync();
+
+
+            var ClassDetails = await db.MenuClassShifts
+                .Include(d => d.MenuClass)
+                .Where(d => frequencies.Contains(d.Id) && SqlFunctions.DateDiff("day", Date, d.DateTime) == 0)
+                .GroupBy(d => d.MenuClassId)
+                .Select(d => new
+                {
+                    ClassName = d.Select(dd => dd.MenuClass.Name).FirstOrDefault(),
+                    Price = d.Select(dd => new { Price = (decimal?)dd.Price }).Sum(dd => dd.Price)
+                })
+                .ToListAsync();
+            return Json(new { PayList = PayKinds, PayDetails = ShiftDetails, ClassDetails = ClassDetails });
+
+        }
+
 
         /// <summary>
         /// 交接班预览
@@ -1099,7 +1162,7 @@ namespace Management.Controllers
                 PreferencePrice = ShiftDetails.OriPrice - ShiftDetails.Price
             });
             await db.SaveChangesAsync();
-            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.IsShow==true).Select(d => d.Id).ToListAsync();
+            var MenuClasses = await db.MenuClasses.Where(d => d.Usable == true && d.IsShow == true).Select(d => d.Id).ToListAsync();
             var ClassShift = await db.MenuClassShifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, DateTime.Now) == 0 && d.Id == 0).ToListAsync();
             var DineIds = Dines.Select(d => d.Id).ToList();
             var DineMenus = await db.DineMenus.Where(d => DineIds.Contains(d.DineId)).ToListAsync();
@@ -1154,7 +1217,7 @@ namespace Management.Controllers
                         Id = 0,
                         DateTime = DateTime.Now,
                         PayKindId = i.Id,
-                        RealPrice =0,
+                        RealPrice = 0,
                         ReceivablePrice = PayList.Where(p => p.PayKindId == i.Id).Select(p => p.PayTotal).FirstOrDefault()
                     });
                     await db.SaveChangesAsync();
@@ -1454,6 +1517,7 @@ namespace Management.Controllers
                         d.IsInvoiced,
                         Discount = d.Discount * 100
                     })
+                    .OrderByDescending(d => d.BeginTime)
                     .ToListAsync();
             return Json(new { UnShiftDine = UnShiftDine });
         }
@@ -1519,6 +1583,7 @@ namespace Management.Controllers
                         d.IsInvoiced,
                         Discount = d.Discount * 100
                     })
+                    .OrderByDescending(d => d.BeginTime)
                     .ToListAsync();
 
             return Json(new JsonSuccess(PaidDines));
@@ -1564,6 +1629,7 @@ namespace Management.Controllers
                         d.IsInvoiced,
                         Discount = d.Discount * 100
                     })
+                    .OrderByDescending(d => d.BeginTime)
                     .ToListAsync();
 
             return Json(new JsonSuccess(UnPaidDines));

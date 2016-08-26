@@ -18,10 +18,10 @@
                     <td class="text-right">{{meal.MealMenu.MenuPrice.Price|currency:'￥'}}</td>
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                            <button class="btn btn-xs btn-info" ng-click="OpenEditModel(meal)">
+                            <button class="btn btn-xs btn-info tooltip-success" data-rel="tooltip" title="编辑套餐" tool   ng-click="OpenEditModel(meal)">
                                 <i class="icon-edit bigger-120"></i>
                             </button>
-                            <button class="btn btn-xs btn-danger" ng-click="DeleteMeal(meal)">
+                            <button class="btn btn-xs btn-danger tooltip-success" data-rel="tooltip" title="删除套餐" tool ng-click="DeleteMeal(meal)">
                                 <i class="icon-trash bigger-120"></i>
                             </button>
                         </div>

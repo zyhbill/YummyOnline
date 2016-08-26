@@ -26,16 +26,16 @@
                     <td>{{staff.Staff.WorkTimeFrom}} - {{staff.Staff.WorkTimeTo}}</td>
                     <td>
                         <div class="visible-md visible-lg hidden-sm hidden-xs btn-group">
-                            <button class="btn btn-xs btn-info" ng-click="OpenEditModel(staff)">
+                            <button class="btn btn-xs btn-info tooltip-success" data-rel="tooltip" title="编辑员工" tool ng-click="OpenEditModel(staff)">
                                 <i class="icon-edit bigger-120"></i>
                             </button>
-                            <button class="btn btn-xs btn-danger" ng-click="DeleteStaff(staff)">
+                            <button class="btn btn-xs btn-danger tooltip-success" data-rel="tooltip" title="删除员工" tool ng-click="DeleteStaff(staff)">
                                 <i class="icon-trash bigger-120"></i>
                             </button>
                         </div>
                         <div class="visible-xs visible-sm hidden-md hidden-lg">
                             <div class="inline position-relative">
-                                <button class="btn btn-minier btn-primary dropdown-toggle" data-toggle="dropdown">
+                                <button class="btn btn-minier btn-primary dropdown-toggle tooltip-success" data-rel="tooltip" title="编辑员工" tool  data-toggle="dropdown">
                                     <i class="icon-cog icon-only bigger-110"></i>
                                 </button>
                                 <ul class="dropdown-menu dropdown-only-icon dropdown-yellow pull-right dropdown-caret dropdown-close">

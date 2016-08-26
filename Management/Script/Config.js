@@ -21,6 +21,9 @@
     }).when('/HandOut', {
         templateUrl: '/Templates/HandOut',
         controller: 'HandOutCtrl'
+    }).when('/HandOutHistory', {
+        templateUrl: '/Templates/HandOutHistory',
+        controller: 'HandOutHistoryCtrl'
     }).when('/Areas', {
         templateUrl: '/Baseinfo/Areas',
         controller: 'AreasCtrl'

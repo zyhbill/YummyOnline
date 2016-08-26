@@ -248,16 +248,16 @@
                 }
                 return format;
             }
-            scope.time = new Date().format('YYYY-MM-dd');
+            scope.time = new Date().format('yyyy-MM-dd');
             element.datetimepicker({
-                format: 'yyyy-MM-dd',
+                format: 'yyyy-mm-dd',
                 minView: '2',
                 maxView: '4',
                 startView: '2',
                 todayBtn: true,
                 language: 'zh-CN'
             }).on('changeDate', function (ev) {
-                scope.time = ev.date.format('YYYY-MM-dd');
+                scope.time = ev.date.format('yyyy-MM-dd');
                 scope.change();
                 scope.$apply();
             });
@@ -291,16 +291,16 @@
                 }
                 return format;
             }
-            scope.time = new Date().format('yyyy-mm');
+            scope.time = new Date().format('yyyy-MM');
             element.datetimepicker({
-                format: 'yyyy-MM',
+                format: 'yyyy-mm',
                 minView: '3',
                 maxView: '4',
                 startView: '3',
                 todayBtn: true,
                 language: 'zh-CN'
             }).on('changeDate', function (ev) {
-                scope.time = ev.date.format('YYYY-MM');
+                scope.time = ev.date.format('yyyy-MM');
                 console.log(scope.time);
                 scope.$apply();
             });

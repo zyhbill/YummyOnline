@@ -395,6 +395,26 @@
         });
     }
 }])
+.controller('HandOutHistoryCtrl', ['$scope', '$rootScope', '$uibModal', 'HandOut', function ($scope, $rootScope, $uibModal, HandOut) {
+    $rootScope.FatherPage = "结账系统管理"; $rootScope.ChildPage = "历史交接查询";
+    $scope.initialize = function () {
+        var promise = HandOut.getElement();
+        promise.then(function (data) {
+            $scope.HandElement = HandOut.HandElement;
+        }, function (data) {
+            console.log(data);
+        })
+    }
+    $scope.getNumbers = function () {
+        HandOut.getNumbers();
+    }
+    $scope.Search = function () {
+        HandOut.Search();
+    }
+    $scope.Print = function () {
+        HandOut.Print();
+    }
+}])
 .controller('DailyDetailCtrl', ['$scope', '$rootScope', '$uibModal', 'HandOut', function ($scope, $rootScope, $uibModal, HandOut) {
     $rootScope.FatherPage = "结账系统管理"; $rootScope.ChildPage = "当日交接班明细";
     $scope.initialize = function () {

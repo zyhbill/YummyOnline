@@ -409,7 +409,7 @@ namespace Management.ObjectClasses
         public int HeadCounts { get; set; } = 0;
         public decimal Cpi { get; set; } = 0;
     }
-
+    
     public class ClassDetails
     {
         public string ClassName { get; set; }

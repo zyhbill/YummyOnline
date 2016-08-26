@@ -426,6 +426,7 @@
             $http.post('../Templates/getUser', { CustomerId: _this.PayElements.CurrentUser.Id, Phone: _this.PayElements.CurrentUser.PhoneNumber, Password: _this.PayElements.CurrentUser.Password }).success(function (data) {
                 if (data.Status) {
                     _this.PayElements.CurrentUser = data.data;
+                    _this.PayElements.CurrentUser.Phone = data.phone;
                     _this.PayElements.CurrentUser.IsLogin = true;
                     _this.PayElements.CurrentUser.VipLevel.VipDiscount.Type = 2;
                     if (_this.PayElements.CurrentUser.VipLevel) _this.PayElements.Discounts.push(_this.PayElements.CurrentUser.VipLevel.VipDiscount);
@@ -682,6 +683,7 @@
             $http.post('../Templates/OpenLogin', { username: _this.OpenElements.CurrentUser.UserName, password: _this.OpenElements.CurrentUser.Password }).success(function (data) {
                 if (data.Status) {
                     //登陆成功获取打折信息
+                    _this.OpenElements.CurrentUser.Phone = data.phone;
                     _this.OpenElements.CurrentUser.isLogin = true;
                     _this.OpenElements.CurrentUser.Id = data.data.Id;
                     if (data.data.VipLevel.VipDiscount) {
@@ -905,6 +907,7 @@
             $http.post('../Templates/OpenDesk', { OrderInfo: OrderInfo, UserId: _this.OpenElements.CurrentUser.Id, OpenDiscount: _this.OpenElements.CurrentDiscount }).success(function (data) {
                 data = JSON.parse(data);
                 _this.OpenElements.OrderMenus = [];
+                _this.OpenElements.CurrentUser = { Number: 1 };
                 deferred.resolve(data);
             }).error(function (data) {
                 alert("金额错误");
@@ -942,6 +945,7 @@
         },
         KeepShift: function () {
             var _this = this;
+            _this.OpenElements.CurrentUser = { Number: 1 };
             var expireDate = new Date();
             if (typeof ($cookies.get('Type')) != undefined) {
                 if ($cookies.get('Type') != this.OpenElements.Type) {
@@ -1618,6 +1622,18 @@
             $http.post('../Templates/Review', {
             }).then(function (response) {
 
+            });
+        },
+        Search: function () {
+            var _this = this;
+            var frequencies = _this.HandElement.Numbers.filter(function (x) { return x.IsChoose }).map(function (x) { return x.Id });
+            $http.post('../Templates/SearchShiftByTime', {
+                Time: _this.HandElement.Time,
+                frequencies: frequencies
+            }).then(function (response) {
+                _this.HandElement.PayKinds = response.data.PayList;
+                _this.HandElement.PayDetails = response.data.PayDetails;
+                _this.HandElement.ClassDetails = response.data.ClassDetails;
             });
         }
     }

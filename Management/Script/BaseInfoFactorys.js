@@ -1293,17 +1293,17 @@
         setNormal: function () {
             $http.post('../Baseinfo/SetPayModel', {
                 Type: 0
-            });
+            }).then(function () { alert('成功')});
         },
         setInt: function () {
             $http.post('../Baseinfo/SetPayModel', {
                 Type: 1
-            });
+            }).then(function () { alert('成功') });
         },
         setFloor: function () {
             $http.post('../Baseinfo/SetPayModel', {
                 Type: 2
-            });
+            }).then(function () { alert('成功') });
         }
     }
     return service;

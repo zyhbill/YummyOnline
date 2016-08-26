@@ -414,6 +414,7 @@
     <Content Include="Views\Templates\TakeOut.cshtml" />
     <Content Include="Views\Templates\RePrinter.cshtml" />
     <Content Include="Views\Templates\PayAll.cshtml" />
+    <Content Include="Views\Templates\HandOutHistory.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -96,7 +96,7 @@
                 </div>
                 <div class="DineInfo" ng-if="!PayElements.CurrentUser.IsLogin">
                     <input placeholder="手机号" class="form-control login" type="text" ng-model="PayElements.CurrentUser.PhoneNumber">
-                    <input type="password" class="form-control login" placeholder="密码" ng-model="PayElements.CurrentUser.Password">
+                    <input type="password" class="form-control passowrd" placeholder="密码" ng-model="PayElements.CurrentUser.Password">
                     <button class="btn btn-success" ng-click="Login()">登陆</button>
                 </div>
                 <div class="DineMenu">
@@ -176,7 +176,7 @@
                         <button class="btn btn-primary" type="button" ng-click="login()" ng-disabled="AllowLogin()">登陆</button>
                     </span>
                     <span ng-if="OpenElements.CurrentUser.isLogin">
-                        <label>用户:{{OpenElements.CurrentUser.Id}}</label>&nbsp;&nbsp;
+                        <label>用户:{{OpenElements.CurrentUser.Phone}}</label>&nbsp;&nbsp;
                         <button class="btn btn-primary" type="button" ng-click="logout()">退出</button>
                     </span>
                 </div>

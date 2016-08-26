@@ -90,7 +90,7 @@ namespace Management.Models
                     var Orders = await db.Dines
                     .Include(p => p.DineMenus.Select(pp => pp.Remarks))
                     .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
-                    .Where(order => order.IsPaid == false && order.IsOnline == false)
+                    .Where(order => order.IsPaid == false && order.IsOnline == false && order.Status!= DineStatus.Shifted)
                     .Select(d => new {
                         d.Discount,
                         d.DiscountName,

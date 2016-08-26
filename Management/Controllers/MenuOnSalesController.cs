@@ -25,15 +25,15 @@ namespace Management.Controllers
                 t.Menu.Name,
                 t.OnSaleWeek,
                 t.Price,
-                OriPrice = t.Menu.MenuPrice.Price
-                
+                OriPrice = t.Menu.MenuPrice.Price,
+                t.MinPrice
             }).ToListAsync();
            
             return Json(menuonsales.ToList());
         }
         //ADD:MenuOnSales
 
-        public async Task<JsonResult> AddMenuOnSales(string id, int onsaleweek, decimal? price)
+        public async Task<JsonResult> AddMenuOnSales(string id, int onsaleweek, decimal? price,decimal? MinPrice)
         {
             if (id != null && price != null)
             {
@@ -41,7 +41,8 @@ namespace Management.Controllers
                 {
                     Id = id,
                     OnSaleWeek = (System.DayOfWeek)onsaleweek,
-                    Price = price.Value
+                    Price = price.Value,
+                    MinPrice = MinPrice.Value
                 });
                 await db.SaveChangesAsync();
                 return Json(new { succeeded = true });
@@ -76,7 +77,7 @@ namespace Management.Controllers
             }
         }
 
-        public async Task<JsonResult> AltMenuOnSales(string id, int onsaleweek, decimal price)
+        public async Task<JsonResult> AltMenuOnSales(string id, int onsaleweek, decimal price,decimal MinPrice)
         {
             MenuOnSale menuonsales = await db.MenuOnSales.FirstOrDefaultAsync(p => p.Id == id && (int)p.OnSaleWeek == onsaleweek);
             if (menuonsales == null)
@@ -86,6 +87,7 @@ namespace Management.Controllers
             else
             {
                 menuonsales.Price = price;
+                menuonsales.MinPrice = MinPrice;
                 await db.SaveChangesAsync();
                 return Json(new { succeeded = true });
             }

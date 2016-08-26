@@ -575,7 +575,7 @@
     $scope.newMenuOnSale = {
         id: null,
         onsaleweek: null,
-        
+        MinPrice:null,
         price: null
     }
 
@@ -596,11 +596,13 @@
             menuOnSale.Id = menuOnSale.ori.Id;
             menuOnSale.OnSaleWeek = menuOnSale.ori.OnSaleWeek;
             menuOnSale.Price = menuOnSale.ori.Price;
+            menuOnSale.MinPrice = menuOnSale.MinPrice;
         } else {
             menuOnSale.ori = {
                 Id: menuOnSale.Id,
                 OnSaleWeek: menuOnSale.OnSaleWeek,
-                Price: menuOnSale.Price
+                Price: menuOnSale.Price,
+                MinPrice:menuOnSale.MinPrice
             }
 
         }

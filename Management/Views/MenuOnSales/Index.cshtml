@@ -56,7 +56,7 @@
     </div>
 
     <table class="table table-bordered table-hover table-striped table-responsive">
-        <thead><tr><th>菜品号</th><th>菜品名称</th><th>打折星期</th><th class = text-right>原价格</th><th class=text-right>价格</th><th class="col-md-2">相关操作</th></tr></thead>
+        <thead><tr><th>菜品号</th><th>菜品名称</th><th>打折星期</th><th class = text-right>原价格</th><th class=text-right>价格</th><th>最低点菜价格</th><th class="col-md-2">相关操作</th></tr></thead>
 
         <tr ng-repeat="menuOnSale in menuOnSales">
 
@@ -86,6 +86,10 @@
                 <input ng-if="menuOnSale.isAlt" type="text" ng-model="menuOnSale.Price" />
                 
                 
+            </td>
+            <td class="text-right">
+                <span ng-if="!menuOnSale.isAlt">{{menuOnSale.MinPrice |currency : '￥'}}</span>
+                <input ng-if="menuOnSale.isAlt" type="text" ng-model="menuOnSale.MinPrice" />
             </td>
             <td>
                 <button type="button" class="btn btn-minier btn-primary dropdown-toggle tooltip-success" data-rel="tooltip" data-placement="bottom" title="修改特价" tool  ng-click="altMenuOnSale(menuOnSale)" ng-if="!menuOnSale.isAlt">

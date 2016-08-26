@@ -240,7 +240,7 @@ namespace OrderSystem {
 				if(!menu.Usable) {
 					return new FunctionResult(false, $"{menu.Name} 不可用", $"Menu Disabled {menu.Id}: {menu.Name}");
 				}
-				if(menu.Status == MenuStatus.SellOut) {
+				if(dine.From == DineFrom.CustomerBrowser && menu.Status == MenuStatus.SellOut) {
 					return new FunctionResult(false, $"{menu.Name} 已售完", $"Menu SellOut {menu.Id}: {menu.Name}");
 				}
 
@@ -407,7 +407,7 @@ namespace OrderSystem {
 				if(randomPrice > mainPaidDetail.Price) {
 					randomPrice = mainPaidDetail.Price;
 				}
-				
+
 				if(randomPrice != 0) {
 					dine.DinePaidDetails.Add(new DinePaidDetail {
 						PayKind = randomPreferencePayKind,

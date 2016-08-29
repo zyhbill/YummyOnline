@@ -385,7 +385,7 @@ namespace Management.Controllers
             HtManage.ManageLog($"HotelId: {(Session["User"] as RStatus).HotelId.ToString()},DineId:{dine.Id} compeleted");
             MvcApplication.client.Send(new NewDineInformProtocol((int)(Session["User"] as RStatus).HotelId, dine.Id, true));
             var CurDesk = dine.DeskId;
-            var CleanDeskDine = db.Dines.Where(d => d.IsPaid == false && d.IsOnline == false && d.DeskId == CurDesk).Count();
+            var CleanDeskDine = db.Dines.Where(d => d.IsPaid == false && d.IsOnline == false && d.DeskId == CurDesk &&d.Status!= DineStatus.Shifted).Count();
             if (CleanDeskDine == 0)
             {
                 var CleanDesk = await db.Desks.FirstOrDefaultAsync(d => d.Id == CurDesk);
@@ -400,14 +400,32 @@ namespace Management.Controllers
             var Dines = await db.Dines
                    .Include(p => p.DineMenus.Select(pp => pp.Remarks))
                    .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
-                   .Where(order => order.IsPaid == false && order.IsOnline == false)
+                   .Where(order => order.IsPaid == false && order.IsOnline == false && order.Status!= DineStatus.Shifted)
                    .Select(d => new
                    {
                        d.Discount,
                        d.DiscountName,
                        d.Id,
-                       d.DineMenus,
-                       Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
+                       DineMenus = d.DineMenus.Select(dd => new
+                       {
+                           Count = dd.Count,
+                           DineId = dd.DineId,
+                           Id = dd.Id,
+                           Menu = new
+                           {
+                               dd.Menu.Id,
+                               dd.Menu.Name,
+                               dd.Menu.MenuPrice,
+                           },
+                           MenuId = dd.MenuId,
+                           OriPrice = dd.OriPrice,
+                           Price = dd.Price,
+                           RemarkPrice = dd.RemarkPrice,
+                           Remarks = dd.Remarks,
+                           ReturnedWaiterId = dd.ReturnedWaiterId,
+                           Status = dd.Status,
+                           Type = dd.Type
+                       }),
                        d.BeginTime,
                        d.DeskId,
                        d.Remarks,
@@ -416,7 +434,11 @@ namespace Management.Controllers
                        d.OriPrice,
                        d.Price
                    }).ToListAsync();
-            return Json(new { Status = true, Dines = Dines });
+            var UserIds =Dines.GroupBy(d => d.UserId)
+                   .Select(d => d.Key)
+                   .ToList();
+            var UserNumbers = await sysdb.Users.Where(d => UserIds.Contains(d.Id)).Select(d => new { d.PhoneNumber, d.Id }).ToListAsync();
+            return Json(new { Status = true, Dines = Dines,UserNumbers = UserNumbers });
         }
         /// <summary>
         /// 获取开桌信息

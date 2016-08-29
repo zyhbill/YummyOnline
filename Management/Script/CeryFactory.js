@@ -398,6 +398,11 @@
                 UserId: _this.PayElements.CurrentUser.Id
             }).success(function (data) {
                 if (data.Status) {
+                    data.Dines.forEach(function (x) {
+                        data.UserNumbers.forEach(function (xx) {
+                            if (xx.Id == x.UserId) { x.PhoneNumber = xx.PhoneNumber; return; }
+                        })
+                    })
                     _this.PayElements.UnpaidDines = data.Dines;
                     for (var i = 0; i < _this.PayElements.UnpaidDines.length; i++) {
                         _this.PayElements.UnpaidDines[i].Discount *= 100;

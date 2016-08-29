@@ -46,7 +46,7 @@ namespace Management
                 {
                     var desk = hotel.Desks.FirstOrDefault(d => d.Id == temp.DeskId);
                     desk.Status = DeskStatus.Used;
-                    var clean = await hotel.Dines.Where(d => d.DeskId == desk.Id && d.IsOnline == false && d.IsPaid == false).ToListAsync();
+                    var clean = await hotel.Dines.Where(d => d.DeskId == desk.Id && d.IsOnline == false && d.IsPaid == false &&d.Status!=DineStatus.Shifted).ToListAsync();
                     if (clean.Count() == 0)
                     {
                         desk.Status = DeskStatus.StandBy;

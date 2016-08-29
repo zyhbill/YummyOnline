@@ -611,8 +611,8 @@
     $scope.searchbyid = function () {
         $http.post('/MenuOnSales/SearchById',{id:$scope.newMenuOnSale.id}).then(function (response) {
             $scope.idtoname = response.data;
-            console.log($scope.newMenuOnSale.id)
-            console.log($scope.idtoname)
+            console.log($scope.newMenuOnSale.id);
+            console.log($scope.idtoname);
         });
     }
 

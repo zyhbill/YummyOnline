@@ -722,6 +722,7 @@ namespace Management.Controllers
             }
             sysStaff.Email = Sf.Email;
             sysStaff.PhoneNumber = Sf.PhoneNumber;
+            sysdb.SaveChanges();
             var staff = await db.Staffs
                 .Include(s => s.StaffRoles)
                 .FirstOrDefaultAsync(s => s.Id == Sf.Id);

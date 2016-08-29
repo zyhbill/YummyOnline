@@ -145,6 +145,11 @@
             var date = new Date();
             var deferred = $q.defer();
             $http.post('../Templates/getPay').success(function (data) {
+                data.Dines.forEach(function (x) {
+                    data.UserNumbers.forEach(function (xx) {
+                        if (xx.Id == x.UserId) { x.PhoneNumber = xx.PhoneNumber; return; }
+                    })
+                })
                 _this.PayElements.UnpaidDines = data.Dines;
                 _this.PayElements.Discounts = [{ Name: "自定义", Discount: 1, IsSet: true ,Type:0}];
                 for (var i = 0; i < _this.PayElements.UnpaidDines.length; i++) {
@@ -186,6 +191,7 @@
             this.PayElements.CurrentDine.isChoose = true;
             //当前用户注销  打折方案为自定义  获取订单用户登录
             this.PayElements.CurrentUser.Id = this.PayElements.CurrentDine.UserId;
+            this.PayElements.CurrentUser.PhoneNumber = this.PayElements.CurrentDine.PhoneNumber;
             this.getUser();
             this.PayElements.Discounts.splice(temp, (this.PayElements.Discounts.length - temp));
             //输入框清空 自定义 折扣率设为 不打折 重新计算价钱 输入框自动聚焦
@@ -423,10 +429,10 @@
         },
         Login: function () {
             var _this = this;
-            $http.post('../Templates/getUser', { CustomerId: _this.PayElements.CurrentUser.Id, Phone: _this.PayElements.CurrentUser.PhoneNumber, Password: _this.PayElements.CurrentUser.Password }).success(function (data) {
+            $http.post('../Templates/getUser', { CustomerId: _this.PayElements.CurrentUser.Id, Phone: _this.PayElements.CurrentUser.PhoneNumberNew, Password: _this.PayElements.CurrentUser.Password }).success(function (data) {
                 if (data.Status) {
                     _this.PayElements.CurrentUser = data.data;
-                    _this.PayElements.CurrentUser.Phone = data.phone;
+                    _this.PayElements.CurrentUser.PhoneNumber = data.phone;
                     _this.PayElements.CurrentUser.IsLogin = true;
                     _this.PayElements.CurrentUser.VipLevel.VipDiscount.Type = 2;
                     if (_this.PayElements.CurrentUser.VipLevel) _this.PayElements.Discounts.push(_this.PayElements.CurrentUser.VipLevel.VipDiscount);
@@ -435,13 +441,23 @@
                         _this.PayElements.CurrentDiscount.Discount *= 100;
                     }
                     _this.PayElements.CurrentDine.UserId = _this.PayElements.CurrentUser.Id;
+                    _this.PayElements.CurrentDine.PhoneNumber = data.phone;
                     _this.reCalc();
                 } else {
-                    if (_this.PayElements.CurrentUser.PhoneNumber) alert('账号密码错误');
+                    if (_this.PayElements.CurrentUser.PhoneNumberNew) alert('账号密码错误');
                 }
             }).error(function (data) {
                 console.log(data);
             })
+        },
+        LogOut:function(){
+            var _this = this;
+            this.PayElements.CurrentDine.UserId = null;
+            this.PayElements.CurrentDine.PhoneNumber = null;
+            this.PayElements.CurrentUser.PhoneNumberNew = null;
+            this.PayElements.CurrentUser.PhoneNumber = null;
+            this.PayElements.CurrentUser.Id = null;
+            this.PayElements.CurrentUser.IsLogin = false;
         },
         AutoFocus: function () {
             //输入框自动聚焦

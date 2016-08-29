@@ -111,7 +111,7 @@ namespace Management.Controllers
             var Dines = db.Dines
                     .Include(p => p.DineMenus.Select(pp => pp.Remarks))
                     .Include(p => p.DineMenus.Select(pp => pp.Menu.MenuPrice))
-                    .Where(order => order.IsPaid == false && order.IsOnline == false&&order.Status!= DineStatus.Shifted)
+                    .Where(order => order.IsPaid == false && order.IsOnline == false && order.Status != DineStatus.Shifted)
                     .Select(d => new
                     {
                         d.Discount,
@@ -122,7 +122,12 @@ namespace Management.Controllers
                             Count = dd.Count,
                             DineId = dd.DineId,
                             Id = dd.Id,
-                            Menu = dd.Menu,
+                            Menu = new
+                            {
+                                dd.Menu.Id,
+                                dd.Menu.Name,
+                                dd.Menu.MenuPrice,
+                            },
                             MenuId = dd.MenuId,
                             OriPrice = dd.OriPrice,
                             Price = dd.Price,
@@ -132,7 +137,6 @@ namespace Management.Controllers
                             Status = dd.Status,
                             Type = dd.Type
                         }),
-                        Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
                         d.DeskId,
                         d.BeginTime,
                         d.HeadCount,
@@ -140,6 +144,10 @@ namespace Management.Controllers
                         d.OriPrice,
                         d.Price
                     });
+            var UserIds = Dines.GroupBy(d =>d.UserId)
+                .Select(d=>d.Key)
+                .ToList();
+            var UserNumbers = await sysdb.Users.Where(d => UserIds.Contains(d.Id)).Select(d =>new { d.PhoneNumber ,d.Id}).ToListAsync();
             var Pays = db.PayKinds.Where(p => p.Usable == true && (p.Type == PayKindType.Offline || p.Type == PayKindType.Points || p.Type == PayKindType.Cash)).Select(p => new { p.Id, p.Name, p.Type });
             var Discounts = db.TimeDiscounts;
             var day = DateTime.Now.DayOfWeek;
@@ -149,7 +157,8 @@ namespace Management.Controllers
                 Dines = await Dines.ToListAsync(),
                 Pays = await Pays.ToListAsync(),
                 Discounts = await Discounts.ToListAsync(),
-                OnSaleMenus = onsale
+                OnSaleMenus = onsale,
+                UserNumbers = UserNumbers
             };
             return Json(PayElements);
         }

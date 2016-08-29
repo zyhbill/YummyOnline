@@ -73,14 +73,16 @@
                     <span>
                         当前订单:&nbsp;&nbsp;&nbsp;&nbsp;
                         {{PayElements.CurrentDine.Id}}&nbsp;&nbsp;&nbsp;&nbsp;当前用户:&nbsp;&nbsp;&nbsp;&nbsp;
-                        {{PayElements.CurrentUser.Id}}
+                        <span ng-show="!!PayElements.CurrentUser.PhoneNumber">{{PayElements.CurrentUser.PhoneNumber}}</span>
+                        <span ng-show="!PayElements.CurrentUser.PhoneNumber">匿名用户</span>
+                        <button class="btn btn-success" ng-show="PayElements.CurrentUser.IsLogin" ng-click="LogOut()">退出登陆</button>
                     </span>
                 </div>
                 <div class="DineInfo" ng-if="PayElements.CurrentUser.IsLogin&&Rate!=0">
                     积分可抵:&nbsp;&nbsp;&nbsp;&nbsp; {{PayElements.CurrentUser.Points/Rate}}
                 </div>
                 <div class="DineInfo" ng-if="!PayElements.CurrentUser.IsLogin">
-                    <input placeholder="手机号" class="form-control login" type="text" ng-model="PayElements.CurrentUser.PhoneNumber">
+                    <input placeholder="手机号" class="form-control login" type="text" ng-model="PayElements.CurrentUser.PhoneNumberNew">
                     <input type="password" class="form-control login" placeholder="密码" ng-model="PayElements.CurrentUser.Password">
                     <button class="btn btn-success" ng-click="Login()">登陆</button>
                 </div>

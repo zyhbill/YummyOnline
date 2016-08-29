@@ -415,4 +415,5 @@ namespace Management.ObjectClasses
         public string ClassName { get; set; }
         public decimal Price { get; set; } = 0;
     }
+    
 }

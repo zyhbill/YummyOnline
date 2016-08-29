@@ -100,7 +100,11 @@ namespace Management.Models
                             Count = dd.Count,
                             DineId = dd.DineId,
                             Id = dd.Id,
-                            Menu = dd.Menu,
+                            Menu = new {
+                                dd.Menu.Id,
+                                dd.Menu.Name,
+                                dd.Menu.MenuPrice,
+                            },
                             MenuId = dd.MenuId,
                             OriPrice = dd.OriPrice,
                             Price = dd.Price,
@@ -110,7 +114,6 @@ namespace Management.Models
                             Status = dd.Status,
                             Type  = dd.Type
                         }),
-                        Menu = d.DineMenus.Select(dd => new { dd.Menu, dd.Menu.MenuPrice }),
                         d.BeginTime,
                         d.DeskId,
                         d.Remarks,
@@ -120,7 +123,11 @@ namespace Management.Models
                         d.Price
                     })
                     .ToListAsync();
-                    return JsonConvert.SerializeObject(new {HotelId=HotelId, change = "dine", data = Orders }, setting);
+                    var UserIds = Orders.GroupBy(d => d.UserId)
+                     .Select(d => d.Key)
+                     .ToList();
+                    var UserNumbers = await sysdb.Users.Where(d => UserIds.Contains(d.Id)).Select(d => new { d.PhoneNumber, d.Id }).ToListAsync();
+                    return JsonConvert.SerializeObject(new {HotelId=HotelId, change = "dine", data = Orders , UserNumbers = UserNumbers }, setting);
                 }
                 else
                 {

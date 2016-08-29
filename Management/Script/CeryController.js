@@ -90,7 +90,14 @@
     $scope.$on('dine', function (event, data) {
         if ($rootScope.HotelId == data.HotelId) {//监视Hotel变化
             console.log(data);
-            if ($scope.PayElements) $scope.PayElements.UnpaidDines = data.data;
+            if ($scope.PayElements) {
+                data.data.forEach(function (x) {
+                    data.UserNumbers.forEach(function (xx) {
+                        if (xx.Id == x.UserId) { x.PhoneNumber = xx.PhoneNumber; return; }
+                    })
+                })
+                $scope.PayElements.UnpaidDines = data.data;
+            }
             option.method.AddOnSale();
             $scope.$apply();
         }
@@ -103,6 +110,7 @@
             $scope.pay();
         }
     }
+    $scope.LogOut = function () { return option.method.LogOut();}
     $scope.PriceAll = function () { return option.method.PriceAll(); }
     $scope.OriPriceAll = function () { return option.method.OriPriceAll(); }
     $scope.Unpaid = function () { return option.method.Unpaid(); }

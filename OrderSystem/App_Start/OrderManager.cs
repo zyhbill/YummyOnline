@@ -31,7 +31,7 @@ namespace OrderSystem {
 			}
 
 			// 桌号判断
-			Desk Desk = await ctx.Desks.FirstOrDefaultAsync(p => p.Id == cart.DeskId);
+			Desk Desk = await ctx.Desks.Include(p => p.Area).FirstOrDefaultAsync(p => p.Id == cart.DeskId);
 			if(Desk == null) {
 				return new FunctionResult(false, "未找到当前桌号", $"No Desk {cart.DeskId}");
 			}
@@ -136,6 +136,28 @@ namespace OrderSystem {
 				});
 			}
 
+			// 外卖处理
+			if(dine.Desk.Area.Type == AreaType.TakeOut) {
+				dine.Type = DineType.ToGo;
+				ctx.TakeOuts.Add(new TakeOut {
+					Dine = dine,
+					Address = cart.TakeOut.Address,
+					Name = cart.TakeOut.Name,
+					PhoneNumber = cart.TakeOut.PhoneNumber
+				});
+				if(dine.UserId != null) {
+					YummyOnlineContext yummyOnlineCtx = new YummyOnlineContext();
+					var userAddress = await yummyOnlineCtx.UserAddresses.FirstOrDefaultAsync(p => p.UserId == dine.UserId && p.Address == cart.TakeOut.Address);
+					if(userAddress == null) {
+						yummyOnlineCtx.UserAddresses.Add(new UserAddress {
+							UserId = dine.UserId,
+							Address = cart.TakeOut.Address
+						});
+					}
+					await yummyOnlineCtx.SaveChangesAsync();
+				}
+			}
+
 			ctx.Dines.Add(dine);
 
 			await ctx.SaveChangesAsync();
@@ -164,10 +186,10 @@ namespace OrderSystem {
 			}
 			List<DineMenu> addedDineMenus = result.Data as List<DineMenu>;
 			// 处理最后生成的价格并比较前端传输的价格数据
-			result = await handleDinePrice(dine, price);
-			if(!result.Succeeded) {
-				return result;
-			}
+			//result = await handleDinePrice(dine, price);
+			//if(!result.Succeeded) {
+			//	return result;
+			//}
 
 			await ctx.SaveChangesAsync();
 
@@ -407,7 +429,7 @@ namespace OrderSystem {
 
 				Random random = new Random(DateTime.Now.Millisecond);
 				decimal randomPrice = (decimal)random.NextDouble();
-				randomPrice *= top;
+				randomPrice = randomPrice + top - 1;
 				randomPrice = Math.Floor(randomPrice * 10) / 10;
 
 				if(randomPrice == 0) {

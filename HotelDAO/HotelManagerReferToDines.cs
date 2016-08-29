@@ -95,7 +95,10 @@ namespace HotelDAO {
 					}
 				}),
 				TakeOut = new {
-					p.TakeOut.Address
+					p.TakeOut.Address,
+					p.TakeOut.Name,
+					p.TakeOut.PhoneNumber,
+					p.TakeOut.RecordId
 				}
 			});
 		}

@@ -15,18 +15,12 @@ namespace WeChat.Controllers
        public ActionResult Login(string openid)
         {
             Session["openid"] = openid;
-            //Request.QueryString["openid"].ToString();
             return View("Login");
         }
 
         public ActionResult query(string phone,string Paswrd)
         {
             string wechatid = Session["openid"].ToString();
-            //if (wechatid == "" || wechatid == null)
-            //    Debug.WriteLine("0");
-            //else
-            //    Debug.WriteLine(wechatid);
-
             if (validate(phone, Paswrd)==false)
                 return Json(new { Status = false, ErrorMessage = "没有用户信息" });
             else
@@ -74,6 +68,11 @@ namespace WeChat.Controllers
                 return false;
             else
                 return true;
+        }
+
+        public ActionResult Success()
+        {
+            return View("Success");
         }
     }
 }

@@ -45,7 +45,7 @@ namespace MessageHandle
                 {
                     Title = "店小二系统总图",
                     //Description = "店小二系统总图",
-                    PicUrl = "",
+                    PicUrl = "http://static.yummyonline.net/dianxiaoer/yun.jpg",
                     Url = "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000081&idx=1&sn=2505ac9e23995714b49cca1122ece2bd#rd"
                 });
                 //result.AppendLine("http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000081&idx=1&sn=2505ac9e23995714b49cca1122ece2bd#rd");
@@ -57,7 +57,7 @@ namespace MessageHandle
                 {
                     Title = "店小二版本种类",
                     //Description = "店小二版本种类",
-                    PicUrl = "",
+                    PicUrl = "https://mp.weixin.qq.com/cgi-bin/filepage?type=2&begin=0&count=12&t=media/img_list&token=81448731&lang=zh_CN",
                     Url = "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000083&idx=1&sn=bc0bbf22bba637121f7bedc919003147#rd"
                 });
                 //result.AppendLine("http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000083&idx=1&sn=bc0bbf22bba637121f7bedc919003147#rd");
@@ -67,10 +67,10 @@ namespace MessageHandle
             {
                 strongResposeMessage.Articles.Add(new Article
                 {
-                    Title="店小二介绍",
+                    Title = "店小二介绍",
                     //Description="店小二介绍",
-                    PicUrl="",
-                    Url= "http://www.rabbitpre.com/m/fERuy7QYX"
+                    PicUrl = "http://static.yummyonline.net/dianxiaoer/yun.jpg",
+                    Url = "http://www.rabbitpre.com/m/fERuy7QYX"
                 });
                 //result.AppendLine("http://www.rabbitpre.com/m/fERuy7QYX");
                 return strongResposeMessage;
@@ -79,10 +79,10 @@ namespace MessageHandle
             {
                 strongResposeMessage.Articles.Add(new Article
                 {
-                    Title="店掌柜",
+                    Title = "店掌柜",
                     //Description="店掌柜",
-                    PicUrl= "http://static.yummyonline.net/dianxiaoer/dian.jpg",
-                    Url= "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000086&idx=1&sn=e032e82cff9d642dfcbe1788f9065f80#rd"
+                    PicUrl = "http://static.yummyonline.net/dianxiaoer/dian.jpg",
+                    Url = "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000086&idx=1&sn=e032e82cff9d642dfcbe1788f9065f80#rd"
                 });
                 //result.AppendLine("http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000086&idx=1&sn=e032e82cff9d642dfcbe1788f9065f80#rd");
                 return strongResposeMessage;
@@ -91,17 +91,17 @@ namespace MessageHandle
             {
                 strongResposeMessage.Articles.Add(new Article
                 {
-                    Title="云掌柜",
+                    Title = "云掌柜",
                     //Description="云掌柜",
-                    PicUrl= "http://static.yummyonline.net/dianxiaoer/yun.jpg",
-                    Url= "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000088&idx=1&sn=15e9880802e286445eca480ab329d362#rd"
+                    PicUrl = "http://static.yummyonline.net/dianxiaoer/yun.jpg",
+                    Url = "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000088&idx=1&sn=15e9880802e286445eca480ab329d362#rd"
                 });
                 //result.AppendLine("http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000088&idx=1&sn=15e9880802e286445eca480ab329d362#rd");
                 return strongResposeMessage;
             }
             else
             {
-                result.AppendLine("请输入1-5");
+                result.AppendLine("请输入数字1-5");
                 responseMessage.Content = result.ToString();
                 return responseMessage;
             }

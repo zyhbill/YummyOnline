@@ -336,6 +336,7 @@
     <Compile Include="App_Start\PayConfig.cs" />
     <Compile Include="App_Start\SqlHelper.cs" />
     <Compile Include="App_Start\weChat.cs" />
+    <Compile Include="App_Start\WeChatTcpInit.cs" />
     <Compile Include="App_Start\WeChat_Base.cs" />
     <Compile Include="App_Start\HotelManager.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
@@ -462,6 +463,8 @@
     <Content Include="Views\MerchantInfo\Info.cshtml" />
     <Content Include="Views\DianInfo\DianInfo1.cshtml" />
     <Content Include="Views\DianInfo\DianInfo2.cshtml" />
+    <Content Include="Views\DianInfo\Product.cshtml" />
+    <Content Include="Views\Login\Success.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -500,6 +503,10 @@
     <ProjectReference Include="..\YummyOnlineDAO\YummyOnlineDAO.csproj">
       <Project>{89c93a27-aed6-4db7-95e0-168c8c6e4531}</Project>
       <Name>YummyOnlineDAO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\YummyOnlineTcpClient\YummyOnlineTcpClient.csproj">
+      <Project>{EC57DD19-5FAE-4217-AD83-6914E2718C71}</Project>
+      <Name>YummyOnlineTcpClient</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

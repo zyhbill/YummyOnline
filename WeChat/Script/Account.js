@@ -6,7 +6,7 @@
         var psw = $('#psw').val();
         var pswagain = $('#pswagain').val();
         var code = $('#code').val();
-        if (psw == pswagain & psw!=0) {
+        if (psw == pswagain & psw != 0) {
             $.post("../Account/Signup",
                 {
                     PhoneNumber: phoneNumber,
@@ -15,8 +15,18 @@
                     PasswordAga: pswagain
                 },
            function (data) {
-               if (data.Succeeded == true)
-                   alert("恭喜，注册成功！");
+               if (data.Succeeded == true) {
+                   $.post("../Account/query",
+                       {
+                           phoneNumber:phone
+                       },
+                       function (datas) {
+                           if (datas.Succeeded == true)
+                               alert("恭喜您，注册成功！");
+                           else
+                               alert(datas.ErrorMessage)
+                       })
+               }
                else
                    alert(data.ErrorMessage);
            })

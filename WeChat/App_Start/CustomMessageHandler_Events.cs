@@ -25,6 +25,29 @@ namespace MessageHandle
             IResponseMessageBase reponseMessage = null;
             switch (requestMessage.EventKey)
             {
+                case "Account":
+                    {
+                        var strongResposeMessageA = CreateResponseMessage<ResponseMessageNews>();
+                        var strongResposeMessageT = CreateResponseMessage<ResponseMessageText>();
+                        if (isUser() == true)
+                        {
+                            strongResposeMessageT.Content = "您已注册绑定~";
+                            reponseMessage = strongResposeMessageT;
+                        }
+                        else
+                        {
+                            strongResposeMessageA.Articles.Add(new Article()
+                            {
+                                Title="会员注册",
+                                Description= "店小二温馨提示：客官请先注册会员才能查看哦～",
+                                PicUrl= "http://static.yummyonline.net/dianxiaoer/bigbang.jpg",
+                                Url= "http://wechatplatform.yummyonline.net/account/?openid="+WeixinOpenId
+                            });
+                            reponseMessage = strongResposeMessageA;
+                        }
+
+                    }
+                    break;
                 case "Points":
                     {
                         var strongResposeMessageF = CreateResponseMessage<ResponseMessageNews>();
@@ -34,8 +57,8 @@ namespace MessageHandle
                             strongResposeMessageF.Articles.Add(new Article()
                             {
                                 Title = "会员绑定",
-                                Description = "会员绑定",
-                                PicUrl = "http://m2.biz.itc.cn/pic/new/f/57/23/Img3832357_f.jpg",
+                                Description = "店小二温馨提示：客官请先注册会员再绑定哦～",
+                                PicUrl = "http://static.yummyonline.net/dianxiaoer/bigbang.jpg",
                                 Url = "http://wechatplatform.yummyonline.net/login/login/?openid=" + WeixinOpenId
                             });
                             reponseMessage = strongResposeMessageF;
@@ -55,8 +78,8 @@ namespace MessageHandle
                             strongResposeMessage.Articles.Add(new Article()
                             {
                                 Title = "会员绑定",
-                                Description = "会员绑定",
-                                PicUrl = "http://m2.biz.itc.cn/pic/new/f/57/23/Img3832357_f.jpg",
+                                Description = "店小二温馨提示：客官请先注册会员再绑定哦～",
+                                PicUrl = "http://static.yummyonline.net/dianxiaoer/bigbang.jpg",
                                 Url = "http://wechatplatform.yummyonline.net/login/login/?openid=" + WeixinOpenId
                             });
                             reponseMessage = strongResposeMessage;
@@ -76,14 +99,50 @@ namespace MessageHandle
                     }
                     break;
 
-                case "Product":
+                case "isProduct":
                     {
                         var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
-                        strongResponseMessage.Content = product();
+                        strongResponseMessage.Content =product();
                         reponseMessage = strongResponseMessage;
                     }
                     break;
 
+                case "Product":
+                    {
+                        var strongResponseMessage = CreateResponseMessage<ResponseMessageNews>();
+                        strongResponseMessage.Articles.Add(new Article()
+                        {
+                            Title= "店小二系统总图",
+                            PicUrl= "http://static.yummyonline.net/dianxiaoer/zong.jpg",
+                            Url= "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000081&idx=1&sn=2505ac9e23995714b49cca1122ece2bd#rd"
+                        });
+                        strongResponseMessage.Articles.Add(new Article()
+                        {
+                            Title = "店小二版本",
+                            PicUrl = "http://static.yummyonline.net/dianxiaoer/all.jpg",
+                            Url = "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000083&idx=1&sn=bc0bbf22bba637121f7bedc919003147#rd"
+                        });
+                        strongResponseMessage.Articles.Add(new Article()
+                        {
+                            Title = "店小二介绍",
+                            PicUrl = "http://static.yummyonline.net/dianxiaoer/dianxiaoer.jpg",
+                            Url = "http://www.rabbitpre.com/m/fERuy7QYX"
+                        });
+                        strongResponseMessage.Articles.Add(new Article()
+                        {
+                            Title = "店掌柜介绍",
+                            PicUrl = "http://static.yummyonline.net/dianxiaoer/dian.jpg",
+                            Url = "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000086&idx=1&sn=e032e82cff9d642dfcbe1788f9065f80#rd"
+                        });
+                        strongResponseMessage.Articles.Add(new Article()
+                        {
+                            Title = "云掌柜介绍",
+                            PicUrl = "http://static.yummyonline.net/dianxiaoer/yun.jpg",
+                            Url = "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000088&idx=1&sn=15e9880802e286445eca480ab329d362#rd"
+                        });
+                        reponseMessage = strongResponseMessage;
+                    }
+                    break;
                 case "Contact":
                     {
                         var strongResponseMessage = CreateResponseMessage<ResponseMessageText>();
@@ -134,21 +193,37 @@ namespace MessageHandle
         public string product()
         {
             var end = new StringBuilder();
-            end.AppendLine("\r\n");
             end.AppendLine("请输入下列数字");
             end.AppendLine("1.店小二系统总图");
             end.AppendLine("2.店小二版本种类");
             end.AppendLine("3.店小二介绍");
-            end.AppendLine("4.店掌柜");
-            end.AppendLine("5.云掌柜");
+            end.AppendLine("4.店掌柜介绍");
+            end.AppendLine("5.云掌柜介绍");
             return end.ToString();
         }
+
+        public string testProduct()
+        {
+            var result = new StringBuilder();
+            result.AppendFormat("<a href={0}>1.店小二系统总图</a>", "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000081&idx=1&sn=2505ac9e23995714b49cca1122ece2bd#rd");
+            result.AppendLine("\r\n");
+            result.AppendFormat("<a href={1}>2.店小二版本种类</a>", "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000083&idx=1&sn=bc0bbf22bba637121f7bedc919003147#rd");
+            result.AppendLine("\r\n");
+            result.AppendFormat("<a href={2}>3.店小二介绍</a>", "http://www.rabbitpre.com/m/fERuy7QYX");
+            result.AppendLine("\r\n");
+            result.AppendFormat("<a href={3}>4.店掌柜介绍</a>", "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000086&idx=1&sn=e032e82cff9d642dfcbe1788f9065f80#rd");
+            result.AppendLine("\r\n");
+            result.AppendFormat("<a href={4}>5.云掌柜介绍</a>", "http://mp.weixin.qq.com/s?__biz=MzIyNzQxOTg1MQ==&mid=100000088&idx=1&sn=15e9880802e286445eca480ab329d362#rd");
+            result.AppendLine("输入数字查看");
+            return result.ToString();
+        }
+
+
 
         //联系方式
         public string contact()
         {
             var end = new StringBuilder();
-            end.AppendLine("\r\n");
             end.AppendLine("电话：021-6660 1020");
             end.AppendLine("传真：021-6660 1020");
             end.AppendLine("邮箱：choice_dxe@163.com");
@@ -188,8 +263,8 @@ namespace MessageHandle
             responseMessage.Articles.Add(new Article()
             {
                 Title = "欢迎关注店小二",
-                Description = "会员绑定",
-                PicUrl = "http://m2.biz.itc.cn/pic/new/f/57/23/Img3832357_f.jpg",
+                Description = "店小二温馨提示：客官请先注册会员再绑定哦～",
+                PicUrl = "http://static.yummyonline.net/dianxiaoer/bigbang.jpg",
                 Url = "http://wechatplatform.yummyonline.net/login/login/?openid=" + WeixinOpenId
             });
             return responseMessage;

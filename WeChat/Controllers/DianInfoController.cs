@@ -17,5 +17,9 @@ namespace WeChat.Controllers
         {
             return View("DianInfo2");
         }
+        public ActionResult Product()
+        {
+            return View("Product");
+        }
     }
 }

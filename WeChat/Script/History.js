@@ -13,7 +13,7 @@
                     $("<p>暂无历史订单</p>").appendTo("#dinelist");
                 else
                     data.Data.Data.forEach(function (x) {
-                        $("<p>订单号: " + x.Id + "<br/>金额: " + x.Price + "</p>").appendTo("#dinelist")
+                        $("<p>时间："+ x.BeginTime+"<br/>订单号: " + x.Id + "<br/>金额: " + x.Price + "</p>").appendTo("#dinelist")
                     })
             }
         })

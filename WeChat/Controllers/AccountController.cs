@@ -9,8 +9,9 @@ using Protocol;
 namespace WeChat.Controllers {
 	public class AccountController : OrderSystem.Controllers.BaseAccountController
     {
-        public ActionResult Index()
+        public ActionResult Index(string openid)
         {
+            Session["openid"] = openid;
             return View("Account");
         }
 
@@ -28,6 +29,58 @@ namespace WeChat.Controllers {
                 return Json(new JsonSuccess());
             else
                 return Json(new JsonError("号码不对"));
+        }
+
+        public ActionResult query(string phone)
+        {
+            string wechatid = Session["openid"].ToString();
+            if (validateP(phone) == true)
+                return Json(new { status = false, ErrorMessage = "已有该用户" });
+            else if (validateO(wechatid) == true)
+                return Json(new { status = false, ErrorMessage = "已有该用户openid" });
+            else
+            {
+                if (wechatid == "" || wechatid == null)
+                    return Json(new JsonError("openid为空"));
+                var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
+                var User = ctx.Users.FirstOrDefault(d => d.PhoneNumber == phone);
+                if(User==null)
+                {
+                    return Json(new JsonError("user没有用户信息"));
+                }
+                else
+                {
+                    User.WeChatOpenId = wechatid;
+                    ctx.SaveChanges();
+                    return Json(new JsonSuccess());
+                }
+            }
+        }
+
+        bool validateO(string openid)
+        {
+            if (openid == null)
+                return false;
+            var yummonlineManager = new YummyOnlineManager();
+            var ctx=new YummyOnlineDAO.Models.YummyOnlineContext();
+            var result = ctx.Users.Where(p => p.WeChatOpenId == openid)
+                .Select(d => new { d.UserName, d.Id, d.Email, d.PhoneNumber, d.WeChatOpenId }).FirstOrDefault();
+            if (result == null)
+                return false;
+            else
+                return true;
+        }
+
+        bool validateP(string phone)
+        {
+            var yummyonlineManager = new YummyOnlineManager();
+            var ctx = new YummyOnlineDAO.Models.YummyOnlineContext();
+            var result = ctx.Users.Where(p => p.PhoneNumber == phone)
+                .Select(d => new { d.UserName, d.Id, d.Email, d.PhoneNumber, d.WeChatOpenId }).FirstOrDefault();
+            if (result == null)
+                return false;
+            else
+                return true;
         }
     }
 }

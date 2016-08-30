@@ -62,14 +62,12 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Senparc.Weixin, Version=4.5.20.25374, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Senparc.Weixin.4.5.20\lib\net45\Senparc.Weixin.dll</HintPath>
+    <Reference Include="Senparc.Weixin, Version=4.7.5.28699, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Senparc.Weixin.4.7.5\lib\net45\Senparc.Weixin.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Senparc.Weixin.MP, Version=13.8.4.26917, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Senparc.Weixin.MP.13.8.4\lib\net45\Senparc.Weixin.MP.dll</HintPath>
+    <Reference Include="Senparc.Weixin.MP, Version=14.3.4.28700, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Senparc.Weixin.MP.14.3.5\lib\net45\Senparc.Weixin.MP.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Senparc.Weixin.MP.MvcExtension, Version=4.0.1.32125, Culture=neutral, processorArchitecture=MSIL">
@@ -328,6 +326,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\AppConfig.cs" />
     <Compile Include="App_Start\CustomMessageContext.cs" />
     <Compile Include="App_Start\CustomMessageHandler.cs" />
     <Compile Include="App_Start\CustomMessageHandler_Events.cs" />

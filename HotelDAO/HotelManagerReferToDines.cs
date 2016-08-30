@@ -40,6 +40,7 @@ namespace HotelDAO {
 				p.IsPaid,
 				p.IsOnline,
 				p.UserId,
+				p.WeChatOpenId,
 				Waiter = new {
 					p.Waiter.Id,
 					p.Waiter.Name

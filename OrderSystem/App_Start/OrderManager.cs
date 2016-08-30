@@ -366,7 +366,7 @@ namespace OrderSystem {
 			cartPrice = Math.Floor(cartPrice.Value * trim) / trim;
 
 			foreach(DineMenu dineMenu in dine.DineMenus) {
-				var menuOnSale = await ctx.MenuOnSales.FirstOrDefaultAsync(p => p.Id == dineMenu.Menu.Id);
+				var menuOnSale = await ctx.MenuOnSales.FirstOrDefaultAsync(p => p.Id == dineMenu.Menu.Id && p.OnSaleWeek == dine.BeginTime.DayOfWeek);
 				if(menuOnSale == null)
 					continue;
 

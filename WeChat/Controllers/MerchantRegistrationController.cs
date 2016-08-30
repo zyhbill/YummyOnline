@@ -18,6 +18,11 @@ namespace WeChat.Controllers
             return View("MerchantRegistration");
         }
 
+        public ActionResult Success()
+        {
+            return View("Success");
+        }
+
         public JsonResult GetKey(string Phone)
         {
             var Rd = new Random();

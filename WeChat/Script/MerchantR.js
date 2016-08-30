@@ -18,7 +18,8 @@
             },
                    function (data) {
                        if (data.Succeeded == true)
-                           alert("注册成功，请耐心等待审核！");
+                           window.location.href = '../MerchantRegistration/Success'
+                           //alert("注册成功，请耐心等待审核！");
                        else
                            alert(data.ErrorMessage);
                    });

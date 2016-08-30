@@ -15,6 +15,11 @@ namespace WeChat.Controllers {
             return View("Account");
         }
 
+        public ActionResult Success()
+        {
+            return View("Success");
+        }
+
         public JsonResult Verify(string Phone)
         {
             string dianxin = @"^1[3578][01379]\d{8}$";

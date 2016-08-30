@@ -22,9 +22,10 @@
                        },
                        function (datas) {
                            if (datas.Succeeded == true)
-                               alert("恭喜您，注册成功！");
+                               //alert("恭喜您，注册成功！");
+                               window.location.href = '../Account/Success';
                            else
-                               alert(datas.ErrorMessage)
+                               alert(datas.ErrorMessage);
                        })
                }
                else

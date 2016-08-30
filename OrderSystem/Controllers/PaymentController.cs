@@ -69,10 +69,10 @@ namespace OrderSystem.Controllers {
 			string redirectUrl = $"{payKind.CompleteUrl}?Succeeded={true}&DineId={dine.Id}";
 
 			if(payKind.Type == PayKindType.Online) {
-				DinePaidDetail pointsPaidDetail = dine.DinePaidDetails.FirstOrDefault(p => p.PayKind.Type == PayKindType.Points);
-				// 如果实际需要支付的价格等于0，或者积分支付的价格等于实际应付的价格则直接判为支付成功
-				if(Math.Abs((double)(dine.Price - 0.00m)) < 0.01 ||
-					(pointsPaidDetail != null && Math.Abs((double)(dine.Price - pointsPaidDetail.Price)) < 0.01)) {
+				DinePaidDetail mainPaidDetail = await HotelManager.GetDineOnlinePaidDetail(dine.Id);
+
+				// 如果实际需要支付的价格等于0则直接显示支付完成界面
+				if(mainPaidDetail.Price == 0) {
 					await onlinePayCompleted(dine.Id, null);
 				}
 				else {
@@ -110,7 +110,8 @@ namespace OrderSystem.Controllers {
 				DineType = cartAddition.DineType,
 				Discount = cartAddition.Discount,
 				DiscountName = cartAddition.DiscountName,
-				GiftMenus = cartAddition.GiftMenus
+				GiftMenus = cartAddition.GiftMenus,
+				From = DineFrom.Manager
 			};
 
 			User user = await UserManager.FindByIdAsync(cartAddition.UserId);
@@ -250,7 +251,12 @@ namespace OrderSystem.Controllers {
 			}
 			await OrderManager.OnlinePayCompleted(dineId, recordId);
 			NewDineInformTcpClient.SendNewDineInfrom(CurrHotel.Id, dineId, true);
+
+			HotelConfig config = await HotelManager.GetHotelConfig();
 			await requestPrintDine(dineId, new List<PrintType> { PrintType.Recipt, PrintType.ServeOrder, PrintType.KitchenOrder });
+			for(int i = 0; i < config.PrintingReciptTimes - 1; i++) {
+				await requestPrintDine(dineId, new List<PrintType> { PrintType.Recipt });
+			}
 		}
 	}
 }

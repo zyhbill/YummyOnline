@@ -13,7 +13,7 @@ namespace HotelDAO {
 				.Select(p => new {
 					p.Id,
 					p.Name,
-					p.Menus.Count
+					Count = p.Menus.Where(m => m.Usable && m.Status == MenuStatus.Normal).Count()
 				});
 			return await linq.ToListAsync();
 		}

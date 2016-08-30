@@ -1,0 +1,112 @@
+﻿
+<script type="text/ng-template" id="imageModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">插入图片</h3>
+	</div>
+	<div class="modal-body">
+		<input type="text" class="form-control" ng-model="newImagePath">
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger" ng-click="cancel()">取消</button>
+		<button class="btn btn-primary" ng-click="ok()">插入</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="linkModal.html">
+	<div class="modal-header">
+		<h3 class="modal-title">插入链接</h3>
+	</div>
+	<div class="modal-body">
+		<input type="text" class="form-control" ng-model="newLinkPath">
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-danger" ng-click="cancel()">取消</button>
+		<button class="btn btn-primary" ng-click="ok()">插入</button>
+	</div>
+</script>
+
+<script type="text/ng-template" id="articleBodyModal.html">
+	<div class="modal-header">
+		<button class="close" ng-click="close()"><span>&times;</span></button>
+		<h3 class="modal-title">{{article.Title}}</h3>
+	</div>
+	<div class="modal-body">
+		<div ng-bind-html="article.Body|to_trusted"></div>
+	</div>
+</script>
+
+<div class="box">
+	<div class="box-body">
+		<select class="form-control" ng-model="hotelId" ng-change="refreshArticles(hotelId)" convert-to-number>
+			<option ng-repeat="hotel in hotels" value="{{hotel.Id}}">
+				{{hotel.Name}}
+				{{hotel.Id}}
+			</option>
+		</select>
+	</div>
+	<div class="table-responsive">
+		<table class="table no-margin">
+			<tr>
+				<th>Id</th>
+				<th>标题</th>
+				<th>简介</th>
+				<th>图片链接</th>
+				<th>正文</th>
+				<th>创建日期</th>
+				<th class="shrink text-right"></th>
+			</tr>
+			<tr ng-repeat="article in articles">
+				<td class="shrink">{{article.Id}}</td>
+				<td>{{article.Title}}</td>
+				<td>{{article.Description}}</td>
+				<td><a href="javascript:;" target="_blank" ng-href="{{article.PicturePath}}">{{article.PicturePath}}</a></td>
+				<td class="shrink">
+					<button class="btn btn-default" ng-click="showArticleBodyModal(article)">预览</button>
+				</td>
+				<td class="shrink">{{article.DateTime | date:'yyyy/M/d HH:mm:ss'}}</td>
+				<td>
+					<button class="btn btn-danger" confirm-click="remove(article)">删除</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div class="box">
+	<div class="box-header">
+		<h3 class="box-title">添加文章</h3>
+	</div>
+	<div class="box-body">
+		<div class="form-group">
+			<label>标题</label>
+			<input class="form-control" type="text" ng-model="newArticle.Title" />
+		</div>
+		<div class="form-group">
+			<label>简介</label>
+			<input class="form-control" type="text" ng-model="newArticle.Description" />
+		</div>
+		<div class="form-group">
+			<label>图片链接</label>
+			<input class="form-control" type="text" ng-model="newArticle.PicturePath" />
+		</div>
+		<div class="form-group">
+			<label>正文</label>
+			<div class="form-group">
+				<div class="btn-toolbar">
+					<div class="btn-group">
+						<button class="btn btn-default" ng-click="showImageModal()">
+							<i class="fa fa-fw fa-picture-o"></i>
+						</button>
+						<button class="btn btn-default" ng-click="showLinkModal()">
+							<i class="fa fa-fw fa-link"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+			<textarea id="article-body"></textarea>
+		</div>
+		<div class="text-right">
+			<button class="btn btn-primary" confirm-class="btn-danger" confirm-click="add()">添加</button>
+		</div>
+	</div>
+</div>

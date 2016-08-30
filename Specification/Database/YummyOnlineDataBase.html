@@ -50,45 +50,20 @@
 	<div class="container-fluid">
 		<h2>YummyOnline Database Specification</h2>
 		
-
 		<div class="alert alert-danger">
-			<p>加入IsPrintReciptAfterPayingOffline</p>
+			<p>加入新的交接班表</p>
 			<p class="text-right">
-				<small>2016-7-29 张朕煜</small>
+				<small>2016-8-17 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
-			<p>加入随机立减功能</p>
+			<p>加入IsOnlyInSetMeal</p>
+			<p>加入新的套餐表</p>
 			<p class="text-right">
-				<small>2016-7-25 张朕煜</small>
+				<small>2016-8-10 </small>
 			</p>
 		</div>
-		<div class="alert alert-danger">
-			<p>加入随机立减功能</p>
-			<p class="text-right">
-				<small>2016-7-25 张朕煜</small>
-			</p>
-		</div>
-		<div class="alert alert-danger">
-			<p>发票功能修改</p>
-			<p class="text-right">
-				<small>2016-7-20 张朕煜</small>
-			</p>
-		</div>
-		<div class="alert alert-danger">
-			<p>Users中增加WeChatOpenId</p>
-			<p class="text-right">
-				<small>2016-7-19 张朕煜</small>
-			</p>
-		</div>
-		<div class="alert alert-danger">
-			<p>PrinterFormats中增加ColorDepth</p>
-			<p>Users中增加Price</p>
-			<p class="text-right">
-				<small>2016-7-8 张朕煜</small>
-			</p>
-		</div>
-
+		
 		<ul>
 			<li>Database version : SQLSERVER 2014</li>
 			<li>Windows version : Windows Server 2012</li>
@@ -388,6 +363,44 @@
 		</table>
 		<table class="table table-bordered table-hover table-condensed">
 			<tr>
+				<th>DineMenuSetMeals</th>
+				<th></th>
+				<th>套餐订单详情</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>DineMenuId</td>
+				<td>int</td>
+				<td>订单详情编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>ClassName</td>
+				<td>nvarchar(20)</td>
+				<td>套餐分类名</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>MenuId</td>
+				<td>nvarchar(6)</td>
+				<td>菜品编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Count</td>
+				<td>int</td>
+				<td>数量</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
 				<th>DinePaidDetails</th>
 				<th></th>
 				<th>支付详情表</th>
@@ -469,6 +482,18 @@
 				<td>
 					<p>0 堂吃</p>
 					<p>1 外卖</p>
+				</td>
+			</tr>
+			<tr>
+				<td>From</td>
+				<td>int</td>
+				<td>下单原始地点</td>
+				<td>
+					<p>0 顾客浏览器点餐</p>
+					<p>1 服务员浏览器</p>
+					<p>2 服务员PAD</p>
+					<p>3 服务员APP</p>
+					<p>4 后台管理系统</p>
 				</td>
 			</tr>
 			<tr>
@@ -611,6 +636,12 @@
 				</td>
 			</tr>
 			<tr>
+				<td>HasAutoPrinter</td>
+				<td>bit</td>
+				<td>是否需要AutoPrinter打印机</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>IsPayFirst</td>
 				<td>bool</td>
 				<td>是否先支付</td>
@@ -623,9 +654,15 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td>HasAutoPrinter</td>
-				<td>bit</td>
-				<td>是否需要AutoPrinter打印机</td>
+				<td>ShiftPrinterId</td>
+				<td>int</td>
+				<td>交接班打印机编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>PrintingReciptTimes</td>
+				<td>int</td>
+				<td>在线支付完成需要打印的收银条次数</td>
 				<td></td>
 			</tr>
 		</table>
@@ -780,6 +817,39 @@
 				<td>类号</td>
 				<td></td>
 			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>MenuClassShifts</th>
+				<th></th>
+				<th>交接班信息</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>交接班次号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>DateTime</td>
+				<td>datetime</td>
+				<td>交接时间</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>MenuClassId</td>
+				<td>int</td>
+				<td>菜品分类Id</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Price</td>
+				<td>deciaml(11, 2)</td>
+				<td>价格</td>
+				<td></td>
+			</tr>
+			<tr>
 		</table>
 		<table class="table table-bordered table-hover table-condensed">
 			<tr>
@@ -978,35 +1048,15 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td>IsOnlyInSetMeal</td>
+				<td>bit</td>
+				<td>是否仅在套餐中显示</td>
+				<td></td>
+			</tr>
+			<tr>
 				<td>Usable</td>
 				<td>bit</td>
 				<td>可用状态</td>
-				<td></td>
-			</tr>
-		</table>
-		<table class="table table-bordered table-hover table-condensed">
-			<tr>
-				<th>MenuSetMeals</th>
-				<th></th>
-				<th>套餐表</th>
-				<th></th>
-			</tr>
-			<tr class="primary-key">
-				<td>MenuId</td>
-				<td>nvarchar(6)</td>
-				<td>菜品号</td>
-				<td></td>
-			</tr>
-			<tr class="primary-key">
-				<td>MenuSetId</td>
-				<td>nvarchar(6)</td>
-				<td>套餐号</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Count</td>
-				<td>int</td>
-				<td>套餐里面单个菜的数量</td>
 				<td></td>
 			</tr>
 		</table>
@@ -1076,6 +1126,44 @@
 				<td>NotifyUrl</td>
 				<td>nvarchar(128)</td>
 				<td>支付成功异步通知地址</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>PayKindShifts</th>
+				<th></th>
+				<th>交接班信息</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>交接班次号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>DateTime</td>
+				<td>datetime</td>
+				<td>交接时间</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>PayKindId</td>
+				<td>int</td>
+				<td>支付方式Id</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>ReceivablePrice</td>
+				<td>deciaml(11, 2)</td>
+				<td>应收</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>RealPrice</td>
+				<td>deciaml(11, 2)</td>
+				<td>实收</td>
 				<td></td>
 			</tr>
 		</table>
@@ -1275,6 +1363,65 @@
 				<td></td>
 			</tr>
 		</table>
+		
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>SetMealClasses</th>
+				<th></th>
+				<th>套餐分类表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>Id</td>
+				<td>int</td>
+				<td>编号</td>
+				<td>自增</td>
+			</tr>
+			<tr>
+				<td>Name</td>
+				<td>nvarchar(20)</td>
+				<td>分类名称</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Count</td>
+				<td>int</td>
+				<td>该分类最大可以点的菜品数量</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>SetMealId</td>
+				<td>nvarchar(6)</td>
+				<td>分类中可以选择的菜品</td>
+				<td></td>
+			</tr>
+		</table>
+		<table class="table table-bordered table-hover table-condensed">
+			<tr>
+				<th>SetMealClassMenus</th>
+				<th></th>
+				<th>套餐分类对应菜品多对多表</th>
+				<th></th>
+			</tr>
+			<tr class="primary-key">
+				<td>SetMealClassId</td>
+				<td>int</td>
+				<td>套餐分类编号</td>
+				<td></td>
+			</tr>
+			<tr class="primary-key">
+				<td>MenuId</td>
+				<td>nvarchar(20)</td>
+				<td>分类对应的菜品编号</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Count</td>
+				<td>int</td>
+				<td>该菜品一次性点单数量</td>
+				<td></td>
+			</tr>
+		</table>
 		<table class="table table-bordered table-hover table-condensed">
 			<tr>
 				<th>Shifts</th>
@@ -1294,22 +1441,64 @@
 				<td>交接时间</td>
 				<td></td>
 			</tr>
-			<tr class="primary-key">
-				<td>PayKindId</td>
+			<tr>
+				<td>OriPrice</td>
+				<td>decimal(11, 2)</td>
+				<td>累计消费</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>Price</td>
+				<td>decimal(11, 2)</td>
+				<td>累计应付</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>ToStayPrice</td>
+				<td>decimal(11, 2)</td>
+				<td>累计堂吃</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>ToGoPrice</td>
+				<td>decimal(11, 2)</td>
+				<td>累计外卖</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>PreferencePrice</td>
+				<td>decimal(11, 2)</td>
+				<td>累计优惠</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>GiftPrice</td>
+				<td>decimal(11, 2)</td>
+				<td>累计赠菜</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>ReturnedPrice</td>
+				<td>decimal(11, 2)</td>
+				<td>累计退菜</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>AveragePrice</td>
+				<td>decimal(11, 2)</td>
+				<td>人均消费</td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>DeskCount</td>
 				<td>int</td>
-				<td>支付方式Id</td>
+				<td>桌数</td>
 				<td></td>
 			</tr>
 			<tr>
-				<td>ReceivablePrice</td>
-				<td>deciaml(11, 2)</td>
-				<td>应收</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>RealPrice</td>
-				<td>deciaml(11, 2)</td>
-				<td>实收</td>
+				<td>CustomerCount</td>
+				<td>int</td>
+				<td>顾客数</td>
 				<td></td>
 			</tr>
 		</table>
@@ -2066,17 +2255,55 @@
 		</table>
 
 
+
+		<div class="alert alert-danger">
+			<p>加入From</p>
+			<p class="text-right">
+				<small>2016-8-1 </small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>加入IsPrintReciptAfterPayingOffline</p>
+			<p class="text-right">
+				<small>2016-7-29 </small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>加入随机立减功能</p>
+			<p class="text-right">
+				<small>2016-7-25 </small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>发票功能修改</p>
+			<p class="text-right">
+				<small>2016-7-20 </small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>Users中增加WeChatOpenId</p>
+			<p class="text-right">
+				<small>2016-7-19 </small>
+			</p>
+		</div>
+		<div class="alert alert-danger">
+			<p>PrinterFormats中增加ColorDepth</p>
+			<p>Users中增加Price</p>
+			<p class="text-right">
+				<small>2016-7-8 </small>
+			</p>
+		</div>
 		<div class="alert alert-danger">
 			<p>Staffs表中增加IsHotelAdmin字段</p>
 			<p>HotelConfigs表中增加IsPayFirst字段</p>
 			<p class="text-right">
-				<small>2016-7-1 张朕煜</small>
+				<small>2016-7-1 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>Hotels表中增加OrderSystemStyle字段</p>
 			<p class="text-right">
-				<small>2016-6-28 张朕煜</small>
+				<small>2016-6-28 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
@@ -2088,20 +2315,20 @@
 			<p>加入ReturnedReasons表</p>
 			<p>修改SystemConfigs</p>
 			<p class="text-right">
-				<small>2016-6-22 张朕煜</small>
+				<small>2016-6-22 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>Hotels中加入Usable</p>
 			<p>Dines中加入DiscountType Type</p>
 			<p class="text-right">
-				<small>2016-5-21 张朕煜</small>
+				<small>2016-5-21 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>SystemConfigs中加入若干配置字段，Menus中增加赠菜状态</p>
 			<p class="text-right">
-				<small>2016-5-12 张朕煜</small>
+				<small>2016-5-12 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
@@ -2125,46 +2352,46 @@
 		<div class="alert alert-danger">
 			<p>总数据中添加新订单通知客户端的GUID授权表</p>
 			<p class="text-right">
-				<small>2016-4-20 张朕煜</small>
+				<small>2016-4-20 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>饭店数据库中的CSS路径移动到总数据库中</p>
 			<p class="text-right">
-				<small>2016-4-19 张朕煜</small>
+				<small>2016-4-19 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>PayKinds删除IsOnline和IsShow两个字段，该信息可以在Type中导出</p>
 			<p>HotelConfig增加HasAutoPrinter字段</p>
 			<p class="text-right">
-				<small>2016-4-15 张朕煜</small>
+				<small>2016-4-15 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>DineMenus主键变为int自增类型</p>
 			<p>DineMenuRemarks修改</p>
 			<p class="text-right">
-				<small>2016-4-14 张朕煜</small>
+				<small>2016-4-14 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>SystemConfigs增加TcpServer所在目录字段</p>
 			<p>Schemas增加三项架构</p>
 			<p class="text-right">
-				<small>2016-4-3 张朕煜</small>
+				<small>2016-4-3 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>HotelConfigs增加抹零</p>
 			<p class="text-right">
-				<small>2016-3-19 张朕煜</small>
+				<small>2016-3-19 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>DineMenus增加所有备注价格</p>
 			<p class="text-right">
-				<small>2016-3-18 张朕煜</small>
+				<small>2016-3-18 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
@@ -2172,26 +2399,26 @@
 			<p>职员增加角色架构表</p>
 			<p>会员增加自定义会员等级表，修改VipDiscounts</p>
 			<p class="text-right">
-				<small>2016-3-17 张朕煜</small>
+				<small>2016-3-17 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>区域所对应的部门改为收银部门与传菜部门</p>
 			<p class="text-right">
-				<small>2016-3-14 张朕煜</small>
+				<small>2016-3-14 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>删除DinePaidDetails中的IsPaid，增加Dines中的IsPaid</p>
 			<p>删除Dines中的IsRefund, ReturnedWaiterId</p>
 			<p class="text-right">
-				<small>2016-3-12 张朕煜</small>
+				<small>2016-3-12 </small>
 			</p>
 		</div>
 		<div class="alert alert-danger">
 			<p>新增两个支付方式表，修改Dines表</p>
 			<p class="text-right">
-				<small>2016-2-27 张朕煜</small>
+				<small>2016-2-27 </small>
 			</p>
 		</div>
 	</div>

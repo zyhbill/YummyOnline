@@ -45,6 +45,8 @@ namespace Protocol.PrintingProtocol {
 		public AreaType AreaType { get; set; }
 		public Printer ReciptPrinter { get; set; }
 		public Printer ServePrinter { get; set; }
+		public string ReciptDepartmentName { get; set; }
+		public string ServeDepartmentName { get; set; }
 	}
 
 	public class DineMenu {
@@ -120,6 +122,7 @@ namespace Protocol.PrintingProtocol {
 		public int ShiftBigFontSize { get; set; }
 		public int ShiftFontSize { get; set; }
 		public int ShiftSmallFontSize { get; set; }
+		public int PaddingRight { get; set; }
 	}
 
 	public class DineForPrinting {

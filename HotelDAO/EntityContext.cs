@@ -72,6 +72,8 @@ namespace HotelDAO.Models {
 		public DbSet<StaffRoleSchema> StaffRoleSchemas { get; set; }
 
 		public DbSet<Shift> Shifts { get; set; }
+		public DbSet<PayKindShift> PayKindShifts { get; set; }
+		public DbSet<MenuClassShift> MenuClassShifts { get; set; }
 
 		public DbSet<Log> Logs { get; set; }
 	}

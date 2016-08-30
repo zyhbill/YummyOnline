@@ -32,5 +32,6 @@ namespace HotelDAO.Models {
 		public int? ShiftPrinterId { get; set; }
 		public Printer ShiftPrinter { get; set; }
 
+		public int PrintingReciptTimes { get; set; }
 	}
 }

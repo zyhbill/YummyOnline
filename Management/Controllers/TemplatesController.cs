@@ -841,7 +841,7 @@ namespace Management.Controllers
             {
                 Date = Convert.ToDateTime(Time);
             }
-            var Numbers = await db.Shifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, Date) == 0)
+            var Numbers = await db.PayKindShifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, Date) == 0)
                 .GroupBy(d => d.Id)
                 .Select(d => new
                 {
@@ -893,14 +893,14 @@ namespace Management.Controllers
                 .ToListAsync();
             if (Profit != null)
             {
-                var Day = db.Shifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, DateTime.Now) == 0).ToList();
+                var Day = db.PayKindShifts.Where(d => SqlFunctions.DateDiff("day", d.DateTime, DateTime.Now) == 0).ToList();
                 if (Day.Count != 0)
                 {
                     Id = Day.Max(d => d.Id) + 1;
                 }
                 foreach (var pft in Profit)
                 {
-                    db.Shifts.Add(new Shift
+                    db.PayKindShifts.Add(new PayKindShift
                     {
                         DateTime = Now,
                         PayKindId = pft.Id,

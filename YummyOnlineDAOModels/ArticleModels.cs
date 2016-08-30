@@ -32,11 +32,11 @@ namespace YummyOnlineDAO.Models {
 		public ArticleStatus Status { get; set; }
 
 		[ForeignKey(nameof(Hotel))]
-		public int HotelId { get; set; }
+		public int? HotelId { get; set; }
 		public Hotel Hotel { get; set; }
 
-		[ForeignKey(nameof(Staff))]
-		public string StaffId { get; set; }
-		public Staff Staff { get; set; }
+		[ForeignKey(nameof(User))]
+		public string UserId { get; set; }
+		public User User { get; set; }
 	}
 }

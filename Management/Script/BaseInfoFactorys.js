@@ -202,7 +202,7 @@
             this.DeskElement.isAjax = true;
             $http.post('../Baseinfo/EditDesk', { Desk: desk, PicFile: file, OriginId: Id }).success(function (data) {
                 if (data.Status) {
-
+                    desk.AreaName = _this.DeskElement.SelectArea.Name;
                 } else {
                     alert(data.ErrorMessage);
                 }

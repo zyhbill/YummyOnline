@@ -1097,6 +1097,7 @@ namespace Management.Controllers
             {
                 Date = Convert.ToDateTime(Time);
             }
+            if (frequencies == null) { return null; }
             var Details = await db.Shifts.Where(d => frequencies.Contains(d.Id) && SqlFunctions.DateDiff("day", Date, d.DateTime) == 0)
                 .ToListAsync();
             var ShiftDetails = new ShiftDetails();

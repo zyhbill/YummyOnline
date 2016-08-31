@@ -255,11 +255,12 @@
                 maxView: '4',
                 startView: '2',
                 todayBtn: true,
+                autoclose:true,
                 language: 'zh-CN'
             }).on('changeDate', function (ev) {
                 scope.time = ev.date.format('yyyy-MM-dd');
-                scope.change();
                 scope.$apply();
+                scope.change();
             });
         }
     }

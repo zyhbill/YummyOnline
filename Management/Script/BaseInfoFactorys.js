@@ -255,7 +255,7 @@
                 _this.MenuElement.Remarks = data.Remarks;
                 _this.MenuElement.IdFilter = {};
                 deferred.resolve(data);
-            }).error(function (data) {
+            }).error(function (data) { 
                 deferred.reject(data);
             })
             return deferred.promise;

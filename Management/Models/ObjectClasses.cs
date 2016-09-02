@@ -129,6 +129,7 @@ namespace Management.ObjectClasses
         public string Name { get; set; }
         public MenuStatus Status { get; set; }
         public string Unit { get; set; }
+        public bool IsOnlyInSetMeal { get; set; }
     }
     public class AddMenu
     {
@@ -149,6 +150,7 @@ namespace Management.ObjectClasses
         public int MinOrderCount { get; set; }
         public int SupplyDate { get; set; }
         public string Unit { get; set; }
+        public bool IsOnlyInSetMeal { get; set; }
 
     }
 

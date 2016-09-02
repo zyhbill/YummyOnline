@@ -332,7 +332,8 @@ namespace Management.Controllers
                     m.Name,
                     m.SupplyDate,
                     m.SweetDegree,
-                    m.Unit
+                    m.Unit,
+                    m.IsOnlyInSetMeal
                 }).ToListAsync();
             var Remarks = await db.Remarks.ToListAsync();
             var Classes = await db.MenuClasses.Where(m => m.Usable == true && m.IsLeaf == true).ToListAsync();
@@ -395,6 +396,7 @@ namespace Management.Controllers
                 menu.SourDegree = Menu.SourDegree;
                 menu.SpicyDegree = Menu.SpicyDegree;
                 menu.Status = Menu.Status;
+                menu.IsOnlyInSetMeal = Menu.IsOnlyInSetMeal;
                 menu.SweetDegree = Menu.SweetDegree;
                 menu.EnglishName = Menu.EnglishName;
                 menu.Unit = Menu.Unit;
@@ -486,6 +488,7 @@ namespace Management.Controllers
                     menu.SweetDegree = Menu.SweetDegree;
                     menu.Unit = Menu.Unit;
                     menu.DepartmentId = Department.Id;
+                    menu.IsOnlyInSetMeal = Menu.IsOnlyInSetMeal;
                     menu.Usable = true;
                     var CleanClass = menu.Classes.Select(m => m.Id);
                     var cleanC = await db.MenuClasses.Where(m => CleanClass.Contains(m.Id)).ToListAsync();
@@ -525,6 +528,7 @@ namespace Management.Controllers
                     menu.SaltyDegree = Menu.SaltyDegree;
                     menu.SourDegree = Menu.SourDegree;
                     menu.SpicyDegree = Menu.SpicyDegree;
+                    menu.IsOnlyInSetMeal = Menu.IsOnlyInSetMeal;
                     menu.Status = Menu.Status;
                     menu.SweetDegree = Menu.SweetDegree;
                     menu.Unit = Menu.Unit;

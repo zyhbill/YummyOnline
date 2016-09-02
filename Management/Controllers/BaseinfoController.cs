@@ -974,6 +974,7 @@ namespace Management.Controllers
                                 me.Classes = new List<MenuClass>();
                                 me.Remarks = new List<Remark>();
                                 me.EnglishName = row[15].ToString();
+                                me.IsOnlyInSetMeal = Convert.ToInt32(row[18].ToString()) == 1;
                                 db.Menus.Add(me);
                                 db.SaveChanges();
                                 var classes = row[16].ToString();
@@ -1028,6 +1029,7 @@ namespace Management.Controllers
                                 clean.SweetDegree = Convert.ToInt32(row[7].ToString());
                                 clean.SaltyDegree = Convert.ToInt32(row[8].ToString());
                                 clean.SpicyDegree = Convert.ToInt32(row[9].ToString());
+                                clean.IsOnlyInSetMeal = Convert.ToInt32(row[18].ToString()) == 1;
                                 clean.Usable = true;
                                 clean.IsSetMeal = false;
                                 clean.EnglishName =  row[15].ToString();
@@ -1098,7 +1100,8 @@ namespace Management.Controllers
                     m.Name,
                     m.SupplyDate,
                     m.SweetDegree,
-                    m.Unit
+                    m.Unit,
+                    m.IsOnlyInSetMeal
                 }).ToListAsync();
             return Json(new { Menus = Menus});
         }

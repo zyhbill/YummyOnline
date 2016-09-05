@@ -285,9 +285,28 @@
             }
         },
         CalcSupply: function () {
-            for (var i = 0 ; i < 7 ; i++) {
-                this.MenuElement.Supply[i] = (parseInt(this.MenuElement.CurrentMenu.SupplyDate).toString(2)[i] == 1);
+            if (this.MenuElement.CurrentMenu.SupplyDate < 64 &&this.MenuElement.CurrentMenu.SupplyDate >=32 ) {
+                var date = '0' +  parseInt(this.MenuElement.CurrentMenu.SupplyDate).toString(2);
+            } else if (this.MenuElement.CurrentMenu.SupplyDate < 32 && this.MenuElement.CurrentMenu.SupplyDate >= 16) {
+                var date = '00' + parseInt(this.MenuElement.CurrentMenu.SupplyDate).toString(2);
+            } else if (this.MenuElement.CurrentMenu.SupplyDate < 16 && this.MenuElement.CurrentMenu.SupplyDate >= 8) {
+                var date = '000' + parseInt(this.MenuElement.CurrentMenu.SupplyDate).toString(2);
+            } else if (this.MenuElement.CurrentMenu.SupplyDate < 8 && this.MenuElement.CurrentMenu.SupplyDate >= 4) {
+                var date = '0000' + parseInt(this.MenuElement.CurrentMenu.SupplyDate).toString(2);
+            } else if (this.MenuElement.CurrentMenu.SupplyDate < 4 && this.MenuElement.CurrentMenu.SupplyDate >= 2) {
+                var date = '00000' + parseInt(this.MenuElement.CurrentMenu.SupplyDate).toString(2);
+            } else if (this.MenuElement.CurrentMenu.SupplyDate < 2 && this.MenuElement.CurrentMenu.SupplyDate >= 1) {
+                var date = '000000' + parseInt(this.MenuElement.CurrentMenu.SupplyDate).toString(2);
+            } else {
+                var date =  parseInt(this.MenuElement.CurrentMenu.SupplyDate).toString(2);
             }
+            this.MenuElement.Supply[0] = date[6]==1;
+            this.MenuElement.Supply[1] = date[5]==1;
+            this.MenuElement.Supply[2] = date[4]==1;
+            this.MenuElement.Supply[3] = date[3]==1;
+            this.MenuElement.Supply[4] = date[2]==1;
+            this.MenuElement.Supply[5] = date[1]==1;
+            this.MenuElement.Supply[6] = date[0]==1;
         },
         DeleteMenu: function (menu) {
             var _this = this;
@@ -340,6 +359,7 @@
             this.MenuElement.isAjax = true;
             this.MenuElement.CurrentMenu.SupplyDate = this.GetSupply();
             this.GetDegree();
+            console.log(this.MenuElement.CurrentMenu.SupplyDate);
             $http.post('../Baseinfo/EditMenu', {
                 Menu: _this.MenuElement.CurrentMenu, PicFile: $rootScope.ImgChange, Departments: _this.MenuElement.SelectDepartment
             , Classes: _this.MenuElement.SelectClasses, Remarks: _this.MenuElement.SelectRemarks, OriId: OriMId
@@ -370,10 +390,8 @@
         },
         GetSupply: function () {
             var num = 0;
-            for (var i = 6; i >= 0 ; i--) {
-                num = num << 1;
-                num += this.MenuElement.Supply[i] ? 1 : 0;
-            }
+            num += (this.MenuElement.Supply[6] ? 1 : 0) * 64 + (this.MenuElement.Supply[5] ? 1 : 0 )* 32 + (this.MenuElement.Supply[4] ? 1 : 0 )* 16 + (this.MenuElement.Supply[3] ? 1 : 0) * 8
+            + (this.MenuElement.Supply[2] ? 1 : 0 )* 4 + (this.MenuElement.Supply[1] ? 1 : 0) * 2 + (this.MenuElement.Supply[0] ? 1 : 0) * 1;
             return num;
         },
         WatchPath: function () {
